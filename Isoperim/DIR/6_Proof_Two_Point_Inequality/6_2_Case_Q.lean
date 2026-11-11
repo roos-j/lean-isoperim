@@ -211,10 +211,14 @@ Q_\beta(\overline{y})^{1-\frac1\beta} - (\alpha_0 - 2\alpha_1 \underline{h} + 4\
 \[- \tfrac12 \beta (1-\beta)Q_\beta(\underline{y})^{1-\frac2\beta} \overline{h}^{\frac1\beta}. \]
 -/
 
-/-- [DIR], §6.2.1: if $\beta>\frac12$ (here $\beta=\beta_0$), then $g_{Q,1,\beta}(h,y)>0$ for
-$0\le h\le\frac14\le y\le\frac12$. -/
-theorem caseQ_II_g_Q_1_pos (h y : ℝ) (hh : h ∈ Icc (0 : ℝ) (1 / 4))
-    (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) : g_Q_1 β₀ h y > 0 := by
+/-- [DIR], §6.2.1: if $\beta>\frac12$ (and $\beta\le1$, the standing range), then
+$g_{Q,1,\beta}(h,y)>0$ for $0\le h\le\frac14\le y\le\frac12$. (The paper only proves the case
+$\beta=\beta_0$, by (6.7); the general claim was spot-checked numerically for
+$\beta\in\{0.5001,0.501,0.52,0.6,0.8,1\}$. At $h=0$ the Lean value
+$g_{Q,1,\beta}(0,y)=\beta Q_\beta(y)^{1-\frac1\beta}$ is the continuous extension, since
+$2-\frac1\beta>0$.) -/
+theorem caseQ_II_g_Q_1_pos (β : ℝ) (hβ : β ∈ Ioc (1 / 2 : ℝ) 1) (h y : ℝ)
+    (hh : h ∈ Icc (0 : ℝ) (1 / 4)) (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) : g_Q_1 β h y > 0 := by
   sorry
 
 /-- The lower bound ([DIR], §6.2.1)
@@ -262,7 +266,18 @@ $g_{Q,1,\frac12}(0,\tfrac12)=0$.
 -/
 
 /-- [DIR], §6.2.1: $g_{Q,1,\frac12}(0,\frac12)=0$, where $g_{Q,1,\frac12}(0,\cdot)$ is the
-continuous extension: $g_{Q,1,\frac12}(h,\frac12)\to0$ as $h\to0^+$. -/
+continuous extension: $g_{Q,1,\frac12}(h,\frac12)\to0$ as $h\to0^+$.
+
+**Discrepancy with the paper.** The paper evaluates $g_{Q,1,\frac12}$ at $h=0$ (here and in
+claim (1) below), although its definition contains
+$(2Q_\beta(y-\frac h2)-Q_\beta(y-h)-Q_\beta(y))h^{-\frac1\beta}$, which is undefined at $h=0$;
+what is meant is the continuous extension
+$\lim_{h\to0^+}g_{Q,1,\frac12}(h,y)=\frac12Q_{\frac12}(y)^{-1}-(\alpha_0+4\alpha_1y)$. In Lean,
+$0^{-2}=0$, so `g_Q_1 (1 / 2) 0 y` $=\frac12Q_{\frac12}(y)^{-1}$ is *not* this extension. All
+statements about "$g_{Q,1,\frac12}(0,y)$" are therefore formulated with the limit $h\to0^+$
+(`caseQ_II_g_Q_1_half_zero`, `caseQ_II_g_Q_1_half_concave`, `caseQ_II_claim_1`,
+`caseQ_II_claim_1_limit`). (For $\beta>\frac12$ the Lean value at $h=0$ agrees with the
+extension.) -/
 theorem caseQ_II_g_Q_1_half_zero :
     Tendsto (fun h ↦ g_Q_1 (1 / 2) h (1 / 2)) (𝓝[>] 0) (𝓝 0) := by
   sorry
@@ -468,7 +483,17 @@ theorem caseQ_III_iff_G_Q (β : ℝ) (hβ : β = 1 / 2 ∨ β = β₀) (h y : �
 
 /-- **Lemma 6.4** ([DIR]). For $\beta\in\{\beta_0,\frac12\}$ and $y\in[\frac14,\frac12]$, the
 function $h\mapsto\partial_hG_{Q,\beta}(h,y)$ vanishes at most once on the interval
-$[\frac14,\frac12]$. Also, $\partial_hG_{Q,\beta}(\frac14,y)>0$. -/
+$[\frac14,\frac12]$. Also, $\partial_hG_{Q,\beta}(\frac14,y)>0$.
+
+**Discrepancy with the paper.** The proof of Lemma 6.4 given in the paper (end of §6.2.2) only
+shows the first claim (via $g_{Q,2,\beta}=-\partial_hp_{y,\beta}>0$, i.e. $p_{y,\beta}$ strictly
+decreasing). The second claim $\partial_hG_{Q,\beta}(\frac14,y)>0$, equivalently
+$p_{y,\beta}(\frac14)>0$ by (6.11) and `Auto.DIR.eqn_6_11_eq_p_Q`, is not argued anywhere,
+although it is needed for `Auto.DIR.caseQ_III_min` (without it, an interior minimum of
+$h\mapsto G_{Q,\beta}(h,y)$ would not be excluded). It is true numerically:
+$\min_{y\in[\frac14,\frac12]}\partial_hG_{Q,\beta}(\frac14,y)\approx0.0367$ for $\beta=\beta_0$
+and $\approx0.0361$ for $\beta=\frac12$. The Lean statement keeps both claims as in the paper.
+-/
 theorem lemma_6_4 (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : ℝ)
     (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
     {h ∈ Icc (1 / 4 : ℝ) (1 / 2) | deriv (fun h ↦ G_Q β h y) h = 0}.Subsingleton ∧
@@ -622,7 +647,20 @@ theorem f_QIII_deriv_eq_sub (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : �
 
 /-- [DIR], §6.2.2: it suffices to show $f_{\beta,0}'\le0$. (Since $y/2\in[\frac18,\frac14]$, this
 is needed on $[\frac18,\frac12]$: if $f_{\beta,0}'\le0$ on $[\frac18,\frac12]$, then
-$f_\beta'\le0$ on $[\frac14,\frac12]$.) -/
+$f_\beta'\le0$ on $[\frac14,\frac12]$.)
+
+**Discrepancy with the paper.** For $y\in[\frac14,\frac12]$ the identity
+$\beta yf_\beta'(y)=f_{\beta,0}(y)-f_{\beta,0}(y/2)$ compares $f_{\beta,0}$ at $y$ and at
+$y/2\in[\frac18,\frac14]$, so $f_\beta'\le0$ on $[\frac14,\frac12]$ needs $f_{\beta,0}$ to be
+decreasing on $[\frac18,\frac12]$. The paper only proves $f_{\beta,0}'<0$ on $[\frac14,\frac12]$
+(from $f_{\beta,0}'''\ge0$, (6.9) and (6.10)). The gap is easily closed and the needed fact is
+true: the sign argument for $f_{\beta,0}'''\ge0$ works verbatim on $[\frac18,\frac12]$ (there
+$R_\beta>0$, $R_\beta'<0$, $R_\beta''<0$), and numerically $f_{\beta,0}''(\frac18)\approx1.67$
+($\beta=\beta_0$), $\approx1.64$ ($\beta=\frac12$), so $f_{\beta,0}''>0$ and $f_{\beta,0}'<0$ on
+$[\frac18,\frac12]$ (numerically $\max_{[\frac18,\frac12]}f_{\beta,0}'=f_{\beta,0}'(\frac12)
+\approx-0.66$). The Lean statement states the reduction with the correct interval
+$[\frac18,\frac12]$; the missing fact is `Auto.DIR.deriv_f_QIII_0_neg_Icc_eighth` (not in the
+paper). -/
 theorem caseQ_III_suffices_f_QIII_0 (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2)
     (h : ∀ y ∈ Icc (1 / 8 : ℝ) (1 / 2), deriv (f_QIII_0 β) y ≤ 0) :
     ∀ y ∈ Icc (1 / 4 : ℝ) (1 / 2), deriv (f_QIII β) y ≤ 0 := by
@@ -788,6 +826,14 @@ theorem eqn_6_10 (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) : deriv (f_QIII_0 
 /-- [DIR], §6.2.2: $f_{\beta,0}'<0$ on $[\frac14,\frac12]$ (for $\beta\in\{\beta_0,\frac12\}$). -/
 theorem deriv_f_QIII_0_neg (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : ℝ)
     (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) : deriv (f_QIII_0 β) y < 0 := by
+  sorry
+
+/-- [DIR], §6.2.2 (not stated in the paper; needed by `Auto.DIR.caseQ_III_suffices_f_QIII_0`,
+see the discrepancy noted there): $f_{\beta,0}'<0$ on $[\frac18,\frac12]$ (for
+$\beta\in\{\beta_0,\frac12\}$). It follows as in the paper from $f_{\beta,0}'''\ge0$ on
+$[\frac18,\frac12]$, $f_{\beta,0}''(\frac18)>0$ and (6.10). -/
+theorem deriv_f_QIII_0_neg_Icc_eighth (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : ℝ)
+    (hy : y ∈ Icc (1 / 8 : ℝ) (1 / 2)) : deriv (f_QIII_0 β) y < 0 := by
   sorry
 
 section Proof_Lemma_6_4

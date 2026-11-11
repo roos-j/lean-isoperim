@@ -46,11 +46,13 @@ and surprising result, since Hamming ball examples show that no such bounds can 
 $\beta<\frac12$ (see e.g. \cite[\S 3]{BIM23}).
 -/
 
-/-- [DIR], §1.1: Hamming ball examples show that no dimension-free lower bounds for
-$\mathbf{E}h_A^\beta$ (in terms of $|A|$) can exist if $\beta<\frac12$: for $0<\beta<\frac12$,
-$\mathcal{B}_\beta(\frac12)=0$. (Here `𝓑` is `Auto.DIR.isoProfile`, Definition 1.3 below.) -/
+/-- [DIR], §1.1 (cited from [BIM23, §3]): Hamming ball examples show that no dimension-free
+lower bounds for $\mathbf{E}h_A^\beta$ (in terms of $|A|$) can exist if $\beta<\frac12$.
+Formalized at $|A|=\frac12$: for $0<\beta<\frac12$,
+$\inf_{n\ge1}\inf_{|A|=1/2}\mathbf{E}h_A^\beta=0$, i.e. $\mathcal{B}_\beta(\frac12)=0$ (written
+out, since `𝓑` = `Auto.DIR.isoProfile` is only introduced in Definition 1.3 below). -/
 theorem no_dimension_free_bound (β : ℝ) (hβ₀ : 0 < β) (hβ : β < 1 / 2) :
-    sInf {v : ℝ | ∃ n : ℕ, 1 ≤ n ∧ ∃ A : Set ({0,1}^n), |A| = 1 / 2 ∧ v = 𝐄 h_{A} ^ β} = 0 := by
+    sInf {v : ℝ | ∃ n : ℕ, 1 ≤ n ∧ ∃ A : Set ({0,1}^n), ｜A｜ = 1 / 2 ∧ v = 𝐄 h_{A} ^ β} = 0 := by
   sorry
 
 /-
@@ -70,7 +72,7 @@ The double infimum is taken as a single infimum over all admissible pairs $(n, A
 $A$ with $|A|=x$ exists (i.e. $x\notin\mathcal{Q}$, see `Auto.DIR.dyadic`), the value is the junk
 value $0$ (`Real.sInf_empty`); the paper only uses $\mathcal{B}_\beta$ on $\mathcal{Q}$. -/
 noncomputable def isoProfile (β x : ℝ) : ℝ :=
-  sInf {v : ℝ | ∃ n : ℕ, 1 ≤ n ∧ ∃ A : Set ({0,1}^n), |A| = x ∧ v = 𝐄 h_{A} ^ β}
+  sInf {v : ℝ | ∃ n : ℕ, 1 ≤ n ∧ ∃ A : Set ({0,1}^n), ｜A｜ = x ∧ v = 𝐄 h_{A} ^ β}
 
 @[inherit_doc] notation "𝓑" => isoProfile
 
@@ -91,7 +93,7 @@ def dyadic : Set ℝ := {x | ∃ n k : ℕ, k ≤ 2 ^ n ∧ x = k / 2 ^ n}
 /-- [DIR], §1.1: the definition of $\mathcal{B}_\beta$ is restricted to $x\in\mathcal{Q}$,
 since otherwise there exists no $A$ with $|A|=x$; i.e. $|A|\in\mathcal{Q}$ for every
 $A\subset\{0,1\}^n$. -/
-theorem dens_mem_dyadic (n : ℕ) (A : Set ({0,1}^n)) : |A| ∈ 𝒬 := by
+theorem dens_mem_dyadic (n : ℕ) (A : Set ({0,1}^n)) : ｜A｜ ∈ 𝒬 := by
   sorry
 
 /-- The sum $s(j)$ of the binary digits of $j$ ([DIR], (1.3)). -/
@@ -126,7 +128,7 @@ noncomputable def inducedEdges {n : ℕ} (A : Set ({0,1}^n)) : ℕ :=
 $|A|$ fixed is equivalent to maximizing the number of edges of $A$ (as an induced subgraph):
 for $|A|=|A'|$, $\mathbf{E}h_A\le\mathbf{E}h_{A'}$ iff $A$ has at least as many induced edges
 as $A'$. -/
-theorem edge_boundary_iff_induced_edges (n : ℕ) (A A' : Set ({0,1}^n)) (h : |A| = |A'|) :
+theorem edge_boundary_iff_induced_edges (n : ℕ) (A A' : Set ({0,1}^n)) (h : ｜A｜ = ｜A'｜) :
     𝐄 h_{A} ≤ 𝐄 h_{A'} ↔ inducedEdges A' ≤ inducedEdges A := by
   sorry
 
@@ -134,7 +136,7 @@ theorem edge_boundary_iff_induced_edges (n : ℕ) (A A' : Set ({0,1}^n)) (h : |A
 when $\beta<1$: there are sets of equal size where the one with more induced edges has the
 larger value of $\mathbf{E}h^\beta$. -/
 theorem edge_equivalence_fails (β : ℝ) (hβ₀ : 0 < β) (hβ : β < 1) :
-    ∃ (n : ℕ) (A A' : Set ({0,1}^n)), |A| = |A'| ∧ inducedEdges A' ≤ inducedEdges A ∧
+    ∃ (n : ℕ) (A A' : Set ({0,1}^n)), ｜A｜ = ｜A'｜ ∧ inducedEdges A' ≤ inducedEdges A ∧
       𝐄 h_{A'} ^ β < 𝐄 h_{A} ^ β := by
   sorry
 

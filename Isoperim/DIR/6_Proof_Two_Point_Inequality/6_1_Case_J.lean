@@ -85,6 +85,13 @@ function $J$ satisfies the best possible estimate, $G^1_{\beta}[J](x,y)\ge 0$ fo
 $\beta=\frac12$. When $x<x_0\approx 0.552$ this estimate fails for $\beta=\frac12$.
 -/
 
+/-- [DIR], §6.1 (cf. Remark 3.6): when $x<x_0\approx0.552$ the estimate
+$G^1_{\frac12}[J](x,y)\ge0$ fails: for every $x\in[\frac12,x_0)$ there is $y\in[x,1]$ with
+$G^1_{\frac12}[J](x,y)<0$. -/
+theorem caseJ_G₁_half_fails (x : ℝ) (hx : x ∈ Ico (1 / 2) x₀) :
+    ∃ y ∈ Icc x 1, G₁ (1 / 2) J x y < 0 := by
+  sorry
+
 /-- **Proposition 6.1** ([DIR]). Let $\beta\ge\beta_0=0.50057$ and $c_0=0.997$. Then for
 $\frac12\le x\le x_0$ and $x\le y\le1$,
 $$G^1_\beta[J](x,y)\ge0\quad\text{and}\quad G^1_{\frac12}[c_0J](x,y)\ge0.$$ -/
@@ -470,12 +477,20 @@ $[\underline x,\overline x]\times[\underline h,\overline h]\subset(\frac12,\frac
 $g_{J,1,\beta,c}(x,h)\ge\underline{g_{J,1,\beta,c}}(\underline x,\overline x,\underline h,
 \overline h)$.
 
-(The paper calls this a tight lower bound. Since the remainder $E_6$ is enclosed using the
-enclosures of $J^{(6)}$ on $[\underline x,\overline x+\overline h]$ rather than at the unknown
-intermediate values, $\underline{g_{J,1,\beta,c}}$ does not converge to $g_{J,1,\beta,c}(x,h)$
-for $h>0$ as the rectangle shrinks; only the lower bound property, which is what the proof uses,
-is stated here. The point $x=\frac12$ is excluded since $J'(\frac12)$ is not meaningful for
-`Auto.DIR.J`.) -/
+**Discrepancy with the paper.** The paper calls $\underline{g_{J,1,\beta,c}}$ a *tight* lower
+bound of $g_{J,1,\beta,c}$ (in the sense of §4.1). It is not: the remainder $E_6$ is enclosed
+using the enclosures of $J^{(6)}$ on $[\underline x,\overline x+\overline h]$ and
+$[\underline x,\overline x+\frac12\overline h]$ (the possible locations of the unknown
+intermediate values $\xi_1,\xi_2$), and these intervals do not shrink as the rectangle shrinks
+to a point $(x,h)$ with $h>0$. Hence $\underline{g_{J,1,\beta,c}}\not\to g_{J,1,\beta,c}(x,h)$
+(numerically, for the rectangle $[0.56,0.56+10^{-8}]\times[0.1,0.1+10^{-8}]$ and
+$(\beta,c)=(\beta_0,1)$ the gap is $\approx2.4\cdot10^{-4}$). Only the lower bound property is
+stated here; it is what the correctness of $\textsc{Partition}_2$ (Fact 4.1, "if" direction)
+needs (it was checked numerically on random subrectangles for $(\beta,c)=(\beta_0,1)$,
+$(\frac12,c_0)$, $(\frac34,0.9)$, $(1,1)$). The interval $x\in[\frac12,\frac58]$ of the paper is
+replaced by $(\frac12,\frac58]$ because the derivatives $J'(\frac12)$, $J^{(k)}(\frac12)$ used in
+$g_{J,1,\beta,c}$ and its lower bound are one-sided in the paper and have no meaning for
+`Auto.DIR.J` (which is arbitrary left of $\frac12$). -/
 theorem g_J_1_lo_le (β c : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1) (hc : 0 < c)
     (xl xu hl hu x h : ℝ) (hxl : 1 / 2 < xl) (hx : x ∈ Icc xl xu) (hxu : xu ≤ 5 / 8)
     (hhl : 0 ≤ hl) (hh : h ∈ Icc hl hu) (hhu : hu ≤ 3 / 16) :
@@ -492,8 +507,17 @@ on this rectangle.
 -/
 
 /-- **(6.3)** ([DIR], §6.1.1) (🚗). For $(\beta,c)\in\{(\beta_0,1),(\frac12,c_0)\}$ and
-$(x,h)\in[\frac12,\frac58]\times[0,\frac3{16}]$ (here $x>\frac12$, see the module docstring):
-$$g_{J,1,\beta,c}(x,h)>10^{-7}$$ (with $N=6$). -/
+$(x,h)\in[\frac12,\frac58]\times[0,\frac3{16}]$ (here $x>\frac12$, see below):
+$$g_{J,1,\beta,c}(x,h)>10^{-7}$$ (with $N=6$).
+
+**Discrepancy with the paper.** The paper states (6.3) on the closed rectangle
+$[\frac12,\frac58]\times[0,\frac3{16}]$. At $x=\frac12$ the function $g_{J,1,\beta,c}$ involves
+$J^{(k)}(\frac12)$, $k=2,\dots,5$, which the paper understands as one-sided derivatives
+(equivalently, derivatives of $J_{w_0}$, (3.4)); `iteratedDeriv k J (1 / 2)` is a junk value
+for `Auto.DIR.J`. The Lean statement therefore assumes $x\in(\frac12,\frac58]$; the case
+$x=\frac12$ of Case I (`Auto.DIR.caseJ_I`) follows by continuity of $G^1_\beta[c\cdot J]$. The
+inequality was spot-checked numerically (minimum $\approx8.5\cdot10^{-5}$ for $(\beta_0,1)$ and
+$\approx1.7\cdot10^{-4}$ for $(\frac12,c_0)$ on a $41\times41$ grid). -/
 theorem eqn_6_3 (β c : ℝ) (hβc : (β, c) = (β₀, 1) ∨ (β, c) = (1 / 2, c₀)) (x h : ℝ)
     (hx : x ∈ Ioc (1 / 2 : ℝ) (5 / 8)) (hh : h ∈ Icc (0 : ℝ) (3 / 16)) :
     g_J_1 6 β c x h > 10 ^ (-7 : ℤ) := by

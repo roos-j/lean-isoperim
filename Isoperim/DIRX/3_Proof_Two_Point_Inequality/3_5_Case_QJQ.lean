@@ -96,7 +96,12 @@ decreasing in $x$ (for details see \cite[\S 6.5]{DIR24}).
 -/
 
 /-- [DIRX], §3.5 (see [DIR], §6.5): the quantity $2Q(\frac{x+y}2)-Q(x)$ is positive, increasing
-in $y$ and decreasing in $x$ (on $[\frac14,\frac12]\times[\frac12,\frac{33}{64}]$). -/
+in $y$ and decreasing in $x$ (on $[\frac14,\frac12]\times[\frac12,\frac{33}{64}]$). ([DIR], §6.5
+(`Auto.DIR.two_Q_sub_Q_pos_mono`) only gives the monotonicity in $y$ for $x+y\le1$; on the
+present rectangle $\frac{x+y}2\le\frac{65}{128}<\frac{33}{64}$, and the monotonicity in $y$
+follows from $Q'>0$ on $[0,\frac{33}{64}]$, `Auto.DIRX.deriv_QX_pos`, which is why the paper
+records that fact. $Q$ is increasing on $[0,t_*]$ with $t_*\approx0.5283$ and decreasing after.)
+-/
 theorem QJQ_monotone :
     (∀ x ∈ Icc (1 / 4 : ℝ) (1 / 2), ∀ y ∈ Icc (1 / 2 : ℝ) (33 / 64),
       2 * Q ((x + y) / 2) - Q x > 0) ∧
@@ -222,7 +227,21 @@ noncomputable def h_QJQ₂_lo (xl xu yl yu : ℝ) : ℝ :=
   (yl - xu) ^ 2 + JX_lo yl yu ^ 2 - (2 * Q ((xl + yu) / 2) - Q xl) ^ 2
 
 /-- [DIRX], §3.5: $\underline{h_{QJQ,2}}$ is a tight lower bound of the left-hand side of (3.9)
-on $[\frac14,\frac12]\times[\frac{33}{64},\frac34]$. -/
+on $[\frac14,\frac12]\times[\frac{33}{64},\frac34]$.
+
+**Discrepancy with the paper.** The paper gives no justification for this tight lower bound; it
+implicitly relies on the monotonicity facts recorded for $\underline{h_{QJQ,1}}$, in particular
+that $2Q(\frac{x+y}2)-Q(x)$ is increasing in $y$. On the present rectangle this fails:
+$\frac{x+y}2$ ranges up to $\frac58$, and $Q'(t)<0$ for $t>t_*\approx0.5283$ (e.g.
+$Q'(\frac58)\approx-0.41$), so $2Q(\frac{x+y}2)-Q(x)$ is decreasing in $y$ where $x+y>2t_*$
+(this part of the rectangle lies outside the region $x+y\le1$ of Case $QJQ$). The claim itself
+nevertheless appears to be true: the loss in the $Q$-term is dominated by the gain from
+$\underline{\mathrm{J}}(\underline y,\overline y)^2=\mathrm{J}(\overline y)^2$ (e.g. at
+$(x,y)=(\frac12,\frac34)$: $-\mathrm{J}\mathrm{J}'(y)\approx0.35$ versus
+$P\,|Q'(\frac{x+y}2)|\approx0.19$,
+$P=2Q(\frac{x+y}2)-Q(x)$); a randomized Python check of $6\cdot10^4$
+sub-rectangles found no violation of the lower-bound property. The Lean statement is the paper's
+claim unchanged (on the full rectangle); a proof needs an argument beyond the paper's. -/
 theorem h_QJQ₂_lo_tight :
     IsTightLowerBound₂ (fun x y ↦ (y - x) ^ 2 + J y ^ 2 - (2 * Q ((x + y) / 2) - Q x) ^ 2)
       h_QJQ₂_lo (1 / 4) (1 / 2) (33 / 64) (3 / 4) := by

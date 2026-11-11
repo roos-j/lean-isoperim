@@ -92,8 +92,10 @@ noncomputable def Q (β x : ℝ) : ℝ :=
 $Q_\beta(0)=Q_\beta(1)=0$, $Q_\beta(\frac12)=\frac12$ and $Q_\beta(\frac14)=2^{\beta-2}$; then
 $Q_\beta(x)=\frac23x(1-x)(2^{\beta+2}-3+4(3-2^{\beta+1})x)$. -/
 theorem Q_spec (β : ℝ) :
-    ∃! p : Polynomial ℝ, p.natDegree ≤ 3 ∧ p.eval 0 = 0 ∧ p.eval 1 = 0 ∧ p.eval (1 / 2) = 1 / 2 ∧
-      p.eval (1 / 4) = 2 ^ (β - 2) ∧ ∀ x, p.eval x = Q β x := by
+    (∃! p : Polynomial ℝ, p.natDegree ≤ 3 ∧ p.eval 0 = 0 ∧ p.eval 1 = 0 ∧
+      p.eval (1 / 2) = 1 / 2 ∧ p.eval (1 / 4) = 2 ^ (β - 2)) ∧
+    ∀ p : Polynomial ℝ, p.natDegree ≤ 3 → p.eval 0 = 0 → p.eval 1 = 0 →
+      p.eval (1 / 2) = 1 / 2 → p.eval (1 / 4) = 2 ^ (β - 2) → ∀ x, p.eval x = Q β x := by
   sorry
 
 /-
@@ -136,7 +138,17 @@ theorem rem_2_3 (β : ℝ) (hβ : β ∈ Icc β₀ 1) (x y : ℝ) (hx : 0 ≤ x)
 /-- **Remark 2.4** ([DIR]), first sentence. Failure for smaller values of $\beta_0$ occurs at
 $x=\frac12$ and $y>\frac12$. We record the failure at $\beta=\frac12$ (which is why the constant
 $c_0<1$ appears in (2.5)): there is $y\in(\frac12,1]$ with
-$G_{\frac12}[b_{\frac12}](\frac12,y)<0$. -/
+$G_{\frac12}[b_{\frac12}](\frac12,y)<0$.
+
+**Discrepancy with the paper.** The sentence is informal: it does not say for which
+$\beta<\beta_0$ the inequality (2.4) (with $\beta_0$ replaced by $\beta$) fails, nor in what
+sense the failure "occurs at" $x=\frac12$. Read literally as "for every $\beta<\beta_0$ there is a
+failure point, and all failure points have $x=\frac12$" it is not established in the paper
+($\beta_0=0.50057$ is only the exponent for which the computer-assisted proof succeeds; the true
+threshold may be smaller). The Lean statement records only the (interpreted) failure at
+$\beta=\frac12$ at a point $(\frac12,y)$ with $y>\frac12$, where all values of $b_{\frac12}$
+involved are values of $J$ ("the failure only involves the function $J$"). Numerically,
+$y\approx0.585$ gives $G^1\approx-3.1\cdot10^{-5}$ and $G^2\approx-0.22$. -/
 theorem rem_2_4_failure : ∃ y ∈ Ioc (1 / 2 : ℝ) 1, G (1 / 2) (b (1 / 2)) (1 / 2) y < 0 := by
   sorry
 
@@ -189,8 +201,8 @@ theorem cor_2_5 :
 by slightly relaxing the requirement $B''B=-2$ to $B''B=-\gamma$ for a $\gamma<2$ one may fix this
 defect and obtain a Bellman function yielding (1.1) for the conjectured critical exponent
 $\beta=\frac12$ [DIRX26]. -/
-theorem rem_2_6 (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) (hA : |A| ≤ 1 / 2) :
-    𝐄 h_{A} ^ (1 / 2 : ℝ) ≥ |A| * (log₂ (1 / |A|)) ^ (1 / 2 : ℝ) := by
+theorem rem_2_6 (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) (hA : ｜A｜ ≤ 1 / 2) :
+    𝐄 h_{A} ^ (1 / 2 : ℝ) ≥ ｜A｜ * (log₂ (1 / ｜A｜)) ^ (1 / 2 : ℝ) := by
   sorry
 
 /-

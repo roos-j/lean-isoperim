@@ -163,8 +163,20 @@ end Proof_Claim_1
 /-- [DIR], §6.5, item 2: the quantity $2Q_\beta(\frac{x+y}2)-Q_\beta(x)$ is positive, increasing
 in $y$ and decreasing in $x$ (for $\beta\in[\frac12,\beta_1]$). Positivity and monotonicity in $x$
 are stated on $[\frac14,\frac12]\times[\frac12,\frac34]$; monotonicity in $y$ is stated on the
-region $QJQ$, i.e. for $y\in[\frac12,1-x]$, since the proof uses $Q_\beta'(\frac{x+y}2)>0$, which
-requires $\frac{x+y}2\le\frac12$ (e.g. $Q_{1/2}'(\frac58)<0$). -/
+region $QJQ$, i.e. for $y\in[\frac12,1-x]$.
+
+**Discrepancy with the paper.** The paper claims (for the tight lower bound on the whole
+rectangle $[\frac14,\frac12]\times[\frac12,\frac34]$) that $2Q_\beta(\frac{x+y}2)-Q_\beta(x)$ is
+increasing in $y$, "since $Q_\beta'>0$ on $[0,\frac12]$". The $y$-derivative is
+$Q_\beta'(\frac{x+y}2)$, and $\frac{x+y}2$ ranges up to $\frac58>\frac12$, where $Q_\beta'$ is
+negative: $Q_\beta'$ vanishes at $\approx0.5283$ ($\beta=\frac12$) resp. $\approx0.5185$
+($\beta=\beta_1$), and $Q_{1/2}'(\frac58)\approx-0.41$. E.g. for $x=\frac12$, $\beta=\frac12$ the
+quantity decreases from $\approx0.4820$ at $y=0.7$ to $\approx0.4643$ at $y=\frac34$. So the claim
+is false on part of the region $x+y>1$ (where $x+y>1.0566$ resp. $x+y>1.0370$); the argument is
+valid for
+$\frac{x+y}2\le\frac12$, i.e. on the region $QJQ$, which is the domain used here. The
+consequences for the tight lower bound and for (6.25) are discussed at
+`Auto.DIR.g_QJQ_tightLowerBound` and `Auto.DIR.eqn_6_25`. -/
 theorem two_Q_sub_Q_pos_mono (β : ℝ) (hβ : β ∈ Icc (1 / 2) β₁) :
     (∀ x ∈ Icc (1 / 4 : ℝ) (1 / 2), ∀ y ∈ Icc (1 / 2 : ℝ) (3 / 4),
         2 * Q β ((x + y) / 2) - Q β x > 0) ∧
@@ -222,7 +234,19 @@ noncomputable def g_QJQ_lo (β xl xu yl yu : ℝ) : ℝ :=
 
 /-- [DIR], §6.5: therefore, a tight lower bound of $g_{QJQ,\beta}$ (on
 $[\frac14,\frac12]\times[\frac12,\frac34]$, for $\beta\in[\frac12,\beta_1]$) is given by
-$\underline{g_{QJQ,\beta}}$. -/
+$\underline{g_{QJQ,\beta}}$.
+
+**Discrepancy with the paper.** The paper derives this from the termwise monotonicity items 1–3.
+On the part of the rectangle with $\frac{x+y}2>\frac12$ this justification breaks down twice:
+item 2 ("increasing in $y$") fails there (see `Auto.DIR.two_Q_sub_Q_pos_mono`), and
+$Q_\beta'(\frac{x+y}2)$ may be negative, in which case multiplying the upper bound
+$2Q_\beta(\frac{\underline x+\overline y}2)-Q_\beta(\underline x)$ of the first factor by the upper
+bound $Q_\beta'(\frac{\underline x+\underline y}2)$ of the second does not give an upper bound of
+the product. The statement itself nevertheless appears to be true: the loss is compensated by the
+terms $\underline y-\overline x$ and $J(\overline y)J'(\overline y)$ (note $(JJ')'=(J')^2-2<-1$),
+and random searches over subrectangles and points of the full rectangle (for $\beta=\frac12$ and
+$\beta=\beta_1$) found no violation of the lower bound property. The statement is kept on the full
+rectangle as in the paper; only its proof in the paper is incomplete. -/
 theorem g_QJQ_tightLowerBound (β : ℝ) (hβ : β ∈ Icc (1 / 2) β₁) :
     IsTightLowerBound₂ (g_QJQ β) (g_QJQ_lo β) (1 / 4) (1 / 2) (1 / 2) (3 / 4) := by
   sorry
@@ -231,7 +255,16 @@ theorem g_QJQ_tightLowerBound (β : ℝ) (hβ : β ∈ Icc (1 / 2) β₁) :
 $\textsc{Partition}_2(\underline{g_{QJQ,\beta}},[\frac14,\frac12]\times[\frac12,\frac34])$ for
 $\beta\in\{\frac12,\beta_1\}$ shows that
 $$g_{QJQ,\beta}>10^{-5}$$
-on $[\frac14,\frac12]\times[\frac12,\frac34]$. -/
+on $[\frac14,\frac12]\times[\frac12,\frac34]$.
+
+**Discrepancy with the paper.** The verification relies on $\underline{g_{QJQ,\beta}}$ being a
+lower bound on the full rectangle, whose justification in the paper is incomplete on the part with
+$x+y>1$ (see `Auto.DIR.g_QJQ_tightLowerBound`). The claim is nevertheless true numerically on the
+full rectangle: on a $41\times41$ grid, $\min g_{QJQ,\beta}\approx7.8\cdot10^{-3}$ for
+$\beta=\frac12$ and $\approx3.0\cdot10^{-2}$ for $\beta=\beta_1$, both attained near $x=\frac14$,
+$y\approx0.58$–$0.59$ (inside the region $x+y\le1$). Note that Proposition 6.9 as stated on the
+full rectangle needs (6.25) on the full rectangle (for the reduction to $y=\frac12$), whereas Case
+$QJQ$ of Theorem 2.2 only needs the part $x+y\le1$. The statement is kept as in the paper. -/
 theorem eqn_6_25 (β : ℝ) (hβ : β ∈ ({1 / 2, β₁} : Set ℝ)) (x y : ℝ)
     (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2)) (hy : y ∈ Icc (1 / 2 : ℝ) (3 / 4)) :
     g_QJQ β x y > 10 ^ (-5 : ℤ) := by

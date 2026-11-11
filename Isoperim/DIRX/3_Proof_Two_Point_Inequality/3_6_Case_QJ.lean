@@ -67,7 +67,15 @@ $G_1[B_w](x,y)\ge 0$.
 -/
 
 /-- [DIRX], §3.6.1: for $\frac38\le x\le\frac12\le y\le\frac58$ (and $x+y\ge1$, the standing
-assumption of Case $QJ$), $G_1[B_w](x,y)\ge0$ (with $w=w_1$). -/
+assumption of Case $QJ$), $G_1[B_w](x,y)\ge0$ (with $w=w_1$).
+
+**Discrepancy with the paper.** The sentence states the claim for
+$\frac38\le x\le\frac12\le y\le\frac58$ without the condition $x+y\ge1$ (which appears in the
+heading of §3.6.1 and of Case $QJ$). The proof via $g_{QJ}$ uses
+$B_w(\frac{x+y}2)=\mathrm{J}(\frac{x+y}2)$, which requires $\frac{x+y}2\ge\frac12$; for
+$x+y<1$ one has $B_w(\frac{x+y}2)=Q(\frac{x+y}2)$ and these points belong to Case $QJQ$
+(§3.5). The Lean statement adds the hypothesis `hxy : 1 ≤ x + y`, matching the heading; this is
+all that is needed for `caseQJ`. -/
 theorem caseQJ_near (x y : ℝ) (hx : x ∈ Icc (3 / 8 : ℝ) (1 / 2))
     (hy : y ∈ Icc (1 / 2 : ℝ) (5 / 8)) (hxy : 1 ≤ x + y) : G₁ (B_{w₁}) x y ≥ 0 := by
   sorry
@@ -170,7 +178,15 @@ noncomputable def h_QJ₁_lo (xl xu yl yu : ℝ) : ℝ :=
     (2 * JX_hi ((xl + yl) / 2) ((xu + yu) / 2) - Q xl) * deriv Q xl
 
 /-- [DIRX], §3.6.1: $\underline{h_{QJ,1}}$ is a tight lower bound of
-$-\frac12\partial_xg_{QJ}$ (i.e. of `h_QJ₁`) on $[\frac14,\frac12]\times[\frac12,\frac58]$. -/
+$-\frac12\partial_xg_{QJ}$ (i.e. of `h_QJ₁`) on $[\frac14,\frac12]\times[\frac12,\frac58]$.
+
+(On this rectangle $c=\frac{x+y}2$ ranges over $[\frac38,\frac9{16}]$, partly below $\frac12$,
+whereas the monotonicity of $\mathrm{J}$, $\mathrm{J}'$ and the enclosures (2.7) are stated in
+§2.2 for arguments in $[\frac12,1]$ (`Auto.DIRX.JX_mono`, `Auto.DIRX.eqn_2_7`,
+`Auto.DIRX.absDJX_encl`). They remain valid on $[1-w_1,1)\supset[\frac38,1)$, since
+$\mathrm{J}''=-\gamma/\mathrm{J}<0$ there and $\mathrm{J}'(x_1)=0$; the same remark applies to
+$\underline{h_{QJ,2}}$ below, where $c\in[\frac7{16},\frac34]$. A randomized Python check of the
+lower-bound property found no violation.) -/
 theorem h_QJ₁_lo_tight :
     IsTightLowerBound₂ h_QJ₁ h_QJ₁_lo (1 / 4) (1 / 2) (1 / 2) (5 / 8) := by
   sorry
@@ -202,8 +218,9 @@ It suffices to show that for all $x\in [\frac14, \frac12]$ and $y\in[\frac58,1]$
 -/
 noncomputable def h_QJ₂ (x y : ℝ) : ℝ := √((y - x) ^ 2 + J y ^ 2) + Q x - 2 * J ((x + y) / 2)
 
-/-- [DIRX], §3.6.2: for $x\in[\frac14,\frac12]$, $y\in[\frac58,1]$ (so $x+y\ge1$),
-$G_1[B_{w_1}](x,y)=h_{QJ,2}(x,y)$, so it suffices to show (3.14). -/
+/-- [DIRX], §3.6.2: for $x\in[\frac14,\frac12]$, $y\in[\frac58,1]$ and $x+y\ge1$ (the standing
+assumption of Case $QJ$; it is not implied by the other two conditions, e.g.
+$(x,y)=(\frac14,\frac58)$), $G_1[B_{w_1}](x,y)=h_{QJ,2}(x,y)$, so it suffices to show (3.14). -/
 theorem G₁_BX_eq_h_QJ₂ (x y : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2))
     (hy : y ∈ Icc (5 / 8 : ℝ) 1) (hxy : 1 ≤ x + y) : G₁ (B_{w₁}) x y = h_QJ₂ x y := by
   sorry

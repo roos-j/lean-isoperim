@@ -21,9 +21,9 @@ Functions $f:\{0,1\}^n\to\{\pm1\}$ are real functions with values in $\{1,-1\}$.
 `Isoperim/DIRX/1_Introduction/Thm_1_3.lean`.
 
 The $O(\cdot)$ statements of the paper are formalized with explicit constants: there is an
-absolute constant $C$ such that the error is bounded by $C$ times the stated order, for all $n$
-and all $p$ in a range $0<p\le\frac1{2n^2}$ of the low-noise regime $p\to0+$ (for the
-expansion of $T_\rho f$ for all $p\in[0,1]$).
+absolute constant $C$ such that the error is bounded by $C$ times the stated order, for all
+$n\ge1$ and all $p\in[0,1]$ (resp. $p\in(0,1]$ where one divides by $\sqrt p$); see the
+discrepancy paragraph of `Auto.DIRX.sqrt_noiseOp_asymp`.
 
 ## Notation introduced here
 
@@ -70,7 +70,13 @@ noncomputable def noiseOp {n : ℕ} (ρ : ℝ) (f : ({0,1}^n) → ℝ) (x : {0,1
 [CGN25]): for every $n\ge1$, every balanced $f:\{0,1\}^n\to\{\pm1\}$ (i.e. $\mathbf{E}f=0$) and
 every correlation parameter $\rho\in[-1,1]$,
 $$\mathbf{E}\sqrt{1-(T_\rho f)^2}\ge\sqrt{1-\rho^2}. \tag{5.1}$$
-(A statement, not a claim of the paper.) -/
+(A statement, not a claim of the paper.)
+
+**Discrepancy with the paper.** [DIRX] states the Hellinger conjecture only in the balanced case
+("Let $f:\{0,1\}^n\to\{\pm1\}$ be balanced ... In this case the Hellinger conjecture asserts
+..."); the general conjecture of [ABCJN17], [CN24], [CGN25] (for unbalanced $f$, with a
+right-hand side depending on $\mathbf{E}f$) is not stated and is not formalized. The Lean
+definition is exactly the balanced case (5.1), quantified over all $n\ge1$. -/
 def HellingerConjecture : Prop :=
   ∀ (n : ℕ), 1 ≤ n → ∀ f : ({0,1}^n) → ℝ, (∀ x, f x = 1 ∨ f x = -1) → 𝐄 f = 0 →
     ∀ ρ ∈ Icc (-1 : ℝ) 1, 𝐄 (fun x ↦ √(1 - (T_{ρ} f x) ^ 2)) ≥ √(1 - ρ ^ 2)
@@ -173,10 +179,21 @@ for every $x\in \{0,1\}^n$.
 /-- [DIRX], §5: this implies in particular that
 $\sqrt{1-(T_\rho f(x))^2}=2\sqrt{p(1-p)}\sqrt{s_f(x)}+O(np)$ for every $x\in\{0,1\}^n$ (with
 $\rho=1-2p$): there is an absolute constant $C$ such that the error is at most $Cnp$ for all
-$n\ge1$, $f:\{0,1\}^n\to\{\pm1\}$, $x$ and $0<p\le\frac1{2n^2}$. -/
+$n\ge1$, $f:\{0,1\}^n\to\{\pm1\}$, $x$ and $p\in[0,1]$.
+
+**Discrepancy with the paper.** The paper does not specify in which sense the $O(np)$ is
+uniform. An earlier audit entry (ErrorReport, 2026-11-11T19:26) claimed that the $O(np)$ error
+needs $p\lesssim n^{-2}$ (the naive estimate $|a-b|=|a^2-b^2|/(a+b)\le|a^2-b^2|/b$ gives only
+$O(n^2p^{3/2})$) and restricted the statement to $0<p\le\frac1{2n^2}$. That restriction is
+unnecessary and has been removed: with $a=\sqrt{1-(T_\rho f(x))^2}$, $b=2\sqrt{p(1-p)s_f(x)}$
+one has $|a-b|\le\sqrt{|a^2-b^2|}$, and for $p\le\frac1n$ the expansion
+$T_\rho f(x)=f(x)(1-2ps_f(x))+E$, $|E|\le C_0n^2p^2$ (`Auto.DIRX.noiseOp_asymp`), together with
+$ps_f(x)\le1$ gives $|a^2-b^2|\le4p^2s_f^2+2|E|+E^2\le(4+2C_0+C_0^2)n^2p^2$; for $p>\frac1n$,
+$|a-b|\le1+2\sqrt{np}\le3np$. So the claim holds with an absolute constant for all
+$p\in[0,1]$, which is what the Lean statement asserts. -/
 theorem sqrt_noiseOp_asymp :
     ∃ C : ℝ, ∀ (n : ℕ), 1 ≤ n → ∀ f : ({0,1}^n) → ℝ, (∀ x, f x = 1 ∨ f x = -1) →
-      ∀ (x : {0,1}^n), ∀ p ∈ Ioc (0 : ℝ) (1 / (2 * n ^ 2)),
+      ∀ (x : {0,1}^n), ∀ p ∈ Icc (0 : ℝ) 1,
         abs (√(1 - (T_{1 - 2 * p} f x) ^ 2) - 2 * √(p * (1 - p)) * √(s_{f} x)) ≤
           C * n * p := by
   sorry
@@ -196,10 +213,13 @@ theorem sqrt_one_sub_sq (ρ p : ℝ) (hp : p = (1 - ρ) / 2) :
 /-- [DIRX], §5: dividing by $\sqrt{1-\rho^2}=2\sqrt{p(1-p)}$ and taking expectations over $x$, the
 Hellinger conjecture (5.1) would imply $\mathbf{E}\sqrt{s_f}\ge1-O(n\sqrt p)$ for balanced
 $f:\{0,1\}^n\to\{\pm1\}$: there is an absolute constant $C$ with
-$\mathbf{E}\sqrt{s_f}\ge1-Cn\sqrt p$ for all $n\ge1$ and $0<p\le\frac1{2n^2}$. -/
+$\mathbf{E}\sqrt{s_f}\ge1-Cn\sqrt p$ for all $n\ge1$ and $p\in(0,1]$. (For $p\le\frac12$
+divide by $2\sqrt{p(1-p)}\ge\sqrt{2p}$; for $p>\frac12$ the bound is trivial once $C\ge\sqrt2$.
+The range was previously restricted to $p\le\frac1{2n^2}$; see the discrepancy paragraph of
+`Auto.DIRX.sqrt_noiseOp_asymp`.) -/
 theorem hellinger_imp_asymp (hH : HellingerConjecture) :
     ∃ C : ℝ, ∀ (n : ℕ), 1 ≤ n → ∀ f : ({0,1}^n) → ℝ, (∀ x, f x = 1 ∨ f x = -1) → 𝐄 f = 0 →
-      ∀ p ∈ Ioc (0 : ℝ) (1 / (2 * n ^ 2)), 𝐄 (fun x ↦ √(s_{f} x)) ≥ 1 - C * n * √p := by
+      ∀ p ∈ Ioc (0 : ℝ) 1, 𝐄 (fun x ↦ √(s_{f} x)) ≥ 1 - C * n * √p := by
   sorry
 
 /-- [DIRX], §5 (and §1): for every fixed $n$, the Hellinger conjecture (5.1) would imply (1.4) in

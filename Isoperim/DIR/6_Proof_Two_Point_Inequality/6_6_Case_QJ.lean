@@ -5,7 +5,8 @@ Authors: Claude
 -/
 module
 
-public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_1_Case_J»
+public import Isoperim.DIR.«3_Variants_Bobkov_Inequality».«3_0_Variants_Bobkov_Inequality»
+public import Isoperim.DIR.«4_Computer_Assisted_Proofs».«4_1_Dyadic_Partitioning»
 
 /-!
 # [DIR] §6.6 Case $QJ$: $\frac14\le x\le\frac12\le y\le1$, $x+y\ge1$
@@ -24,12 +25,16 @@ computer-assisted bound (6.26)) and §6.6.2 (far from diagonal; Proposition 6.12
   $-\beta\partial_xg_{QJ,\beta,c}(x,y)$; `g_QJ_1_lo β c xl xu yl yu` :
   $\underline{g_{QJ,1,\beta,c}}$; `g_QJ_2 x y`, `g_QJ_2_lo xl xu yl yu` : $g_{QJ,2}$,
   $\underline{g_{QJ,2}}$.
+* `Jw₀_lo xl xu`, `Jw₀_hi xl xu`, `absDJw₀_hi xl xu` : the enclosures (6.2) of $J$ and
+  $\overline{|J'|}$ of §6.1.1, applied to $J_{w_0}$ (`Jw w₀`) instead of `J`.
 * `J` is only meaningful on $[\frac12,1]$. The computer-assisted claims of this section are
   formulated by the paper on rectangles containing points with $\frac{x+y}2<\frac12$, where the
   paper's $J$ is to be read as its extension $J_{w_0}$ given by (3.4) (as in the companion code).
-  These statements carry the hypothesis `hJ : EqOn J (Jw w₀) (Icc (1 - w₀) 1)` making this
-  extension explicit. Pointwise claims on the region $x+y\ge1$ are stated without it (claims
-  involving $J'(\frac{x+y}2)$ for $1<x+y$, where $\frac{x+y}2\in(\frac12,1)$).
+  Therefore the functions $g_{QJ,\beta,c}$, $-\beta\partial_xg_{QJ,\beta,c}$,
+  $\underline{g_{QJ,1,\beta,c}}$, $g_{QJ,2}$, $\underline{g_{QJ,2}}$ are defined with `Jw w₀` at
+  the argument $\frac{x+y}2$ (resp. its interval enclosure), see the discrepancy notes at
+  `Auto.DIR.g_QJ` and `Auto.DIR.g_QJ_2`. On the region $x+y\ge1$ of Case $QJ$ this agrees with
+  $J$ by (3.4) (`Auto.DIR.eqn_3_4`).
 -/
 
 @[expose] public section
@@ -48,7 +53,14 @@ $\beta=\frac12$ (or include a constant $c<1$).
 
 /-- [DIR], §6.6: in this region ($\frac14\le x\le\frac12\le y\le1$, $x+y\ge1$),
 $G^1_\beta[J](x,y)$ is increasing in $\beta$ (for $\beta\in[\frac12,1]$). (The value $J(x)$ enters
-$G^1_\beta[J](x,y)$ only through a $\beta$-independent summand.) -/
+$G^1_\beta[J](x,y)$ only through a $\beta$-independent summand.)
+
+**Discrepancy with the paper.** The paper writes $G^1_\beta[J](x,y)$ although $J(x)$ is undefined
+for $x<\frac12$; what is meant (and used for Proposition 6.11) is that the only
+$\beta$-dependent term $((y-x)^{\frac1\beta}+J(y)^{\frac1\beta})^\beta$ is increasing in $\beta$,
+so that e.g. $G^1_\beta[b_{\beta_0}](x,y)$ is increasing in $\beta$. The Lean statement uses
+`Auto.DIR.J` literally; its (arbitrary) value at $x$ enters only through a $\beta$-independent
+summand, so the statement is true as written. -/
 theorem caseQJ_G₁_monotoneOn_beta (x y : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2))
     (hy : y ∈ Icc (1 / 2 : ℝ) 1) (hxy : 1 ≤ x + y) :
     MonotoneOn (fun β ↦ G₁ β J x y) (Icc (1 / 2) 1) := by
@@ -75,7 +87,14 @@ This is the triangle I in Figure \ref{fig:qj} [Figure 8].
 $\beta\in[\beta_0,1]$,
 $$G^1_\beta[b_{\beta_0}](x,y)\ge0\quad\text{and}\quad
 G^1_{\frac12}[c_0\cdot b_{\frac12}](x,y)\ge0.$$
-(The hypothesis $x+y\ge1$ of §6.6.1 (triangle I) is included.) -/
+
+**Discrepancy with the paper.** The proposition as printed does not assume $x+y\ge1$; it is the
+defining condition of triangle I (title of §6.6.1 and of Case $QJ$). For $x+y<1$ one has
+$b_\beta(\frac{x+y}2)=Q_\beta(\frac{x+y}2)$ instead of $J(\frac{x+y}2)$, and the proof (which
+works with $g_{QJ,\beta,c}$, i.e. with $J(\frac{x+y}2)$) does not cover this part. The Lean
+statement adds the hypothesis $x+y\ge1$. (Numerically the printed version also appears to hold
+on the part $x+y<1$ of $[\frac38,\frac12]\times[\frac12,\frac58]$, with very small margins near
+$(\frac12,\frac12)$, e.g. $\approx1.4\cdot10^{-7}$ at $(0.497,0.5)$; this is not claimed.) -/
 theorem prop_6_11 (x y : ℝ) (hx : x ∈ Icc (3 / 8 : ℝ) (1 / 2))
     (hy : y ∈ Icc (1 / 2 : ℝ) (5 / 8)) (hxy : 1 ≤ x + y) (β : ℝ) (hβ : β ∈ Icc β₀ 1) :
     G₁ β (b β₀) x y ≥ 0 ∧ G₁ (1 / 2) (c₀ • b (1 / 2)) x y ≥ 0 := by
@@ -91,10 +110,21 @@ theorem prop_6_11_mono_beta (x y : ℝ) (hx : x ∈ Icc (3 / 8 : ℝ) (1 / 2))
 
 /-- The function ([DIR], §6.6.1)
 $$g_{QJ,\beta,c}(x,y)=(y-x)^{\frac1\beta}+c^{\frac1\beta}J(y)^{\frac1\beta}
--c^{\frac1\beta}(2J(\tfrac{x+y}2)-Q_\beta(x))^{\frac1\beta}.$$ -/
+-c^{\frac1\beta}(2J(\tfrac{x+y}2)-Q_\beta(x))^{\frac1\beta},$$
+with $J(\frac{x+y}2)$ read as $J_{w_0}(\frac{x+y}2)$ (see below).
+
+**Discrepancy with the paper.** The function $J$ is defined only on $[\frac12,1]$, but the
+paper uses $g_{QJ,\beta,c}$ and its $x$-derivative on the rectangle
+$[\frac14,\frac12]\times[\frac12,\frac58]$ ((6.26)), where $\frac{x+y}2\in[\frac38,\frac9{16}]$
+can be $<\frac12$. There $J$ must mean its extension $J_{w_0}$ from (3.4), which is smooth on
+$(1-w_0,1)\ni\frac38$ (as in the companion code). The Lean definition uses `Jw w₀` at the
+argument $\frac{x+y}2$ (and `Auto.DIR.J` at $y\ge\frac12$); on triangle I ($x+y\ge1$) this is the
+paper's $g_{QJ,\beta,c}$ by `Auto.DIR.eqn_3_4`. (This replaces an earlier formulation with a
+conditional hypothesis `EqOn J (Jw w₀) (Icc (1 - w₀) 1)`, which `Auto.DIR.J` does not satisfy in
+general.) -/
 noncomputable def g_QJ (β c x y : ℝ) : ℝ :=
   (y - x) ^ (1 / β) + c ^ (1 / β) * J y ^ (1 / β) -
-    c ^ (1 / β) * (2 * J ((x + y) / 2) - Q β x) ^ (1 / β)
+    c ^ (1 / β) * (2 * Jw w₀ ((x + y) / 2) - Q β x) ^ (1 / β)
 
 /-- [DIR], §6.6.1: (Observe that $2J(\frac{x+y}2)-Q_\beta(x)>0$) (on triangle I, for
 $\beta\in[\frac12,1]$). -/
@@ -113,11 +143,10 @@ theorem G₁_nonneg_iff_g_QJ_nonneg (x y : ℝ) (hx : x ∈ Icc (3 / 8 : ℝ) (1
   sorry
 
 /-- [DIR], §6.6.1: we claim that $\partial_xg_{QJ,\beta,c}(x,y)\le0$ for each $y$ (on triangle I,
-for $(\beta,c)\in\{(\beta_0,1),(\frac12,c_0)\}$; stated for $1<x+y$, where $J'(\frac{x+y}2)$ is
-meaningful). -/
+for $(\beta,c)\in\{(\beta_0,1),(\frac12,c_0)\}$). -/
 theorem g_QJ_deriv_x_nonpos (β c : ℝ) (hβc : (β, c) = (β₀, 1) ∨ (β, c) = (1 / 2, c₀))
     (x y : ℝ) (hx : x ∈ Icc (3 / 8 : ℝ) (1 / 2)) (hy : y ∈ Icc (1 / 2 : ℝ) (5 / 8))
-    (hxy : 1 < x + y) : deriv (fun x ↦ g_QJ β c x y) x ≤ 0 := by
+    (hxy : 1 ≤ x + y) : deriv (fun x ↦ g_QJ β c x y) x ≤ 0 := by
   sorry
 
 /-- The expression for $-\beta\partial_xg_{QJ,\beta,c}(x,y)$ ([DIR], §6.6.1; not named in the
@@ -126,15 +155,15 @@ $$(y-x)^{\frac1\beta-1}+c^{\frac1\beta}(2J(\tfrac{x+y}2)-Q_\beta(x))^{\frac1\bet
 (J'(\tfrac{x+y}2)-Q'_\beta(x)).$$ -/
 noncomputable def dg_QJ (β c x y : ℝ) : ℝ :=
   (y - x) ^ (1 / β - 1) +
-    c ^ (1 / β) * (2 * J ((x + y) / 2) - Q β x) ^ (1 / β - 1) *
-      (deriv J ((x + y) / 2) - deriv (Q β) x)
+    c ^ (1 / β) * (2 * Jw w₀ ((x + y) / 2) - Q β x) ^ (1 / β - 1) *
+      (deriv (Jw w₀) ((x + y) / 2) - deriv (Q β) x)
 
 /-- [DIR], §6.6.1: calculate
 $$-\beta\partial_xg_{QJ,\beta,c}(x,y)=(y-x)^{\frac1\beta-1}+c^{\frac1\beta}
 (2J(\tfrac{x+y}2)-Q_\beta(x))^{\frac1\beta-1}(J'(\tfrac{x+y}2)-Q'_\beta(x))$$
-(on triangle I with $1<x+y$, for $\beta\in[\frac12,1]$, $c>0$). -/
+(on triangle I, for $\beta\in[\frac12,1]$, $c>0$; $J$ at $\frac{x+y}2$ read as $J_{w_0}$). -/
 theorem g_QJ_deriv_x (β c : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1) (hc : 0 < c) (x y : ℝ)
-    (hx : x ∈ Icc (3 / 8 : ℝ) (1 / 2)) (hy : y ∈ Icc (1 / 2 : ℝ) (5 / 8)) (hxy : 1 < x + y) :
+    (hx : x ∈ Icc (3 / 8 : ℝ) (1 / 2)) (hy : y ∈ Icc (1 / 2 : ℝ) (5 / 8)) (hxy : 1 ≤ x + y) :
     -β * deriv (fun x ↦ g_QJ β c x y) x = dg_QJ β c x y := by
   sorry
 
@@ -144,6 +173,26 @@ $\beta>0$). -/
 theorem g_QJ_deriv_x_nonpos_of_pos (β c x y : ℝ) (hβ : 0 < β)
     (h : -β * deriv (fun x ↦ g_QJ β c x y) x > 0) : deriv (fun x ↦ g_QJ β c x y) x ≤ 0 := by
   sorry
+
+/-- The lower interval enclosure (6.2) applied to $J_{w_0}$ ([DIR], §6.6.1, "the enclosures for
+$J$ (see (6.2))", with $J$ read as $J_{w_0}$ as explained at `Auto.DIR.g_QJ`):
+$\underline J(\underline x,\overline x)=\min(J_{w_0}(\underline x),J_{w_0}(\overline x))$. -/
+noncomputable def Jw₀_lo (xl xu : ℝ) : ℝ := min (Jw w₀ xl) (Jw w₀ xu)
+
+open Classical in
+/-- The upper interval enclosure (6.2) applied to $J_{w_0}$ ([DIR], §6.6.1, cf.
+`Auto.DIR.Jw₀_lo`): $\overline J(\underline x,\overline x)=J_{w_0}(\overline x)$ if
+$\overline x<x_0$, $J_{w_0}(\underline x)$ if $\underline x>x_0$, and $J_{w_0}(x_0)$ else.
+(This is an enclosure on $[1-w_0,1]$, where $J_{w_0}$ increases up to $x_0=1-\frac{w_0}2$ and
+decreases after.) -/
+noncomputable def Jw₀_hi (xl xu : ℝ) : ℝ :=
+  if xu < x₀ then Jw w₀ xu else if xl > x₀ then Jw w₀ xl else Jw w₀ x₀
+
+/-- The upper enclosure of $|J'|$ of §6.1.1 applied to $J_{w_0}$ ([DIR], §6.6.1, cf.
+`Auto.DIR.Jw₀_lo`):
+$\overline{|J'|}(\underline x,\overline x)=\max(|J_{w_0}'(\underline x)|,|J_{w_0}'(\overline x)|)$.
+-/
+noncomputable def absDJw₀_hi (xl xu : ℝ) : ℝ := max |deriv (Jw w₀) xl| |deriv (Jw w₀) xu|
 
 open Classical in
 /-- The lower bound ([DIR], §6.6.1)
@@ -156,21 +205,25 @@ $$-c^{\frac1\beta}(2\overline J(\tfrac{\underline x+\underline y}2,\tfrac{\overl
 +\underline y}2,\tfrac{\overline x+\overline y}2)\mathbf 1_{\text{not}\;\frac{\overline x
 +\overline y}2<x_0}$$
 $$-c^{\frac1\beta}(2\overline J(\tfrac{\underline x+\underline y}2,\tfrac{\overline x
-+\overline y}2)-Q_\beta(\underline x))^{\frac1\beta-1}Q'_\beta(\underline x).$$ -/
++\overline y}2)-Q_\beta(\underline x))^{\frac1\beta-1}Q'_\beta(\underline x).$$
+Here $J$, $J'$, $\underline J$, $\overline J$, $\overline{|J'|}$ at (enclosures of) $\frac{x+y}2$
+are read for $J_{w_0}$ (`Auto.DIR.Jw₀_lo`, `Auto.DIR.Jw₀_hi`, `Auto.DIR.absDJw₀_hi`), see the
+discrepancy note at `Auto.DIR.g_QJ`. -/
 noncomputable def g_QJ_1_lo (β c xl xu yl yu : ℝ) : ℝ :=
   (yl - xu) ^ (1 / β - 1) +
-    c ^ (1 / β) * (2 * J_lo ((xl + yl) / 2) ((xu + yu) / 2) - Q β xu) ^ (1 / β - 1) *
-      deriv J ((xu + yu) / 2) * (if (xu + yu) / 2 < x₀ then 1 else 0) -
-    c ^ (1 / β) * (2 * J_hi ((xl + yl) / 2) ((xu + yu) / 2) - Q β xl) ^ (1 / β - 1) *
-      absDJ_hi ((xl + yl) / 2) ((xu + yu) / 2) * (if ¬ (xu + yu) / 2 < x₀ then 1 else 0) -
-    c ^ (1 / β) * (2 * J_hi ((xl + yl) / 2) ((xu + yu) / 2) - Q β xl) ^ (1 / β - 1) *
+    c ^ (1 / β) * (2 * Jw₀_lo ((xl + yl) / 2) ((xu + yu) / 2) - Q β xu) ^ (1 / β - 1) *
+      deriv (Jw w₀) ((xu + yu) / 2) * (if (xu + yu) / 2 < x₀ then 1 else 0) -
+    c ^ (1 / β) * (2 * Jw₀_hi ((xl + yl) / 2) ((xu + yu) / 2) - Q β xl) ^ (1 / β - 1) *
+      absDJw₀_hi ((xl + yl) / 2) ((xu + yu) / 2) * (if ¬ (xu + yu) / 2 < x₀ then 1 else 0) -
+    c ^ (1 / β) * (2 * Jw₀_hi ((xl + yl) / 2) ((xu + yu) / 2) - Q β xl) ^ (1 / β - 1) *
       deriv (Q β) xl
 
 /-- [DIR], §6.6.1: recalling Lemma 5.8 and the enclosures for $J$, $|J'|$ (see (6.2)), a tight
 lower bound of this expression (on $[\frac14,\frac12]\times[\frac12,\frac58]$, for
-$(\beta,c)\in\{(\beta_0,1),(\frac12,c_0)\}$) can be given by $\underline{g_{QJ,1,\beta,c}}$.
-(With `J` read as its extension $J_{w_0}$, hypothesis `hJ`.) -/
-theorem g_QJ_1_tightLowerBound (hJ : EqOn J (Jw w₀) (Icc (1 - w₀) 1)) (β c : ℝ)
+$(\beta,c)\in\{(\beta_0,1),(\frac12,c_0)\}$) can be given by $\underline{g_{QJ,1,\beta,c}}$
+(with $J$ at $\frac{x+y}2$ read as $J_{w_0}$, see `Auto.DIR.g_QJ`; the lower bound property was
+spot-checked numerically on random subrectangles). -/
+theorem g_QJ_1_tightLowerBound (β c : ℝ)
     (hβc : (β, c) = (β₀, 1) ∨ (β, c) = (1 / 2, c₀)) :
     IsTightLowerBound₂ (dg_QJ β c) (g_QJ_1_lo β c) (1 / 4) (1 / 2) (1 / 2) (5 / 8) := by
   sorry
@@ -179,8 +232,17 @@ theorem g_QJ_1_tightLowerBound (hJ : EqOn J (Jw w₀) (Icc (1 - w₀) 1)) (β c 
 $\textsc{Partition}_2(\underline{g_{QJ,1,\beta,c}},[\frac14,\frac12]\times[\frac12,\frac58])$
 shows, for $(\beta,c)\in\{(\beta_0,1),(\frac12,c_0)\}$,
 $$-\beta\partial_xg_{QJ,\beta,c}>10^{-5}$$
-on this region. (With `J` read as its extension $J_{w_0}$, hypothesis `hJ`.) -/
-theorem eqn_6_26 (hJ : EqOn J (Jw w₀) (Icc (1 - w₀) 1)) (β c : ℝ)
+on this region (with $J$ at $\frac{x+y}2$ read as $J_{w_0}$, see `Auto.DIR.g_QJ`).
+
+**Discrepancy with the paper.** Only triangle I ($\frac38\le x\le\frac12\le y\le\frac58$,
+$x+y\ge1$) is needed, but $\textsc{Partition}_2$ is run on the larger rectangle
+$[\frac14,\frac12]\times[\frac12,\frac58]$. On its part with $x+y<1$ the paper's $J(\frac{x+y}2)$
+is evaluated below $\frac12$ and only makes sense as $J_{w_0}$ (which is what the statement
+uses), and the quantity there is not related to the two-point inequality ($b_\beta$ would
+involve $Q_\beta$ at $\frac{x+y}2$). The Lean statement keeps the paper's rectangle (it is
+stronger than needed and true numerically: $\min\approx0.0328$ for $(\beta_0,1)$ and
+$\approx0.0342$ for $(\frac12,c_0)$ on a $41\times41$ grid). -/
+theorem eqn_6_26 (β c : ℝ)
     (hβc : (β, c) = (β₀, 1) ∨ (β, c) = (1 / 2, c₀)) (x y : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2))
     (hy : y ∈ Icc (1 / 2 : ℝ) (5 / 8)) :
     -β * deriv (fun x ↦ g_QJ β c x y) x > 10 ^ (-5 : ℤ) := by
@@ -221,14 +283,24 @@ We will show the following claim that is stronger than required:
 -/
 
 /-- The function ([DIR], (6.27))
-$$g_{QJ,2}(x,y)=((y-x)^2+J(y)^2)^{1/2}+Q_{\frac12}(x)-2J(\tfrac{x+y}2).$$ -/
+$$g_{QJ,2}(x,y)=((y-x)^2+J(y)^2)^{1/2}+Q_{\frac12}(x)-2J(\tfrac{x+y}2),$$
+with $J(\frac{x+y}2)$ read as $J_{w_0}(\frac{x+y}2)$ (see below).
+
+**Discrepancy with the paper.** Proposition 6.12 and its proof (the lower bound
+$\underline{g_{QJ,2}}$ and $\textsc{Partition}_2$) concern all of
+$[\frac14,\frac12]\times[\frac58,1]$, including the part $x+y<1$ outside Case $QJ$, where
+$\frac{x+y}2\in[\frac7{16},\frac12)$ and $J(\frac{x+y}2)$ is undefined; there $J$ must mean the
+extension $J_{w_0}$ of (3.4). The Lean definition uses `Jw w₀` at $\frac{x+y}2$ (it equals the
+paper's $g_{QJ,2}$ where $x+y\ge1$, by `Auto.DIR.eqn_3_4`), so that (6.27) can be stated on the
+paper's full rectangle without a conditional hypothesis on `Auto.DIR.J`. -/
 noncomputable def g_QJ_2 (x y : ℝ) : ℝ :=
-  ((y - x) ^ 2 + J y ^ 2) ^ (1 / 2 : ℝ) + Q (1 / 2) x - 2 * J ((x + y) / 2)
+  ((y - x) ^ 2 + J y ^ 2) ^ (1 / 2 : ℝ) + Q (1 / 2) x - 2 * Jw w₀ ((x + y) / 2)
 
 /-- **Proposition 6.12** ([DIR]) (🚗). For all $x\in[\frac14,\frac12]$ and $y\in[\frac58,1]$,
 $$g_{QJ,2}(x,y)=((y-x)^2+J(y)^2)^{1/2}+Q_{\frac12}(x)-2J(\tfrac{x+y}2)>10^{-7}. \tag{6.27}$$
-(For $x+y<1$, `J` at $\frac{x+y}2$ is read as its extension $J_{w_0}$, hypothesis `hJ`.) -/
-theorem prop_6_12 (hJ : EqOn J (Jw w₀) (Icc (1 - w₀) 1)) (x y : ℝ)
+(With $J(\frac{x+y}2)$ read as $J_{w_0}(\frac{x+y}2)$, see `Auto.DIR.g_QJ_2`; numerically the
+minimum is $\approx3.9\cdot10^{-5}$, at $(x,y)=(\frac12,\frac58)$.) -/
+theorem prop_6_12 (x y : ℝ)
     (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2)) (hy : y ∈ Icc (5 / 8 : ℝ) 1) :
     g_QJ_2 x y > 10 ^ (-7 : ℤ) := by
   sorry
@@ -246,15 +318,16 @@ section Proof_Proposition_6_12
 /-- The lower bound ([DIR], proof of Proposition 6.12)
 $$\underline{g_{QJ,2}}(\underline x,\overline x,\underline y,\overline y)=((\underline y
 -\overline x)^2+J(\overline y)^2)^{1/2}+Q_{\frac12}(\underline x)-2\overline J(\tfrac{\underline x
-+\underline y}2,\tfrac{\overline x+\overline y}2).$$ -/
++\underline y}2,\tfrac{\overline x+\overline y}2),$$
+with $\overline J$ the enclosure of $J_{w_0}$ (`Auto.DIR.Jw₀_hi`), see `Auto.DIR.g_QJ_2`. -/
 noncomputable def g_QJ_2_lo (xl xu yl yu : ℝ) : ℝ :=
   ((yl - xu) ^ 2 + J yu ^ 2) ^ (1 / 2 : ℝ) + Q (1 / 2) xl -
-    2 * J_hi ((xl + yl) / 2) ((xu + yu) / 2)
+    2 * Jw₀_hi ((xl + yl) / 2) ((xu + yu) / 2)
 
 /-- [DIR], proof of Proposition 6.12: a tight lower bound (of $g_{QJ,2}$ on
-$[\frac14,\frac12]\times[\frac58,1]$) is given by $\underline{g_{QJ,2}}$. (With `J` read as its
-extension $J_{w_0}$, hypothesis `hJ`.) -/
-theorem g_QJ_2_tightLowerBound (hJ : EqOn J (Jw w₀) (Icc (1 - w₀) 1)) :
+$[\frac14,\frac12]\times[\frac58,1]$) is given by $\underline{g_{QJ,2}}$ (with $J$ at
+$\frac{x+y}2$ read as $J_{w_0}$, see `Auto.DIR.g_QJ_2`). -/
+theorem g_QJ_2_tightLowerBound :
     IsTightLowerBound₂ g_QJ_2 g_QJ_2_lo (1 / 4) (1 / 2) (5 / 8) 1 := by
   sorry
 

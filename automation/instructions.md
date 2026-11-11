@@ -92,10 +92,12 @@ Rules:
 - Statements must be mathematically faithful, including Lean junk values (restrict to the domain
   where the paper's object is defined, e.g. `x ∈ 𝒬` for `𝓑 β x`, intervals for `J`; use a single
   `sInf` over a set instead of nested `⨅` with `Prop` binders in `ℝ`; `Real.rpow` with `0 ^ 0 = 1`).
+- Notation is introduced ONLY with the `notation`/`notation3` commands (also `local notation`);
+  no metaprogramming (`syntax`, `macro`, `elab`, `meta def`, ...) (user requirement, 2026-11-11T23:03+00:00).
 - Statements should look like the paper. Notation is introduced conservatively, at first use, and
   listed in the module docstring of the file introducing it. Current notation (DIR §1–§3):
-  `{0,1}^n` (cube `Fin n → ZMod 2`, `x + e i` = bit flip), `h_{A}`, `𝐄 f`, `𝟏_{A}`, `|A|`
-  (density; `|a|` stays `abs` otherwise), `log₂`, `|∇(A, B)|`, `𝓑 β x`, `𝒬`, `x⁎`, `‖f‖_[p]`,
+  `{0,1}^n` (cube `Fin n → ZMod 2`, `x + e i` = bit flip), `h_{A}`, `𝐄 f`, `𝟏_{A}`, `｜A｜`
+  (density, full-width bar U+FF5C; `|a|` is `abs`), `log₂`, `|∇(A, B)|`, `𝓑 β x`, `𝒬`, `x⁎`, `‖f‖_[p]`,
   `∇f`, `G₁ β B x y`, `G₂`, `G`, `L β x`, `Q β x`, `b β x`, `c₀ • B`, `b̃`, `L̃`, `𝔅 β x`, `Mi`,
   `M`, `φ`, `Φ`, `I`, `Jw w x`, `w₀`, `x₀`, `β₀`, `c₀`; derivatives as `deriv f`,
   `deriv (deriv f)`, `iteratedDeriv k f` (the prime symbol `′` is unavailable: Mathlib uses `′′`).
@@ -129,6 +131,13 @@ lake build
 - **2026-11-11T19:12+00:00** (raw entry 2): refactor to namespaces `Auto.DIR` and `Auto.DIRX`
   and remove the `dir_`/`dirx_` name prefixes.
 
+- **2026-11-11T23:03+00:00** (raw entry 3): remove all metacode (notation only via `notation`/`notation3`); fix
+  the ErrorReport items in Lean and describe each discrepancy precisely at its place
+  (`**Discrepancy with the paper.**` paragraphs); audit correctness throughout and fix further
+  discrepancies; audit strict forward reasoning (claims stated before their prerequisites, by
+  analysis of the paper's arguments) in `automation/forward_reasoning.md`, including whether the
+  proof dependencies force import loops between files. Still no proofs.
+
 ## Settled decisions
 
 - Proof-section claims reference later results only in comments (setup phase). When proofs are
@@ -139,12 +148,12 @@ lake build
 
 ## Current status / next step
 
-Setup phase complete (2026-11-11): all 38 files of the layout exist, every claim is stated and
-proved `by sorry`, `lake build` succeeds and the Mathlib style/header linters report only
-`sorry` warnings. Faithfulness questions and possible gaps in the papers found while stating the
-claims are listed in `automation/ErrorReport.md` (several need a decision before the proof
-phase, e.g. the hypothesis `hJ : EqOn J (Jw w₀) ...` in [DIR] §6.6 and the possibly false tight
-lower bound for $g_{QJQ,\beta}$ on the full rectangle in [DIR] §6.5).
+Setup phase complete, followed by the audits requested on 2026-11-11 (22:51 UTC): metacode
+removed (`｜A｜` is a plain `notation`), all ErrorReport items fixed or documented with
+`**Discrepancy with the paper.**` paragraphs at their places, a second correctness audit
+(`automation/ErrorReport.md`, section "Audit round 2"), and the forward-reasoning audit
+(`automation/forward_reasoning.md`). `lake build` succeeds; linters report only `sorry` warnings.
 
-Next step: proof phase, starting with the elementary results of [DIR] §5 and §3, in forward
-logical order; first add fine-grained proof rows to `automation/Status.md`.
+Open decisions for the user before the proof phase: how to resolve the file-level import loops
+forced by the paper-structured layout (options (a)–(c) in `automation/forward_reasoning.md` §2),
+and the unresolved paper gaps listed in `automation/ErrorReport.md`.

@@ -48,3 +48,10 @@ complete | 2026-11-11 14:26:14 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_5_Case
 complete | 2026-11-11 14:26:14 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_6_Case_QJ | statement scaffold: 5 defs, 12 theorems (all sorry)
 complete | 2026-11-11 14:26:14 ET | [DIRX] 4_Proof_Poincare_Inequality/4_0_Proof_Poincare_Inequality | statement scaffold: 5 defs, 19 theorems (all sorry)
 complete | 2026-11-11 14:26:14 ET | [DIRX] 5_Connection_Hellinger_Conjecture/5_0_Connection_Hellinger_Conjecture | statement scaffold: 5 defs, 10 theorems (all sorry)
+
+## Audits (setup phase)
+
+complete | 2026-11-11 18:30:59 ET | [DIR], [DIRX] all files | metacode removed; notation only via notation/notation3
+complete | 2026-11-11 18:30:59 ET | [DIR], [DIRX] all files | ErrorReport items fixed; Discrepancy paragraphs in place
+complete | 2026-11-11 18:30:59 ET | [DIR], [DIRX] all files | correctness audit round 2 (see ErrorReport.md)
+complete | 2026-11-11 18:30:59 ET | [DIR], [DIRX] all files | forward-reasoning audit (automation/forward_reasoning.md)

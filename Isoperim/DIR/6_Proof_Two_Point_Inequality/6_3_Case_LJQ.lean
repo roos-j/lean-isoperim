@@ -112,7 +112,16 @@ for $\beta\in\{\beta_0,\frac12\}$ and $(x,y)\in [\frac1{16},\frac14]\times[\frac
 -/
 
 /-- **(6.13)** ([DIR], §6.3.1) (🚗). For $\beta\in\{\beta_0,\frac12\}$ and
-$(x,y)\in[\frac1{16},\frac14]\times[\frac12,\frac34]$: $$G_\beta[b_\beta](x,y)>10^{-7}.$$ -/
+$(x,y)\in[\frac1{16},\frac14]\times[\frac12,\frac34]$: $$G_\beta[b_\beta](x,y)>10^{-7}.$$
+
+**Discrepancy with the paper.** The paper only mentions running
+$\textsc{Partition}_2(\underline{g_{LJQ,1,1/2}},\dots)$, i.e. the case $\beta=\frac12$, but
+claims (6.13) for $\beta\in\{\beta_0,\frac12\}$. This is presumably a typo
+($\textsc{Partition}_2(\underline{g_{LJQ,1,\beta}},\dots)$ for both values of $\beta$; the lower
+bound `Auto.DIR.g_LJQ_1_lo_tight` is valid for both). The Lean statement claims (6.13) for both
+values as the paper does; numerically
+$\min G_\beta[b_\beta]\approx2.0\cdot10^{-3}$ ($\beta=\beta_0$) and $\approx1.9\cdot10^{-3}$
+($\beta=\frac12$) on a $31\times31$ grid of the rectangle. -/
 theorem eqn_6_13 (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (x y : ℝ)
     (hx : x ∈ Icc (1 / 16 : ℝ) (1 / 4)) (hy : y ∈ Icc (1 / 2 : ℝ) (3 / 4)) :
     G β (b β) x y > 10 ^ (-7 : ℤ) := by
@@ -136,8 +145,15 @@ noncomputable def G_LJQ (β x y : ℝ) : ℝ :=
 /-- **Proposition 6.6** ([DIR]). Let $\beta\in[\frac12,1]$, $x\in[0,\frac14]$ and
 $y\in[\frac12,1]$. If in addition $x\le\frac1{16}$ or $y\ge\frac34$ holds, then
 $$G_{LJQ,\beta}(x,y)=y-x+(2^\beta-1)J(y)+L_\beta(x)-2Q_\beta(\tfrac{x+y}2)\ge0.$$
-(Within Case $LJQ$, i.e. under the standing assumption $x+y\le1$ of §6.3, which is also what the
-proof covers.) -/
+
+**Discrepancy with the paper.** The proposition as printed does not assume $x+y\le1$. This is
+the standing assumption of Case $LJQ$ (title of §6.3, needed for $b_\beta(\frac{x+y}2)=
+Q_\beta(\frac{x+y}2)$), and the proof only covers it: the reduction via Lemma 6.7 checks the
+boundary pieces $x=0$, $x=\frac1{16}$ and $x=1-y$ (claims (1)–(3)), which bound region II only
+under $x+y\le1$ (for $y\ge\frac34$ and $x+y>1$ the piece $x=\frac14$ would be needed). The Lean
+statement adds the hypothesis $x+y\le1$. (Numerically the printed statement without it also
+appears to hold: on a grid, $\min G_{LJQ,\beta}$ over the part with $x+y>1$ is
+$\approx0.0055$, $0.013$, $0.025$ for $\beta=\frac12,\frac34,1$.) -/
 theorem prop_6_6 (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1) (x y : ℝ)
     (hx : x ∈ Icc (0 : ℝ) (1 / 4)) (hy : y ∈ Icc (1 / 2 : ℝ) 1) (hxy : x + y ≤ 1)
     (h : x ≤ 1 / 16 ∨ y ≥ 3 / 4) : G_LJQ β x y ≥ 0 := by
@@ -352,7 +368,14 @@ theorem f_LJQ_1_half_deriv4 :
   sorry
 
 /-- [DIR], §6.3.2, proof of (1): $f_{\frac12}''(\frac12)=0$ (as a one-sided limit,
-$f_{\frac12}''(y)\to0$ as $y\to\frac12^+$). -/
+$f_{\frac12}''(y)\to0$ as $y\to\frac12^+$).
+
+**Discrepancy with the paper.** The paper evaluates $f_{\frac12}''$ at the endpoint $y=\frac12$
+of $[\frac12,1]$, where $J''(\frac12)$ (equivalently $J(\frac12)^{-1}$ in the formula for
+$f_{\frac12}''$) is meant one-sidedly. For `Auto.DIR.J`, which is arbitrary left of $\frac12$,
+`deriv (deriv (f_LJQ_1 (1 / 2))) (1 / 2)` is a junk value, so the claim is stated as the limit
+$y\to\frac12^+$ (by the formula, the limit is $-4(\sqrt2-1)-\frac12Q_{\frac12}''(\frac14)
+=-4(\sqrt2-1)+4(\sqrt2-1)=0$). -/
 theorem f_LJQ_1_half_deriv2_half :
     Tendsto (deriv (deriv (f_LJQ_1 (1 / 2)))) (𝓝[>] (1 / 2)) (𝓝 0) := by
   sorry
@@ -412,8 +435,25 @@ theorem eqn_6_16 :
     deriv (f_LJQ_1 (1 / 2)) (9 / 16) > 0.05 ∧ deriv (f_LJQ_1 (1 / 2)) (15 / 16) < -0.1 := by
   sorry
 
+/-- [DIR], §6.3.2, proof of (1) (not stated in the paper, but needed by the next step, see
+`Auto.DIR.f_LJQ_1_half_y₁`): the one-sided derivative $f_{\frac12}'(\frac12^+)
+=\lim_{y\to\frac12^+}f_{\frac12}'(y)=1+(\sqrt2-1)J'(\frac12^+)-Q_{\frac12}'(\frac14)$ exists and is
+$>0.05$ (numerically $\approx0.0571$). -/
+theorem f_LJQ_1_half_deriv_half :
+    ∃ d > (0.05 : ℝ), Tendsto (deriv (f_LJQ_1 (1 / 2))) (𝓝[>] (1 / 2)) (𝓝 d) := by
+  sorry
+
 /-- [DIR], §6.3.2, proof of (1): $f_{\frac12}'$ has exactly one zero $y_1$ on $(\frac12,1)$;
-therefore $f_{\frac12}$ is increasing on $[\frac12,y_1]$ and decreasing on $[y_1,1]$. -/
+therefore $f_{\frac12}$ is increasing on $[\frac12,y_1]$ and decreasing on $[y_1,1]$.
+
+**Discrepancy with the paper.** From "$f_{\frac12}'$ is increasing on $(\frac12,y_0)$ and
+decreasing on $(y_0,1)$" together with (6.16) the paper concludes that $f_{\frac12}'$ has exactly
+one zero on $(\frac12,1)$. This also requires $f_{\frac12}'>0$ near $\frac12$, i.e.
+$f_{\frac12}'(\frac12^+)\ge0$ (otherwise $f_{\frac12}'$ could have a second zero in
+$(\frac12,\frac9{16})$; and if $f_{\frac12}'(\frac12^+)<0$ then, as $f_{\frac12}(\frac12)=0$, the
+claim $f_{\frac12}\ge0$ would even fail). This value is not evaluated in the paper; numerically
+$f_{\frac12}'(\frac12^+)\approx0.0571>0$, recorded as `Auto.DIR.f_LJQ_1_half_deriv_half`. The
+statement itself is kept as in the paper. -/
 theorem f_LJQ_1_half_y₁ :
     ∃ y₁ ∈ Ioo (1 / 2 : ℝ) 1, deriv (f_LJQ_1 (1 / 2)) y₁ = 0 ∧
       (∀ y ∈ Ioo (1 / 2 : ℝ) 1, deriv (f_LJQ_1 (1 / 2)) y = 0 → y = y₁) ∧
@@ -452,7 +492,18 @@ noncomputable def g_LJQ_2_lo (yl yu βl βu : ℝ) : ℝ :=
   yl - 1 / 16 + (2 ^ βl - 1) * J_lo yl yu + L βl (1 / 16) - 2 * Q βu (1 / 32 + yu / 2)
 
 /-- [DIR], §6.3.2, proof of (2): $\underline{g_{LJQ,2}}$ is a tight lower bound of
-$(y,\beta)\mapsto G_{LJQ,\beta}(\frac1{16},y)$ on $[\frac12,\frac34]\times[\frac12,1]$. -/
+$(y,\beta)\mapsto G_{LJQ,\beta}(\frac1{16},y)$ on $[\frac12,\frac34]\times[\frac12,1]$.
+
+**Discrepancy with the paper.** The paper gives no justification, and the evident termwise
+reasoning fails: the term $-2Q_{\overline\beta}(\frac1{32}+\frac{\overline y}2)$ is a lower bound
+of $-2Q_\beta(\frac1{32}+\frac y2)$ only if $Q_{\overline\beta}$ is increasing on
+$[\frac9{32},\frac{13}{32}]$, which fails for $\overline\beta$ near $1$ ($Q_\beta'$ vanishes at
+$\approx0.495,0.442,0.368$ for $\beta=0.6,0.75,1$; e.g. $Q_1'(\frac{13}{32})\approx-0.22$), and
+termwise the bound is violated by up to $\approx8\cdot10^{-3}$. The loss is compensated by the
+other terms ($\underline y\le y$ and $\underline J(\underline y,\overline y)\le J(y)$): a random
+and a targeted search over subrectangles and points found no violation of the lower bound
+property (smallest sampled slack $\approx1.4\cdot10^{-3}$), so the claim is believed true and is
+kept as stated. -/
 theorem g_LJQ_2_lo_tight :
     IsTightLowerBound₂ (fun y β ↦ G_LJQ β (1 / 16) y) g_LJQ_2_lo (1 / 2) (3 / 4) (1 / 2) 1 := by
   sorry

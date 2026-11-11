@@ -66,7 +66,7 @@ $\|\nabla f\|_1 = \tfrac{1}{2} ( \mathbf{E} \sqrt{h_A} + \mathbf{E} \sqrt{h_{A^c
 /-- [DIRX], §4: for $f=\mathbf{1}_A$, $\|f-\mathbf{E}f\|_1=2|A|(1-|A|)$ and
 $\|\nabla f\|_1=\frac12(\mathbf{E}\sqrt{h_A}+\mathbf{E}\sqrt{h_{A^c}})$. -/
 theorem norms_indicator (n : ℕ) (A : Set ({0,1}^n)) :
-    ‖𝟏_{A} - fun _ ↦ 𝐄 𝟏_{A}‖_[1] = 2 * |A| * (1 - |A|) ∧
+    ‖𝟏_{A} - fun _ ↦ 𝐄 𝟏_{A}‖_[1] = 2 * ｜A｜ * (1 - ｜A｜) ∧
       ‖∇𝟏_{A}‖_[1] = 1 / 2 * (𝐄 (fun x ↦ √(h_{A} x)) + 𝐄 (fun x ↦ √(h_{Aᶜ} x))) := by
   sorry
 

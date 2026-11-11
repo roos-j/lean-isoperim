@@ -45,8 +45,8 @@ theorem b_eq_Q_ge_L (x : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
   sorry
 
 /-- [DIR], §2.2, proof of Theorem 1.1: for $\beta=\beta_0$, (1.1) follows from (2.6). -/
-theorem eqn_1_1_β₀ (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) (hA : |A| ≤ 1 / 2) :
-    𝐄 h_{A} ^ β₀ ≥ |A| * (log₂ (1 / |A|)) ^ β₀ := by
+theorem eqn_1_1_β₀ (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) (hA : ｜A｜ ≤ 1 / 2) :
+    𝐄 h_{A} ^ β₀ ≥ ｜A｜ * (log₂ (1 / ｜A｜)) ^ β₀ := by
   sorry
 
 /-
@@ -150,6 +150,13 @@ theorem b_lt_Ltilde_imp (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y) (hy : y ≤ 1
 /-
 Thus \eqref{eqn:btildetwopt} [(2.8)] is proved and Theorem \ref{thm:isoperimJ} [1.7] follows.
 -/
+
+/-- [DIR], §2.2, proof of Theorem 1.7 (implicit in "it suffices to show" and "Theorem 1.7
+follows"): by Proposition 2.1 and (2.8), $\mathcal{B}_{\beta_0}\ge\tilde b_{\beta_0}$ on
+$\mathcal{Q}$; since $\tilde b_{\beta_0}(x)=\max(J(x),L_{\beta_0}(1-x))$ for $x\in[\frac12,1]$,
+this is (1.6). -/
+theorem isoProfile_ge_btilde (x : ℝ) (hx : x ∈ 𝒬) : 𝓑 β₀ x ≥ b̃ β₀ x := by
+  sorry
 
 end Proof_Theorem_1_7
 

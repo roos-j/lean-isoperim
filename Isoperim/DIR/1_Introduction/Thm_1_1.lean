@@ -28,8 +28,8 @@ Corollary 1.9, which in the paper appears after Remark 1.8.
 * `h_{A}` : the function $h_A$;
 * `𝐄 f` : the expectation $\mathbf{E} f = 2^{-n}\sum_{x} f(x)$;
 * `𝟏_{A}` : the indicator function $\mathbf{1}_A$ (real valued);
-* `|A|` : the normalized size $|A| = \mathbf{E}\mathbf{1}_A$ of a set `A ⊆ {0,1}^n`
-  (for any other argument `|a|` keeps its usual meaning `abs a`);
+* `｜A｜` : the normalized size $|A| = \mathbf{E}\mathbf{1}_A$ of a set `A ⊆ {0,1}^n`
+  (written with the full-width bar `｜`, U+FF5C; `|a|` keeps its usual meaning `abs a`);
 * `log₂` : the binary logarithm `Real.logb 2`;
 * `|∇(A, B)|` : the edge boundary measure of Corollary 1.9.
 
@@ -80,28 +80,13 @@ noncomputable def expect {n : ℕ} {M : Type*} [AddCommGroup M] [Module ℝ M]
 notation "𝟏_{" A "}" => Set.indicator A (fun _ => (1 : ℝ))
 
 /-- The normalized size $|A|=\mathbf{E}\mathbf{1}_A$ of $A\subset\{0,1\}^n$
-([DIR], §1, after Theorem 1.1). Written `|A|`. -/
+([DIR], §1, after Theorem 1.1). Written `｜A｜` (full-width bars). -/
 noncomputable def dens {n : ℕ} (A : Set ({0,1}^n)) : ℝ := 𝐄 𝟏_{A}
 
-/-- Auxiliary syntax for the notation `|A|`: elaborates to `Auto.DIR.dens A` when `A` is a set,
-and to `abs A` otherwise. -/
-syntax (name := absOrDens) "absOrDens% " term:max : term
-
-open Lean Elab Term Meta in
-/-- Elaborator for `absOrDens%`, see `Auto.DIR.dens`. -/
-@[term_elab absOrDens] meta def elabAbsOrDens : TermElab := fun stx expectedType? => do
-  let a : Term := ⟨stx[1]⟩
-  let isSet ← observing? (do
-    let e ← withoutErrToSorry <| elabTerm a none
-    let ty ← whnfR (← instantiateMVars (← inferType e))
-    return ty.isAppOf ``Set)
-  if isSet == some true then
-    elabTerm (← `(Auto.DIR.dens $a)) expectedType?
-  else
-    elabTerm (← `(abs $a)) expectedType?
-
-macro_rules
-  | `(|$a|) => `(absOrDens% $a)
+/-- The notation `｜A｜` for `Auto.DIR.dens A`, the paper's $|A|$. It uses the full-width vertical
+bar `｜` (U+FF5C): the ASCII `|` cannot be used by a plain `notation` without clashing with
+Mathlib's `|a|` and with set-builder notation `{x ∈ s | p x}`. -/
+notation:max "｜" A "｜" => dens A
 
 /-- The binary logarithm $\log_2$. -/
 notation "log₂" => Real.logb 2
@@ -124,10 +109,10 @@ $|A|\le\frac12$,
 $$\mathbf{E}h_A^\beta\ge|A|(\log_2(1/|A|))^\beta. \tag{1.1}$$
 This is an equality if $A$ is a subcube. -/
 theorem thm_1_1 (n : ℕ) (hn : 1 ≤ n) (β : ℝ) (hβ : β₀ ≤ β) :
-    (∀ A : Set ({0,1}^n), |A| ≤ 1 / 2 →
-      𝐄 h_{A} ^ β ≥ |A| * (log₂ (1 / |A|)) ^ β) ∧
-    (∀ A : Set ({0,1}^n), |A| ≤ 1 / 2 → IsSubcube A →
-      𝐄 h_{A} ^ β = |A| * (log₂ (1 / |A|)) ^ β) := by
+    (∀ A : Set ({0,1}^n), ｜A｜ ≤ 1 / 2 →
+      𝐄 h_{A} ^ β ≥ ｜A｜ * (log₂ (1 / ｜A｜)) ^ β) ∧
+    (∀ A : Set ({0,1}^n), ｜A｜ ≤ 1 / 2 → IsSubcube A →
+      𝐄 h_{A} ^ β = ｜A｜ * (log₂ (1 / ｜A｜)) ^ β) := by
   sorry
 
 /-
@@ -138,11 +123,11 @@ Here $\mathbf{E}f=2^{-n} \sum_{x\in \{0,1\}^n} f(x)$ and $|A|=\mathbf{E} \mathbf
 /-- [DIR], §1, after Theorem 1.1: if (1.1) holds for some $\beta$, then it follows for all
 $\beta'\ge\beta$ (by Hölder's inequality, see Lemma 5.1). -/
 theorem eqn_1_1_mono (β : ℝ) (hβ : 0 < β)
-    (h : ∀ (n : ℕ), 1 ≤ n → ∀ A : Set ({0,1}^n), |A| ≤ 1 / 2 →
-      𝐄 h_{A} ^ β ≥ |A| * (log₂ (1 / |A|)) ^ β)
+    (h : ∀ (n : ℕ), 1 ≤ n → ∀ A : Set ({0,1}^n), ｜A｜ ≤ 1 / 2 →
+      𝐄 h_{A} ^ β ≥ ｜A｜ * (log₂ (1 / ｜A｜)) ^ β)
     (β' : ℝ) (hβ' : β ≤ β') :
-    ∀ (n : ℕ), 1 ≤ n → ∀ A : Set ({0,1}^n), |A| ≤ 1 / 2 →
-      𝐄 h_{A} ^ β' ≥ |A| * (log₂ (1 / |A|)) ^ β' := by
+    ∀ (n : ℕ), 1 ≤ n → ∀ A : Set ({0,1}^n), ｜A｜ ≤ 1 / 2 →
+      𝐄 h_{A} ^ β' ≥ ｜A｜ * (log₂ (1 / ｜A｜)) ^ β' := by
   sorry
 
 /-
@@ -152,12 +137,12 @@ two-point inequality for the Gaussian isoperimetric profile
 [Remark 3.6] below).
 -/
 
-/-- **Remark 1.2** ([DIR], added in revised version, August 2026). This failure can be overcome
-to prove (1.1) in the full conjectured range $\beta\ge 0.5$, see [DIRX26] (Theorem 1.1 there),
-also see Remark 2.6. -/
+/-- **Remark 1.2** ([DIR], added in revised version, August 2026; cited from [DIRX26,
+Theorem 1.1], formalized as `Auto.DIRX.thm_1_1`). This failure can be overcome to prove (1.1) in
+the full conjectured range $\beta\ge 0.5$, see [DIRX26], also see Remark 2.6. -/
 theorem rem_1_2 (n : ℕ) (hn : 1 ≤ n) (β : ℝ) (hβ : 1 / 2 ≤ β) (A : Set ({0,1}^n))
-    (hA : |A| ≤ 1 / 2) :
-    𝐄 h_{A} ^ β ≥ |A| * (log₂ (1 / |A|)) ^ β := by
+    (hA : ｜A｜ ≤ 1 / 2) :
+    𝐄 h_{A} ^ β ≥ ｜A｜ * (log₂ (1 / ｜A｜)) ^ β := by
   sorry
 
 /-! ### §1.4 Towards a conjecture of Kahn and Park
@@ -189,8 +174,8 @@ where $|\nabla(A,B)|=2^{-n}\#\{(x,y)\in\mathcal{E} : x\in A, y\in B\}$,
 $|W|=\mathbf{E}\mathbf{1}_W$, and $\mathcal{E}$ is the set of edges of $\{0,1\}^n$. -/
 theorem cor_1_9 (n : ℕ) (hn : 1 ≤ n) (A B W : Set ({0,1}^n))
     (hAB : Disjoint A B) (hAW : Disjoint A W) (hBW : Disjoint B W)
-    (hcover : A ∪ B ∪ W = Set.univ) (hA : |A| = 1 / 2) :
-    |∇(A, B)| + (n : ℝ) ^ (0.50057 : ℝ) * |W| ≥ 1 / 2 := by
+    (hcover : A ∪ B ∪ W = Set.univ) (hA : ｜A｜ = 1 / 2) :
+    |∇(A, B)| + (n : ℝ) ^ (0.50057 : ℝ) * ｜W｜ ≥ 1 / 2 := by
   sorry
 
 /-
@@ -200,20 +185,26 @@ $0.5$.
 -/
 
 /-- [DIR], §1.4 (cited from Kahn–Park [KP20]): Corollary 1.9 holds with the exponent
-$\log_2(\frac32)\approx0.585$ in place of $0.50057$. (The paper writes $\log_3(\frac32)$, a typo
-for $\log_2(\frac32)\approx 0.585$; see `automation/ErrorReport.md`.) -/
+$\log_2(\frac32)\approx0.585$ in place of $0.50057$.
+
+**Discrepancy with the paper.** The paper says "Kahn and Park proved this with
+$\log_3(\frac32)\approx 0.585$ in the exponent of $n$". But $\log_3(\frac32)\approx0.369$, while
+$0.585\approx\log_2(\frac32)$, the exponent of [KP20] (and the value $\log_2(\frac32)$ quoted
+in the abstract and in §1.1 of [DIR]). With $\log_3(\frac32)<\frac12$ the claim would even
+contradict the optimality of the conjectured exponent $0.5$. The Lean statement uses
+$\log_2(\frac32)$ (typo repair). -/
 theorem cor_1_9_kahn_park (n : ℕ) (hn : 1 ≤ n) (A B W : Set ({0,1}^n))
     (hAB : Disjoint A B) (hAW : Disjoint A W) (hBW : Disjoint B W)
-    (hcover : A ∪ B ∪ W = Set.univ) (hA : |A| = 1 / 2) :
-    |∇(A, B)| + (n : ℝ) ^ (log₂ (3 / 2)) * |W| ≥ 1 / 2 := by
+    (hcover : A ∪ B ∪ W = Set.univ) (hA : ｜A｜ = 1 / 2) :
+    |∇(A, B)| + (n : ℝ) ^ (log₂ (3 / 2)) * ｜W｜ ≥ 1 / 2 := by
   sorry
 
 /-- [DIR], §1.4 (cited from [BIM23, Cor. 1.6]): Corollary 1.9 holds with the exponent $0.53$
 in place of $0.50057$. -/
 theorem cor_1_9_bim (n : ℕ) (hn : 1 ≤ n) (A B W : Set ({0,1}^n))
     (hAB : Disjoint A B) (hAW : Disjoint A W) (hBW : Disjoint B W)
-    (hcover : A ∪ B ∪ W = Set.univ) (hA : |A| = 1 / 2) :
-    |∇(A, B)| + (n : ℝ) ^ (0.53 : ℝ) * |W| ≥ 1 / 2 := by
+    (hcover : A ∪ B ∪ W = Set.univ) (hA : ｜A｜ = 1 / 2) :
+    |∇(A, B)| + (n : ℝ) ^ (0.53 : ℝ) * ｜W｜ ≥ 1 / 2 := by
   sorry
 
 /-- The conjecture of Kahn and Park [KP20, Conjecture 1.3] with the conjectured optimal
@@ -222,7 +213,7 @@ $|\nabla(A,B)|+n^{0.5}|W|\ge\frac12$. This is a statement (a `Prop`), not a clai
 paper; it is proved in [DIRX26, Theorem 1.2]. -/
 def KahnParkConjecture : Prop :=
   ∀ (n : ℕ), 1 ≤ n → ∀ A B W : Set ({0,1}^n), Disjoint A B → Disjoint A W → Disjoint B W →
-    A ∪ B ∪ W = Set.univ → |A| = 1 / 2 → |∇(A, B)| + (n : ℝ) ^ (0.5 : ℝ) * |W| ≥ 1 / 2
+    A ∪ B ∪ W = Set.univ → ｜A｜ = 1 / 2 → |∇(A, B)| + (n : ℝ) ^ (0.5 : ℝ) * ｜W｜ ≥ 1 / 2
 
 /-
 Corollary \ref{cor:kahnpark} follows from Theorem \ref{thm:mainisoperim} because for
@@ -235,11 +226,11 @@ $$\tfrac12\le\mathbf{E}h_{B\cup W}^{\beta_0}\le\mathbf{E}(h_{B\cup W}\mathbf{1}_
 +\mathbf{E}(h_{B\cup W}^{\beta_0}\mathbf{1}_W)\le|\nabla(A,B)|+n^{0.50057}|W|.$$ -/
 theorem cor_1_9_chain (n : ℕ) (hn : 1 ≤ n) (A B W : Set ({0,1}^n))
     (hAB : Disjoint A B) (hAW : Disjoint A W) (hBW : Disjoint B W)
-    (hcover : A ∪ B ∪ W = Set.univ) (hBW' : |B ∪ W| = 1 / 2) (hA : |A| = 1 / 2) :
+    (hcover : A ∪ B ∪ W = Set.univ) (hBW' : ｜B ∪ W｜ = 1 / 2) (hA : ｜A｜ = 1 / 2) :
     1 / 2 ≤ 𝐄 h_{B ∪ W} ^ β₀ ∧
     𝐄 h_{B ∪ W} ^ β₀ ≤ 𝐄 (h_{B ∪ W} * 𝟏_{B}) + 𝐄 (h_{B ∪ W} ^ β₀ * 𝟏_{W}) ∧
     𝐄 (h_{B ∪ W} * 𝟏_{B}) + 𝐄 (h_{B ∪ W} ^ β₀ * 𝟏_{W}) ≤
-      |∇(A, B)| + (n : ℝ) ^ (0.50057 : ℝ) * |W| := by
+      |∇(A, B)| + (n : ℝ) ^ (0.50057 : ℝ) * ｜W｜ := by
   sorry
 
 end Auto.DIR

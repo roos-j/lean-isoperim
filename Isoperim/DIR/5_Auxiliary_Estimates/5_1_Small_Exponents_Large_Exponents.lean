@@ -35,12 +35,12 @@ $$\mathbf{E}h_A^{\tilde\beta}\ge B(|A|)^{\frac{\tilde\beta}\beta}|A|^{-\frac{\ti
 In particular, if (1.1) holds for $\beta_0$, then it holds for all $\beta\ge\beta_0$. -/
 theorem lemma_5_1 :
     (∀ (n : ℕ) (A : Set ({0,1}^n)) (B : ℝ → ℝ) (β : ℝ), 0 < β →
-      𝐄 h_{A} ^ β ≥ B |A| → B |A| > 0 →
-      ∀ β' : ℝ, β ≤ β' → 𝐄 h_{A} ^ β' ≥ B |A| ^ (β' / β) * |A| ^ (-(β' / β) + 1)) ∧
-    ((∀ (n : ℕ), 1 ≤ n → ∀ A : Set ({0,1}^n), |A| ≤ 1 / 2 →
-        𝐄 h_{A} ^ β₀ ≥ |A| * (log₂ (1 / |A|)) ^ β₀) →
-      ∀ β : ℝ, β₀ ≤ β → ∀ (n : ℕ), 1 ≤ n → ∀ A : Set ({0,1}^n), |A| ≤ 1 / 2 →
-        𝐄 h_{A} ^ β ≥ |A| * (log₂ (1 / |A|)) ^ β) := by
+      𝐄 h_{A} ^ β ≥ B ｜A｜ → B ｜A｜ > 0 →
+      ∀ β' : ℝ, β ≤ β' → 𝐄 h_{A} ^ β' ≥ B ｜A｜ ^ (β' / β) * ｜A｜ ^ (-(β' / β) + 1)) ∧
+    ((∀ (n : ℕ), 1 ≤ n → ∀ A : Set ({0,1}^n), ｜A｜ ≤ 1 / 2 →
+        𝐄 h_{A} ^ β₀ ≥ ｜A｜ * (log₂ (1 / ｜A｜)) ^ β₀) →
+      ∀ β : ℝ, β₀ ≤ β → ∀ (n : ℕ), 1 ≤ n → ∀ A : Set ({0,1}^n), ｜A｜ ≤ 1 / 2 →
+        𝐄 h_{A} ^ β ≥ ｜A｜ * (log₂ (1 / ｜A｜)) ^ β) := by
   sorry
 
 section Proof_Lemma_5_1
@@ -50,8 +50,8 @@ inequality,
 $$B(|A|)\le\mathbf{E}h_A^\beta\le(\mathbf{E}h_A^{p\beta})^{\frac1p}|A|^{1-\frac1p},$$
 which implies the claim. -/
 theorem lemma_5_1_holder (n : ℕ) (A : Set ({0,1}^n)) (B : ℝ → ℝ) (β : ℝ) (hβ : 0 < β)
-    (h : 𝐄 h_{A} ^ β ≥ B |A|) (p : ℝ) (hp : 1 ≤ p) :
-    B |A| ≤ 𝐄 h_{A} ^ β ∧ 𝐄 h_{A} ^ β ≤ (𝐄 h_{A} ^ (p * β)) ^ (1 / p) * |A| ^ (1 - 1 / p) := by
+    (h : 𝐄 h_{A} ^ β ≥ B ｜A｜) (p : ℝ) (hp : 1 ≤ p) :
+    B ｜A｜ ≤ 𝐄 h_{A} ^ β ∧ 𝐄 h_{A} ^ β ≤ (𝐄 h_{A} ^ (p * β)) ^ (1 / p) * ｜A｜ ^ (1 - 1 / p) := by
   sorry
 
 end Proof_Lemma_5_1

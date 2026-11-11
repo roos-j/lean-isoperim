@@ -85,7 +85,7 @@ $\mathbf{E}\sqrt{h_A}\ge B(|A|)$ for all $A\subset\{0,1\}^n$ and $n\ge1$. -/
 theorem kahn_park (B : ℝ → ℝ) (hB : ∀ x ∈ Icc (0 : ℝ) 1, 0 ≤ B x) (hB0 : B 0 = 0)
     (hB1 : B 1 = 0) (htwo : ∀ x y : ℝ, 0 ≤ x → x ≤ y → y ≤ 1 → G B x y ≥ 0)
     (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) :
-    𝐄 (fun x ↦ √(h_{A} x)) ≥ B |A| := by
+    𝐄 (fun x ↦ √(h_{A} x)) ≥ B ｜A｜ := by
   sorry
 
 /-
@@ -111,10 +111,13 @@ local notation "Q" => QX
 
 /-- [DIRX], §2.1: $Q$ is the unique cubic interpolating polynomial such that $Q(0)=Q(1)=0$,
 $Q(\frac12)=\frac12$ and $Q(\frac14)=2^{-3/2}$, i.e.
-$Q(x)=\frac23x(1-x)(2^{5/2}-3+4(3-2^{3/2})x)$. -/
+$Q(x)=\frac23x(1-x)(2^{5/2}-3+4(3-2^{3/2})x)$: $Q$ is a polynomial of degree $\le3$ with these
+four values, and every polynomial of degree $\le3$ with these four values equals $Q$. -/
 theorem QX_spec :
-    ∃! p : Polynomial ℝ, p.natDegree ≤ 3 ∧ p.eval 0 = 0 ∧ p.eval 1 = 0 ∧ p.eval (1 / 2) = 1 / 2 ∧
-      p.eval (1 / 4) = 2 ^ (-3 / 2 : ℝ) ∧ ∀ x, p.eval x = Q x := by
+    (∃ p : Polynomial ℝ, p.natDegree ≤ 3 ∧ ∀ x, p.eval x = Q x) ∧
+      Q 0 = 0 ∧ Q 1 = 0 ∧ Q (1 / 2) = 1 / 2 ∧ Q (1 / 4) = 2 ^ (-3 / 2 : ℝ) ∧
+      ∀ p : Polynomial ℝ, p.natDegree ≤ 3 → p.eval 0 = 0 → p.eval 1 = 0 →
+        p.eval (1 / 2) = 1 / 2 → p.eval (1 / 4) = 2 ^ (-3 / 2 : ℝ) → ∀ x, p.eval x = Q x := by
   sorry
 
 /-
@@ -195,8 +198,8 @@ that (2.4) holds for all $0\le x\le y\le1$ (by the Kahn–Park reduction and
 $B_w\ge L$ on $[0,\frac12]$). -/
 theorem thm_1_1_of_eqn_2_4
     (h : ∃ w ∈ Ioc (1 / 2 : ℝ) 1, ∀ x y : ℝ, 0 ≤ x → x ≤ y → y ≤ 1 → G (B_{w}) x y ≥ 0)
-    (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) (hA : |A| ≤ 1 / 2) :
-    𝐄 (fun x ↦ √(h_{A} x)) ≥ |A| * √(log₂ (1 / |A|)) := by
+    (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) (hA : ｜A｜ ≤ 1 / 2) :
+    𝐄 (fun x ↦ √(h_{A} x)) ≥ ｜A｜ * √(log₂ (1 / ｜A｜)) := by
   sorry
 
 /-- **(2.4)** ([DIRX], §2.1; proved in §3 for $w=w_1$). For all $0\le x\le y\le1$,
@@ -214,7 +217,7 @@ As a consequence of this argument we obtain the isoperimetric inequality
 $$\mathbf{E}\sqrt{h_A}\ge B_{w_1}(|A|),$$
 valid for all $A\subset\{0,1\}^n$. -/
 theorem eqn_2_5 (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) :
-    𝐄 (fun x ↦ √(h_{A} x)) ≥ B_{w₁} |A| := by
+    𝐄 (fun x ↦ √(h_{A} x)) ≥ B_{w₁} ｜A｜ := by
   sorry
 
 /-
@@ -282,8 +285,8 @@ estimate $\mathbf{E} h_A^\beta\ge {\mathrm{J}}(|A|)$ that follows from \eqref{eq
 /-- **Remark 2.2** ([DIRX]): the estimate $\mathbf{E}h_A^\beta\ge\mathrm{J}(|A|)$ for
 $\beta\ge\frac12$ and $|A|\ge\frac12$ follows from (2.5). -/
 theorem rem_2_2_rpow_ge_J (n : ℕ) (hn : 1 ≤ n) (β : ℝ) (hβ : 1 / 2 ≤ β) (A : Set ({0,1}^n))
-    (hA : |A| ≥ 1 / 2) :
-    𝐄 h_{A} ^ β ≥ J |A| := by
+    (hA : ｜A｜ ≥ 1 / 2) :
+    𝐄 h_{A} ^ β ≥ J ｜A｜ := by
   sorry
 
 /-- **Remark 2.2** ([DIRX]): for all values $x=|A|>\frac12$, [DIR, (2.6)]
@@ -293,16 +296,34 @@ $b_{\beta_0}(x)>\mathrm{J}(x)$ for $x\in(\frac12,1)$. -/
 theorem rem_2_2_stronger (x : ℝ) (hx : x ∈ Ioo (1 / 2 : ℝ) 1) : b β₀ x > J x := by
   sorry
 
+
 /-
 This is consistent with the fact that ``Case $J$'' in \cite[\S 6]{DIR24} is more difficult to
 handle than Case $J$ in the present paper (see \S \ref{sec:caseJ} [§3.1]). For $\beta\ge\beta_0$
 and $|A|>\frac12$, the best known lower bound is that given in \cite[Thm. 1.6]{DIR24}, which
 further improves on \cite[(2.6)]{DIR24} as $|A|\to 1-$.
 \end{rem}
-(Note: \cite[Thm. 1.6]{DIR24} refers to the numbering of the first arXiv version of [DIR]; in the
-revised version this is Theorem 1.7, `Auto.DIR.thm_1_7`, with the lower bound
-$\max(J(|A|),(1-|A|)(\log_2(1/(1-|A|)))^\beta)$. The comparison "best known" is not a
-mathematical claim and is not formalized.)
+(\cite[Thm. 1.6]{DIR24} is Theorem 1.7 of the revised version of [DIR], `Auto.DIR.thm_1_7`; see
+the discrepancy paragraph of `Auto.DIRX.rem_2_2_thm_1_7_improves` below.)
 -/
+
+/-- **Remark 2.2** ([DIRX]), last claim: for $\beta\ge\beta_0$ and $|A|>\frac12$ the best known
+lower bound is that of [DIR, Theorem 1.7] (cited as "[DIR24, Thm. 1.6]"),
+$\mathbf{E}h_A^{\beta_0}\ge\max(J(|A|),(1-|A|)(\log_2(1/(1-|A|)))^{\beta_0})$
+(`Auto.DIR.thm_1_7`, stated there for $\beta=\beta_0$), which further improves on [DIR, (2.6)]
+($\mathcal{B}_{\beta_0}\ge b_{\beta_0}$) as $|A|\to1-$: there is $\delta>0$ with
+$(1-x)(\log_2(1/(1-x)))^{\beta_0}>b_{\beta_0}(x)$ for $x\in(1-\delta,1)$ (by [DIR], (2.9) this can
+only happen for $x>1-10^{-10^{380}}$). The comparison "best known" itself is not a
+mathematical claim and is not formalized.
+
+**Discrepancy with the paper.** [DIRX] cites "[DIR24, Thm. 1.6]". This is the theorem number of
+the first arXiv version of [DIR]; in the revised version [DIR] (arXiv:2407.12674v2, formalized
+here) the inequality $\mathbf{E}h_A^\beta\ge\max(J(|A|),(1-|A|)(\log_2(1/(1-|A|)))^\beta)$ is
+Theorem 1.7 (`Auto.DIR.thm_1_7`), while Theorem 1.6 of v2 is a different statement (the bound
+(1.4) of [DIR] for $\mathbf{E}\sqrt{h_A}$, `Auto.DIR.thm_1_6`). The Lean
+statement refers to v2's Theorem 1.7. -/
+theorem rem_2_2_thm_1_7_improves :
+    ∃ δ > 0, ∀ x ∈ Ioo (1 - δ) 1, (1 - x) * (log₂ (1 / (1 - x))) ^ β₀ > b β₀ x := by
+  sorry
 
 end Auto.DIRX

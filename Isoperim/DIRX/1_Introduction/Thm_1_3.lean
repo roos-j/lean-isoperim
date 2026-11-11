@@ -135,8 +135,15 @@ noncomputable def mutualInfoBSC {n : ℕ} (α : ℝ) (f : ({0,1}^n) → ℝ) : �
 ([DIRX], §1): for every $n\ge1$, every Boolean function $f:\{0,1\}^n\to\{0,1\}$ and every
 crossover probability $\alpha\in[0,\frac12]$, $I(f(X);Y)\le1-h(\alpha)$, where $X$ is uniform on
 $\{0,1\}^n$, $Y$ is the output of the binary symmetric channel with crossover probability
-$\alpha$ on input $X$, and $h$ is the binary entropy. (A statement, not a claim of the paper.
-The paper does not state the conjecture explicitly; this is its standard formulation.) -/
+$\alpha$ on input $X$, and $h$ is the binary entropy. (A statement, not a claim of the paper.)
+
+**Discrepancy with the paper.** [DIRX] only names the "most informative Boolean function
+conjecture, also known as Courtade–Kumar conjecture [KC13]" and does not state it. The Lean
+definition uses the standard formulation of [KC13] (mutual information $I(f(X);Y)\le1-h(\alpha)$
+for the binary symmetric channel, $X$ uniform, logarithms base $2$); this is an interpretation,
+not text of the paper. The paper's further claim that it "would be implied by" the Hellinger
+conjecture is not formalized (the general Hellinger conjecture is not stated in [DIRX]; see the
+comment below and `Auto.DIRX.HellingerConjecture`). -/
 def CourtadeKumarConjecture : Prop :=
   ∀ (n : ℕ), 1 ≤ n → ∀ f : ({0,1}^n) → ℝ, (∀ x, f x = 0 ∨ f x = 1) →
     ∀ α ∈ Icc (0 : ℝ) (1 / 2), mutualInfoBSC α f ≤ 1 - binEntropy₂ α
@@ -144,12 +151,11 @@ def CourtadeKumarConjecture : Prop :=
 /-
 The latter would be implied by a stronger conjecture, known as Hellinger conjecture
 \cite{ABCJN17, CGN25}. (The Hellinger conjecture is formalized, in the balanced case used in this
-paper, as `Auto.DIRX.HellingerConjecture` in §5, see \eqref{eqn:hellinger} [(5.1)]. The paper does
-not
-state the general form of the Hellinger conjecture, so the implication to the Courtade–Kumar
-conjecture is recorded only as this comment.) Roughly speaking, these conjectures concern
-optimality questions for Boolean functions under standard noisy-channel models on $\{0,1\}^n$,
-where each bit is independently perturbed.
+paper, as `Auto.DIRX.HellingerConjecture` in §5, see \eqref{eqn:hellinger} [(5.1)]. The paper
+does not state the general form of the Hellinger conjecture, so the implication to the
+Courtade–Kumar conjecture is recorded only as this comment.) Roughly speaking, these conjectures
+concern optimality questions for Boolean functions under standard noisy-channel models on
+$\{0,1\}^n$, where each bit is independently perturbed.
 In the low-noise limit, the Hellinger conjecture would in particular imply that
 -/
 
@@ -205,7 +211,7 @@ theorem sqrt_sensitivity_indicator (n : ℕ) (A : Set ({0,1}^n)) (x : {0,1}^n) :
 /-- [DIRX], §1, after (1.4): Theorem 1.1 with $|A|=\frac12$ immediately implies (1.4): for
 $|A|=\frac12$, $\mathbf{E}\sqrt{s_{\mathbf{1}_A}}=\mathbf{E}\sqrt{h_A}+\mathbf{E}\sqrt{h_{A^c}}
 \ge\frac12+\frac12=1$. -/
-theorem eqn_1_4_of_thm_1_1 (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) (hA : |A| = 1 / 2) :
+theorem eqn_1_4_of_thm_1_1 (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) (hA : ｜A｜ = 1 / 2) :
     𝐄 (fun x ↦ √(s_{𝟏_{A}} x)) = 𝐄 (fun x ↦ √(h_{A} x)) + 𝐄 (fun x ↦ √(h_{Aᶜ} x)) ∧
       𝐄 (fun x ↦ √(h_{A} x)) ≥ 1 / 2 ∧ 𝐄 (fun x ↦ √(h_{Aᶜ} x)) ≥ 1 / 2 := by
   sorry

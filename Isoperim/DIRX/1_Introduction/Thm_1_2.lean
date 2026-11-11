@@ -45,8 +45,8 @@ $|\nabla(A,B)|=2^{-n}\#\{(x,y)\in\mathcal{E} : x\in A,y\in B\}$, where $\mathcal
 edges of $\{0,1\}^n$. -/
 theorem thm_1_2 (n : ℕ) (hn : 1 ≤ n) (A B W : Set ({0,1}^n))
     (hAB : Disjoint A B) (hAW : Disjoint A W) (hBW : Disjoint B W)
-    (hcover : A ∪ B ∪ W = Set.univ) (hA : |A| = 1 / 2) :
-    |∇(A, B)| + √n * |W| ≥ 1 / 2 := by
+    (hcover : A ∪ B ∪ W = Set.univ) (hA : ｜A｜ = 1 / 2) :
+    |∇(A, B)| + √n * ｜W｜ ≥ 1 / 2 := by
   sorry
 
 /-- [DIRX], §1, Theorem 1.2: this settles the conjecture of Kahn and Park [KP20, Conjecture 1.3]
@@ -71,12 +71,12 @@ $$\tfrac12\le\mathbf{E}\sqrt{h_{B\cup W}}\le\mathbf{E}(h_{B\cup W}\mathbf{1}_B)
 which is no greater than $|\nabla(A,B)|+\sqrt n|W|$. -/
 theorem thm_1_2_chain (n : ℕ) (hn : 1 ≤ n) (A B W : Set ({0,1}^n))
     (hAB : Disjoint A B) (hAW : Disjoint A W) (hBW : Disjoint B W)
-    (hcover : A ∪ B ∪ W = Set.univ) (hBW' : |B ∪ W| = 1 / 2) (hA : |A| = 1 / 2) :
+    (hcover : A ∪ B ∪ W = Set.univ) (hBW' : ｜B ∪ W｜ = 1 / 2) (hA : ｜A｜ = 1 / 2) :
     1 / 2 ≤ 𝐄 (fun x ↦ √(h_{B ∪ W} x)) ∧
     𝐄 (fun x ↦ √(h_{B ∪ W} x)) ≤
       𝐄 (h_{B ∪ W} * 𝟏_{B}) + 𝐄 (fun x ↦ √(h_{B ∪ W} x) * 𝟏_{W} x) ∧
     𝐄 (h_{B ∪ W} * 𝟏_{B}) + 𝐄 (fun x ↦ √(h_{B ∪ W} x) * 𝟏_{W} x) ≤
-      |∇(A, B)| + √n * |W| := by
+      |∇(A, B)| + √n * ｜W｜ := by
   sorry
 
 /-

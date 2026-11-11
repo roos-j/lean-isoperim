@@ -110,9 +110,17 @@ def PoincareConstBoolConjecture : Prop := ∀ p : ℝ, 1 ≤ p → poincareConst
 /-
 It is conjectured that indicator functions of half-cubes extremize this inequality, which would
 mean that $C_{B,p}=1$ for all $p\ge 1$.
-We obtain an improvement of the best known lower bound for $C_{B,1}$ as well as the sharp bound
-$C_{B,p} =1$ for $p\geq 2\beta_0$.
 -/
+
+/-- [DIR], §1.5, before Theorem 1.10: "We obtain an improvement of the best known lower bound
+for $C_{B,1}$ as well as the sharp bound $C_{B,p}=1$ for $p\geq 2\beta_0$": $C_{B,p}=1$ for
+$p\ge2\beta_0$, and $C_{B,1}\ge0.997>\sqrt{2^{3/2}-2}$ (the previous best bound, see
+`Auto.DIR.poincareConstBool_one_bim`). This is a consequence of Theorem 1.10 below (together
+with the half-cube example). -/
+theorem poincareConstBool_bounds :
+    (∀ p : ℝ, 2 * β₀ ≤ p → poincareConstBool p = 1) ∧
+    poincareConstBool 1 ≥ 0.997 ∧ (0.997 : ℝ) > √(2 ^ (3 / 2 : ℝ) - 2) := by
+  sorry
 
 /-- A *half-cube* of $\{0,1\}^n$: a set $\{x : x_i=a\}$ for some coordinate $i$ and bit $a$
 ([DIR], Theorem 1.10). -/
@@ -121,7 +129,16 @@ def IsHalfCube {n : ℕ} (A : Set ({0,1}^n)) : Prop := ∃ (i : Fin n) (a : ZMod
 /-- **Theorem 1.10** ([DIR]). For all $p\ge2\beta_0=1.00114$ and $f:\{0,1\}^n\to\{0,1\}$,
 $$\|\nabla f\|_p\ge\|f-\mathbf{E}f\|_p. \tag{1.7}$$
 Equality is achieved when $f=\mathbf{1}_A$ for a half-cube $A$. Moreover,
-$\|\nabla f\|_1\ge0.997\|f-\mathbf{E}f\|_1$. -/
+$\|\nabla f\|_1\ge0.997\|f-\mathbf{E}f\|_1$.
+
+**Discrepancy with the paper.** (1.7) is claimed for all $p\ge2\beta_0$, but the proof in §7
+only covers $p=2\beta_0$: it combines (7.1) with $\mathbf{E}h_A^{p/2}\ge b_{p/2}(|A|)$, which is
+available only for $p/2=\beta_0$ ((2.6)) and, with the factor $0.997$, for $p=1$ ((2.7)), and
+Proposition 7.1 is stated for $\beta=p/2\in[\frac12,\beta_0]$. The range $p>2\beta_0$ is not
+argued: for $p\in(2\beta_0,2]$ it would need the omitted Remarks 2.3 and 7.2, for $p>2$ nothing
+is said, and neither Hölder's inequality (Lemma 5.1) nor $h_A^{p/2}\ge h_A^{\beta_0}$ reduces it
+to $p=2\beta_0$. The Lean statement is kept as in the paper; the case $p>2\beta_0$ of the first
+conjunct is an unresolved gap. -/
 theorem thm_1_10 (n : ℕ) (hn : 1 ≤ n) :
     (∀ p : ℝ, 2 * β₀ ≤ p → ∀ f : ({0,1}^n) → ℝ, (∀ x, f x = 0 ∨ f x = 1) →
       ‖∇f‖_[p] ≥ ‖f - fun _ ↦ 𝐄 f‖_[p]) ∧

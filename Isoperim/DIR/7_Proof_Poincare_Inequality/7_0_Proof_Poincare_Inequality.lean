@@ -6,7 +6,8 @@ Authors: Claude
 module
 
 public import Isoperim.DIR.«1_Introduction».Thm_1_10
-public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_1_Case_J»
+public import Isoperim.DIR.«3_Variants_Bobkov_Inequality».«3_0_Variants_Bobkov_Inequality»
+public import Isoperim.DIR.«4_Computer_Assisted_Proofs».«4_1_Dyadic_Partitioning»
 
 /-!
 # [DIR] §7 Proof of the Poincaré inequality
@@ -21,6 +22,18 @@ subsections; its unnumbered cases I–III are Lean sections).
 
 * `G_P β x` : $G_{P,\beta}(x)$; `g_P_1 x`, `g_P_2_lo xl xu`, `g_P_3 β x`, `g_P_3_lo xl xu` : the
   auxiliary functions and tight lower bounds of the proof of Proposition 7.1.
+
+## Derivatives at endpoints
+
+In Case III the paper evaluates $\partial_xG_{P,\beta}$ and $J'(1-x)$ on the closed interval
+$x\in[\frac14,\frac12]$. The Lean function `G_P β` is not differentiable at $\frac14$ (where
+$b_\beta$ switches from $L_\beta$ to $Q_\beta$) nor at $\frac12$ (where it has a symmetric
+corner), and the values of `J` left of $\frac12$ are junk. Therefore $g_{P,3,\beta}$ is defined
+with the derivative within $[\frac14,\frac12]$ (one-sided at the endpoints, i.e. the derivative of
+the branch $Q_\beta(x)+J(1-x)$ used by the paper), and $J'$ is written as the derivative of
+$J_{w_0}$ (`deriv (Jw w₀)`), which equals $J'$ on $(\frac12,1)$ by (3.4) and is the one-sided
+derivative of $J$ at $\frac12$. (At $x=1$, i.e. $J'(1)=-\infty$ in the paper, no Lean statement
+evaluates $J'$.)
 -/
 
 @[expose] public section
@@ -43,8 +56,8 @@ theorem boolean_eq_indicator (n : ℕ) (f : ({0,1}^n) → ℝ) (hf : ∀ x, f x 
 /-- [DIR], §7: for $f=\mathbf{1}_A$, $\mathbf{E}f=|A|=2^{-n}\#A$ and
 $\|f-\mathbf{E}f\|_p^p=|A|^p(1-|A|)+|A|(1-|A|)^p$ (for $p>0$). -/
 theorem indicator_norms (n : ℕ) (A : Set ({0,1}^n)) (p : ℝ) (hp : 0 < p) :
-    𝐄 𝟏_{A} = |A| ∧ |A| = (2 : ℝ)⁻¹ ^ n * A.ncard ∧
-    ‖𝟏_{A} - fun _ ↦ 𝐄 𝟏_{A}‖_[p] ^ p = |A| ^ p * (1 - |A|) + |A| * (1 - |A|) ^ p := by
+    𝐄 𝟏_{A} = ｜A｜ ∧ ｜A｜ = (2 : ℝ)⁻¹ ^ n * A.ncard ∧
+    ‖𝟏_{A} - fun _ ↦ 𝐄 𝟏_{A}‖_[p] ^ p = ｜A｜ ^ p * (1 - ｜A｜) + ｜A｜ * (1 - ｜A｜) ^ p := by
   sorry
 
 /-
@@ -65,8 +78,8 @@ Set $p=2\beta$.
 $A\subset\{0,1\}^n$), then
 $\|\nabla f\|_p^p\ge2^{-2\beta}(B(|A|)+B(1-|A|))$ for $f=\mathbf{1}_A$. -/
 theorem grad_norm_ge (n : ℕ) (β : ℝ) (hβ : 0 < β) (B : ℝ → ℝ)
-    (hB : ∀ A : Set ({0,1}^n), 𝐄 h_{A} ^ β ≥ B |A|) (A : Set ({0,1}^n)) :
-    ‖∇𝟏_{A}‖_[2 * β] ^ (2 * β) ≥ 2 ^ (-(2 * β)) * (B |A| + B (1 - |A|)) := by
+    (hB : ∀ A : Set ({0,1}^n), 𝐄 h_{A} ^ β ≥ B ｜A｜) (A : Set ({0,1}^n)) :
+    ‖∇𝟏_{A}‖_[2 * β] ^ (2 * β) ≥ 2 ^ (-(2 * β)) * (B ｜A｜ + B (1 - ｜A｜)) := by
   sorry
 
 /-
@@ -167,7 +180,15 @@ noncomputable def g_P_2_lo (xl xu : ℝ) : ℝ :=
 $\underline{g_{P,2}}$: it bounds $G_{P,\beta}(x)$ from below for all $\beta\in[\frac12,\beta_0]$
 and $x\in[\underline x,\overline x]\subset[\frac1{64},\frac14]$, and it is a tight lower bound
 (in the sense of §4.1) of its diagonal
-$x\mapsto2^{-2\beta_0}(L_{\frac12}(x)+J(1-x))-2x(1-x)$. -/
+$x\mapsto2^{-2\beta_0}(L_{\frac12}(x)+J(1-x))-2x(1-x)$.
+
+**Discrepancy with the paper.** The paper calls $\underline{g_{P,2}}$ "a tight lower bound for
+$G_{P,\beta}(x)$". It is a lower bound uniformly in $\beta\in[\frac12,\beta_0]$, but it is not
+tight in the sense of §4.1 for any $G_{P,\beta}$: as $\overline x-\underline x\to0$ it tends to
+$2^{-2\beta_0}(L_{\frac12}(x)+J(1-x))-2x(1-x)\ne G_{P,\beta}(x)$. Only the lower bound property is
+needed (the 'if' part of Fact 4.1, applied to the diagonal). The Lean statement records the
+uniform lower bound and tightness for the diagonal; it does not claim tightness for
+$G_{P,\beta}$. -/
 theorem g_P_2_lo_tight :
     (∀ β ∈ Icc (1 / 2) β₀, ∀ xl xu x : ℝ, xl ∈ Icc (1 / 64) (1 / 4) → xu ∈ Icc (1 / 64) (1 / 4) →
       x ∈ Icc xl xu → G_P β x ≥ g_P_2_lo xl xu) ∧
@@ -198,27 +219,30 @@ theorem prop_7_1_case_III_eq (β : ℝ) (x : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) 
   sorry
 
 /-- The function $g_{P,3,\beta}(x)=-\partial_xG_{P,\beta}(x)$ ([DIR], proof of Proposition 7.1,
-Case III). -/
-noncomputable def g_P_3 (β x : ℝ) : ℝ := -deriv (G_P β) x
+Case III), for $x\in[\frac14,\frac12]$; the derivative is taken within $[\frac14,\frac12]$, so it is
+one-sided at the endpoints (see the module docstring). -/
+noncomputable def g_P_3 (β x : ℝ) : ℝ := -derivWithin (G_P β) (Icc (1 / 4) (1 / 2)) x
 
 /-- [DIR], proof of Proposition 7.1, Case III: it will suffice to show that the function is
 decreasing in $x$, i.e. that $g_{P,3,\beta}(x)=-\partial_xG_{P,\beta}(x)>0$ for all
 $x\in[\frac14,\frac12]$, $\beta\in[\frac12,\beta_0]$. Calculate
 $$g_{P,3,\beta}(x)=-2^{-2\beta}Q'_\beta(x)+2^{-2\beta}J'(1-x)+2\beta x^{2\beta-1}(1-x)-x^{2\beta}
-+(1-x)^{2\beta}-2\beta x(1-x)^{2\beta-1}.$$ -/
-theorem g_P_3_formula (β : ℝ) (hβ : β ∈ Icc (1 / 2) β₀) (x : ℝ) (hx : x ∈ Ioo (1 / 4 : ℝ) (1 / 2)) :
-    g_P_3 β x = -2 ^ (-(2 * β)) * deriv (Q β) x + 2 ^ (-(2 * β)) * deriv J (1 - x) +
++(1-x)^{2\beta}-2\beta x(1-x)^{2\beta-1}.$$
+($J'$ is the derivative of $J_{w_0}$, see the module docstring.) -/
+theorem g_P_3_formula (β : ℝ) (hβ : β ∈ Icc (1 / 2) β₀) (x : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
+    g_P_3 β x = -2 ^ (-(2 * β)) * deriv (Q β) x + 2 ^ (-(2 * β)) * deriv (Jw w₀) (1 - x) +
       2 * β * x ^ (2 * β - 1) * (1 - x) - x ^ (2 * β) + (1 - x) ^ (2 * β) -
       2 * β * x * (1 - x) ^ (2 * β - 1) := by
   sorry
 
 /-- [DIR], proof of Proposition 7.1, Case III: $J'(1-x)$ is increasing for $x\in[0,\frac12]$,
 positive if $1-x<x_0$ and negative if $1-x>x_0$; also $Q'_\beta(x)$ is decreasing in $x$,
-positive and decreasing in $\beta$ by Lemma 5.8. -/
+positive and decreasing in $\beta$ by Lemma 5.8. ($J'$ is the derivative of $J_{w_0}$; the point
+$x=0$, where $J'(1)=-\infty$, is excluded.) -/
 theorem prop_7_1_case_III_mono :
-    MonotoneOn (fun x ↦ deriv J (1 - x)) (Icc 0 (1 / 2)) ∧
-    (∀ x ∈ Icc (0 : ℝ) (1 / 2), 1 - x < x₀ → deriv J (1 - x) > 0) ∧
-    (∀ x ∈ Ico (0 : ℝ) (1 / 2), 1 - x > x₀ → deriv J (1 - x) < 0) ∧
+    MonotoneOn (fun x ↦ deriv (Jw w₀) (1 - x)) (Ioc 0 (1 / 2)) ∧
+    (∀ x ∈ Ioc (0 : ℝ) (1 / 2), 1 - x < x₀ → deriv (Jw w₀) (1 - x) > 0) ∧
+    (∀ x ∈ Ioc (0 : ℝ) (1 / 2), 1 - x > x₀ → deriv (Jw w₀) (1 - x) < 0) ∧
     (∀ β ∈ Icc (1 / 2) β₀, AntitoneOn (deriv (Q β)) (Icc (1 / 4) (1 / 2))) ∧
     (∀ β ∈ Icc (1 / 2) β₀, ∀ x ∈ Icc (1 / 4 : ℝ) (1 / 2), deriv (Q β) x > 0) ∧
     (∀ x ∈ Icc (1 / 4 : ℝ) (1 / 2), AntitoneOn (fun β ↦ deriv (Q β) x) (Icc (1 / 2) β₀)) := by
@@ -230,17 +254,27 @@ $$\underline{g_{P,3}}(\underline x,\overline x)=-2^{-1}Q'_{\frac12}(\underline x
 +2^{-2\beta_0}J'(1-\underline x)\mathbf{1}_{1-\underline x<x_0}
 -2^{-1}\overline{|J'|}(1-\overline x,1-\underline x)\mathbf{1}_{\text{not }1-\underline x<x_0}
 +\underline x^{2\beta_0-1}(1-\overline x)-\overline x+(1-\overline x)^{2\beta_0}
--2\beta_0\overline x.$$ -/
+-2\beta_0\overline x.$$
+Here $\overline{|J'|}(\underline y,\overline y)=\max(|J'(\underline y)|,|J'(\overline y)|)$ is the
+upper enclosure of $|J'|$ of §6.1.1 (`Auto.DIR.absDJ_hi`), written out with $J'$ the derivative of
+$J_{w_0}$ (see the module docstring), since $1-\overline x$ may equal $\frac12$. -/
 noncomputable def g_P_3_lo (xl xu : ℝ) : ℝ :=
-  -2⁻¹ * deriv (Q (1 / 2)) xl + 2 ^ (-(2 * β₀)) * deriv J (1 - xl) * (if 1 - xl < x₀ then 1 else 0)
-    - 2⁻¹ * absDJ_hi (1 - xu) (1 - xl) * (if 1 - xl < x₀ then 0 else 1)
+  -2⁻¹ * deriv (Q (1 / 2)) xl
+    + 2 ^ (-(2 * β₀)) * deriv (Jw w₀) (1 - xl) * (if 1 - xl < x₀ then 1 else 0)
+    - 2⁻¹ * max (abs (deriv (Jw w₀) (1 - xu))) (abs (deriv (Jw w₀) (1 - xl))) *
+      (if 1 - xl < x₀ then 0 else 1)
     + xl ^ (2 * β₀ - 1) * (1 - xu) - xu + (1 - xu) ^ (2 * β₀) - 2 * β₀ * xu
 
 /-- [DIR], proof of Proposition 7.1, Case III: a tight lower bound for $g_{P,3,\beta}$ is
 therefore given by $\underline{g_{P,3}}$: it bounds $g_{P,3,\beta}(x)$ from below for all
 $\beta\in[\frac12,\beta_0]$ and $x\in[\underline x,\overline x]\subset[\frac14,\frac12]$, and it is
-a
-tight lower bound (in the sense of §4.1) of its diagonal $x\mapsto\underline{g_{P,3}}(x,x)$. -/
+a tight lower bound (in the sense of §4.1) of its diagonal $x\mapsto\underline{g_{P,3}}(x,x)$.
+
+**Discrepancy with the paper.** As for $\underline{g_{P,2}}$, the paper calls
+$\underline{g_{P,3}}$ "a tight lower bound for $g_{P,3,\beta}$", but it is only a lower bound
+uniform in $\beta\in[\frac12,\beta_0]$: its diagonal (e.g. containing $-\frac12Q'_{\frac12}(x)$
+and $-\frac12|J'(1-x)|$) differs from $g_{P,3,\beta}(x)$ for every $\beta$. The Lean statement
+records the uniform lower bound and tightness for the diagonal. -/
 theorem g_P_3_lo_tight :
     (∀ β ∈ Icc (1 / 2) β₀, ∀ xl xu x : ℝ, xl ∈ Icc (1 / 4) (1 / 2) → xu ∈ Icc (1 / 4) (1 / 2) →
       x ∈ Icc xl xu → g_P_3 β x ≥ g_P_3_lo xl xu) ∧

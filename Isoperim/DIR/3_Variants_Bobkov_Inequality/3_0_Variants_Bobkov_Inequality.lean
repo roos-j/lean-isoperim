@@ -56,8 +56,21 @@ theorem M_indicator (n : ℕ) (A : Set ({0,1}^n)) : M 𝟏_{A} = fun x ↦ √(h
 $B:\mathcal{I}\to\mathbb{R}$. If
 $$B(\mathbf{E}f)\le\mathbf{E}\sqrt{B(f)^2+(Mf)^2} \tag{3.1}$$
 holds for all $f:\{0,1\}\to\mathcal{I}$, then it holds for all $f:\{0,1\}^n\to\mathcal{I}$ and
-$n\ge1$. -/
+$n\ge1$.
+
+**Discrepancy with the paper.** The paper allows any real-valued $B:\mathcal{I}\to\mathbb{R}$.
+For sign-changing $B$ the lemma is false: take $\mathcal{I}=[0,1]$, $S=\{0.1,0.2,0.6,0.9,0.45\}$,
+$B=0$ on $S\setminus\{0.45\}$, $B(0.45)=1$ and $B=-2$ on $[0,1]\setminus S$. No two points of $S$
+have their midpoint in $S$ (apart from $x=y$), so the case $n=1$ holds (if the midpoint is in $S$,
+one of $x,y$ is not, and the right-hand side is $\ge1$). But $f$ on $\{0,1\}^2$ with values
+$f(0,0)=0.1$, $f(1,0)=0.2$, $f(0,1)=0.6$, $f(1,1)=0.9$ has $\mathbf{E}f=0.45$, $B(\mathbf{E}f)=1$
+and $\mathbf{E}\sqrt{B(f)^2+(Mf)^2}=\mathbf{E}Mf\approx0.34$. The induction ([Bob97, Lemma 1],
+[BG99, Lemma 2.1]) needs $|B(\mathbf{E}f_j)|\le\mathbf{E}\sqrt{B(f_j)^2+(Mf_j)^2}$ for the
+restrictions $f_j$, i.e. $B\ge0$. All applications in the paper ($L_{1/2}$ on $[0,\frac12]$, $J$
+on $[x_0,1]$) are non-negative. The Lean statement adds the hypothesis $B\ge0$ on
+$\mathcal{I}$. -/
 theorem lemma_3_1 (𝓘 : Set ℝ) (h𝓘 : 𝓘.OrdConnected) (h𝓘0 : 𝓘 ⊆ Ici 0) (B : ℝ → ℝ)
+    (hB : ∀ t ∈ 𝓘, 0 ≤ B t)
     (h1 : ∀ f : ({0,1}^1) → ℝ, (∀ x, f x ∈ 𝓘) →
       B (𝐄 f) ≤ 𝐄 (fun x ↦ √(B (f x) ^ 2 + (M f x) ^ 2)))
     (n : ℕ) (hn : 1 ≤ n) (f : ({0,1}^n) → ℝ) (hf : ∀ x, f x ∈ 𝓘) :
@@ -73,8 +86,13 @@ written as
 
 /-- **(3.2)** ([DIR], §3). For $n=1$, (3.1) may be written as
 $$B\Big(\frac{x+y}2\Big)\le\frac12\sqrt{(y-x)^2+B(y)^2}+\frac12B(x),$$
-where $\max(f(0),f(1))=y\in\mathcal{I}$ and $\min(f(0),f(1))=x\in\mathcal{I}$. -/
-theorem eqn_3_2 (B : ℝ → ℝ) (f : ({0,1}^1) → ℝ) :
+where $\max(f(0),f(1))=y\in\mathcal{I}$ and $\min(f(0),f(1))=x\in\mathcal{I}$.
+
+**Discrepancy with the paper.** For $n=1$ the right-hand side of (3.1) equals
+$\frac12\sqrt{(y-x)^2+B(y)^2}+\frac12|B(x)|$, so the rewriting as (3.2) needs $B(x)\ge0$
+(for $B(x)<0$, (3.2) is strictly stronger than (3.1)). The Lean statement assumes
+$B(\min(f(0),f(1)))\ge0$ (cf. the hypothesis $B\ge0$ added to Lemma 3.1). -/
+theorem eqn_3_2 (B : ℝ → ℝ) (f : ({0,1}^1) → ℝ) (hB : 0 ≤ B (min (f 0) (f 1))) :
     B (𝐄 f) ≤ 𝐄 (fun x ↦ √(B (f x) ^ 2 + (M f x) ^ 2)) ↔
       B ((min (f 0) (f 1) + max (f 0) (f 1)) / 2) ≤
         1 / 2 * √((max (f 0) (f 1) - min (f 0) (f 1)) ^ 2 + B (max (f 0) (f 1)) ^ 2) +
@@ -108,9 +126,9 @@ $\mathbf{E}f=\frac12|A|$ and the inequality becomes
 $$L(\tfrac12|A|)\le\tfrac12\mathbf{E}(\mathbf{1}_A\sqrt{1+h_A})
 \le\tfrac12(|A|+\mathbf{E}\sqrt{h_A}).$$ -/
 theorem proof_thm_1_6_chain (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) :
-    𝐄 (fun x ↦ 1 / 2 * 𝟏_{A} x) = 1 / 2 * |A| ∧
-    L (1 / 2) (1 / 2 * |A|) ≤ 1 / 2 * 𝐄 (fun x ↦ 𝟏_{A} x * √(1 + h_{A} x)) ∧
-    1 / 2 * 𝐄 (fun x ↦ 𝟏_{A} x * √(1 + h_{A} x)) ≤ 1 / 2 * (|A| + 𝐄 (fun x ↦ √(h_{A} x))) := by
+    𝐄 (fun x ↦ 1 / 2 * 𝟏_{A} x) = 1 / 2 * ｜A｜ ∧
+    L (1 / 2) (1 / 2 * ｜A｜) ≤ 1 / 2 * 𝐄 (fun x ↦ 𝟏_{A} x * √(1 + h_{A} x)) ∧
+    1 / 2 * 𝐄 (fun x ↦ 𝟏_{A} x * √(1 + h_{A} x)) ≤ 1 / 2 * (｜A｜ + 𝐄 (fun x ↦ √(h_{A} x))) := by
   sorry
 
 /-
@@ -155,9 +173,14 @@ theorem eqn_3_3 (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) 1) (hy : y ∈ Icc (0 : �
   sorry
 
 /-- [DIR], §3: the function $I$ is also characterized by the conditions $I(0)=I(1)=0$,
-$I\cdot I''=-1$: it satisfies them, and it is the unique continuous function on $[0,1]$ that is
-twice differentiable on $(0,1)$ and satisfies them. (The characterization requires $I\ge0$,
-which is implicit in the paper: $-I$ satisfies the same two conditions.) -/
+$I\cdot I''=-1$: it satisfies them, and it is the unique non-negative continuous function on
+$[0,1]$ that is $C^2$ on $(0,1)$ and satisfies them.
+
+**Discrepancy with the paper.** The paper says "$I$ is also characterized by the conditions
+$I(0)=I(1)=0$, $I\cdot I''=-1$". Without a sign condition this is false: $-I$ satisfies the same
+two conditions, since $(-I)(-I)''=I\,I''=-1$. The Lean statement adds the implicit hypothesis
+$g\ge0$ on $[0,1]$ for the competitor $g$ (and the regularity: $g$ continuous on $[0,1]$, $C^2$ on
+$(0,1)$). -/
 theorem I_characterization :
     (I 0 = 0 ∧ I 1 = 0 ∧ ∀ x ∈ Ioo (0 : ℝ) 1, I x * deriv (deriv I) x = -1) ∧
     ∀ g : ℝ → ℝ, ContinuousOn g (Icc 0 1) → ContDiffOn ℝ 2 g (Ioo 0 1) →
@@ -423,8 +446,8 @@ $$\mathbf{E}\sqrt{h_A}\ge(1-x_0)^{-1}\big(J((1-x_0)|A|+x_0)-\|J\|_\infty(1-|A|)\
 where $\|J\|_\infty=\sup_{[\frac12,1]}|J|$. -/
 theorem rem_3_7_isoperim (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) :
     𝐄 (fun x ↦ √(h_{A} x)) ≥
-      (1 - x₀)⁻¹ * (J ((1 - x₀) * |A| + x₀) - sSup ((fun x ↦ |J x|) '' Icc (1 / 2) 1) * (1 -
-          |A|)) := by
+      (1 - x₀)⁻¹ * (J ((1 - x₀) * ｜A｜ + x₀) - sSup ((fun x ↦ |J x|) '' Icc (1 / 2) 1) * (1 -
+          ｜A｜)) := by
   sorry
 
 /-- [DIR], **Remark 3.7**, last claim: the right-hand side

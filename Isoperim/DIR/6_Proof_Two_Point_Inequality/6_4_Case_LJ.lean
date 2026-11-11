@@ -141,9 +141,16 @@ theorem eqn_6_20 : deriv (deriv (fun x ↦ g_LJ x 1)) (1 / 4) ≤ -0.7 := by
   sorry
 
 /-- [DIR], proof of Proposition 6.8: $J^{-1}$ is increasing on $[\frac34,1]$ (stated on
-$[\frac34,1)$, as $J(1)=0$). (What is used is that $J^{-1}$ is increasing on $[1-\frac{w_0}2,1)$,
-which contains the values $\frac{x+y}2$ of the current case; see
-`Auto.DIR.J_inv_monotoneOn_Ico_x₀`.) -/
+$[\frac34,1)$, as $J(1)=0$ and $0^{-1}=0$ in Lean).
+
+**Discrepancy with the paper.** The statement is true, but it is not what the argument needs.
+The paper deduces $\partial_x^2g_{LJ}(\frac14,y)\le\partial_x^2g_{LJ}(\frac14,1)\le-0.7$ for
+$y\in[\frac34,1]$ from it, where $\partial_x^2g_{LJ}(\frac14,y)=L_{\frac12}''(\frac14)
++J(\frac{1/4+y}2)^{-1}$ involves $J^{-1}$ at $\frac{1/4+y}2\in[\frac12,\frac58]$, not at points of
+$[\frac34,1]$. In the current case ($\frac{x+y}2\ge x_0=1-\frac{w_0}2$, hence also
+$\frac{1/4+y}2\ge x_0$) what is used is that $J^{-1}$ is increasing on $[x_0,\frac58]$; this holds
+since $J$ is positive and decreasing on $[x_0,1)$, see `Auto.DIR.J_inv_monotoneOn_Ico_x₀`. Both
+statements are recorded. -/
 theorem J_inv_monotoneOn : MonotoneOn (fun x ↦ (J x)⁻¹) (Ico (3 / 4) 1) := by
   sorry
 

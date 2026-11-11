@@ -32,7 +32,7 @@ where $f(x)\sim g(x)$ as $x\to x_*$ means $\lim_{x\to x_*}\frac{f(x)}{g(x)}=1$ (
 along $x\in\mathcal{Q}$, where $\mathcal{B}_{\frac12}$ is defined). -/
 theorem thm_1_6 :
     (∀ (n : ℕ), 1 ≤ n → ∀ A : Set ({0,1}^n),
-      𝐄 (fun x ↦ √(h_{A} x)) ≥ |A| * √(log₂ (1 / |A|) + 1) - |A|) ∧
+      𝐄 (fun x ↦ √(h_{A} x)) ≥ ｜A｜ * √(log₂ (1 / ｜A｜) + 1) - ｜A｜) ∧
     Tendsto (fun x ↦ 𝓑 (1 / 2) x / (x * √(log₂ (1 / x)))) (𝓝[𝒬 ∩ Set.Ioi 0] 0) (𝓝 1) := by
   sorry
 

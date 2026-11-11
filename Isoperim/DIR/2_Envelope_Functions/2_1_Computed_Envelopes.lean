@@ -60,6 +60,17 @@ noncomputable def envelope (β x : ℝ) : ℝ :=
 
 @[inherit_doc] notation "𝔅" => envelope
 
+/-- [DIR], §2.1, implicit in "Proposition 2.1 implies $\mathcal{B}_\beta\ge\mathfrak{B}_\beta$"
+(cited from Kahn–Park [KP20], see Proposition 2.1): the dyadic version of Proposition 2.1. If
+$B:[0,1]\to[0,\infty)$, $B(0)=B(1)=0$ and (2.2) holds for all $0\le x\le y\le1$ with
+$x,y\in\mathcal{Q}$, then $\mathcal{B}_\beta\ge B$ on $\mathcal{Q}$. (The induction on $n$ only
+evaluates $B$ at dyadic points.) -/
+theorem prop_2_1_dyadic (β : ℝ) (hβ : 1 / 2 ≤ β) (B : ℝ → ℝ)
+    (hB : ∀ x ∈ Icc (0 : ℝ) 1, 0 ≤ B x) (hB0 : B 0 = 0) (hB1 : B 1 = 0)
+    (h22 : ∀ x y : ℝ, x ∈ 𝒬 → y ∈ 𝒬 → 0 ≤ x → x ≤ y → y ≤ 1 → G β B x y ≥ 0) :
+    ∀ x ∈ 𝒬, 𝓑 β x ≥ B x := by
+  sorry
+
 /-- [DIR], §2.1, after Definition 2.7: by the above observation, the $\beta$-envelope satisfies
 (2.2) (for $0\le x\le y\le1$ with $x,y\in\mathcal{Q}$). -/
 theorem envelope_twopt (β : ℝ) (hβ : 1 / 2 ≤ β) (x y : ℝ) (hxQ : x ∈ 𝒬) (hyQ : y ∈ 𝒬)
@@ -67,7 +78,15 @@ theorem envelope_twopt (β : ℝ) (hβ : 1 / 2 ≤ β) (x y : ℝ) (hxQ : x ∈ 
   sorry
 
 /-- [DIR], §2.1, after Definition 2.7: Proposition 2.1 implies
-$\mathcal{B}_\beta\ge\mathfrak{B}_\beta$ (on $\mathcal{Q}$). -/
+$\mathcal{B}_\beta\ge\mathfrak{B}_\beta$ (on $\mathcal{Q}$).
+
+**Discrepancy with the paper.** Proposition 2.1 as stated assumes (2.2) for all real
+$0\le x\le y\le1$, whereas $\mathfrak{B}_\beta$ (and every function in Definition 2.7) is only
+known to satisfy (2.2) for $x,y\in\mathcal{Q}$; outside $\mathcal{Q}$ the supremum in
+Definition 2.7 is $+\infty$ (junk value $0$ in Lean). So the deduction needs the dyadic version
+of Proposition 2.1, which holds by the same induction (only dyadic points occur) and is stated
+above as `Auto.DIR.prop_2_1_dyadic`; it also gives the boundedness on $\mathcal{Q}$ of the family
+in Definition 2.7 needed for `Auto.DIR.envelope_twopt`. -/
 theorem isoProfile_ge_envelope (β : ℝ) (hβ : 1 / 2 ≤ β) (x : ℝ) (hx : x ∈ 𝒬) :
     𝓑 β x ≥ 𝔅 β x := by
   sorry

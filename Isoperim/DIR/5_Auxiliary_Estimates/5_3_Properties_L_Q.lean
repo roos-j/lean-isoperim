@@ -297,9 +297,15 @@ section Proof_Lemma_5_8
 
 /-- [DIR], proof of Lemma 5.8 (2): from (5.6) one can write
 $$Q'_\beta(x)=\tfrac23(1-2x)(2^{\beta+2}-3+4\alpha_1x)+\tfrac83\alpha_1x(1-x)>0$$
-for $x\in[0,\frac12]$ and $\beta\in[\frac12,\log_2(\frac32)]$. -/
+for $x\in[0,\frac12]$ and $\beta\in[\frac12,\log_2(\frac32)]$.
+
+**Discrepancy with the paper.** The paper states the positivity for the closed range
+$\beta\in[\frac12,\log_2(\frac32)]$, but at $\beta=\log_2(\frac32)$ (where $\alpha_1=0$) and
+$x=\frac12$ the right-hand side vanishes, so strict positivity fails there. Lemma 5.8 itself
+assumes the half-open range $[\frac12,\log_2(\frac32))$, on which the claim is true; the Lean
+statement uses this half-open range. -/
 theorem lemma_5_8_2_rewrite (x : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 2)) (β : ℝ)
-    (hβ : β ∈ Icc (1 / 2 : ℝ) (log₂ (3 / 2))) :
+    (hβ : β ∈ Ico (1 / 2 : ℝ) (log₂ (3 / 2))) :
     deriv (Q β) x = 2 / 3 * (1 - 2 * x) * (2 ^ (β + 2) - 3 + 4 * α₁ β * x) +
         8 / 3 * α₁ β * x * (1 - x) ∧
       2 / 3 * (1 - 2 * x) * (2 ^ (β + 2) - 3 + 4 * α₁ β * x) + 8 / 3 * α₁ β * x * (1 - x) > 0 := by
@@ -308,10 +314,15 @@ theorem lemma_5_8_2_rewrite (x : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 2)) (β : �
 /-- [DIR], proof of Lemma 5.8 (2): $\partial_\beta
 Q'_\beta(x)=\frac13(\log2)2^{3+\beta}(6x^2-6x+1)$,
 which is negative if $x\in[\frac14,\frac12]$, because
-$6x^2-6x+1=(x-\frac12-\frac{\sqrt3}6)(x-\frac12+\frac{\sqrt3}6)$. -/
+$6x^2-6x+1=(x-\frac12-\frac{\sqrt3}6)(x-\frac12+\frac{\sqrt3}6)$.
+
+**Discrepancy with the paper.** The displayed factorization is missing the leading coefficient:
+$(x-\frac12-\frac{\sqrt3}6)(x-\frac12+\frac{\sqrt3}6)=x^2-x+\frac16$, so the correct identity is
+$6x^2-6x+1=6(x-\frac12-\frac{\sqrt3}6)(x-\frac12+\frac{\sqrt3}6)$ (the sign argument is
+unaffected). The Lean statement includes the factor $6$. -/
 theorem lemma_5_8_2_dbeta (x β : ℝ) :
     deriv (fun β' ↦ deriv (Q β') x) β = 1 / 3 * log 2 * 2 ^ (3 + β) * (6 * x ^ 2 - 6 * x + 1) ∧
-    6 * x ^ 2 - 6 * x + 1 = (x - 1 / 2 - √3 / 6) * (x - 1 / 2 + √3 / 6) ∧
+    6 * x ^ 2 - 6 * x + 1 = 6 * (x - 1 / 2 - √3 / 6) * (x - 1 / 2 + √3 / 6) ∧
     (x ∈ Icc (1 / 4) (1 / 2) → 1 / 3 * log 2 * 2 ^ (3 + β) * (6 * x ^ 2 - 6 * x + 1) < 0) := by
   sorry
 
@@ -386,11 +397,24 @@ theorem lemma_5_9_1_quarter_steps :
   sorry
 
 /-- [DIR], proof of Lemma 5.9 (1): therefore $L_\beta'-Q_\beta'$ has a unique zero $\tilde x$ on
-$[0,\frac14]$ (on $(0,\frac14]$); thus $L_\beta-Q_\beta$ has a unique local extreme on this
-interval, which is a maximum since $L_\beta'-Q_\beta'$ is increasing on $[0,\tilde x]$ and
-decreasing on $[\tilde x,\frac14]$. -/
+$[0,\frac14]$ (on $(0,\frac14]$, as $L_\beta'(0)$ is undefined). -/
 theorem lemma_5_9_1_unique_zero :
     ∃! xtilde ∈ Ioc (0 : ℝ) (1 / 4), deriv (L β) xtilde - deriv (Q β) xtilde = 0 := by
+  sorry
+
+/-- [DIR], proof of Lemma 5.9 (1): thus $L_\beta-Q_\beta$ has a unique local extreme on this
+interval, which is a maximum since $L_\beta'-Q_\beta'$ is increasing on $[0,\tilde x]$ and
+decreasing on $[\tilde x,\frac14]$.
+
+**Discrepancy with the paper.** The stated reason is misworded: $L_\beta'-Q_\beta'$ is strictly
+convex and tends to $+\infty$ at $0^+$, so it is *not* increasing on $[0,\tilde x]$. What holds
+(and what the argument needs) is $L_\beta'-Q_\beta'>0$ on $(0,\tilde x)$ and $<0$ on
+$(\tilde x,\frac14]$, i.e. $L_\beta-Q_\beta$ is increasing on $[0,\tilde x]$ and decreasing on
+$[\tilde x,\frac14]$. The Lean statement formalizes this corrected version. -/
+theorem lemma_5_9_1_max :
+    ∃ xtilde ∈ Ioc (0 : ℝ) (1 / 4), deriv (L β) xtilde - deriv (Q β) xtilde = 0 ∧
+      MonotoneOn (fun x ↦ L β x - Q β x) (Icc 0 xtilde) ∧
+      AntitoneOn (fun x ↦ L β x - Q β x) (Icc xtilde (1 / 4)) := by
   sorry
 
 /-- [DIR], proof of Lemma 5.9 (1): together with

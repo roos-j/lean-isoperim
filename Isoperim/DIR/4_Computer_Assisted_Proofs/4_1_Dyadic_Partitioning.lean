@@ -107,7 +107,16 @@ theorem fact_4_1_eps {n : ℕ} (f : (Fin n → ℝ) → ℝ) (fl : (Fin n → �
 
 /-- [DIR], proof of Fact 4.1, 'only if' part: the collection of $\varepsilon_x/2$-neighborhoods
 around each point $x$ forms an open cover of $[a,b]$; by the Heine–Borel theorem there exists a
-finite subcover, which induces an admissible partition. -/
+finite subcover, which induces an admissible partition.
+
+**Discrepancy with the paper.** The paper's argument has a gap: the tightness condition only
+controls $\underline f(\underline x,\overline x)$ for rectangles $[\underline x,\overline x]$
+that *contain* $x$, but a cell of the partition induced by a finite subcover of the
+$\varepsilon_x/2$-neighborhoods lies in some neighborhood of a center $x$ without necessarily
+containing $x$, and $\underline f$ is not assumed monotone under inclusion. The statement is
+nevertheless true: a $\delta$-fine tagged partition exists for the gauge $\delta(x)=\varepsilon_x$
+(Cousin's lemma, proved by repeated bisection), and each of its cells contains its tag. The Lean
+statement is the conclusion of the paper, unchanged. -/
 theorem fact_4_1_only_if {n : ℕ} (f : (Fin n → ℝ) → ℝ) (fl : (Fin n → ℝ) → (Fin n → ℝ) → ℝ)
     (a b : Fin n → ℝ) (hab : IsRectangle a b) (hfl : IsTightLowerBound f fl a b)
     (hf : ∀ x ∈ Icc a b, f x > 0) : ∃ P, IsAdmissiblePartition fl a b P := by
@@ -209,7 +218,14 @@ A finite value of $maxDepth$ ensures that the procedure terminates. (In the Lean
 
 /-- [DIR], §4.1: Fact 4.1 implies that if it is true that $f>0$ holds on $[a,b]$, then the
 procedure will always succeed in producing a proof of this, provided that $maxDepth$ is chosen
-large enough. -/
+large enough.
+
+**Discrepancy with the paper.** Fact 4.1 only gives the existence of *some* admissible
+partition, which need not be dyadic, so it does not by itself imply that
+$\textsc{Partition}_n$ succeeds. The claim is true by the bisection argument (if the procedure
+failed for every $maxDepth$, König's lemma gives a nested sequence of failing dyadic rectangles
+shrinking to a point $x$, contradicting $\varepsilon_x>0$ from the proof of Fact 4.1). The Lean
+statement is the paper's claim, unchanged. -/
 theorem partition_succeeds {n : ℕ} (f : (Fin n → ℝ) → ℝ)
     (fl : (Fin n → ℝ) → (Fin n → ℝ) → ℝ) (a b : Fin n → ℝ) (hab : IsRectangle a b)
     (hfl : IsTightLowerBound f fl a b) (hf : ∀ x ∈ Icc a b, f x > 0) :
