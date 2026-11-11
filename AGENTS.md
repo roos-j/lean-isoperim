@@ -1,6 +1,7 @@
 # Repository instructions
 
-This is a blank Lean library, pinned to `leanprover/lean4:v4.35.0` in
+This Lean library formalizes the papers [DIR] (arXiv:2407.12674) and [DIRX]
+(arXiv:2602.20462); it is pinned to `leanprover/lean4:v4.35.0` in
 `lean-toolchain`. Preserve that pin unless the user requests an upgrade.
 Mathlib and LeanCert are pinned to their `v4.35.0` releases in `lakefile.toml`.
 Preserve compatible dependency pins when adding or updating packages.
@@ -8,8 +9,12 @@ Preserve compatible dependency pins when adding or updating packages.
 ## Layout and validation
 
 - `lakefile.toml` defines the `Isoperim` library and default build target.
-- Put new modules under `Isoperim/` and import public modules from `Isoperim.lean`
-  so `lake build` checks them.
+- The formalization follows the paper-structured layout under `Isoperim/DIR/` and
+  `Isoperim/DIRX/` (one folder per section, one file per subsection or introduction
+  theorem). Import all modules from `Isoperim.lean` so `lake build` checks them.
+- Before working, read `automation/instructions.md` (local conventions, scope, status
+  pointers) and `automation/Status.md`. These local instructions supersede conflicting
+  guidance in the skill; the user's current explicit instructions take precedence over both.
 - Run commands from the repository root: `lake env lean --version`,
   `lake env lean Isoperim/Module.lean`, and finally `lake build`.
 - Keep Lake's generated `lake-manifest.json` tracked when present; do not edit
