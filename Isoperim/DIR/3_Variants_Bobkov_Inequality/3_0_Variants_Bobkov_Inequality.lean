@@ -7,6 +7,7 @@ module
 
 public import Isoperim.DIR.«1_Introduction».Definitions
 public import Isoperim.DIR.«2_Envelope_Functions».Definitions
+public import Isoperim.DIR.«3_Variants_Bobkov_Inequality».«3_0_Variants_Bobkov_Inequality_aux»
 
 /-!
 # [DIR] §3 Variants of Bobkov's inequality
@@ -141,7 +142,18 @@ theorem I_characterization :
     ∀ g : ℝ → ℝ, ContinuousOn g (Icc 0 1) → ContDiffOn ℝ 2 g (Ioo 0 1) →
       (∀ x ∈ Icc (0 : ℝ) 1, 0 ≤ g x) → g 0 = 0 → g 1 = 0 →
       (∀ x ∈ Ioo (0 : ℝ) 1, g x * deriv (deriv g) x = -1) → EqOn g I (Icc 0 1) := by
-  sorry
+  have hI : I = gProf := rfl
+  rw [hI]
+  refine ⟨⟨gProf_zero, gProf_one, fun x hx ↦ gProf_mul_deriv2 hx⟩, ?_⟩
+  intro g hgc hg hg0 hg0' hg1 hgg
+  have hgp : ∀ x ∈ Ioo (0 : ℝ) 1, 0 < g x := by
+    intro x hx
+    refine lt_of_le_of_ne (hg0 x (Ioo_subset_Icc_self hx)) fun h ↦ ?_
+    have := hgg x hx
+    rw [← h, zero_mul] at this; norm_num at this
+  exact eqOn_of_mul_deriv2_eq one_pos hgc continuousOn_gProf hg
+    (contDiffOn_two_of_infty contDiffOn_gProf) hgp (fun x hx ↦ gProf_pos hx) hgg
+    (fun x hx ↦ gProf_mul_deriv2 hx) (by rw [hg0', gProf_zero]) (by rw [hg1, gProf_one])
 
 /-- $J_w(x)=\sqrt2\cdot wI(w^{-1}(1-x))$ for $w>0$ and $x\in[1-w,1]$ ([DIR], §3). -/
 noncomputable def Jw (w x : ℝ) : ℝ := √2 * w * I (w⁻¹ * (1 - x))
@@ -149,12 +161,16 @@ noncomputable def Jw (w x : ℝ) : ℝ := √2 * w * I (w⁻¹ * (1 - x))
 /-- [DIR], §3: $J_w(1)=0$ and $J_w''J_w=-2$ (on $(1-w,1)$). -/
 theorem Jw_spec (w : ℝ) (hw : 0 < w) :
     Jw w 1 = 0 ∧ ∀ x ∈ Ioo (1 - w) 1, deriv (deriv (Jw w)) x * Jw w x = -2 := by
-  sorry
+  have hJ : Jw w = gJw w := rfl
+  rw [hJ]
+  exact ⟨gJw_one w, fun x hx ↦ gJw_deriv2_mul hw hx⟩
 
 /-- [DIR], §3, (3.4) and Corollary 5.12: there is a unique $w_0\in(0,1)$ with
 $J_{w_0}(\frac12)=\frac12$. -/
 theorem existsUnique_w₀ : ∃! w : ℝ, w ∈ Ioo 0 1 ∧ Jw w 2⁻¹ = 2⁻¹ := by
-  sorry
+  have hJ : Jw = gJw := rfl
+  rw [hJ]
+  exact existsUnique_gJw_half
 
 open Classical in
 /-- The constant $w_0$ ([DIR], (3.4)): the value such that $J_{w_0}(\frac12)=\frac12$ (unique in
@@ -163,23 +179,36 @@ noncomputable def w₀ : ℝ := if h : ∃ w : ℝ, w ∈ Ioo 0 1 ∧ Jw w 2⁻�
 
 /-- [DIR], §3: one computes $w_0\in[0.895,0.896]$. -/
 theorem w₀_mem : w₀ ∈ Icc (0.895 : ℝ) 0.896 := by
-  sorry
+  have h : ∃ w : ℝ, w ∈ Ioo 0 1 ∧ Jw w 2⁻¹ = 2⁻¹ := existsUnique_w₀.exists
+  have hs := h.choose_spec
+  rw [w₀, dite_eq_left_of_eq_true (eq_true h)]
+  exact mem_Icc_of_gJw_half_eq hs.1 hs.2
 
 /-- [DIR], §1.3: there is a unique smooth function on $(\frac12,1)$, continuous at the endpoints,
 satisfying $J''J=-2$, $J(\frac12)=\frac12$, $J(1)=0$ (uniqueness on $[\frac12,1]$). -/
 theorem existsUnique_J :
     (∃ f, IsJ f) ∧ ∀ f g, IsJ f → IsJ g → EqOn f g (Icc 2⁻¹ 1) := by
-  sorry
+  obtain ⟨w, hw, -⟩ := existsUnique_w₀
+  exact ⟨⟨gJw w, isJ_gJw hw.1 hw.2⟩, fun f g hf hg ↦ isJ_unique hf hg⟩
 
 /-- [DIR], §2.2: $J(x)$ and $L_\beta(1-x)$ are equal to $\frac12$ at $x=\frac12$. -/
 theorem J_half_eq_L_half (β : ℝ) : J 2⁻¹ = 2⁻¹ ∧ L β (1 - 2⁻¹) = 2⁻¹ := by
-  sorry
+  refine ⟨?_, by norm_num [L, Real.logb_self_eq_one]⟩
+  have h := existsUnique_J.1
+  rw [J, dite_eq_left_of_eq_true (eq_true h)]
+  exact h.choose_spec.2.2.2.1
 
 /-- **(3.4)** ([DIR], §3). With $J$ the function of Theorem 1.7,
 $$J(x)=J_{w_0}(x)$$
 (for $x\in[\frac12,1]$), where $w_0$ is such that $J_{w_0}(\frac12)=\frac12$. -/
 theorem eqn_3_4 (x : ℝ) (hx : x ∈ Icc (2⁻¹ : ℝ) 1) : J x = Jw w₀ x := by
-  sorry
+  have h : ∃ w : ℝ, w ∈ Ioo 0 1 ∧ Jw w 2⁻¹ = 2⁻¹ := existsUnique_w₀.exists
+  have hs := h.choose_spec
+  have hw₀ : w₀ = h.choose := by rw [w₀, dite_eq_left_of_eq_true (eq_true h)]
+  have hJ := existsUnique_J.1
+  have hJJ : IsJ J := by rw [J, dite_eq_left_of_eq_true (eq_true hJ)]; exact hJ.choose_spec
+  rw [hw₀]
+  exact isJ_unique hJJ (isJ_gJw hs.1 hs.2) hx
 
 section Proof_Lemma_3_2
 
@@ -190,13 +219,22 @@ include hI hI0 hII
 /-- [DIR], proof of Lemma 3.2: the first claim follows from $I''=-1/I\le0$. -/
 theorem lemma_3_2_deriv2 (x : ℝ) (hx : x ∈ Ioo a b) :
     deriv (deriv I) x = -(I x)⁻¹ ∧ -(I x)⁻¹ ≤ 0 := by
-  sorry
+  have h := hII x hx
+  have hne : I x ≠ 0 := fun h0 ↦ by rw [h0, zero_mul] at h; norm_num at h
+  refine ⟨?_, neg_nonpos.2 (inv_nonneg.2 (hI0 x hx))⟩
+  field_simp
+  linarith [mul_comm (I x) (deriv (deriv I) x)]
 
 /-- [DIR], proof of Lemma 3.2: $((I')^2)'=2I'I''=-2I'/I$. -/
 theorem lemma_3_2_sq_deriv (x : ℝ) (hx : x ∈ Ioo a b) :
     deriv (fun t ↦ deriv I t ^ 2) x = 2 * deriv I x * deriv (deriv I) x ∧
       2 * deriv I x * deriv (deriv I) x = -2 * deriv I x / I x := by
-  sorry
+  obtain ⟨-, hd2⟩ := contDiffOn_two_differentiableAt isOpen_Ioo hI hx
+  have e := (lemma_3_2_deriv2 I a b hI hI0 hII x hx).1
+  have hne : I x ≠ 0 := fun h0 ↦ by have := hII x hx; rw [h0, zero_mul] at this; norm_num at this
+  refine ⟨?_, ?_⟩
+  · rw [(hd2.hasDerivAt.fun_pow 2).deriv]; ring
+  · rw [e]; field_simp
 
 /-- [DIR], proof of Lemma 3.2:
 $((I')^2)''=-2I''/I+2(I')^2/I^2=2(1+(I')^2)/I^2\ge0$. -/
@@ -206,7 +244,16 @@ theorem lemma_3_2_sq_deriv2 (x : ℝ) (hx : x ∈ Ioo a b) :
       -2 * deriv (deriv I) x / I x + 2 * deriv I x ^ 2 / I x ^ 2 =
         2 * (1 + deriv I x ^ 2) / I x ^ 2 ∧
       2 * (1 + deriv I x ^ 2) / I x ^ 2 ≥ 0 := by
-  sorry
+  have hev : deriv (fun t ↦ deriv I t ^ 2) =ᶠ[𝓝 x] fun t ↦ -2 * deriv I t / I t := by
+    filter_upwards [Ioo_mem_nhds hx.1 hx.2] with t ht
+    obtain ⟨h1, h2⟩ := lemma_3_2_sq_deriv I a b hI hI0 hII t ht
+    rw [h1, h2]
+  obtain ⟨hd1, hd2⟩ := contDiffOn_two_differentiableAt isOpen_Ioo hI hx
+  have hne : I x ≠ 0 := fun h0 ↦ by have := hII x hx; rw [h0, zero_mul] at this; norm_num at this
+  have hD := (hd2.hasDerivAt.const_mul (-2)).fun_div hd1.hasDerivAt hne
+  have e := (lemma_3_2_deriv2 I a b hI hI0 hII x hx).1
+  rw [hev.deriv_eq, hD.deriv]
+  refine ⟨by field_simp; ring, by rw [e]; field_simp, by positivity⟩
 
 end Proof_Lemma_3_2
 
@@ -215,7 +262,35 @@ interval $(a,b)$), then $I$ is concave and $(I')^2$ is convex (there). -/
 theorem lemma_3_2 (I : ℝ → ℝ) (a b : ℝ) (hI : ContDiffOn ℝ 2 I (Ioo a b))
     (hI0 : ∀ x ∈ Ioo a b, 0 ≤ I x) (hII : ∀ x ∈ Ioo a b, I x * deriv (deriv I) x = -1) :
     ConcaveOn ℝ (Ioo a b) I ∧ ConvexOn ℝ (Ioo a b) (fun x ↦ deriv I x ^ 2) := by
-  sorry
+  have hd : ∀ x ∈ Ioo a b, DifferentiableAt ℝ I x ∧ DifferentiableAt ℝ (deriv I) x :=
+    fun x hx ↦ contDiffOn_two_differentiableAt isOpen_Ioo hI hx
+  have hne : ∀ x ∈ Ioo a b, I x ≠ 0 := fun x hx h0 ↦ by
+    have := hII x hx; rw [h0, zero_mul] at this; norm_num at this
+  have hsq : ∀ x ∈ Ioo a b, DifferentiableAt ℝ (fun t ↦ deriv I t ^ 2) x :=
+    fun x hx ↦ (hd x hx).2.pow 2
+  refine ⟨concaveOn_of_deriv2_nonpos (convex_Ioo a b) hI.continuousOn ?_ ?_ ?_,
+    convexOn_of_deriv2_nonneg (convex_Ioo a b)
+      (fun x hx ↦ (hsq x hx).continuousAt.continuousWithinAt) ?_ ?_ ?_⟩
+  · rw [interior_Ioo]; exact fun x hx ↦ (hd x hx).1.differentiableWithinAt
+  · rw [interior_Ioo]; exact fun x hx ↦ (hd x hx).2.differentiableWithinAt
+  · rw [interior_Ioo]
+    intro x hx
+    simp only [Function.iterate_succ, Function.iterate_zero, Function.comp_apply, id]
+    exact (lemma_3_2_deriv2 I a b hI hI0 hII x hx).1 ▸ (lemma_3_2_deriv2 I a b hI hI0 hII x hx).2
+  · rw [interior_Ioo]; exact fun x hx ↦ (hsq x hx).differentiableWithinAt
+  · rw [interior_Ioo]
+    intro x hx
+    have hev : deriv (fun t ↦ deriv I t ^ 2) =ᶠ[𝓝 x] fun t ↦ -2 * deriv I t / I t := by
+      filter_upwards [Ioo_mem_nhds hx.1 hx.2] with t ht
+      obtain ⟨h1, h2⟩ := lemma_3_2_sq_deriv I a b hI hI0 hII t ht
+      rw [h1, h2]
+    exact (((hd x hx).2.const_mul (-2)).div (hd x hx).1 (hne x hx)).congr_of_eventuallyEq
+      hev |>.differentiableWithinAt
+  · rw [interior_Ioo]
+    intro x hx
+    simp only [Function.iterate_succ, Function.iterate_zero, Function.comp_apply, id]
+    obtain ⟨h1, h2, h3⟩ := lemma_3_2_sq_deriv2 I a b hI hI0 hII x hx
+    rw [h1, h2]; exact h3
 
 section Proof_Proposition_3_3
 
@@ -276,7 +351,11 @@ at $x$). -/
 theorem convex_sub_ge (f : ℝ → ℝ) (s : Set ℝ) (hs : IsOpen s) (hf : ConvexOn ℝ s f)
     (x y : ℝ) (hx : x ∈ s) (hy : y ∈ s) (hxy : x ≤ y) (hfx : DifferentiableAt ℝ f x) :
     f y - f x ≥ (y - x) * deriv f x := by
-  sorry
+  rcases hxy.lt_or_eq with h | h
+  · have hs := hf.deriv_le_slope hx hy h hfx
+    rw [slope_def_field, le_div_iff₀ (sub_pos.2 h)] at hs
+    linarith
+  · subst h; simp
 
 /-- [DIR], proof of Proposition 3.3: since $(I')^2$ is convex by Lemma 3.2,
 $I'(c+u)^2-I'(c-u)^2\ge2u((I')^2)'(c-u)$. -/
@@ -326,7 +405,11 @@ theorem rem_3_6 (w : ℝ) (hw : 0 < w) (hw1 : w ≤ 1) :
     (∀ x ∈ Ioo (1 - w / 2) 1, deriv (Jw w) x < 0) ∧
     ∀ x ∈ Ico (1 - w) (1 - w / 2), ∃ y ∈ Ioc x 1,
       √((y - x) ^ 2 + Jw w y ^ 2) + Jw w x < 2 * Jw w ((x + y) / 2) := by
-  sorry
+  have hJ : Jw w = gJw w := rfl
+  rw [hJ]
+  obtain ⟨h1, h2, h3⟩ := deriv_gJw_sign hw
+  refine ⟨h1, h2, h3, fun x hx ↦ ⟨2 - w - x, ⟨by linarith [hx.2], by linarith [hx.1]⟩, ?_⟩⟩
+  exact gJw_reflect_fail hw hx
 
 /-- **Corollary 3.5** ([DIR]). Let $0<w\le1$. Then for all $1-\frac w2\le x\le y\le1$:
 $$\sqrt{(y-x)^2+J_w(y)^2}+J_w(x)\ge2J_w(\tfrac{x+y}2).$$ -/

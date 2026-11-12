@@ -45,7 +45,13 @@ local notation "ε" => εX
 in the paper, needed to make sense of $\mathrm{J}''$). -/
 theorem JX_contDiff :
     ContDiffOn ℝ ∞ J (Ioo (1 - w₁) 1) ∧ ContinuousOn J (Icc (1 - w₁) 1) := by
-  sorry
+  have hw : (0 : ℝ) < w₁ := by norm_num [w₁]
+  have he : ∀ x, J x = (2⁻¹ * (I ((2 * w₁)⁻¹))⁻¹) • gProf (w₁⁻¹ * (1 - x)) := fun x ↦ by
+    simp only [JX, JXw, smul_eq_mul, div_eq_inv_mul]; rfl
+  exact ⟨((contDiffOn_gProf_affine hw).const_smul (2⁻¹ * (I ((2 * w₁)⁻¹))⁻¹)).congr
+      fun x _ ↦ he x,
+    ((continuousOn_gProf_affine hw).const_smul (2⁻¹ * (I ((2 * w₁)⁻¹))⁻¹)).congr
+      fun x _ ↦ he x⟩
 
 /-- [DIRX], §2.2: $\mathrm{J}\cdot\mathrm{J}''=-\gamma$ (on $(1-w_1,1)\supset[\frac12,1)$, where
 $\mathrm{J}$ is smooth). -/

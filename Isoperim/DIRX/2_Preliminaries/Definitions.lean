@@ -74,7 +74,15 @@ noncomputable def JXw (w x : ℝ) : ℝ := 2⁻¹ * (I ((2 * w)⁻¹))⁻¹ * I 
 /-- [DIRX], §2.1: $\mathrm{J}_w(\frac12)=\frac12$ and $\mathrm{J}_w(1)=0$ for $w\in(\frac12,1]$. -/
 theorem JXw_half_one (w : ℝ) (hw : w ∈ Ioc (2⁻¹ : ℝ) 1) :
     JXw w 2⁻¹ = 2⁻¹ ∧ JXw w 1 = 0 := by
-  sorry
+  have hI : I = gProf := rfl
+  have hw0 : 0 < w := by linarith [hw.1]
+  have hu : (2 * w)⁻¹ ∈ Ioo (0 : ℝ) 1 :=
+    ⟨by positivity, inv_lt_one_of_one_lt₀ (by linarith [hw.1])⟩
+  have hp := (gProf_pos hu).ne'
+  refine ⟨?_, by simp [JXw, hI, gProf_zero]⟩
+  simp only [JXw, hI]
+  rw [show (1 - 2⁻¹ : ℝ) / w = (2 * w)⁻¹ by field_simp; norm_num, mul_assoc,
+    inv_mul_cancel₀ hp, mul_one]
 
 /-- **(2.2)** ([DIRX], §2.1). The Bellman function
 $$B_w(x)=\begin{cases}L(x)&x\in[0,\frac14],\\ Q(x)&x\in[\frac14,\frac12],\\
