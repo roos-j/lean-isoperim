@@ -6,6 +6,7 @@ Authors: Claude
 module
 
 public import Isoperim.DIR.«2_Envelope_Functions».Definitions
+public import Isoperim.DIR.«5_Auxiliary_Estimates».«5_2_Two_Point_Inequalities_aux»
 
 /-!
 # [DIR] §5.2 Two-point inequalities
@@ -83,8 +84,8 @@ The paper's literal form is not what Taylor's theorem says, although it is a tru
 $E_1\le\frac12\beta(1-\beta)B(x+h)^{1-2/\beta}h^{2/\beta}$ is unaffected since
 $(1+\tilde a)^{\beta-2}\le1$. The Lean statement uses the Lagrange form. -/
 theorem lemma_5_4_taylor (β : ℝ) (hβ : β ∈ Ioo (0 : ℝ) 1) (a : ℝ) (ha : 0 ≤ a) :
-    ∃ ã ∈ Icc 0 a, (1 + a) ^ β = 1 + β * a - 2⁻¹ * β * (1 - β) * (1 + ã) ^ (β - 2) * a ^ 2 := by
-  sorry
+    ∃ ã ∈ Icc 0 a, (1 + a) ^ β = 1 + β * a - 2⁻¹ * β * (1 - β) * (1 + ã) ^ (β - 2) * a ^ 2 :=
+  one_add_rpow_taylor β a ha
 
 /-- [DIR], proof of Lemma 5.4: letting $a=(hB(x+h)^{-1})^{\frac1\beta}$,
 $$(h^{\frac1\beta}+B(x+h)^{\frac1\beta})^\beta=B(x+h)(1+a)^\beta
@@ -105,7 +106,30 @@ theorem lemma_5_4_expansion (β : ℝ) (hβ : β ∈ Ioo (0 : ℝ) 1) (Bxh h : �
       2⁻¹ * Bxh * β * (1 - β) * ((1 + ã) ^ (β - 2) * ((h * Bxh⁻¹) ^ β⁻¹) ^ 2) ≥ 0 ∧
       (1 + ã) ^ (β - 2) * ((h * Bxh⁻¹) ^ β⁻¹) ^ 2 ≤ ((h * Bxh⁻¹) ^ β⁻¹) ^ 2 ∧
       ((h * Bxh⁻¹) ^ β⁻¹) ^ 2 = h ^ (2 / β) * Bxh ^ (-(2 / β)) := by
-  sorry
+  obtain ⟨hβ0, hβ1⟩ := hβ
+  set A : ℝ := (h * Bxh⁻¹) ^ β⁻¹ with hA
+  have hA0 : 0 ≤ A := rpow_nonneg (mul_nonneg hh (inv_nonneg.2 hB.le)) _
+  obtain ⟨ã, hã, hT⟩ := lemma_5_4_taylor β ⟨hβ0, hβ1⟩ A hA0
+  have hBi : 0 < Bxh ^ β⁻¹ := rpow_pos_of_pos hB _
+  have hAe : A = h ^ β⁻¹ / Bxh ^ β⁻¹ := by
+    rw [hA, mul_rpow hh (inv_nonneg.2 hB.le), inv_rpow hB.le, div_eq_mul_inv]
+  have hBA : Bxh * A = Bxh ^ (1 - β⁻¹) * h ^ β⁻¹ := by
+    rw [hAe, rpow_sub hB, rpow_one]; ring
+  have hR : (1 + ã) ^ (β - 2) ≤ 1 :=
+    rpow_le_one_of_one_le_of_nonpos (by linarith [hã.1]) (by linarith)
+  have hR0 : 0 ≤ (1 + ã) ^ (β - 2) := rpow_nonneg (by linarith [hã.1]) _
+  refine ⟨ã, hã, ?_, ?_, ?_, ?_, ?_⟩
+  · have : h ^ β⁻¹ + Bxh ^ β⁻¹ = Bxh ^ β⁻¹ * (1 + A) := by
+      rw [hAe]; field_simp; ring
+    rw [this, mul_rpow hBi.le (by linarith), rpow_inv_rpow hB.le hβ0.ne']
+  · rw [hT]; linear_combination β * hBA
+  · have : 0 ≤ β * (1 - β) := mul_nonneg hβ0.le (by linarith)
+    have := mul_nonneg hR0 (sq_nonneg A)
+    positivity
+  · nlinarith [sq_nonneg A]
+  · rw [hA, ← rpow_natCast, ← rpow_mul (mul_nonneg hh (inv_nonneg.2 hB.le)),
+      mul_rpow hh (inv_nonneg.2 hB.le), inv_rpow hB.le, ← rpow_neg hB.le]
+    congr 2 <;> push_cast <;> ring
 
 end Proof_Lemma_5_4
 
@@ -127,6 +151,15 @@ theorem lemma_5_4 (𝓘 : Set ℝ) (h𝓘 : 𝓘.OrdConnected) (B : ℝ → ℝ)
     ∃ E₁ : ℝ, G₁ β B x (x + h) =
         β * B (x + h) ^ (1 - β⁻¹) * h ^ β⁻¹ + (B x + B (x + h) - 2 * B (x + 2⁻¹ * h)) - E₁ ∧
       0 ≤ E₁ ∧ E₁ ≤ 2⁻¹ * β * (1 - β) * B (x + h) ^ (1 - 2 / β) * h ^ (2 / β) := by
-  sorry
+  obtain ⟨ã, -, h1, h2, h3, h4, h5⟩ := lemma_5_4_expansion β hβ (B (x + h)) h hBpos hh
+  refine ⟨_, ?_, h3, ?_⟩
+  · rw [G₁, show x + h - x = h by ring, h1, h2, show (x + (x + h)) / 2 = x + 2⁻¹ * h by ring]
+    ring
+  · have hc : 0 ≤ 2⁻¹ * B (x + h) * β * (1 - β) :=
+      mul_nonneg (mul_nonneg (by positivity) hβ.1.le) (by linarith [hβ.2])
+    calc _ ≤ 2⁻¹ * B (x + h) * β * (1 - β) * (h ^ (2 / β) * B (x + h) ^ (-(2 / β))) := by
+          rw [← h5]; exact mul_le_mul_of_nonneg_left h4 hc
+      _ = _ := by
+          rw [show 1 - 2 / β = 1 + -(2 / β) by ring, rpow_add hBpos, rpow_one]; ring
 
 end Auto.DIR

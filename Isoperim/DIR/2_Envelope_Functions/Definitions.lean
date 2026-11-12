@@ -69,7 +69,43 @@ theorem Q_spec (β : ℝ) :
       p.eval 2⁻¹ = 2⁻¹ ∧ p.eval 4⁻¹ = 2 ^ (β - 2)) ∧
     ∀ p : Polynomial ℝ, p.natDegree ≤ 3 → p.eval 0 = 0 → p.eval 1 = 0 →
       p.eval 2⁻¹ = 2⁻¹ → p.eval 4⁻¹ = 2 ^ (β - 2) → ∀ x, p.eval x = Q β x := by
-  sorry
+  set s : ℝ := (2 : ℝ) ^ β with hs
+  have h2 : (2 : ℝ) ^ (β + 2) = 4 * s := by
+    rw [Real.rpow_add two_pos]; norm_num [hs]; ring
+  have h1 : (2 : ℝ) ^ (β + 1) = 2 * s := by
+    rw [Real.rpow_add two_pos]; norm_num [hs]; ring
+  have hm : (2 : ℝ) ^ (β - 2) = s / 4 := by
+    rw [Real.rpow_sub two_pos]; norm_num [hs]
+  -- the explicit cubic
+  set A : ℝ := 4 * s - 3
+  set B : ℝ := 12 - 8 * s
+  set p₀ : Polynomial ℝ := open Polynomial in
+    C (-(2 / 3 * B)) * X ^ 3 + C (2 / 3 * (B - A)) * X ^ 2 + C (2 / 3 * A) * X + C 0 with hp₀
+  have hev : ∀ x, p₀.eval x = Q β x := by
+    intro x; simp only [hp₀, Q, h1, h2, A, B, Polynomial.eval_add,
+      Polynomial.eval_mul, Polynomial.eval_C, Polynomial.eval_pow, Polynomial.eval_X]
+    ring
+  have hP : p₀.natDegree ≤ 3 ∧ p₀.eval 0 = 0 ∧ p₀.eval 1 = 0 ∧
+      p₀.eval 2⁻¹ = 2⁻¹ ∧ p₀.eval 4⁻¹ = 2 ^ (β - 2) := by
+    refine ⟨Polynomial.natDegree_cubic_le, ?_, ?_, ?_, ?_⟩ <;>
+      simp only [hev, Q, h1, h2, hm] <;> ring
+  have huniq : ∀ p : Polynomial ℝ, p.natDegree ≤ 3 → p.eval 0 = 0 → p.eval 1 = 0 →
+      p.eval 2⁻¹ = 2⁻¹ → p.eval 4⁻¹ = 2 ^ (β - 2) → p = p₀ := by
+    intro p hd e0 e1 e2 e4
+    refine Polynomial.eq_of_natDegree_lt_card_of_eval_eq' p p₀ {0, 1, 2⁻¹, 4⁻¹} ?_ ?_
+    · intro i hi
+      simp only [Finset.mem_insert, Finset.mem_singleton] at hi
+      rcases hi with rfl | rfl | rfl | rfl
+      · rw [e0, hP.2.1]
+      · rw [e1, hP.2.2.1]
+      · rw [e2, hP.2.2.2.1]
+      · rw [e4, hP.2.2.2.2]
+    · have : ({0, 1, 2⁻¹, 4⁻¹} : Finset ℝ).card = 4 := by
+        rw [Finset.card_insert_of_notMem, Finset.card_insert_of_notMem,
+          Finset.card_pair] <;> norm_num
+      rw [this]; have := hP.1; omega
+  exact ⟨⟨p₀, hP, fun p hp => huniq p hp.1 hp.2.1 hp.2.2.1 hp.2.2.2.1 hp.2.2.2.2⟩,
+    fun p hd e0 e1 e2 e4 x => by rw [huniq p hd e0 e1 e2 e4, hev]⟩
 
 /-- **(2.3)** ([DIR], §2).
 $$b_\beta(x)=\begin{cases}L_\beta(x)&x\in[0,\frac14],\\ Q_\beta(x)&x\in[\frac14,\frac12],\\
