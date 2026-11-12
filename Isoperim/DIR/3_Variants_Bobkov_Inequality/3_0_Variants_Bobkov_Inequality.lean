@@ -127,16 +127,6 @@ $x\in(0,1)$, with the continuous extension $I(0)=I(1)=0$ (and junk value $0$ out
 Here $\Phi^{-1}$ is the inverse of the bijection $\Phi:\mathbb{R}\to(0,1)$. -/
 noncomputable def I (x : ℝ) : ℝ := if 0 < x ∧ x < 1 then φ (Function.invFun Φ x) else 0
 
-/-- **(3.3)** ([DIR], §3, Bobkov [Bob97]): the Gaussian isoperimetric profile satisfies Bobkov's
-original two-point inequality for the two-sided gradient,
-$$I\Big(\frac{x+y}2\Big)\le\frac12\sqrt{\Big(\frac{y-x}2\Big)^2+I(y)^2}
-+\frac12\sqrt{\Big(\frac{y-x}2\Big)^2+I(x)^2}$$
-for $x,y\in[0,1]$. -/
-theorem eqn_3_3 (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) 1) (hy : y ∈ Icc (0 : ℝ) 1) :
-    I ((x + y) / 2) ≤
-      1 / 2 * √(((y - x) / 2) ^ 2 + I y ^ 2) + 1 / 2 * √(((y - x) / 2) ^ 2 + I x ^ 2) := by
-  sorry
-
 /-- [DIR], §3: the function $I$ is also characterized by the conditions $I(0)=I(1)=0$,
 $I\cdot I''=-1$: it satisfies them, and it is the unique non-negative continuous function on
 $[0,1]$ that is $C^2$ on $(0,1)$ and satisfies them.
@@ -179,15 +169,6 @@ theorem eqn_3_4 (x : ℝ) (hx : x ∈ Icc (1 / 2 : ℝ) 1) : J x = Jw w₀ x := 
 
 /-- [DIR], §3: one computes $w_0\in[0.895,0.896]$. -/
 theorem w₀_mem : w₀ ∈ Icc (0.895 : ℝ) 0.896 := by
-  sorry
-
-/-- [DIR], §3 (Bobkov [Bob97]): $I$ is the pointwise maximal non-negative continuous function
-on $[0,1]$ satisfying (3.3) together with the boundary conditions $I(0)=I(1)=0$. -/
-theorem I_maximal (B : ℝ → ℝ) (hBc : ContinuousOn B (Icc 0 1))
-    (hB0 : ∀ x ∈ Icc (0 : ℝ) 1, 0 ≤ B x) (hB01 : B 0 = 0 ∧ B 1 = 0)
-    (h33 : ∀ x ∈ Icc (0 : ℝ) 1, ∀ y ∈ Icc (0 : ℝ) 1, B ((x + y) / 2) ≤
-      1 / 2 * √(((y - x) / 2) ^ 2 + B y ^ 2) + 1 / 2 * √(((y - x) / 2) ^ 2 + B x ^ 2)) :
-    ∀ x ∈ Icc (0 : ℝ) 1, B x ≤ I x := by
   sorry
 
 /-- **Lemma 3.2** ([DIR]). If a non-negative function $I$ solves $I\cdot I''=-1$ (on an open
@@ -235,16 +216,6 @@ theorem prop_3_3 (I : ℝ → ℝ) (a b : ℝ) (hIc : ContinuousOn I (Icc a b))
     (hII : ∀ x ∈ Ioo a b, deriv (deriv I) x * I x = -1) (hI' : ∀ x ∈ Ioo a b, deriv I x ≤ 0)
     (x y : ℝ) (hx : x ∈ Icc a b) (hy : y ∈ Icc a b) (hxy : x ≤ y) :
     √(1 / 2 * (y - x) ^ 2 + I y ^ 2) + I x ≥ 2 * I ((x + y) / 2) := by
-  sorry
-
-/-- **Remark 3.4** ([DIR]). The crucial difference to [Bob97] is the additional requirement that
-$I'\le0$. This requirement is necessary: the conclusion fails if it does not hold. (There is a
-non-negative $I$ with $I''I=-1$ on an interval for which (3.5) fails.) -/
-theorem rem_3_4 :
-    ∃ (I : ℝ → ℝ) (a b : ℝ), ContinuousOn I (Icc a b) ∧ ContDiffOn ℝ 2 I (Ioo a b) ∧
-      (∀ x ∈ Icc a b, 0 ≤ I x) ∧ (∀ x ∈ Ioo a b, deriv (deriv I) x * I x = -1) ∧
-      ∃ x ∈ Icc a b, ∃ y ∈ Icc a b, x ≤ y ∧
-        √(1 / 2 * (y - x) ^ 2 + I y ^ 2) + I x < 2 * I ((x + y) / 2) := by
   sorry
 
 section Proof_Proposition_3_3
@@ -367,32 +338,5 @@ theorem J_eqn_3_2 (x y : ℝ) (hx : x₀ ≤ x) (hxy : x ≤ y) (hy : y ≤ 1) :
   sorry
 
 /-! ### Remark 3.7 -/
-
-/-- [DIR], **Remark 3.7**, first claim: Corollary 3.5 and Lemma 3.1 imply also that
-$J(\mathbf{E}f)\le\mathbf{E}\sqrt{J(f)^2+(Mf)^2}$ holds for all $f:\{0,1\}^n\to[x_0,1]$. -/
-theorem rem_3_7_J (n : ℕ) (hn : 1 ≤ n) (f : ({0,1}^n) → ℝ) (hf : ∀ x, f x ∈ Icc x₀ 1) :
-    J (𝐄 f) ≤ 𝐄 (fun x ↦ √(J (f x) ^ 2 + (M f x) ^ 2)) := by
-  sorry
-
-/-- [DIR], **Remark 3.7**, second claim: letting $f=(1-x_0)\mathbf{1}_A+x_0$ we obtain the
-isoperimetric inequality
-$$\mathbf{E}\sqrt{h_A}\ge(1-x_0)^{-1}\big(J((1-x_0)|A|+x_0)-\|J\|_\infty(1-|A|)\big),$$
-where $\|J\|_\infty=\sup_{[\frac12,1]}|J|$. -/
-theorem rem_3_7_isoperim (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) :
-    𝐄 (fun x ↦ √(h_{A} x)) ≥
-      (1 - x₀)⁻¹ * (J ((1 - x₀) * ｜A｜ + x₀) - sSup ((fun x ↦ |J x|) '' Icc (1 / 2) 1) * (1 -
-          ｜A｜)) := by
-  sorry
-
-/-- [DIR], **Remark 3.7**, last claim: the right-hand side
-$r(x)=(1-x_0)^{-1}(J((1-x_0)x+x_0)-\|J\|_\infty(1-x))$ is asymptotically equivalent to $J(x)$ as
-$x\to1^-$, and hence improves on (2.7) as $|A|\to1^-$: $r(x)>0.997\,b_{\frac12}(x)$ for $x<1$
-close to $1$. -/
-theorem rem_3_7_asymp :
-    Tendsto (fun x ↦ (1 - x₀)⁻¹ * (J ((1 - x₀) * x + x₀) -
-        sSup ((fun x ↦ |J x|) '' Icc (1 / 2) 1) * (1 - x)) / J x) (𝓝[<] 1) (𝓝 1) ∧
-    ∀ᶠ x in 𝓝[<] 1, (1 - x₀)⁻¹ * (J ((1 - x₀) * x + x₀) -
-        sSup ((fun x ↦ |J x|) '' Icc (1 / 2) 1) * (1 - x)) > 0.997 * b (1 / 2) x := by
-  sorry
 
 end Auto.DIR

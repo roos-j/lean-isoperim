@@ -36,31 +36,6 @@ section Case_LJQ_I
 
 /-! ### §6.3.1 Case I: $\frac1{16}\le x\le\frac14$, $\frac12\le y\le\frac34$ -/
 
-/-- [DIR], §6.3.1 (asserted; the paper only proves the case $\beta\in\{\frac12,\beta_0\}$, see
-(6.13)): $G_\beta[b_\beta](x,y)>0$ for all $\beta\in[\frac12,1]$ and
-$(x,y)\in[\frac1{16},\frac14]\times[\frac12,\frac34]$. -/
-theorem caseLJQ_I_all_β (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1) (x y : ℝ)
-    (hx : x ∈ Icc (1 / 16 : ℝ) (1 / 4)) (hy : y ∈ Icc (1 / 2 : ℝ) (3 / 4)) :
-    G β (b β) x y > 0 := by
-  sorry
-
-/-- The lower bound ([DIR], §6.3.1)
-$$\underline{g_{LJQ,1,\beta}}(\underline x,\overline x,\underline y,\overline y)
-=\max\big(((\underline y-\overline x)^{\frac1\beta}+\underline J(\underline y,\overline y)^{
-\frac1\beta})^\beta,\ \underline y-\overline x+(2^\beta-1)\underline J(\underline y,\overline y)
-\big)+L_\beta(\underline x)-2Q_\beta(\tfrac{\overline x+\overline y}2)$$
-(the paper writes $L(\underline x,\beta)$ for $L_\beta(\underline x)$). -/
-noncomputable def g_LJQ_1_lo (β xl xu yl yu : ℝ) : ℝ :=
-  max (((yl - xu) ^ (1 / β) + J_lo yl yu ^ (1 / β)) ^ β) (yl - xu + (2 ^ β - 1) * J_lo yl yu)
-    + L β xl - 2 * Q β ((xu + yu) / 2)
-
-/-- [DIR], §6.3.1: $\underline{g_{LJQ,1,\beta}}$ is a tight lower bound for
-$G_\beta[b_\beta]$ on $[\frac1{16},\frac14]\times[\frac12,\frac34]$ (for
-$\beta\in\{\frac12,\beta_0\}$). -/
-theorem g_LJQ_1_lo_tight (β : ℝ) (hβ : β = 1 / 2 ∨ β = β₀) :
-    IsTightLowerBound₂ (G β (b β)) (g_LJQ_1_lo β) (1 / 16) (1 / 4) (1 / 2) (3 / 4) := by
-  sorry
-
 /-- **(6.13)** ([DIR], §6.3.1) (🚗). For $\beta\in\{\beta_0,\frac12\}$ and
 $(x,y)\in[\frac1{16},\frac14]\times[\frac12,\frac34]$: $$G_\beta[b_\beta](x,y)>10^{-7}.$$
 
@@ -318,30 +293,6 @@ theorem f_LJQ_1_half_nonneg (y : ℝ) (hy : y ∈ Icc (1 / 2 : ℝ) 1) :
 end Proof_Claim_1
 
 section Proof_Claim_2
-
-/-- The lower bound ([DIR], §6.3.2, proof of (2))
-$$\underline{g_{LJQ,2}}(\underline y,\overline y,\underline\beta,\overline\beta)
-=\underline y-\tfrac1{16}+(2^{\underline\beta}-1)\underline J(\underline y,\overline y)
-+L_{\underline\beta}(\tfrac1{16})-2Q_{\overline\beta}(\tfrac1{32}+\tfrac{\overline y}2).$$ -/
-noncomputable def g_LJQ_2_lo (yl yu βl βu : ℝ) : ℝ :=
-  yl - 1 / 16 + (2 ^ βl - 1) * J_lo yl yu + L βl (1 / 16) - 2 * Q βu (1 / 32 + yu / 2)
-
-/-- [DIR], §6.3.2, proof of (2): $\underline{g_{LJQ,2}}$ is a tight lower bound of
-$(y,\beta)\mapsto G_{LJQ,\beta}(\frac1{16},y)$ on $[\frac12,\frac34]\times[\frac12,1]$.
-
-**Discrepancy with the paper.** The paper gives no justification, and the evident termwise
-reasoning fails: the term $-2Q_{\overline\beta}(\frac1{32}+\frac{\overline y}2)$ is a lower bound
-of $-2Q_\beta(\frac1{32}+\frac y2)$ only if $Q_{\overline\beta}$ is increasing on
-$[\frac9{32},\frac{13}{32}]$, which fails for $\overline\beta$ near $1$ ($Q_\beta'$ vanishes at
-$\approx0.495,0.442,0.368$ for $\beta=0.6,0.75,1$; e.g. $Q_1'(\frac{13}{32})\approx-0.22$), and
-termwise the bound is violated by up to $\approx8\cdot10^{-3}$. The loss is compensated by the
-other terms ($\underline y\le y$ and $\underline J(\underline y,\overline y)\le J(y)$): a random
-and a targeted search over subrectangles and points found no violation of the lower bound
-property (smallest sampled slack $\approx1.4\cdot10^{-3}$), so the claim is believed true and is
-kept as stated. -/
-theorem g_LJQ_2_lo_tight :
-    IsTightLowerBound₂ (fun y β ↦ G_LJQ β (1 / 16) y) g_LJQ_2_lo (1 / 2) (3 / 4) (1 / 2) 1 := by
-  sorry
 
 /-- **(6.17)** ([DIR], §6.3.2, proof of (2)) (🚗). For all $y\in[\frac12,\frac34]$ and all
 $\beta\in[\frac12,1]$: $$G_{LJQ,\beta}(\tfrac1{16},y)>10^{-5}.$$ -/

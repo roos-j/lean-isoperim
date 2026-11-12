@@ -73,10 +73,6 @@ theorem γX_mem : γ ∈ Icc (1.945 : ℝ) 1.946 := by
 /-- $x_1=1-\frac{w_1}2$ ([DIRX], §2.2). -/
 noncomputable def x₁ : ℝ := 1 - w₁ / 2
 
-/-- [DIRX], §2.2: $x_1=1-\frac{w_1}2=\frac{35}{64}=0.546875$. -/
-theorem x₁_eq : x₁ = 35 / 64 ∧ (35 / 64 : ℝ) = 0.546875 := by
-  sorry
-
 /-- **(2.6)** ([DIRX], §2.2). For $x\in(0,\frac1{64}]$,
 $$\mathrm{J}(1-x)>x\sqrt{\log(w_1/x)}.$$ -/
 theorem eqn_2_6 (x : ℝ) (hx : x ∈ Ioc (0 : ℝ) (1 / 64)) : J (1 - x) > x * √(log (w₁ / x)) := by
@@ -125,53 +121,10 @@ end Proof_Eqn_2_6
 theorem JX_mono : MonotoneOn J (Icc (1 / 2) x₁) ∧ AntitoneOn J (Icc x₁ 1) := by
   sorry
 
-/-- **(2.7)** ([DIRX], §2.2). The lower interval enclosure
-$\underline{\mathrm{J}}(\underline x,\overline x)=\min(\mathrm{J}(\underline x),
-\mathrm{J}(\overline x))$. -/
-noncomputable def JX_lo (xl xu : ℝ) : ℝ := min (J xl) (J xu)
-
-open Classical in
-/-- ([DIRX], §2.2, display after (2.7)). The upper interval enclosure
-$\overline{\mathrm{J}}(\underline x,\overline x)=\mathrm{J}(\overline x)$ if $\overline x<x_1$,
-$\mathrm{J}(\underline x)$ if $\underline x>x_1$, and $\mathrm{J}(x_1)$ else. -/
-noncomputable def JX_hi (xl xu : ℝ) : ℝ := if xu < x₁ then J xu else if xl > x₁ then J xl else J x₁
-
-/-- [DIRX], §2.2, (2.7): $[\underline{\mathrm{J}},\overline{\mathrm{J}}]$ is an interval
-enclosure for $\mathrm{J}$ on $[\frac12,1]$: for $\frac12\le\underline x\le x\le\overline x\le1$,
-$\underline{\mathrm{J}}(\underline x,\overline x)\le\mathrm{J}(x)\le
-\overline{\mathrm{J}}(\underline x,\overline x)$, and both equal $\mathrm{J}(x)$ when
-$\underline x=\overline x=x$. -/
-theorem eqn_2_7 (xl xu : ℝ) (hxl : 1 / 2 ≤ xl) (hxu : xu ≤ 1) :
-    (∀ x ∈ Icc xl xu, JX_lo xl xu ≤ J x ∧ J x ≤ JX_hi xl xu) ∧
-      (xl = xu → JX_lo xl xu = J xl ∧ JX_hi xl xu = J xl) := by
-  sorry
-
 /-- [DIRX], §2.2: $\mathrm{J}'(x_1)=0$ and $\mathrm{J}''<0$ (on $(1-w_1,1)$), so $\mathrm{J}'$ is
 strictly decreasing (on $(1-w_1,1)\supset[\frac12,1)$). -/
 theorem deriv_JX : deriv J x₁ = 0 ∧ (∀ x ∈ Ioo (1 - w₁) 1, deriv (deriv J) x < 0) ∧
     StrictAntiOn (deriv J) (Ioo (1 - w₁) 1) := by
-  sorry
-
-open Classical in
-/-- ([DIRX], §2.2). The lower interval enclosure of $|\mathrm{J}'|$:
-$\underline{|\mathrm{J}'|}(\underline x,\overline x)=\mathrm{J}'(\overline x)$ if
-$\overline x<x_1$, $-\mathrm{J}'(\underline x)$ if $\underline x>x_1$, and $0$ else. -/
-noncomputable def absDJX_lo (xl xu : ℝ) : ℝ :=
-  if xu < x₁ then deriv J xu else if xl > x₁ then -deriv J xl else 0
-
-/-- ([DIRX], §2.2). The upper interval enclosure of $|\mathrm{J}'|$:
-$\overline{|\mathrm{J}'|}(\underline x,\overline x)=\max(|\mathrm{J}'(\underline x)|,
-|\mathrm{J}'(\overline x)|)$. -/
-noncomputable def absDJX_hi (xl xu : ℝ) : ℝ := max |deriv J xl| |deriv J xu|
-
-/-- [DIRX], §2.2: $[\underline{|\mathrm{J}'|},\overline{|\mathrm{J}'|}]$ is an interval
-enclosure for $|\mathrm{J}'|$ on $[\frac12,1)$: for $\frac12\le\underline x\le x\le\overline x<1$,
-$\underline{|\mathrm{J}'|}(\underline x,\overline x)\le|\mathrm{J}'(x)|\le
-\overline{|\mathrm{J}'|}(\underline x,\overline x)$, and both equal $|\mathrm{J}'(x)|$ when
-$\underline x=\overline x=x$. -/
-theorem absDJX_encl (xl xu : ℝ) (hxl : 1 / 2 ≤ xl) (hxu : xu < 1) :
-    (∀ x ∈ Icc xl xu, absDJX_lo xl xu ≤ |deriv J x| ∧ |deriv J x| ≤ absDJX_hi xl xu) ∧
-      (xl = xu → absDJX_lo xl xu = |deriv J xl| ∧ absDJX_hi xl xu = |deriv J xl|) := by
   sorry
 
 end Auto.DIRX

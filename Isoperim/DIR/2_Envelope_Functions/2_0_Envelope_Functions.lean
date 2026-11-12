@@ -99,54 +99,13 @@ theorem thm_2_2 (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y) (hy : y ≤ 1) :
     G β₀ (b β₀) x y ≥ 0 ∧ G (1 / 2) (c₀ • b (1 / 2)) x y ≥ 0 := by
   sorry
 
-/-- **Remark 2.3** ([DIR]). (2.4) continues to hold for all $\beta\in[\beta_0,1]$ (this can be
-proved by the same methods, not pursued in the paper): $G_\beta[b_\beta](x,y)\ge0$ for
-$0\le x\le y\le1$. -/
-theorem rem_2_3 (β : ℝ) (hβ : β ∈ Icc β₀ 1) (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y)
-    (hy : y ≤ 1) : G β (b β) x y ≥ 0 := by
-  sorry
-
 /-! ### Remark 2.4 -/
-
-/-- **Remark 2.4** ([DIR]), first sentence. Failure for smaller values of $\beta_0$ occurs at
-$x=\frac12$ and $y>\frac12$. We record the failure at $\beta=\frac12$ (which is why the constant
-$c_0<1$ appears in (2.5)): there is $y\in(\frac12,1]$ with
-$G_{\frac12}[b_{\frac12}](\frac12,y)<0$.
-
-**Discrepancy with the paper.** The sentence is informal: it does not say for which
-$\beta<\beta_0$ the inequality (2.4) (with $\beta_0$ replaced by $\beta$) fails, nor in what
-sense the failure "occurs at" $x=\frac12$. Read literally as "for every $\beta<\beta_0$ there is a
-failure point, and all failure points have $x=\frac12$" it is not established in the paper
-($\beta_0=0.50057$ is only the exponent for which the computer-assisted proof succeeds; the true
-threshold may be smaller). The Lean statement records only the (interpreted) failure at
-$\beta=\frac12$ at a point $(\frac12,y)$ with $y>\frac12$, where all values of $b_{\frac12}$
-involved are values of $J$ ("the failure only involves the function $J$"). Numerically,
-$y\approx0.585$ gives $G^1\approx-3.1\cdot10^{-5}$ and $G^2\approx-0.22$. -/
-theorem rem_2_4_failure : ∃ y ∈ Ioc (1 / 2 : ℝ) 1, G (1 / 2) (b (1 / 2)) (1 / 2) y < 0 := by
-  sorry
-
-/-- [DIR], Remark 2.4: letting $y\to x$ in the inequality $G_{\frac12}[B](x,y)\ge0$ and assuming
-that $B$ is $C^2$ gives the differential inequality $B''B\ge-2$. (Stated for $B\ge0$ of class
-$C^2$ on an open interval $(a,b)$ on which the two-point inequality holds.) -/
-theorem rem_2_4_local (B : ℝ → ℝ) (a c : ℝ) (hB : ContDiffOn ℝ 2 B (Ioo a c))
-    (hB0 : ∀ x ∈ Ioo a c, 0 ≤ B x)
-    (h : ∀ x y, x ∈ Ioo a c → y ∈ Ioo a c → x ≤ y → G (1 / 2) B x y ≥ 0) :
-    ∀ x ∈ Ioo a c, deriv (deriv B) x * B x ≥ -2 := by
-  sorry
 
 /-- **Corollary 2.5** ([DIR]). The following isoperimetric inequalities hold (on $\mathcal{Q}$):
 $$\mathcal{B}_{\beta_0}\ge b_{\beta_0}, \tag{2.6}$$
 $$\mathcal{B}_{\frac12}\ge0.997\cdot b_{\frac12}. \tag{2.7}$$ -/
 theorem cor_2_5 :
     (∀ x ∈ 𝒬, 𝓑 β₀ x ≥ b β₀ x) ∧ (∀ x ∈ 𝒬, 𝓑 (1 / 2) x ≥ 0.997 * b (1 / 2) x) := by
-  sorry
-
-/-- **Remark 2.6** ([DIR], added in revised version, August 2026). Somewhat counterintuitively,
-by slightly relaxing the requirement $B''B=-2$ to $B''B=-\gamma$ for a $\gamma<2$ one may fix this
-defect and obtain a Bellman function yielding (1.1) for the conjectured critical exponent
-$\beta=\frac12$ [DIRX26]. -/
-theorem rem_2_6 (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) (hA : ｜A｜ ≤ 1 / 2) :
-    𝐄 h_{A} ^ (1 / 2 : ℝ) ≥ ｜A｜ * (log₂ (1 / ｜A｜)) ^ (1 / 2 : ℝ) := by
   sorry
 
 end Auto.DIR

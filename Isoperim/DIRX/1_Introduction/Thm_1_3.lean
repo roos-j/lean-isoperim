@@ -51,71 +51,6 @@ theorem thm_1_3 (n : ℕ) (hn : 1 ≤ n) :
       ‖∇𝟏_{A}‖_[1] = ‖𝟏_{A} - fun _ ↦ 𝐄 𝟏_{A}‖_[1]) := by
   sorry
 
-/-- The best constant $C_1^{\mathbb{R}}$ in the $L^1$ Poincaré inequality for *real-valued*
-functions ([DIRX], §1, after Theorem 1.3): the largest constant $C$ such that
-$\|\nabla f\|_1\ge C\|f-\mathbf{E}f\|_1$ for all $f:\{0,1\}^n\to\mathbb{R}$ and all $n\ge1$.
-(Compare `Auto.DIR.poincareConst` of [DIR], which is defined using complex-valued functions.) -/
-noncomputable def poincareConstReal : ℝ :=
-  sSup {C : ℝ | ∀ (n : ℕ), 1 ≤ n → ∀ f : ({0,1}^n) → ℝ, ‖∇f‖_[1] ≥ C * ‖f - fun _ ↦ 𝐄 f‖_[1]}
-
-/-- [DIRX], §1, after Theorem 1.3 (cited from [BELP08], [ILvHV]): the sharp constant in the
-$L^1$ Poincaré inequality for real-valued $f$ lies in the interval
-$(\frac2\pi,\sqrt{\frac2\pi}]$. -/
-theorem poincareConstReal_mem : poincareConstReal ∈ Ioc (2 / π) √(2 / π) := by
-  sorry
-
-/-- [DIRX], §1, after Theorem 1.3: (1.3) shows that the lower bound improves for Boolean-valued
-functions; precisely, the best constant for Boolean-valued functions is $C_{B,1}=1$ (by (1.3)
-and the half-cube equality case), which exceeds the constant $C_1^{\mathbb{R}}$ for real-valued
-functions (which is $\le\sqrt{2/\pi}<1$). Here `poincareConstBool` is $C_{B,p}$ from [DIR], §1.5.
--/
-theorem poincareConstBool_one :
-    poincareConstBool 1 = 1 ∧ poincareConstBool 1 > poincareConstReal := by
-  sorry
-
-/-- The probability $\mathbf{P}(Z=z)=\prod_{j=1}^np^{z_j}(1-p)^{1-z_j}$ for a random vector
-$Z=(Z_1,\dots,Z_n)$ in $\{0,1\}^n$ with i.i.d. coordinates satisfying $\mathbf{P}(Z_j=1)=p$
-([DIRX], §1 and §5). This is the noise of the binary symmetric channel with crossover
-probability $p$. -/
-noncomputable def probZ {n : ℕ} (p : ℝ) (z : {0,1}^n) : ℝ :=
-  ∏ j, if z j = 1 then p else 1 - p
-
-/-- The binary entropy $h(\alpha)=-\alpha\log_2\alpha-(1-\alpha)\log_2(1-\alpha)$ (base $2$)
-([DIRX], §1, used in the Courtade–Kumar conjecture). -/
-noncomputable def binEntropy₂ (α : ℝ) : ℝ := Real.binEntropy α / Real.log 2
-
-open Classical in
-/-- The mutual information $I(f(X);Y)$ ([DIRX], §1, Courtade–Kumar conjecture), where $X$ is
-uniformly distributed on $\{0,1\}^n$ and $Y=X\oplus Z$ is the output of the memoryless binary
-symmetric channel with crossover probability $\alpha$ (with $Z$ as in `Auto.DIRX.probZ`), for
-$f:\{0,1\}^n\to\{0,1\}$:
-$$I(f(X);Y)=\sum_{b\in\{0,1\}}\sum_{y}\mathbf{P}(f(X)=b,Y=y)
-\log_2\frac{\mathbf{P}(f(X)=b,Y=y)}{\mathbf{P}(f(X)=b)\,\mathbf{P}(Y=y)},$$
-with $\mathbf{P}(f(X)=b,Y=y)=2^{-n}\sum_{x:f(x)=b}\mathbf{P}(Z=x\oplus y)$,
-$\mathbf{P}(Y=y)=2^{-n}$ (terms with vanishing probability contribute $0$). -/
-noncomputable def mutualInfoBSC {n : ℕ} (α : ℝ) (f : ({0,1}^n) → ℝ) : ℝ :=
-  ∑ b ∈ ({0, 1} : Finset ℝ), ∑ y : {0,1}^n,
-    let pby := (2 : ℝ)⁻¹ ^ n * ∑ x, (if f x = b then probZ α (x + y) else 0)
-    let pb := 𝐄 (fun x ↦ if f x = b then (1 : ℝ) else 0)
-    pby * log₂ (pby / (pb * (2 : ℝ)⁻¹ ^ n))
-
-/-- The *Courtade–Kumar conjecture* (most informative Boolean function conjecture) [KC13]
-([DIRX], §1): for every $n\ge1$, every Boolean function $f:\{0,1\}^n\to\{0,1\}$ and every
-crossover probability $\alpha\in[0,\frac12]$, $I(f(X);Y)\le1-h(\alpha)$, where $X$ is uniform on
-$\{0,1\}^n$, $Y$ is the output of the binary symmetric channel with crossover probability
-$\alpha$ on input $X$, and $h$ is the binary entropy. (A statement, not a claim of the paper.)
-
-**Discrepancy with the paper.** [DIRX] only names the "most informative Boolean function
-conjecture, also known as Courtade–Kumar conjecture [KC13]" and does not state it. The Lean
-definition uses the standard formulation of [KC13] (mutual information $I(f(X);Y)\le1-h(\alpha)$
-for the binary symmetric channel, $X$ uniform, logarithms base $2$); this is an interpretation,
-not text of the paper. The paper's further claim that it "would be implied by" the Hellinger
-conjecture is not formalized (the general Hellinger conjecture is not stated in [DIRX]; see the
-comment below and `Auto.DIRX.HellingerConjecture`). -/
-def CourtadeKumarConjecture : Prop :=
-  ∀ (n : ℕ), 1 ≤ n → ∀ f : ({0,1}^n) → ℝ, (∀ x, f x = 0 ∨ f x = 1) →
-    ∀ α ∈ Icc (0 : ℝ) (1 / 2), mutualInfoBSC α f ≤ 1 - binEntropy₂ α
-
 open Classical in
 /-- The sensitivity $s_f(x)$ of $f$ at $x$ ([DIRX], §1, after (1.4) and §5): the number of
 single-bit flips of $x$ that change the value of $f(x)$, i.e. the number of indices $j$ with
@@ -124,16 +59,6 @@ noncomputable def sensitivity {n : ℕ} (f : ({0,1}^n) → ℝ) (x : {0,1}^n) : 
   (Finset.univ.filter fun j ↦ f (x + e j) ≠ f x).card
 
 @[inherit_doc] notation "s_{" f "}" => sensitivity f
-
-/-- **(1.4)** ([DIRX], §1). For balanced Boolean functions $f:\{0,1\}^n\to\{0,1\}$ (i.e.
-$\mathbf{E}f=\frac12$),
-$$\mathbf{E}\sqrt{s_f}\ge1.$$
-This is predicted by the Hellinger conjecture in the low-noise limit (see
-`Auto.DIRX.hellinger_imp_eqn_1_4` in §5) and follows from Theorem 1.1 with $|A|=\frac12$. -/
-theorem eqn_1_4 (n : ℕ) (hn : 1 ≤ n) (f : ({0,1}^n) → ℝ) (hf : ∀ x, f x = 0 ∨ f x = 1)
-    (hbal : 𝐄 f = 1 / 2) :
-    𝐄 (fun x ↦ √(s_{f} x)) ≥ 1 := by
-  sorry
 
 /-- [DIRX], §1, after (1.4): for $f=\mathbf{1}_A$, $s_f(x)=h_A(x)+h_{A^c}(x)$. -/
 theorem sensitivity_indicator (n : ℕ) (A : Set ({0,1}^n)) (x : {0,1}^n) :
@@ -149,14 +74,6 @@ theorem hA_mul_hA_compl (n : ℕ) (A : Set ({0,1}^n)) (x : {0,1}^n) :
 $\sqrt{s_f}=\sqrt{h_A}+\sqrt{h_{A^c}}$ for $f=\mathbf{1}_A$. -/
 theorem sqrt_sensitivity_indicator (n : ℕ) (A : Set ({0,1}^n)) (x : {0,1}^n) :
     √(s_{𝟏_{A}} x) = √(h_{A} x) + √(h_{Aᶜ} x) := by
-  sorry
-
-/-- [DIRX], §1, after (1.4): Theorem 1.1 with $|A|=\frac12$ immediately implies (1.4): for
-$|A|=\frac12$, $\mathbf{E}\sqrt{s_{\mathbf{1}_A}}=\mathbf{E}\sqrt{h_A}+\mathbf{E}\sqrt{h_{A^c}}
-\ge\frac12+\frac12=1$. -/
-theorem eqn_1_4_of_thm_1_1 (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) (hA : ｜A｜ = 1 / 2) :
-    𝐄 (fun x ↦ √(s_{𝟏_{A}} x)) = 𝐄 (fun x ↦ √(h_{A} x)) + 𝐄 (fun x ↦ √(h_{Aᶜ} x)) ∧
-      𝐄 (fun x ↦ √(h_{A} x)) ≥ 1 / 2 ∧ 𝐄 (fun x ↦ √(h_{Aᶜ} x)) ≥ 1 / 2 := by
   sorry
 
 /-! ### Acknowledgments -/

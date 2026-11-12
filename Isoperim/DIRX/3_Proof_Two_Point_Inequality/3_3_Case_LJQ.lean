@@ -6,7 +6,6 @@ Authors: Claude
 module
 
 public import Isoperim.DIRX.«2_Preliminaries».«2_2_Properties_J»
-public import Isoperim.DIR.«4_Computer_Assisted_Proofs».«4_1_Dyadic_Partitioning»
 
 /-!
 # [DIRX] §3.3 Case LJQ
@@ -57,21 +56,6 @@ theorem caseLJQ (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 4)) (hy : y ∈ Icc (
 section Case_I
 
 /-! ### Case I: $\frac1{16}\le x\le\frac14$, $\frac12\le y\le\frac34$ -/
-
-/-- The tight lower bound ([DIRX], §3.3, Case I)
-$$\underline{h_{LJQ,1}}(\underline x,\overline x,\underline y,\overline y)=
-\max\Big(\sqrt{(\underline y-\overline x)^2+\underline{\mathrm{J}}(\underline y,\overline y)^2},
-\underline y-\overline x+(\sqrt2-1)\underline{\mathrm{J}}(\underline y,\overline y)\Big)
-+L(\underline x)-2Q(\tfrac{\overline x+\overline y}2).$$ -/
-noncomputable def h_LJQ₁_lo (xl xu yl yu : ℝ) : ℝ :=
-  max (√((yl - xu) ^ 2 + JX_lo yl yu ^ 2)) (yl - xu + (√2 - 1) * JX_lo yl yu) + L xl -
-    2 * Q ((xu + yu) / 2)
-
-/-- [DIRX], §3.3, Case I: $\underline{h_{LJQ,1}}$ is a tight lower bound for $G[B_w](x,y)$
-(with $w=w_1$) on the rectangle $[\frac1{16},\frac14]\times[\frac12,\frac34]$. -/
-theorem h_LJQ₁_lo_tight :
-    IsTightLowerBound₂ (fun x y ↦ G (B_{w₁}) x y) h_LJQ₁_lo (1 / 16) (1 / 4) (1 / 2) (3 / 4) := by
-  sorry
 
 /-- **(3.3)** ([DIRX], §3.3, Case I) (🚗). By dyadic partitioning,
 $$G[B_w](x,y)>10^{-6}$$ for $(x,y)\in[\frac1{16},\frac14]\times[\frac12,\frac34]$ (with
@@ -224,19 +208,6 @@ theorem fX_nonneg (y : ℝ) (hy : y ∈ Icc (1 / 2 : ℝ) 1) : f y ≥ 0 := by
 end Boundary_x_eq_0
 
 section Boundary_x_eq_1_16
-
-/-- The tight lower bound ([DIRX], §3.3, Case II)
-$$\underline{h_{LJQ,2}}(\underline y,\overline y)=\underline y-\tfrac1{16}
-+(\sqrt2-1)\underline{\mathrm{J}}(\underline y,\overline y)+L(\tfrac1{16})
--2Q(\tfrac1{32}+\tfrac{\overline y}2).$$ -/
-noncomputable def h_LJQ₂_lo (yl yu : ℝ) : ℝ :=
-  yl - 1 / 16 + (√2 - 1) * JX_lo yl yu + L (1 / 16) - 2 * Q (1 / 32 + yu / 2)
-
-/-- [DIRX], §3.3: $\underline{h_{LJQ,2}}$ is a tight lower bound for $y\mapsto
-G_{LJQ}(\frac1{16},y)$ on $[\frac12,\frac34]$. -/
-theorem h_LJQ₂_lo_tight :
-    IsTightLowerBound₁ (fun y ↦ G_LJQ (1 / 16) y) h_LJQ₂_lo (1 / 2) (3 / 4) := by
-  sorry
 
 /-- **(3.7)** ([DIRX], §3.3) (🚗). Dyadic partitioning yields
 $$G_{LJQ}(\tfrac1{16},y)>10^{-4}$$ for all $y\in[\frac12,\frac34]$. -/

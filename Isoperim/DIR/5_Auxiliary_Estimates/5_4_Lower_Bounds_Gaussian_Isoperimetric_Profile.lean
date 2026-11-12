@@ -6,7 +6,6 @@ Authors: Claude
 module
 
 public import Isoperim.DIR.«3_Variants_Bobkov_Inequality».«3_0_Variants_Bobkov_Inequality»
-public import Isoperim.DIR.«4_Computer_Assisted_Proofs».«4_1_Dyadic_Partitioning»
 
 /-!
 # [DIR] §5.4 Lower bounds for the Gaussian isoperimetric profile
@@ -39,10 +38,6 @@ namespace Auto.DIR
 
 open Real Set Filter Topology MeasureTheory
 
-/-- [DIR], §5.4: it is well-known that $I(x)\sim\sqrt2\cdot x\sqrt{\log(1/x)}$ as $x\to0^+$. -/
-theorem I_asymp : Tendsto (fun x ↦ I x / (√2 * x * √(log (1 / x)))) (𝓝[>] 0) (𝓝 1) := by
-  sorry
-
 /-- **Proposition 5.11** ([DIR]). For all $0<x\le\frac15$:
 $$I(x)\ge\sqrt2\cdot x\sqrt{\log(1/x)}\Big(1-\frac12\frac{\log\log(1/x)}{\log(1/x)}
 -\frac{\log(2\pi^{1/2})}{\log(1/x)}\Big).$$ -/
@@ -50,11 +45,6 @@ theorem prop_5_11 (x : ℝ) (hx : x ∈ Ioc (0 : ℝ) (1 / 5)) :
     I x ≥ √2 * x * √(log (1 / x)) *
       (1 - 1 / 2 * (log (log (1 / x)) / log (1 / x)) - log (2 *
           π ^ (1 / 2 : ℝ)) / log (1 / x)) := by
-  sorry
-
-/-- [DIR], §5.4, after Proposition 5.11: the estimate $I(x)\le\sqrt2\cdot x\sqrt{\log(1/x)}$ also
-holds (for $0<x\le\frac12$) and can be proved along the same lines, but it is not needed. -/
-theorem I_upper (x : ℝ) (hx : x ∈ Ioc (0 : ℝ) (1 / 2)) : I x ≤ √2 * x * √(log (1 / x)) := by
   sorry
 
 section Proof_Proposition_5_11
@@ -177,29 +167,6 @@ theorem lemma_5_13 (x : ℝ) (hx : x ∈ Ioo (1 / 2) (1 - (10 : ℝ) ^ (-(10 : �
 
 section Proof_Lemma_5_13
 
-open Classical in
-/-- The tight lower bound ([DIR], proof of Lemma 5.13)
-$$\underline{g_{JL,\beta}}(\underline x,\overline x)=2\overline J(\underline x,\overline x)^{-1}
--\beta\log(2)^{-\beta}(1-\overline x)^{-1}(1-\beta+\log\tfrac1{1-\overline x})
-(\log\tfrac1{1-\underline x})^{-2+\beta}$$
-for $-\partial_x^2[J(x)-L_\beta(1-x)]$ (here $\overline J$ is the upper enclosure (6.2):
-$\overline J(\underline x,\overline x)=J(\overline x)$ if $\overline x<x_0$, $J(\underline x)$ if
-$\underline x>x_0$, and $J(x_0)$ else; written out since (6.2) only appears in §6.1.1,
-cf. `Auto.DIR.J_hi`). -/
-noncomputable def g_JL_lo (β xl xu : ℝ) : ℝ :=
-  2 * (if xu < x₀ then J xu else if xl > x₀ then J xl else J x₀)⁻¹ -
-    β * (log 2) ^ (-β) * (1 - xu)⁻¹ * (1 - β + log (1 / (1 - xu))) *
-      (log (1 / (1 - xl))) ^ (-2 + β)
-
-/-- [DIR], proof of Lemma 5.13: $\underline{g_{JL,\beta_0}}$ is a tight lower bound of
-$-\partial_x^2[J(x)-L_{\beta_0}(1-x)]$ on $[\frac12,\frac{2047}{2048}]$. (The second derivative
-is that of $J_{w_0}$, which equals $J$ on $[\frac12,1]$, so that its value at $x=\frac12$ is the
-one-sided derivative meant in the paper; see the module docstring.) -/
-theorem g_JL_lo_tight :
-    IsTightLowerBound₁ (fun x ↦ -deriv (deriv (fun t ↦ Jw w₀ t - L β₀ (1 - t))) x) (g_JL_lo β₀)
-      (1 / 2) (2047 / 2048) := by
-  sorry
-
 /-- **(5.11)** (🚗) ([DIR], proof of Lemma 5.13). Running
 $\textsc{Partition}_1(\underline{g_{JL,\beta_0}},[\frac12,\frac{2047}{2048}])$ shows
 $$-\partial_x^2[J(x)-L_\beta(1-x)]>0.08$$
@@ -280,25 +247,5 @@ theorem eqn_5_12_small (u : ℝ) (hu : u ∈ Icc (7 : ℝ) 1200) :
   sorry
 
 end Proof_Lemma_5_13
-
-/-- **Remark 5.14** ([DIR]). Here is a "back-of-the-envelope" version of this calculation: from the
-asymptotic estimates for $J$ one sees that $J(1-s)-L_\beta(s)$ must change sign roughly where
-$2(\log2)^{\beta_0}=(\log(1/s))^{\beta_0-\frac12}$, i.e.
-$s=e^{-(2(\log2)^{\beta_0})^{1/(\beta_0-1/2)}}\approx10^{-9.4\cdot10^{387}}$. Controlling the error
-shows the zero must lie in $[10^{-10^{388}},10^{-10^{387}}]$ (here $\beta=\beta_0$).
-
-**Discrepancy with the paper.** The remark is a back-of-the-envelope computation and speaks of
-"the zero" as if $s\mapsto J(1-s)-L_{\beta_0}(s)$ had a unique zero; neither uniqueness nor the
-absence of zeros in $(0,10^{-10^{388}})$ or $(10^{-10^{387}},10^{-10^{380}}]$ is argued (Lemma
-5.13 only excludes zeros for $s\in(10^{-10^{380}},\frac12)$). The Lean statement therefore claims
-only what "controlling the error" provides: the sign change
-$J(1-s)-L_{\beta_0}(s)>0$ at $s=10^{-10^{387}}$ and $<0$ at $s=10^{-10^{388}}$, and hence a zero
-in $[10^{-10^{388}},10^{-10^{387}}]$; it does not claim uniqueness. -/
-theorem rem_5_14 :
-    J (1 - (10 : ℝ) ^ (-(10 : ℝ) ^ 387)) > L β₀ ((10 : ℝ) ^ (-(10 : ℝ) ^ 387)) ∧
-    J (1 - (10 : ℝ) ^ (-(10 : ℝ) ^ 388)) < L β₀ ((10 : ℝ) ^ (-(10 : ℝ) ^ 388)) ∧
-    ∃ s ∈ Icc ((10 : ℝ) ^ (-(10 : ℝ) ^ 388)) ((10 : ℝ) ^ (-(10 : ℝ) ^ 387)),
-      J (1 - s) = L β₀ s := by
-  sorry
 
 end Auto.DIR

@@ -11,12 +11,8 @@ public import Isoperim.DIR.«1_Introduction».Thm_1_6
 public import Isoperim.DIR.«1_Introduction».Thm_1_7
 public import Isoperim.DIR.«1_Introduction».Thm_1_10
 public import Isoperim.DIR.«2_Envelope_Functions».«2_0_Envelope_Functions»
-public import Isoperim.DIR.«2_Envelope_Functions».«2_1_Computed_Envelopes»
 public import Isoperim.DIR.«2_Envelope_Functions».«2_2_Proofs_Theorems_1_1_1_5_1_7»
 public import Isoperim.DIR.«3_Variants_Bobkov_Inequality».«3_0_Variants_Bobkov_Inequality»
-public import Isoperim.DIR.«4_Computer_Assisted_Proofs».«4_1_Dyadic_Partitioning»
-public import Isoperim.DIR.«4_Computer_Assisted_Proofs».«4_2_Interval_Arithmetic»
-public import Isoperim.DIR.«4_Computer_Assisted_Proofs».«4_3_Source_Code»
 public import Isoperim.DIR.«5_Auxiliary_Estimates».«5_1_Small_Exponents_Large_Exponents»
 public import Isoperim.DIR.«5_Auxiliary_Estimates».«5_2_Two_Point_Inequalities»
 public import Isoperim.DIR.«5_Auxiliary_Estimates».«5_3_Properties_L_Q»
@@ -34,7 +30,6 @@ public import Isoperim.DIRX.«1_Introduction».Thm_1_3
 public import Isoperim.DIRX.«2_Preliminaries».«2_1_Reduction_Two_Point_Inequality»
 public import Isoperim.DIRX.«2_Preliminaries».«2_2_Properties_J»
 public import Isoperim.DIRX.«2_Preliminaries».«2_3_Properties_L_Q»
-public import Isoperim.DIRX.«2_Preliminaries».«2_4_Computer_Assisted_Proofs»
 public import Isoperim.DIRX.«3_Proof_Two_Point_Inequality».«3_1_Case_J»
 public import Isoperim.DIRX.«3_Proof_Two_Point_Inequality».«3_2_Case_Q»
 public import Isoperim.DIRX.«3_Proof_Two_Point_Inequality».«3_3_Case_LJQ»
@@ -42,7 +37,6 @@ public import Isoperim.DIRX.«3_Proof_Two_Point_Inequality».«3_4_Case_LJ»
 public import Isoperim.DIRX.«3_Proof_Two_Point_Inequality».«3_5_Case_QJQ»
 public import Isoperim.DIRX.«3_Proof_Two_Point_Inequality».«3_6_Case_QJ»
 public import Isoperim.DIRX.«4_Proof_Poincare_Inequality».«4_0_Proof_Poincare_Inequality»
-public import Isoperim.DIRX.«5_Connection_Hellinger_Conjecture».«5_0_Connection_Hellinger_Conjecture»
 
 /-!
 # Isoperim

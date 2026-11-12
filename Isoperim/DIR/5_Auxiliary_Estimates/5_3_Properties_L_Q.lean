@@ -315,13 +315,6 @@ theorem lemma_5_9 (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) (log₂ (3 / 2))) :
         Q β x) := by
   sorry
 
-/-- **Remark 5.10** ([DIR]). The conclusions in Lemma 5.9 continue to hold for all
-$\beta\in[\frac12,1]$. -/
-theorem rem_5_10 (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1) :
-    (∀ x ∈ Icc (0 : ℝ) (1 / 4), L β x ≥ Q β x) ∧ (∀ x ∈ Icc (1 / 4 : ℝ) (1 / 2), L β x ≤
-        Q β x) := by
-  sorry
-
 section Proof_Lemma_5_9
 
 section Proof_Claim_1

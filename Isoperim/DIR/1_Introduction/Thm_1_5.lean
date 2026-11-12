@@ -33,15 +33,6 @@ open Real Finset
 
 /-! ### §1.1 Motivation, history and further results -/
 
-/-- [DIR], §1.1 (cited from [BIM23, §3]): Hamming ball examples show that no dimension-free
-lower bounds for $\mathbf{E}h_A^\beta$ (in terms of $|A|$) can exist if $\beta<\frac12$.
-Formalized at $|A|=\frac12$: for $0<\beta<\frac12$,
-$\inf_{n\ge1}\inf_{|A|=1/2}\mathbf{E}h_A^\beta=0$, i.e. $\mathcal{B}_\beta(\frac12)=0$ (written
-out, since `𝓑` = `Auto.DIR.isoProfile` is only introduced in Definition 1.3 below). -/
-theorem no_dimension_free_bound (β : ℝ) (hβ₀ : 0 < β) (hβ : β < 1 / 2) :
-    sInf {v : ℝ | ∃ n : ℕ, 1 ≤ n ∧ ∃ A : Set ({0,1}^n), ｜A｜ = 1 / 2 ∧ v = 𝐄 h_{A} ^ β} = 0 := by
-  sorry
-
 /-- **Definition 1.3** ([DIR]). The *$\beta$-isoperimetric profile* $\mathcal{B}_\beta$ for the
 Hamming cube is
 $$\mathcal{B}_\beta(x)=\inf_{n\ge1}\ \inf_{A\subset\{0,1\}^n,\,|A|=x}\mathbf{E}h_A^\beta.
@@ -77,33 +68,6 @@ theorem eqn_1_3 (n k : ℕ) (hk : 1 ≤ k) (hkn : k ≤ 2 ^ n) :
     𝓑 1 (k / 2 ^ n) = k / 2 ^ n * (n - 2 / k * ∑ j ∈ Ico 1 k, (s j : ℝ)) := by
   sorry
 
-/-- [DIR], §1.1: the function $\mathcal{B}_1$ is nowhere differentiable (as a function on
-$\mathcal{Q}$, where it is defined). -/
-theorem isoProfile_one_nowhere_differentiable (x : ℝ) (hx : x ∈ 𝒬) (d : ℝ) :
-    ¬ HasDerivWithinAt (𝓑 1) d 𝒬 x := by
-  sorry
-
-/-- The number of edges of the subgraph of $\{0,1\}^n$ induced by $A$ (each edge counted once).
-Used in [DIR], §1.1. -/
-noncomputable def inducedEdges {n : ℕ} (A : Set ({0,1}^n)) : ℕ :=
-  Set.ncard {p ∈ edges n | p.1 ∈ A ∧ p.2 ∈ A} / 2
-
-/-- [DIR], §1.1: for $\beta=1$ it is not difficult to see that minimizing $\mathbf{E}h_A$ with
-$|A|$ fixed is equivalent to maximizing the number of edges of $A$ (as an induced subgraph):
-for $|A|=|A'|$, $\mathbf{E}h_A\le\mathbf{E}h_{A'}$ iff $A$ has at least as many induced edges
-as $A'$. -/
-theorem edge_boundary_iff_induced_edges (n : ℕ) (A A' : Set ({0,1}^n)) (h : ｜A｜ = ｜A'｜) :
-    𝐄 h_{A} ≤ 𝐄 h_{A'} ↔ inducedEdges A' ≤ inducedEdges A := by
-  sorry
-
-/-- [DIR], §1.1: the equivalence of `Auto.DIR.edge_boundary_iff_induced_edges` no longer holds
-when $\beta<1$: there are sets of equal size where the one with more induced edges has the
-larger value of $\mathbf{E}h^\beta$. -/
-theorem edge_equivalence_fails (β : ℝ) (hβ₀ : 0 < β) (hβ : β < 1) :
-    ∃ (n : ℕ) (A A' : Set ({0,1}^n)), ｜A｜ = ｜A'｜ ∧ inducedEdges A' ≤ inducedEdges A ∧
-      𝐄 h_{A'} ^ β < 𝐄 h_{A} ^ β := by
-  sorry
-
 /-- [DIR], §1.1: the example of a codimension $k$ subcube
 $A=\{x\in\{0,1\}^n : x_1=\dots=x_k=0\}$ shows that
 $\mathcal{B}_\beta(2^{-k})\le 2^{-k}k^\beta$. -/
@@ -111,83 +75,7 @@ theorem isoProfile_two_pow_le (β : ℝ) (hβ : 0 < β) (k : ℕ) :
     𝓑 β (2⁻¹ ^ k) ≤ 2⁻¹ ^ k * (k : ℝ) ^ β := by
   sorry
 
-/-- [DIR], §1.1: subcubes are extremizers in (1.2) for $\beta=1$:
-$\mathcal{B}_1(2^{-k})=2^{-k}k$. -/
-theorem isoProfile_one_two_pow (k : ℕ) :
-    𝓑 1 (2⁻¹ ^ k) = 2⁻¹ ^ k * (k : ℝ) := by
-  sorry
-
-/-- **Conjecture 1.4** ([DIR]). For all $\beta\ge\frac12$ and all $k\ge1$,
-$\mathcal{B}_\beta(2^{-k})=2^{-k}k^\beta$. (A statement, not a claim.) -/
-def conj_1_4 : Prop :=
-  ∀ β : ℝ, 1 / 2 ≤ β → ∀ k : ℕ, 1 ≤ k → 𝓑 β (2⁻¹ ^ k) = 2⁻¹ ^ k * (k : ℝ) ^ β
-
-/-- [DIR], §1.1: Theorem 1.1 proves the conjecture for $\beta\ge0.50057$. -/
-theorem conj_1_4_of_ge_β₀ (β : ℝ) (hβ : β₀ ≤ β) (k : ℕ) (hk : 1 ≤ k) :
-    𝓑 β (2⁻¹ ^ k) = 2⁻¹ ^ k * (k : ℝ) ^ β := by
-  sorry
-
-/-- [DIR], §1.1 (cited from Kahn–Park [KP20]): Conjecture 1.4 holds for
-$\beta\ge\log_2(\frac32)\approx0.585$ and $k=1,2$. -/
-theorem conj_1_4_kahn_park (β : ℝ) (hβ : log₂ (3 / 2) ≤ β) (k : ℕ) (hk : k = 1 ∨ k = 2) :
-    𝓑 β (2⁻¹ ^ k) = 2⁻¹ ^ k * (k : ℝ) ^ β := by
-  sorry
-
-/-- [DIR], §1.1 (cited from Beltran–Ivanisvili–Madrid [BIM23]): Conjecture 1.4 holds for
-$\beta\ge\log_2(\frac32)$ and all $k\ge1$. -/
-theorem conj_1_4_bim (β : ℝ) (hβ : log₂ (3 / 2) ≤ β) (k : ℕ) (hk : 1 ≤ k) :
-    𝓑 β (2⁻¹ ^ k) = 2⁻¹ ^ k * (k : ℝ) ^ β := by
-  sorry
-
-/-- [DIR], §1.1 (cited from [BIM23]): Conjecture 1.4 holds for $k=1$ when $\beta\ge0.53$. -/
-theorem conj_1_4_bim_one (β : ℝ) (hβ : 0.53 ≤ β) :
-    𝓑 β (2⁻¹ ^ 1) = 2⁻¹ ^ 1 * ((1 : ℕ) : ℝ) ^ β := by
-  sorry
-
 /-! ### §1.2 Results at the critical exponent -/
-
-/-- [DIR], §1.2: $\mathcal{B}_{\frac12}(\frac12)\le\frac12$. -/
-theorem isoProfile_half_half_le : 𝓑 (1 / 2) (1 / 2) ≤ 1 / 2 := by
-  sorry
-
-/-- [DIR], §1.2 (cited from Talagrand [Tal93]): $\mathcal{B}_{\frac12}(x)\ge Cx(1-x)$ for all
-$x\in\mathcal{Q}$ with $C=\sqrt2$. -/
-theorem talagrand (x : ℝ) (hx : x ∈ 𝒬) : 𝓑 (1 / 2) x ≥ √2 * x * (1 - x) := by
-  sorry
-
-/-- [DIR], §1.2 (cited from Bobkov–Götze [BG99]): $\mathcal{B}_{\frac12}(x)\ge Cx(1-x)$ for all
-$x\in\mathcal{Q}$ with $C=\sqrt3$. -/
-theorem bobkov_goetze (x : ℝ) (hx : x ∈ 𝒬) : 𝓑 (1 / 2) x ≥ √3 * x * (1 - x) := by
-  sorry
-
-/-- [DIR], §1.2 (cited from [BIM23, Cor. 1.7]): $\mathcal{B}_{\frac12}(x)\ge Cx(1-x)$ for all
-$x\in\mathcal{Q}$ with $C=2\sqrt{2^{3/2}-2}$. -/
-theorem bim_cor_1_7 (x : ℝ) (hx : x ∈ 𝒬) :
-    𝓑 (1 / 2) x ≥ 2 * √(2 ^ (3 / 2 : ℝ) - 2) * x * (1 - x) := by
-  sorry
-
-/-- [DIR], §1.2: the latter implies
-$\mathcal{B}_{\frac12}(\frac12)\ge\frac12\sqrt{2^{3/2}-2}\approx0.455$. -/
-theorem isoProfile_half_half_ge_bim :
-    𝓑 (1 / 2) (1 / 2) ≥ 1 / 2 * √(2 ^ (3 / 2 : ℝ) - 2) := by
-  sorry
-
-/-- [DIR], §1.2: the upper bound $\mathcal{B}_{\frac12}(\frac14)\le\frac14\sqrt2$. -/
-theorem isoProfile_half_quarter_le : 𝓑 (1 / 2) (1 / 4) ≤ 1 / 4 * √2 := by
-  sorry
-
-/-- [DIR], §1.2: the best possible bound of the form $Cx(1-x)$ is achieved when
-$C=\frac43\sqrt2$, since for larger values of $C$ the function would contradict the upper bound
-$\mathcal{B}_{\frac12}(\frac14)\le\frac14\sqrt2$. -/
-theorem best_constant_C (C : ℝ) (hC : 4 / 3 * √2 < C) :
-    ¬ ∀ x ∈ 𝒬, 𝓑 (1 / 2) x ≥ C * x * (1 - x) := by
-  sorry
-
-/-- [DIR], §1.2: such a bound with $C=\frac43\sqrt2$ would only give
-$\mathcal{B}_{\frac12}(\frac12)\ge\frac13\sqrt2\approx0.471$. -/
-theorem best_constant_C_half :
-    4 / 3 * √2 * (1 / 2 : ℝ) * (1 - 1 / 2) = 1 / 3 * √2 := by
-  sorry
 
 /-- **Theorem 1.5** ([DIR]). For all $k\ge1$,
 $$2^{-k}\sqrt k\ge\mathcal{B}_{\frac12}(2^{-k})\ge0.997\cdot2^{-k}\sqrt k.$$

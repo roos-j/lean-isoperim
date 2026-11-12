@@ -6,7 +6,6 @@ Authors: Claude
 module
 
 public import Isoperim.DIR.«1_Introduction».Thm_1_10
-public import Isoperim.DIR.«4_Computer_Assisted_Proofs».«4_1_Dyadic_Partitioning»
 public import Isoperim.DIRX.«2_Preliminaries».«2_2_Properties_J»
 
 /-!
@@ -119,22 +118,6 @@ section Case_II
 
 /-! ### Case II: $x\in[\frac1{64},\frac14]$ -/
 
-/-- [DIRX], §4, Case II: since $x_1<\frac34$, the function $x\mapsto\mathrm{J}(1-x)$ is increasing
-on $[\frac1{64},\frac14]$. -/
-theorem JX_one_sub_mono :
-    x₁ < 3 / 4 ∧ MonotoneOn (fun x ↦ J (1 - x)) (Icc (1 / 64) (1 / 4)) := by
-  sorry
-
-/-- The tight lower bound ([DIRX], §4, Case II)
-$$\underline{h_{P,1}}(\underline x,\overline x)=\tfrac12(L(\underline x)+\mathrm{J}(1-\underline x))
--2\overline x(1-\underline x).$$ -/
-noncomputable def h_P₁_lo (xl xu : ℝ) : ℝ := 1 / 2 * (L xl + J (1 - xl)) - 2 * xu * (1 - xl)
-
-/-- [DIRX], §4, Case II: $\underline{h_{P,1}}$ is a tight lower bound for $G_P$ on
-$[\frac1{64},\frac14]$. -/
-theorem h_P₁_lo_tight : IsTightLowerBound₁ G_P h_P₁_lo (1 / 64) (1 / 4) := by
-  sorry
-
 /-- **(4.2)** ([DIRX], §4, Case II) (🚗). Dyadic partitioning shows that $G_P(x)>10^{-4}$ for all
 $x\in[\frac1{64},\frac14]$. -/
 theorem eqn_4_2 (x : ℝ) (hx : x ∈ Icc (1 / 64 : ℝ) (1 / 4)) : G_P x > (10 : ℝ) ^ (-4 : ℤ) := by
@@ -168,31 +151,6 @@ noncomputable def h_P₂ (x : ℝ) : ℝ :=
 then $x\mapsto\frac12(Q(x)+\mathrm{J}(1-x))-2x(1-x)$ is decreasing on $[\frac14,\frac12]$. -/
 theorem G_PX_III_anti (h : ∀ x ∈ Icc (1 / 4 : ℝ) (1 / 2), h_P₂ x > 0) :
     AntitoneOn (fun x ↦ 1 / 2 * (Q x + J (1 - x)) - 2 * x * (1 - x)) (Icc (1 / 4) (1 / 2)) := by
-  sorry
-
-/-- [DIRX], §4, Case III: we compute
-$h_{P,2}(x)=-\frac12Q'(x)+\frac12\mathrm{J}'(1-x)-4x+2$ (for $x\in[\frac14,\frac12]$). -/
-theorem h_P₂_eq (x : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
-    h_P₂ x = -(1 / 2) * deriv Q x + 1 / 2 * deriv J (1 - x) - 4 * x + 2 := by
-  sorry
-
-/-- [DIRX], §4, Case III: the function $x\mapsto\mathrm{J}'(1-x)$ is increasing on $[0,\frac12]$
-(we state it on $(0,\frac12]$, since $\mathrm{J}'(1)$ is infinite) and $Q'$ is decreasing (on
-$[0,\frac12]$). -/
-theorem deriv_JX_one_sub_mono :
-    MonotoneOn (fun x ↦ deriv J (1 - x)) (Ioc 0 (1 / 2)) ∧
-      AntitoneOn (deriv Q) (Icc 0 (1 / 2)) := by
-  sorry
-
-/-- The tight lower bound ([DIRX], §4, Case III)
-$$\underline{h_{P,2}}(\underline x,\overline x)=-\tfrac12Q'(\underline x)
-+\tfrac12\mathrm{J}'(1-\underline x)-4\overline x+2.$$ -/
-noncomputable def h_P₂_lo (xl xu : ℝ) : ℝ :=
-  -(1 / 2) * deriv Q xl + 1 / 2 * deriv J (1 - xl) - 4 * xu + 2
-
-/-- [DIRX], §4, Case III: $\underline{h_{P,2}}$ is a tight lower bound for $h_{P,2}$ on
-$[\frac14,\frac12]$. -/
-theorem h_P₂_lo_tight : IsTightLowerBound₁ h_P₂ h_P₂_lo (1 / 4) (1 / 2) := by
   sorry
 
 /-- **(4.3)** ([DIRX], §4, Case III) (🚗). By dyadic partitioning, $h_{P,2}(x)>10^{-4}$ for all

@@ -49,53 +49,6 @@ noncomputable def gradNorm {n : ℕ} {M : Type*} [NormedAddCommGroup M] [NormedS
 
 @[inherit_doc] notation:max "∇" f:max => gradNorm f
 
-/-- The best constant $C_p$ in the $L^p$ Poincaré inequality ([DIR], §1.5): the largest constant
-such that $\|\nabla f\|_p\ge C_p\|f-\mathbf{E}f\|_p$ holds for all $f:\{0,1\}^n\to\mathbb{C}$
-(and all $n\ge1$). -/
-noncomputable def poincareConst (p : ℝ) : ℝ :=
-  sSup {C : ℝ | ∀ (n : ℕ), 1 ≤ n → ∀ f : ({0,1}^n) → ℂ,
-    ‖∇f‖_[p] ≥ C * ‖f - fun _ ↦ 𝐄 f‖_[p]}
-
-/-- [DIR], §1.5: the value of $C_p$ remains unknown except for $p=2$, where $C_2=1$. -/
-theorem poincareConst_two : poincareConst 2 = 1 := by
-  sorry
-
-/-- [DIR], §1.5 (cited from [BELP08], [ILvHV]): in the endpoint case $p=1$,
-$\sqrt{2/\pi}\ge C_1>\frac2\pi$. -/
-theorem poincareConst_one_bounds :
-    √(2 / π) ≥ poincareConst 1 ∧ poincareConst 1 > 2 / π := by
-  sorry
-
-/-- [DIR], §1.5: the conjecture $C_1=\sqrt{2/\pi}$ (a statement, not a claim). -/
-def PoincareConstOneConjecture : Prop := poincareConst 1 = √(2 / π)
-
-/-- The best constant $C_{B,p}$ in the $L^p$ Poincaré inequality restricted to Boolean-valued
-functions $f:\{0,1\}^n\to\{0,1\}$ ([DIR], §1.5). -/
-noncomputable def poincareConstBool (p : ℝ) : ℝ :=
-  sSup {C : ℝ | ∀ (n : ℕ), 1 ≤ n → ∀ f : ({0,1}^n) → ℝ, (∀ x, f x = 0 ∨ f x = 1) →
-    ‖∇f‖_[p] ≥ C * ‖f - fun _ ↦ 𝐄 f‖_[p]}
-
-/-- [DIR], §1.5 (cited from [BIM23]): $C_{B,1}>C_1$; specifically
-$C_{B,1}\ge\sqrt{2^{3/2}-2}>\sqrt{2/\pi}$. -/
-theorem poincareConstBool_one_bim :
-    poincareConstBool 1 > poincareConst 1 ∧
-    poincareConstBool 1 ≥ √(2 ^ (3 / 2 : ℝ) - 2) ∧ √(2 ^ (3 / 2 : ℝ) - 2) > √(2 / π) := by
-  sorry
-
-/-- [DIR], §1.5: the conjecture that indicator functions of half-cubes extremize the Boolean
-Poincaré inequality, which would mean $C_{B,p}=1$ for all $p\ge1$ (a statement, not a claim). -/
-def PoincareConstBoolConjecture : Prop := ∀ p : ℝ, 1 ≤ p → poincareConstBool p = 1
-
-/-- [DIR], §1.5, before Theorem 1.10: "We obtain an improvement of the best known lower bound
-for $C_{B,1}$ as well as the sharp bound $C_{B,p}=1$ for $p\geq 2\beta_0$": $C_{B,p}=1$ for
-$p\ge2\beta_0$, and $C_{B,1}\ge0.997>\sqrt{2^{3/2}-2}$ (the previous best bound, see
-`Auto.DIR.poincareConstBool_one_bim`). This is a consequence of Theorem 1.10 below (together
-with the half-cube example). -/
-theorem poincareConstBool_bounds :
-    (∀ p : ℝ, 2 * β₀ ≤ p → poincareConstBool p = 1) ∧
-    poincareConstBool 1 ≥ 0.997 ∧ (0.997 : ℝ) > √(2 ^ (3 / 2 : ℝ) - 2) := by
-  sorry
-
 /-- A *half-cube* of $\{0,1\}^n$: a set $\{x : x_i=a\}$ for some coordinate $i$ and bit $a$
 ([DIR], Theorem 1.10). -/
 def IsHalfCube {n : ℕ} (A : Set ({0,1}^n)) : Prop := ∃ (i : Fin n) (a : ZMod 2), A = {x | x i = a}
@@ -120,10 +73,6 @@ theorem thm_1_10 (n : ℕ) (hn : 1 ≤ n) :
       ‖∇𝟏_{A}‖_[p] = ‖𝟏_{A} - fun _ ↦ 𝐄 𝟏_{A}‖_[p]) ∧
     (∀ f : ({0,1}^n) → ℝ, (∀ x, f x = 0 ∨ f x = 1) →
       ‖∇f‖_[1] ≥ 0.997 * ‖f - fun _ ↦ 𝐄 f‖_[1]) := by
-  sorry
-
-/-- [DIR], Theorem 1.10: $2\beta_0=1.00114$. -/
-theorem two_mul_β₀ : 2 * β₀ = 1.00114 := by
   sorry
 
 /-! ### Structure of the paper -/

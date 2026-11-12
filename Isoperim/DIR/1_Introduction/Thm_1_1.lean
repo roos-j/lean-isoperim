@@ -105,24 +105,6 @@ theorem thm_1_1 (n : ℕ) (hn : 1 ≤ n) (β : ℝ) (hβ : β₀ ≤ β) :
       𝐄 h_{A} ^ β = ｜A｜ * (log₂ (1 / ｜A｜)) ^ β) := by
   sorry
 
-/-- [DIR], §1, after Theorem 1.1: if (1.1) holds for some $\beta$, then it follows for all
-$\beta'\ge\beta$ (by Hölder's inequality, see Lemma 5.1). -/
-theorem eqn_1_1_mono (β : ℝ) (hβ : 0 < β)
-    (h : ∀ (n : ℕ), 1 ≤ n → ∀ A : Set ({0,1}^n), ｜A｜ ≤ 1 / 2 →
-      𝐄 h_{A} ^ β ≥ ｜A｜ * (log₂ (1 / ｜A｜)) ^ β)
-    (β' : ℝ) (hβ' : β ≤ β') :
-    ∀ (n : ℕ), 1 ≤ n → ∀ A : Set ({0,1}^n), ｜A｜ ≤ 1 / 2 →
-      𝐄 h_{A} ^ β' ≥ ｜A｜ * (log₂ (1 / ｜A｜)) ^ β' := by
-  sorry
-
-/-- **Remark 1.2** ([DIR], added in revised version, August 2026; cited from [DIRX26,
-Theorem 1.1], formalized as `Auto.DIRX.thm_1_1`). This failure can be overcome to prove (1.1) in
-the full conjectured range $\beta\ge 0.5$, see [DIRX26], also see Remark 2.6. -/
-theorem rem_1_2 (n : ℕ) (hn : 1 ≤ n) (β : ℝ) (hβ : 1 / 2 ≤ β) (A : Set ({0,1}^n))
-    (hA : ｜A｜ ≤ 1 / 2) :
-    𝐄 h_{A} ^ β ≥ ｜A｜ * (log₂ (1 / ｜A｜)) ^ β := by
-  sorry
-
 /-! ### §1.4 Towards a conjecture of Kahn and Park
 
 In the paper this subsection follows Remark 1.8 (§1.3). It is placed here since Corollary 1.9
@@ -150,37 +132,6 @@ theorem cor_1_9 (n : ℕ) (hn : 1 ≤ n) (A B W : Set ({0,1}^n))
     (hcover : A ∪ B ∪ W = Set.univ) (hA : ｜A｜ = 1 / 2) :
     |∇(A, B)| + (n : ℝ) ^ (0.50057 : ℝ) * ｜W｜ ≥ 1 / 2 := by
   sorry
-
-/-- [DIR], §1.4 (cited from Kahn–Park [KP20]): Corollary 1.9 holds with the exponent
-$\log_2(\frac32)\approx0.585$ in place of $0.50057$.
-
-**Discrepancy with the paper.** The paper says "Kahn and Park proved this with
-$\log_3(\frac32)\approx 0.585$ in the exponent of $n$". But $\log_3(\frac32)\approx0.369$, while
-$0.585\approx\log_2(\frac32)$, the exponent of [KP20] (and the value $\log_2(\frac32)$ quoted
-in the abstract and in §1.1 of [DIR]). With $\log_3(\frac32)<\frac12$ the claim would even
-contradict the optimality of the conjectured exponent $0.5$. The Lean statement uses
-$\log_2(\frac32)$ (typo repair). -/
-theorem cor_1_9_kahn_park (n : ℕ) (hn : 1 ≤ n) (A B W : Set ({0,1}^n))
-    (hAB : Disjoint A B) (hAW : Disjoint A W) (hBW : Disjoint B W)
-    (hcover : A ∪ B ∪ W = Set.univ) (hA : ｜A｜ = 1 / 2) :
-    |∇(A, B)| + (n : ℝ) ^ (log₂ (3 / 2)) * ｜W｜ ≥ 1 / 2 := by
-  sorry
-
-/-- [DIR], §1.4 (cited from [BIM23, Cor. 1.6]): Corollary 1.9 holds with the exponent $0.53$
-in place of $0.50057$. -/
-theorem cor_1_9_bim (n : ℕ) (hn : 1 ≤ n) (A B W : Set ({0,1}^n))
-    (hAB : Disjoint A B) (hAW : Disjoint A W) (hBW : Disjoint B W)
-    (hcover : A ∪ B ∪ W = Set.univ) (hA : ｜A｜ = 1 / 2) :
-    |∇(A, B)| + (n : ℝ) ^ (0.53 : ℝ) * ｜W｜ ≥ 1 / 2 := by
-  sorry
-
-/-- The conjecture of Kahn and Park [KP20, Conjecture 1.3] with the conjectured optimal
-exponent $0.5$ ([DIR], §1.4): for every partition $(A,B,W)$ of $\{0,1\}^n$ with $|A|=\frac12$,
-$|\nabla(A,B)|+n^{0.5}|W|\ge\frac12$. This is a statement (a `Prop`), not a claim of the
-paper; it is proved in [DIRX26, Theorem 1.2]. -/
-def KahnParkConjecture : Prop :=
-  ∀ (n : ℕ), 1 ≤ n → ∀ A B W : Set ({0,1}^n), Disjoint A B → Disjoint A W → Disjoint B W →
-    A ∪ B ∪ W = Set.univ → ｜A｜ = 1 / 2 → |∇(A, B)| + (n : ℝ) ^ (0.5 : ℝ) * ｜W｜ ≥ 1 / 2
 
 /-- [DIR], §1.4, display after Corollary 1.9: for a partition $(A,B,W)$ of $\{0,1\}^n$ with
 $|B\cup W|=|A|=\frac12$,

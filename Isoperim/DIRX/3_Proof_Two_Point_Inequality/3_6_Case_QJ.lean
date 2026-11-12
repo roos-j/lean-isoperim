@@ -6,7 +6,6 @@ Authors: Claude
 module
 
 public import Isoperim.DIRX.«2_Preliminaries».«2_2_Properties_J»
-public import Isoperim.DIR.«4_Computer_Assisted_Proofs».«4_1_Dyadic_Partitioning»
 
 /-!
 # [DIRX] §3.6 Case QJ
@@ -94,54 +93,10 @@ from §3.1, (3.1)). -/
 theorem g_QJ_half (y : ℝ) (hy : y ∈ Icc (1 / 2 : ℝ) (5 / 8)) : g_QJ (1 / 2) y ≥ 0 := by
   sorry
 
-/-- The expression $y-x+(2\mathrm{J}(\frac{x+y}2)-Q(x))(\mathrm{J}'(\frac{x+y}2)-Q'(x))$, which
-equals $-\frac12\partial_xg_{QJ}(x,y)$ ([DIRX], §3.6.1; its tight lower bound is denoted
-$\underline{h_{QJ,1}}$ in the paper). -/
-noncomputable def h_QJ₁ (x y : ℝ) : ℝ :=
-  y - x + (2 * J ((x + y) / 2) - Q x) * (deriv J ((x + y) / 2) - deriv Q x)
-
-/-- [DIRX], §3.6.1: $-\frac12\partial_xg_{QJ}(x,y)=y-x+(2\mathrm{J}(\frac{x+y}2)-Q(x))
-(\mathrm{J}'(\frac{x+y}2)-Q'(x))$ (for $(x,y)\in[\frac14,\frac12]\times[\frac12,\frac58]$). -/
-theorem g_QJ_deriv (x y : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2))
-    (hy : y ∈ Icc (1 / 2 : ℝ) (5 / 8)) :
-    -(1 / 2) * deriv (fun t ↦ g_QJ t y) x = h_QJ₁ x y := by
-  sorry
-
 /-- [DIRX], §3.6.1: if $\partial_xg_{QJ}<0$ on $[\frac38,\frac12]\times[\frac12,\frac58]$, then
 $g_{QJ}(x,y)\ge g_{QJ}(\frac12,y)\ge0$ there, which finishes the proof of this case. -/
 theorem g_QJ_nonneg (x y : ℝ) (hx : x ∈ Icc (3 / 8 : ℝ) (1 / 2))
     (hy : y ∈ Icc (1 / 2 : ℝ) (5 / 8)) : g_QJ x y ≥ g_QJ (1 / 2) y ∧ g_QJ x y ≥ 0 := by
-  sorry
-
-open Classical in
-/-- The tight lower bound ([DIRX], §3.6.1), with $\underline c=\frac{\underline x+\underline y}2$,
-$\overline c=\frac{\overline x+\overline y}2$:
-$$\underline{h_{QJ,1}}(\underline x,\overline x,\underline y,\overline y)
-=\underline y-\overline x+(2\underline{\mathrm{J}}(\underline c,\overline c)-Q(\overline x))
-\mathrm{J}'(\overline c)\mathbf{1}_{\overline c<x_1}
--(2\overline{\mathrm{J}}(\underline c,\overline c)-Q(\underline x))
-\overline{|\mathrm{J}'|}(\underline c,\overline c)\mathbf{1}_{\text{not }\overline c<x_1}
--(2\overline{\mathrm{J}}(\underline c,\overline c)-Q(\underline x))Q'(\underline x).$$ -/
-noncomputable def h_QJ₁_lo (xl xu yl yu : ℝ) : ℝ :=
-  yl - xu +
-    (2 * JX_lo ((xl + yl) / 2) ((xu + yu) / 2) - Q xu) * deriv J ((xu + yu) / 2) *
-      (if (xu + yu) / 2 < x₁ then 1 else 0) -
-    (2 * JX_hi ((xl + yl) / 2) ((xu + yu) / 2) - Q xl) *
-      absDJX_hi ((xl + yl) / 2) ((xu + yu) / 2) * (if ¬ (xu + yu) / 2 < x₁ then 1 else 0) -
-    (2 * JX_hi ((xl + yl) / 2) ((xu + yu) / 2) - Q xl) * deriv Q xl
-
-/-- [DIRX], §3.6.1: $\underline{h_{QJ,1}}$ is a tight lower bound of
-$-\frac12\partial_xg_{QJ}$ (i.e. of `h_QJ₁`) on $[\frac14,\frac12]\times[\frac12,\frac58]$.
-
-(On this rectangle $c=\frac{x+y}2$ ranges over $[\frac38,\frac9{16}]$, partly below $\frac12$,
-whereas the monotonicity of $\mathrm{J}$, $\mathrm{J}'$ and the enclosures (2.7) are stated in
-§2.2 for arguments in $[\frac12,1]$ (`Auto.DIRX.JX_mono`, `Auto.DIRX.eqn_2_7`,
-`Auto.DIRX.absDJX_encl`). They remain valid on $[1-w_1,1)\supset[\frac38,1)$, since
-$\mathrm{J}''=-\gamma/\mathrm{J}<0$ there and $\mathrm{J}'(x_1)=0$; the same remark applies to
-$\underline{h_{QJ,2}}$ below, where $c\in[\frac7{16},\frac34]$. A randomized Python check of the
-lower-bound property found no violation.) -/
-theorem h_QJ₁_lo_tight :
-    IsTightLowerBound₂ h_QJ₁ h_QJ₁_lo (1 / 4) (1 / 2) (1 / 2) (5 / 8) := by
   sorry
 
 /-- **(3.13)** ([DIRX], §3.6.1) (🚗). Dyadic partitioning yields
@@ -174,19 +129,6 @@ theorem G₁_BX_eq_h_QJ₂ (x y : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2))
 $$h_{QJ,2}(x,y)=\sqrt{(y-x)^2+\mathrm{J}(y)^2}+Q(x)-2\mathrm{J}(\tfrac{x+y}2)>10^{-7}.$$ -/
 theorem eqn_3_14 (x y : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2))
     (hy : y ∈ Icc (5 / 8 : ℝ) 1) : h_QJ₂ x y > (10 : ℝ) ^ (-7 : ℤ) := by
-  sorry
-
-/-- The tight lower bound ([DIRX], §3.6.2)
-$$\underline{h_{QJ,2}}(\underline x,\overline x,\underline y,\overline y)
-=\sqrt{(\underline y-\overline x)^2+\mathrm{J}(\overline y)^2}+Q(\underline x)
--2\overline{\mathrm{J}}(\tfrac{\underline x+\underline y}2,\tfrac{\overline x+\overline y}2).$$ -/
-noncomputable def h_QJ₂_lo (xl xu yl yu : ℝ) : ℝ :=
-  √((yl - xu) ^ 2 + J yu ^ 2) + Q xl - 2 * JX_hi ((xl + yl) / 2) ((xu + yu) / 2)
-
-/-- [DIRX], §3.6.2: $\underline{h_{QJ,2}}$ is a tight lower bound of $h_{QJ,2}$ on
-$[\frac14,\frac12]\times[\frac58,1]$. -/
-theorem h_QJ₂_lo_tight :
-    IsTightLowerBound₂ h_QJ₂ h_QJ₂_lo (1 / 4) (1 / 2) (5 / 8) 1 := by
   sorry
 
 end Far_From_Diagonal

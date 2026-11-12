@@ -5,7 +5,6 @@ Authors: Claude
 -/
 module
 
-public import Isoperim.DIR.«4_Computer_Assisted_Proofs».«4_1_Dyadic_Partitioning»
 public import Isoperim.DIR.«5_Auxiliary_Estimates».«5_3_Properties_L_Q»
 
 /-!
@@ -42,13 +41,6 @@ theorem prop_6_2 (β : ℝ) (hβ : β = 1 / 2 ∨ β = β₀) (x y : ℝ) (hx : 
     (hy : y ≤ 1 / 2) : G₁ β (fun t ↦ max (L β t) (Q β t)) x y ≥ 0 := by
   sorry
 
-/-- **Remark 6.3** ([DIR]). The argument is not sensitive to the exact value of $\beta_0$: the
-conclusion holds for all $\beta\in[\frac12,1]$ (not pursued in the paper):
-$G^1_\beta[\max(L_\beta,Q_\beta)](x,y)\ge0$ for $0\le x\le y\le\frac12$. -/
-theorem rem_6_3 (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1) (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y)
-    (hy : y ≤ 1 / 2) : G₁ β (fun t ↦ max (L β t) (Q β t)) x y ≥ 0 := by
-  sorry
-
 /-- [DIR], §6.2 (cited from [BIM23, Lemma 2.2]): $G^1_\beta[L_\beta](x,y)\ge0$ for all
 $0\le x\le y\le\frac12$ (for $\beta\in[\frac12,1]$). -/
 theorem caseQ_G₁_L (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1) (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y)
@@ -74,12 +66,6 @@ theorem caseQ_reduction (β : ℝ) (hβ : β = 1 / 2 ∨ β = β₀)
 $\frac{x+y}2\ge\frac14$: $$G^1_\beta[Q_\beta](x,y)\ge0.$$ -/
 theorem eqn_6_6 (β : ℝ) (hβ : β = 1 / 2 ∨ β = β₀) (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y)
     (hy : y ≤ 1 / 2) (hxy' : (x + y) / 2 ≥ 1 / 4) : G₁ β (Q β) x y ≥ 0 := by
-  sorry
-
-/-- [DIR], §6.2: $G^1_\beta[Q_\beta](x,x)=0$ for $x\in[0,\frac12]$ and
-$G^1_\beta[Q_\beta](0,\frac12)=0$ (for $\beta\in\{\frac12,\beta_0\}$). -/
-theorem caseQ_G₁_Q_eq_zero (β : ℝ) (hβ : β = 1 / 2 ∨ β = β₀) :
-    (∀ x ∈ Icc (0 : ℝ) (1 / 2), G₁ β (Q β) x x = 0) ∧ G₁ β (Q β) 0 (1 / 2) = 0 := by
   sorry
 
 section Case_Q_II
@@ -125,16 +111,6 @@ theorem caseQ_II_g_Q_1_eq (β h y : ℝ) (hh : 0 < h) :
       - 1 / 2 * β * (1 - β) * Q β y ^ (1 - 2 / β) * h ^ (1 / β) := by
   sorry
 
-/-- [DIR], §6.2.1: if $\beta>\frac12$ (and $\beta\le1$, the standing range), then
-$g_{Q,1,\beta}(h,y)>0$ for $0\le h\le\frac14\le y\le\frac12$. (The paper only proves the case
-$\beta=\beta_0$, by (6.7); the general claim was spot-checked numerically for
-$\beta\in\{0.5001,0.501,0.52,0.6,0.8,1\}$. At $h=0$ the Lean value
-$g_{Q,1,\beta}(0,y)=\beta Q_\beta(y)^{1-\frac1\beta}$ is the continuous extension, since
-$2-\frac1\beta>0$.) -/
-theorem caseQ_II_g_Q_1_pos (β : ℝ) (hβ : β ∈ Ioc (1 / 2 : ℝ) 1) (h y : ℝ)
-    (hh : h ∈ Icc (0 : ℝ) (1 / 4)) (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) : g_Q_1 β h y > 0 := by
-  sorry
-
 /-- The lower bound ([DIR], §6.2.1)
 $$\underline{g_{Q,1,\beta}}(\underline h,\overline h,\underline y,\overline y)
 =\beta Q_\beta(\overline y)^{1-\frac1\beta}
@@ -143,13 +119,6 @@ $$\underline{g_{Q,1,\beta}}(\underline h,\overline h,\underline y,\overline y)
 noncomputable def g_Q_1_lo (β hl hu yl yu : ℝ) : ℝ :=
   β * Q β yu ^ (1 - 1 / β) - (α₀ β - 2 * α₁ β * hl + 4 * α₁ β * yu) * hu ^ (2 - 1 / β)
     - 1 / 2 * β * (1 - β) * Q β yl ^ (1 - 2 / β) * hu ^ (1 / β)
-
-/-- [DIR], §6.2.1: for $\beta\in(\frac12,\log_2\frac32)$ (in particular $\beta=\beta_0$),
-$\underline{g_{Q,1,\beta}}$ is a tight lower bound of $g_{Q,1,\beta}$ on
-$[0,\frac14]\times[\frac14,\frac12]$. -/
-theorem g_Q_1_lo_tight (β : ℝ) (hβ : β ∈ Ioo (1 / 2 : ℝ) (log₂ (3 / 2))) :
-    IsTightLowerBound₂ (g_Q_1 β) (g_Q_1_lo β) 0 (1 / 4) (1 / 4) (1 / 2) := by
-  sorry
 
 /-- **(6.7)** ([DIR], §6.2.1) (🚗). For $(h,y)\in[0,\frac14]\times[\frac14,\frac12]$:
 $$g_{Q,1,\beta_0}(h,y)>0.001.$$ -/
@@ -161,23 +130,6 @@ theorem eqn_6_7 (h y : ℝ) (hh : h ∈ Icc (0 : ℝ) (1 / 4)) (hy : y ∈ Icc (
 $0\le h\le\frac14\le y\le\frac12$, $G^1_{\beta_0}[Q_{\beta_0}](y-h,y)\ge0$. -/
 theorem caseQ_II_β₀ (h y : ℝ) (hh : h ∈ Icc (0 : ℝ) (1 / 4))
     (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) : G₁ β₀ (Q β₀) (y - h) y ≥ 0 := by
-  sorry
-
-/-- [DIR], §6.2.1: $g_{Q,1,\frac12}(0,\frac12)=0$, where $g_{Q,1,\frac12}(0,\cdot)$ is the
-continuous extension: $g_{Q,1,\frac12}(h,\frac12)\to0$ as $h\to0^+$.
-
-**Discrepancy with the paper.** The paper evaluates $g_{Q,1,\frac12}$ at $h=0$ (here and in
-claim (1) below), although its definition contains
-$(2Q_\beta(y-\frac h2)-Q_\beta(y-h)-Q_\beta(y))h^{-\frac1\beta}$, which is undefined at $h=0$;
-what is meant is the continuous extension
-$\lim_{h\to0^+}g_{Q,1,\frac12}(h,y)=\frac12Q_{\frac12}(y)^{-1}-(\alpha_0+4\alpha_1y)$. In Lean,
-$0^{-2}=0$, so `g_Q_1 (1 / 2) 0 y` $=\frac12Q_{\frac12}(y)^{-1}$ is *not* this extension. All
-statements about "$g_{Q,1,\frac12}(0,y)$" are therefore formulated with the limit $h\to0^+$
-(`caseQ_II_g_Q_1_half_zero`, `caseQ_II_g_Q_1_half_concave`, `caseQ_II_claim_1`,
-`caseQ_II_claim_1_limit`). (For $\beta>\frac12$ the Lean value at $h=0$ agrees with the
-extension.) -/
-theorem caseQ_II_g_Q_1_half_zero :
-    Tendsto (fun h ↦ g_Q_1 (1 / 2) h (1 / 2)) (𝓝[>] 0) (𝓝 0) := by
   sorry
 
 /-- [DIR], §6.2.1: for $h>0$ (and $\alpha_i=\alpha_i(\frac12)$),
@@ -231,13 +183,6 @@ theorem caseQ_II_claim_1_iff (y : ℝ) (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
         1 - 2 * (α₀ (1 / 2) + 4 * α₁ (1 / 2) * y) * Q (1 / 2) y ≥ 0) := by
   sorry
 
-/-- [DIR], §6.2.1, proof of claim (1): $1-2(\alpha_0+4\alpha_1y)Q_{\frac12}(y)$ is a polynomial of
-degree $4$ in $y$. -/
-theorem caseQ_II_claim_1_poly :
-    ∃ p : Polynomial ℝ, p.natDegree = 4 ∧
-      ∀ y, p.eval y = 1 - 2 * (α₀ (1 / 2) + 4 * α₁ (1 / 2) * y) * Q (1 / 2) y := by
-  sorry
-
 /-- [DIR], §6.2.1, proof of claim (1): with $t=\frac12-y$,
 $1-2(\alpha_0+4\alpha_1y)Q_{\frac12}(y)=1-\frac13(1-4t^2)(1-4\alpha_1t)(3-4\alpha_1t)$. -/
 theorem caseQ_II_claim_1_subst (t : ℝ) :
@@ -272,14 +217,6 @@ $$\underline{g_{Q,1,\frac12}}(\tfrac14,\tfrac14,\tfrac14,\tfrac38)>0.01\quad\tex
 theorem eqn_6_8 :
     g_Q_1_lo (1 / 2) (1 / 4) (1 / 4) (1 / 4) (3 / 8) > 0.01 ∧
       g_Q_1_lo (1 / 2) (1 / 4) (1 / 4) (3 / 8) (1 / 2) > 0.001 := by
-  sorry
-
-/-- [DIR], §6.2.1, proof of claim (2): $\underline{g_{Q,1,\frac12}}$ is a lower bound of
-$g_{Q,1,\frac12}$ at $h=\frac14$: for $\frac14\le\underline y\le y\le\overline y\le\frac12$,
-$g_{Q,1,\frac12}(\frac14,y)\ge\underline{g_{Q,1,\frac12}}(\frac14,\frac14,\underline y,
-\overline y)$. -/
-theorem caseQ_II_claim_2_lo (yl yu y : ℝ) (hyl : 1 / 4 ≤ yl) (hy : y ∈ Icc yl yu)
-    (hyu : yu ≤ 1 / 2) : g_Q_1 (1 / 2) (1 / 4) y ≥ g_Q_1_lo (1 / 2) (1 / 4) (1 / 4) yl yu := by
   sorry
 
 end Proof_Claim_2
@@ -326,14 +263,6 @@ and $\approx0.0361$ for $\beta=\frac12$. The Lean statement keeps both claims as
 theorem lemma_6_4 (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : ℝ)
     (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
     {h ∈ Icc (1 / 4 : ℝ) (1 / 2) | deriv (fun h ↦ G_Q β h y) h = 0}.Subsingleton ∧
-      deriv (fun h ↦ G_Q β h y) (1 / 4) > 0 := by
-  sorry
-
-/-- **Remark 6.5** ([DIR]). This is slightly more than we need: it would be enough to show this
-for $y\in[\frac38,\frac12]$ and $h\in[\frac14,y]$ (the restricted statement is recorded here). -/
-theorem rem_6_5 (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : ℝ)
-    (hy : y ∈ Icc (3 / 8 : ℝ) (1 / 2)) :
-    {h ∈ Icc (1 / 4 : ℝ) y | deriv (fun h ↦ G_Q β h y) h = 0}.Subsingleton ∧
       deriv (fun h ↦ G_Q β h y) (1 / 4) > 0 := by
   sorry
 
@@ -630,34 +559,6 @@ theorem lemma_6_4_of_strictAntiOn (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (
 
 /-- The function $g_{Q,2,\beta}(h,y)=-\partial_hp_{y,\beta}(h)$ ([DIR], proof of Lemma 6.4). -/
 noncomputable def g_Q_2 (β h y : ℝ) : ℝ := -deriv (p_Q β y) h
-
-/-- [DIR], proof of Lemma 6.4: for $h>0$,
-$g_{Q,2,\beta}(h,y)=-a_2h^2+a_{1,y}h-a_{0^+,y}h^{2-\frac1\beta}+a_{-1^+,y}h^{1-\frac1\beta}$
-with the coefficients read off from $p_{y,\beta}$: $a_2=12\alpha_1$,
-$a_{1,y}=2\alpha_0+8\alpha_1y$, $a_{0^+,y}=6(3-\frac1\beta)\alpha_1Q_\beta(y)^{\frac1\beta}$,
-$a_{-1^+,y}=(2-\frac1\beta)(2\alpha_0+8\alpha_1y)Q_\beta(y)^{\frac1\beta}$. -/
-theorem g_Q_2_eq (β h y : ℝ) (hh : 0 < h) :
-    g_Q_2 β h y = -(12 * α₁ β) * h ^ 2 + (2 * α₀ β + 8 * α₁ β * y) * h
-      - 6 * (3 - 1 / β) * α₁ β * Q β y ^ (1 / β) * h ^ (2 - 1 / β)
-      + (2 - 1 / β) * (2 * α₀ β + 8 * α₁ β * y) * Q β y ^ (1 / β) * h ^ (1 - 1 / β) := by
-  sorry
-
-/-- The lower bound ([DIR], proof of Lemma 6.4)
-$$\underline{g_{Q,2,\beta}}(\underline h,\overline h,\underline y,\overline y)
-=-12\alpha_1\overline h^2+(2\alpha_0+8\alpha_1\underline y)\underline h
--6(3-\tfrac1\beta)\alpha_1Q_\beta(\overline y)^{\frac1\beta}\overline h^{2-\frac1\beta}
-+(2-\tfrac1\beta)(2\alpha_0+8\alpha_1\underline y)Q_\beta(\underline y)^{\frac1\beta}
-\overline h^{-\frac1\beta+1}.$$ -/
-noncomputable def g_Q_2_lo (β hl hu yl yu : ℝ) : ℝ :=
-  -12 * α₁ β * hu ^ 2 + (2 * α₀ β + 8 * α₁ β * yl) * hl
-    - 6 * (3 - 1 / β) * α₁ β * Q β yu ^ (1 / β) * hu ^ (2 - 1 / β)
-    + (2 - 1 / β) * (2 * α₀ β + 8 * α₁ β * yl) * Q β yl ^ (1 / β) * hu ^ (-1 / β + 1)
-
-/-- [DIR], proof of Lemma 6.4: $\underline{g_{Q,2,\beta}}$ is a tight lower bound of
-$g_{Q,2,\beta}$ on $[\frac14,\frac12]^2$ (for $\beta\in\{\beta_0,\frac12\}$). -/
-theorem g_Q_2_lo_tight (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) :
-    IsTightLowerBound₂ (g_Q_2 β) (g_Q_2_lo β) (1 / 4) (1 / 2) (1 / 4) (1 / 2) := by
-  sorry
 
 /-- **(6.12)** ([DIR], proof of Lemma 6.4) (🚗). For $\beta\in\{\frac12,\beta_0\}$ and
 $(h,y)\in[\frac14,\frac12]^2$: $$g_{Q,2,\beta}(h,y)>0.01.$$ -/

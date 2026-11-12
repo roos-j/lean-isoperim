@@ -6,7 +6,6 @@ Authors: Claude
 module
 
 public import Isoperim.DIR.«3_Variants_Bobkov_Inequality».«3_0_Variants_Bobkov_Inequality»
-public import Isoperim.DIR.«4_Computer_Assisted_Proofs».«4_1_Dyadic_Partitioning»
 public import Isoperim.DIR.«5_Auxiliary_Estimates».«5_3_Properties_L_Q»
 
 /-!
@@ -38,13 +37,6 @@ namespace Auto.DIR
 open Real Set
 
 /-! ## §6.1 Case $J$: $\frac12\le x\le y\le 1$ -/
-
-/-- [DIR], §6.1 (cf. Remark 3.6): when $x<x_0\approx0.552$ the estimate
-$G^1_{\frac12}[J](x,y)\ge0$ fails: for every $x\in[\frac12,x_0)$ there is $y\in[x,1]$ with
-$G^1_{\frac12}[J](x,y)<0$. -/
-theorem caseJ_G₁_half_fails (x : ℝ) (hx : x ∈ Ico (1 / 2) x₀) :
-    ∃ y ∈ Icc x 1, G₁ (1 / 2) J x y < 0 := by
-  sorry
 
 /-- **Proposition 6.1** ([DIR]). Let $\beta\ge\beta_0=0.50057$ and $c_0=0.997$. Then for
 $\frac12\le x\le x_0$ and $x\le y\le1$,
@@ -103,17 +95,6 @@ noncomputable def E_J (N : ℕ) (x h : ℝ) : ℝ :=
     ∑ k ∈ Finset.Ico 2 N, 1 / (k.factorial : ℝ) * (1 - 2 ^ (-(k : ℝ) + 1)) * iteratedDeriv k J x
       * h ^ k
 
-/-- [DIR], §6.1.1 (Taylor's theorem). For every $N\ge2$, $\frac12<x$, $h\ge0$, $x+h<1$:
-$$J(x)+J(x+h)-2J(x+\tfrac h2)=\sum_{k=2}^{N-1}\tfrac1{k!}(1-2^{-k+1})J^{(k)}(x)h^k+E_N,$$
-where $E_N=\frac1{N!}(J^{(N)}(\xi_1)-2^{-N+1}J^{(N)}(\xi_2))h^N$ for some intermediate values
-$\xi_1\in[x,x+h]$, $\xi_2\in[x,x+\frac h2]$. -/
-theorem caseJ_I_taylor (N : ℕ) (hN : 2 ≤ N) (x h : ℝ) (hx : 1 / 2 < x) (hh : 0 ≤ h)
-    (hxh : x + h < 1) :
-    ∃ ξ₁ ∈ Icc x (x + h), ∃ ξ₂ ∈ Icc x (x + h / 2),
-      E_J N x h = 1 / (N.factorial : ℝ) *
-        (iteratedDeriv N J ξ₁ - 2 ^ (-(N : ℝ) + 1) * iteratedDeriv N J ξ₂) * h ^ N := by
-  sorry
-
 /-- The function $g_{J,1,\beta,c}$ ([DIR], §6.1.1) (depending on $N\ge2$; the paper uses $N=6$):
 $$g_{J,1,\beta,c}(x,h)=\beta c^{1-\frac1\beta}J(x+h)^{1-\frac1\beta}
 -\tfrac12\beta(1-\beta)c^{1-\frac2\beta}J(x+h)^{1-\frac2\beta}h^{\frac1\beta}
@@ -149,38 +130,9 @@ theorem eqn_6_1 (x : ℝ) (hx : x ∈ Ioo (1 / 2 : ℝ) 1) :
       iteratedDeriv 4 J x < 0 := by
   sorry
 
-/-- [DIR], §6.1.1: $J^{(5)}=4J'(7+3|J'|^2)J^{-4}$ on $(\frac12,1)$. -/
-theorem iteratedDeriv_five_J (x : ℝ) (hx : x ∈ Ioo (1 / 2 : ℝ) 1) :
-    iteratedDeriv 5 J x = 4 * deriv J x * (7 + 3 * |deriv J x| ^ 2) * J x ^ (-4 : ℤ) := by
-  sorry
-
-/-- [DIR], §6.1.1: $J^{(6)}=-8(7+23|J'|^2+6|J'|^4)J^{-5}<0$ on $(\frac12,1)$. -/
-theorem iteratedDeriv_six_J (x : ℝ) (hx : x ∈ Ioo (1 / 2 : ℝ) 1) :
-    iteratedDeriv 6 J x =
-        -8 * (7 + 23 * |deriv J x| ^ 2 + 6 * |deriv J x| ^ 4) * J x ^ (-5 : ℤ) ∧
-      iteratedDeriv 6 J x < 0 := by
-  sorry
-
 /-- [DIR], §6.1.1: $J$ is increasing on $[\frac12,x_0]$ and decreasing on $[x_0,1]$. -/
 theorem J_monotoneOn_antitoneOn :
     MonotoneOn J (Icc (1 / 2) x₀) ∧ AntitoneOn J (Icc x₀ 1) := by
-  sorry
-
-/-- The lower interval enclosure $\underline J(\underline x,\overline x)=\min(J(\underline x),
-J(\overline x))$ ([DIR], (6.2)). -/
-noncomputable def J_lo (xl xu : ℝ) : ℝ := min (J xl) (J xu)
-
-open Classical in
-/-- The upper interval enclosure ([DIR], (6.2)):
-$\overline J(\underline x,\overline x)=J(\overline x)$ if $\overline x<x_0$,
-$J(\underline x)$ if $\underline x>x_0$, and $J(x_0)$ else. -/
-noncomputable def J_hi (xl xu : ℝ) : ℝ := if xu < x₀ then J xu else if xl > x₀ then J xl else J x₀
-
-/-- **(6.2)** ([DIR], §6.1.1): $\underline J$, $\overline J$ form an interval enclosure for $J$:
-for $\frac12\le\underline x\le x\le\overline x\le1$,
-$\underline J(\underline x,\overline x)\le J(x)\le\overline J(\underline x,\overline x)$. -/
-theorem eqn_6_2 (xl xu x : ℝ) (hxl : 1 / 2 ≤ xl) (hx : x ∈ Icc xl xu) (hxu : xu ≤ 1) :
-    J_lo xl xu ≤ J x ∧ J x ≤ J_hi xl xu := by
   sorry
 
 /-- [DIR], §6.1.1: $J'(x_0)=0$ and $J''<0$ (on $(\frac12,1)$), so $J'$ is strictly decreasing
@@ -188,132 +140,6 @@ theorem eqn_6_2 (xl xu x : ℝ) (hxl : 1 / 2 ≤ xl) (hx : x ∈ Icc xl xu) (hxu
 theorem deriv_J_x₀ :
     deriv J x₀ = 0 ∧ (∀ x ∈ Ioo (1 / 2 : ℝ) 1, deriv (deriv J) x < 0) ∧
       StrictAntiOn (deriv J) (Ioo (1 / 2) 1) := by
-  sorry
-
-open Classical in
-/-- The lower interval enclosure of $|J'|$ ([DIR], §6.1.1, after (6.2)):
-$\underline{|J'|}(\underline x,\overline x)=J'(\overline x)$ if $\overline x<x_0$,
-$-J'(\underline x)$ if $\underline x>x_0$, and $0$ else. -/
-noncomputable def absDJ_lo (xl xu : ℝ) : ℝ :=
-  if xu < x₀ then deriv J xu else if xl > x₀ then -deriv J xl else 0
-
-/-- The upper interval enclosure of $|J'|$ ([DIR], §6.1.1, after (6.2)):
-$\overline{|J'|}(\underline x,\overline x)=\max(|J'(\underline x)|,|J'(\overline x)|)$. -/
-noncomputable def absDJ_hi (xl xu : ℝ) : ℝ := max |deriv J xl| |deriv J xu|
-
-/-- [DIR], §6.1.1: $\underline{|J'|}$, $\overline{|J'|}$ form an interval enclosure for $|J'|$:
-for $\frac12<\underline x\le x\le\overline x<1$,
-$\underline{|J'|}(\underline x,\overline x)\le|J'(x)|\le\overline{|J'|}(\underline x,\overline x)$.
--/
-theorem absDJ_enclosure (xl xu x : ℝ) (hxl : 1 / 2 < xl) (hx : x ∈ Icc xl xu)
-    (hxu : xu < 1) : absDJ_lo xl xu ≤ |deriv J x| ∧ |deriv J x| ≤ absDJ_hi xl xu := by
-  sorry
-
-/-- [DIR], §6.1.1: $J^{(3)}$ changes sign at $x_0$: $J^{(3)}>0$ on $(\frac12,x_0)$ and
-$J^{(3)}<0$ on $(x_0,1)$; likewise for $J^{(5)}$. -/
-theorem iteratedDeriv_three_five_J_sign :
-    (∀ x ∈ Ioo (1 / 2) x₀, 0 < iteratedDeriv 3 J x ∧ 0 < iteratedDeriv 5 J x) ∧
-      ∀ x ∈ Ioo x₀ 1, iteratedDeriv 3 J x < 0 ∧ iteratedDeriv 5 J x < 0 := by
-  sorry
-
-open Classical in
-/-- The lower bound $\underline{J^{(3)}}$ ([DIR], §6.1.1):
-$$\underline{J^{(3)}}(\underline x,\overline x)=2J'(\overline x)J(\overline x)^{-2}
-\mathbf 1_{\overline x<x_0}-2\overline{|J'|}(\underline x,\overline x)
-\underline J(\underline x,\overline x)^{-2}\mathbf 1_{\text{not}\ \overline x<x_0}.$$ -/
-noncomputable def J3_lo (xl xu : ℝ) : ℝ :=
-  2 * deriv J xu * J xu ^ (-2 : ℤ) * (if xu < x₀ then 1 else 0)
-    - 2 * absDJ_hi xl xu * J_lo xl xu ^ (-2 : ℤ) * (if ¬ xu < x₀ then 1 else 0)
-
-open Classical in
-/-- The lower bound $\underline{J^{(5)}}$ ([DIR], §6.1.1):
-$$\underline{J^{(5)}}(\underline x,\overline x)=4J'(\overline x)(7+3|J'(\overline x)|^2)
-J(\overline x)^{-4}\mathbf 1_{\overline x<x_0}-4\overline{|J'|}(\underline x,\overline x)
-(7+3\overline{|J'|}(\underline x,\overline x)^2)\underline J(\underline x,\overline x)^{-4}
-\mathbf 1_{\text{not}\ \overline x<x_0}.$$ -/
-noncomputable def J5_lo (xl xu : ℝ) : ℝ :=
-  4 * deriv J xu * (7 + 3 * |deriv J xu| ^ 2) * J xu ^ (-4 : ℤ) * (if xu < x₀ then 1 else 0)
-    - 4 * absDJ_hi xl xu * (7 + 3 * absDJ_hi xl xu ^ 2) * J_lo xl xu ^ (-4 : ℤ)
-      * (if ¬ xu < x₀ then 1 else 0)
-
-/-- [DIR], §6.1.1: $\underline{J^{(3)}}$ is a tight lower bound of $J^{(3)}$ on every interval
-$[a,b]\subset(\frac12,1)$. -/
-theorem J3_lo_tight (a b : ℝ) (ha : 1 / 2 < a) (hb : b < 1) :
-    IsTightLowerBound₁ (iteratedDeriv 3 J) J3_lo a b := by
-  sorry
-
-/-- [DIR], §6.1.1: $\underline{J^{(5)}}$ is a tight lower bound of $J^{(5)}$ on every interval
-$[a,b]\subset(\frac12,1)$. -/
-theorem J5_lo_tight (a b : ℝ) (ha : 1 / 2 < a) (hb : b < 1) :
-    IsTightLowerBound₁ (iteratedDeriv 5 J) J5_lo a b := by
-  sorry
-
-open Classical in
-/-- The lower bound $\underline{g_{J,1,\beta,c}}(\underline x,\overline x,\underline h,
-\overline h)$ ([DIR], §6.1.1):
-$$\beta c^{1-\frac1\beta}\overline J(\underline x+\underline h,
-\overline x+\overline h)^{1-\frac1\beta}
--\tfrac12\beta(1-\beta)c^{1-\frac2\beta}\underline J(\underline x+\underline h,
-\overline x+\overline h)^{1-\frac2\beta}\overline h^{\frac1\beta}
--\tfrac c2\underline J(\underline x,\overline x)^{-1}\overline h^{2-\frac1\beta}$$
-$$+c\Big(\tfrac14J'(\overline x)J(\overline x)^{-2}\underline h^{3-\frac1\beta}
-+\tfrac1{32}J'(\overline x)(7+3|J'(\overline x)|^2)J(\overline x)^{-4}
-\underline h^{5-\frac1\beta}\Big)\mathbf 1_{\overline x<x_0}$$
-$$-c\Big(\tfrac14\overline{|J'|}\,\underline J^{-2}\overline h^{3-\frac1\beta}
-+\tfrac1{32}\overline{|J'|}(7+3\overline{|J'|}^2)\underline J^{-4}\overline h^{5-\frac1\beta}
-\Big)\mathbf 1_{\text{not}\ \overline x<x_0}
--\tfrac{7c}{48}(1+\overline{|J'|}^2)\underline J^{-3}\overline h^{4-\frac1\beta}$$
-$$-\tfrac c{90}(7+23\overline{|J'|}(\underline x,\overline x+\overline h)^2
-+6\overline{|J'|}(\underline x,\overline x+\overline h)^4)
-\underline J(\underline x,\overline x+\overline h)^{-5}\overline h^{6-\frac1\beta}$$
-$$+\tfrac c{2880}(7+23\underline{|J'|}(\underline x,\overline x+\tfrac12\overline h)^2
-+6\underline{|J'|}(\underline x,\overline x+\tfrac12\overline h)^4)
-\overline J(\underline x,\overline x+\tfrac12\overline h)^{-5}\underline h^{6-\frac1\beta},$$
-where $\overline{|J'|}$, $\underline J$ without arguments are evaluated at
-$(\underline x,\overline x)$. -/
-noncomputable def g_J_1_lo (β c xl xu hl hu : ℝ) : ℝ :=
-  β * c ^ (1 - 1 / β) * J_hi (xl + hl) (xu + hu) ^ (1 - 1 / β)
-    - 1 / 2 * β * (1 - β) * c ^ (1 - 2 / β) * J_lo (xl + hl) (xu + hu) ^ (1 - 2 / β)
-      * hu ^ (1 / β)
-    - c / 2 * J_lo xl xu ^ (-1 : ℤ) * hu ^ (2 - 1 / β)
-    + c * (1 / 4 * deriv J xu * J xu ^ (-2 : ℤ) * hl ^ (3 - 1 / β)
-        + 1 / 32 * deriv J xu * (7 + 3 * |deriv J xu| ^ 2) * J xu ^ (-4 : ℤ)
-          * hl ^ (5 - 1 / β)) * (if xu < x₀ then 1 else 0)
-    - c * (1 / 4 * absDJ_hi xl xu * J_lo xl xu ^ (-2 : ℤ) * hu ^ (3 - 1 / β)
-        + 1 / 32 * absDJ_hi xl xu * (7 + 3 * absDJ_hi xl xu ^ 2) * J_lo xl xu ^ (-4 : ℤ)
-          * hu ^ (5 - 1 / β)) * (if ¬ xu < x₀ then 1 else 0)
-    - 7 * c / 48 * (1 + absDJ_hi xl xu ^ 2) * J_lo xl xu ^ (-3 : ℤ) * hu ^ (4 - 1 / β)
-    - c / 90 * (7 + 23 * absDJ_hi xl (xu + hu) ^ 2 + 6 * absDJ_hi xl (xu + hu) ^ 4)
-      * J_lo xl (xu + hu) ^ (-5 : ℤ) * hu ^ (6 - 1 / β)
-    + c / 2880 * (7 + 23 * absDJ_lo xl (xu + 1 / 2 * hu) ^ 2
-        + 6 * absDJ_lo xl (xu + 1 / 2 * hu) ^ 4)
-      * J_hi xl (xu + 1 / 2 * hu) ^ (-5 : ℤ) * hl ^ (6 - 1 / β)
-
-/-- [DIR], §6.1.1: $\underline{g_{J,1,\beta,c}}$ is a lower bound for $g_{J,1,\beta,c}$ (with
-$N=6$): for $\beta\in[\frac12,1]$, $c>0$, and all subrectangles
-$[\underline x,\overline x]\times[\underline h,\overline h]\subset(\frac12,\frac58]\times
-[0,\frac3{16}]$ and $(x,h)$ in them,
-$g_{J,1,\beta,c}(x,h)\ge\underline{g_{J,1,\beta,c}}(\underline x,\overline x,\underline h,
-\overline h)$.
-
-**Discrepancy with the paper.** The paper calls $\underline{g_{J,1,\beta,c}}$ a *tight* lower
-bound of $g_{J,1,\beta,c}$ (in the sense of §4.1). It is not: the remainder $E_6$ is enclosed
-using the enclosures of $J^{(6)}$ on $[\underline x,\overline x+\overline h]$ and
-$[\underline x,\overline x+\frac12\overline h]$ (the possible locations of the unknown
-intermediate values $\xi_1,\xi_2$), and these intervals do not shrink as the rectangle shrinks
-to a point $(x,h)$ with $h>0$. Hence $\underline{g_{J,1,\beta,c}}\not\to g_{J,1,\beta,c}(x,h)$
-(numerically, for the rectangle $[0.56,0.56+10^{-8}]\times[0.1,0.1+10^{-8}]$ and
-$(\beta,c)=(\beta_0,1)$ the gap is $\approx2.4\cdot10^{-4}$). Only the lower bound property is
-stated here; it is what the correctness of $\textsc{Partition}_2$ (Fact 4.1, "if" direction)
-needs (it was checked numerically on random subrectangles for $(\beta,c)=(\beta_0,1)$,
-$(\frac12,c_0)$, $(\frac34,0.9)$, $(1,1)$). The interval $x\in[\frac12,\frac58]$ of the paper is
-replaced by $(\frac12,\frac58]$ because the derivatives $J'(\frac12)$, $J^{(k)}(\frac12)$ used in
-$g_{J,1,\beta,c}$ and its lower bound are one-sided in the paper and have no meaning for
-`Auto.DIR.J` (which is arbitrary left of $\frac12$). -/
-theorem g_J_1_lo_le (β c : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1) (hc : 0 < c)
-    (xl xu hl hu x h : ℝ) (hxl : 1 / 2 < xl) (hx : x ∈ Icc xl xu) (hxu : xu ≤ 5 / 8)
-    (hhl : 0 ≤ hl) (hh : h ∈ Icc hl hu) (hhu : hu ≤ 3 / 16) :
-    g_J_1 6 β c x h ≥ g_J_1_lo β c xl xu hl hu := by
   sorry
 
 /-- **(6.3)** ([DIR], §6.1.1) (🚗). For $(\beta,c)\in\{(\beta_0,1),(\frac12,c_0)\}$ and
@@ -359,51 +185,6 @@ theorem caseJ_II_iff_g_J_2 (x y : ℝ) (hx : x ∈ Icc (1 / 2 : ℝ) (9 / 16))
 $2J(\frac{x+y}2)-J(x)\ge0$. -/
 theorem caseJ_II_nonneg (x y : ℝ) (hx : x ∈ Icc (1 / 2 : ℝ) (9 / 16))
     (hy : y ∈ Icc (11 / 16 : ℝ) 1) : 2 * J ((x + y) / 2) - J x ≥ 0 := by
-  sorry
-
-/-- [DIR], §6.1.2: for $x\ge\frac12$ and $y\ge\frac{11}{16}$,
-$\frac{x+y}2\ge\frac12(\frac12+\frac{11}{16})=0.59375>x_0$, so $J'(\frac{x+y}2)<0$ (stated
-for $\frac{x+y}2<1$, where $J'$ is meaningful). -/
-theorem caseJ_II_midpoint (x y : ℝ) (hx : 1 / 2 ≤ x) (hy : 11 / 16 ≤ y)
-    (hxy : (x + y) / 2 < 1) :
-    (x + y) / 2 ≥ 1 / 2 * (1 / 2 + 11 / 16) ∧ (1 / 2 * (1 / 2 + 11 / 16) : ℝ) = 0.59375 ∧
-      (0.59375 : ℝ) > x₀ ∧ deriv J ((x + y) / 2) < 0 := by
-  sorry
-
-/-- [DIR], §6.1.2: $2J(\frac{x+y}2)-J(x)$ is decreasing in $y\in[\frac{11}{16},1]$ for
-$x\in[\frac12,\frac9{16}]$. -/
-theorem caseJ_II_antitone_y (x : ℝ) (hx : x ∈ Icc (1 / 2 : ℝ) (9 / 16)) :
-    AntitoneOn (fun y ↦ 2 * J ((x + y) / 2) - J x) (Icc (11 / 16) 1) := by
-  sorry
-
-/-- [DIR], §6.1.2: the $x$-derivative of $2J(\frac{x+y}2)-J(x)$ is
-$J'(\frac{x+y}2)-J'(x)=J''(\xi)\frac{y-x}2<0$ for some $\xi\in(x,\frac{x+y}2)$ (mean value
-theorem), for $\frac12<x\le\frac9{16}$ and $\frac{11}{16}\le y\le1$. -/
-theorem caseJ_II_deriv_x (x y : ℝ) (hx : x ∈ Ioc (1 / 2 : ℝ) (9 / 16))
-    (hy : y ∈ Icc (11 / 16 : ℝ) 1) :
-    deriv (fun x ↦ 2 * J ((x + y) / 2) - J x) x = deriv J ((x + y) / 2) - deriv J x ∧
-      ∃ ξ ∈ Ioo x ((x + y) / 2),
-        deriv J ((x + y) / 2) - deriv J x = deriv (deriv J) ξ * ((y - x) / 2) ∧
-          deriv (deriv J) ξ * ((y - x) / 2) < 0 := by
-  sorry
-
-/-- [DIR], §6.1.2: $2J(\frac{x+y}2)-J(x)$ is decreasing in $x\in[\frac12,\frac9{16}]$ for
-$y\in[\frac{11}{16},1]$. -/
-theorem caseJ_II_antitone_x (y : ℝ) (hy : y ∈ Icc (11 / 16 : ℝ) 1) :
-    AntitoneOn (fun x ↦ 2 * J ((x + y) / 2) - J x) (Icc (1 / 2) (9 / 16)) := by
-  sorry
-
-/-- The lower bound ([DIR], §6.1.2)
-$$\underline{g_{J,2}}(\underline x,\overline x,\underline y,\overline y)
-=(\underline y-\overline x)^2
-+J(\overline y)^2-(2J(\tfrac{\underline x+\underline y}2)-J(\underline x))^2.$$ -/
-noncomputable def g_J_2_lo (xl xu yl yu : ℝ) : ℝ :=
-  (yl - xu) ^ 2 + J yu ^ 2 - (2 * J ((xl + yl) / 2) - J xl) ^ 2
-
-/-- [DIR], §6.1.2: $\underline{g_{J,2}}$ is a tight lower bound for $g_{J,2}$ on
-$[\frac12,\frac9{16}]\times[\frac{11}{16},1]$. -/
-theorem g_J_2_lo_tight :
-    IsTightLowerBound₂ g_J_2 g_J_2_lo (1 / 2) (9 / 16) (11 / 16) 1 := by
   sorry
 
 /-- **(6.5)** ([DIR], §6.1.2) (🚗). For $(x,y)\in[\frac12,\frac9{16}]\times[\frac{11}{16},1]$:

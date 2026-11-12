@@ -6,7 +6,6 @@ Authors: Claude
 module
 
 public import Isoperim.DIR.«3_Variants_Bobkov_Inequality».«3_0_Variants_Bobkov_Inequality»
-public import Isoperim.DIR.«4_Computer_Assisted_Proofs».«4_1_Dyadic_Partitioning»
 
 /-!
 # [DIR] §6.5 Case $QJQ$: $\frac14\le x\le\frac12\le y$, $x+y\le1$
@@ -61,13 +60,6 @@ theorem prop_6_9 (x y : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2)) (hy : y ∈ 
     (β : ℝ) (hβ : β ∈ Icc (1 / 2) β₁) : G_QJQ β x y ≥ 0 := by
   sorry
 
-/-- **Remark 6.10** ([DIR]). The conclusion (of Proposition 6.9) fails for
-$\beta\ge\beta_1+\frac1{1024}$. (Stated for $\beta\in[\beta_1+\frac1{1024},1]$, the standing
-range $\beta\le1$ of the paper.) -/
-theorem rem_6_10 (β : ℝ) (hβ : β ∈ Icc (β₁ + 1 / 1024) 1) :
-    ∃ x ∈ Icc (1 / 4 : ℝ) (1 / 2), ∃ y ∈ Icc (1 / 2 : ℝ) (3 / 4), G_QJQ β x y < 0 := by
-  sorry
-
 /-- [DIR], §6.5: from (5.9) we see that for each fixed $(x,y)$ the left-hand side in (6.23) is
 either monotone increasing or decreasing in $\beta$ (for $\beta\in[\frac12,\beta_1]$). -/
 theorem G_QJQ_monotone_or_antitone (x y : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2))
@@ -115,63 +107,6 @@ theorem G_QJQ_ge_G_QJQ_half (β : ℝ) (hβ : β ∈ ({1 / 2, β₁} : Set ℝ))
     G_QJQ β x y ≥ G_QJQ β x (1 / 2) := by
   sorry
 
-/-- [DIR], §6.5, item 1: the function $x\mapsto J(x)J'(x)$ is decreasing on
-$x\in[\frac12,\frac34]$ (with the one-sided derivative at $\frac12$). -/
-theorem J_mul_deriv_J_antitoneOn :
-    AntitoneOn (fun x ↦ J x * derivWithin J (Icc (1 / 2) 1) x) (Icc (1 / 2) (3 / 4)) := by
-  sorry
-
-section Proof_Claim_1
-
-/-- [DIR], §6.5, proof of item 1: $(JJ')'=(J')^2-2$ using that $JJ''=-2$ (on $(\frac12,1)$). -/
-theorem J_mul_deriv_J_deriv (x : ℝ) (hx : x ∈ Ioo (1 / 2 : ℝ) 1) :
-    deriv (fun x ↦ J x * deriv J x) x = deriv J x ^ 2 - 2 := by
-  sorry
-
-/-- [DIR], §6.5, proof of item 1: $(J')^2$ is convex (Lemma 3.2) (on $(\frac12,1)$). -/
-theorem deriv_J_sq_convexOn : ConvexOn ℝ (Ioo (1 / 2) 1) (fun x ↦ deriv J x ^ 2) := by
-  sorry
-
-/-- [DIR], §6.5, proof of item 1: evaluating $(J')^2-2$ at the endpoints $x=\frac12$ (one-sided
-derivative) and $x=\frac34$ shows $(J')^2-2<-1<0$. -/
-theorem deriv_J_sq_sub_two_endpoints :
-    derivWithin J (Icc (1 / 2) 1) (1 / 2) ^ 2 - 2 < -1 ∧ deriv J (3 / 4) ^ 2 - 2 < -1 := by
-  sorry
-
-/-- [DIR], §6.5, proof of item 1: so (by convexity it suffices to evaluate at the endpoints)
-$(J')^2-2<-1<0$ on $(\frac12,\frac34]$. -/
-theorem deriv_J_sq_sub_two_lt (x : ℝ) (hx : x ∈ Ioc (1 / 2 : ℝ) (3 / 4)) :
-    deriv J x ^ 2 - 2 < -1 := by
-  sorry
-
-end Proof_Claim_1
-
-/-- [DIR], §6.5, item 2: the quantity $2Q_\beta(\frac{x+y}2)-Q_\beta(x)$ is positive, increasing
-in $y$ and decreasing in $x$ (for $\beta\in[\frac12,\beta_1]$). Positivity and monotonicity in $x$
-are stated on $[\frac14,\frac12]\times[\frac12,\frac34]$; monotonicity in $y$ is stated on the
-region $QJQ$, i.e. for $y\in[\frac12,1-x]$.
-
-**Discrepancy with the paper.** The paper claims (for the tight lower bound on the whole
-rectangle $[\frac14,\frac12]\times[\frac12,\frac34]$) that $2Q_\beta(\frac{x+y}2)-Q_\beta(x)$ is
-increasing in $y$, "since $Q_\beta'>0$ on $[0,\frac12]$". The $y$-derivative is
-$Q_\beta'(\frac{x+y}2)$, and $\frac{x+y}2$ ranges up to $\frac58>\frac12$, where $Q_\beta'$ is
-negative: $Q_\beta'$ vanishes at $\approx0.5283$ ($\beta=\frac12$) resp. $\approx0.5185$
-($\beta=\beta_1$), and $Q_{1/2}'(\frac58)\approx-0.41$. E.g. for $x=\frac12$, $\beta=\frac12$ the
-quantity decreases from $\approx0.4820$ at $y=0.7$ to $\approx0.4643$ at $y=\frac34$. So the claim
-is false on part of the region $x+y>1$ (where $x+y>1.0566$ resp. $x+y>1.0370$); the argument is
-valid for
-$\frac{x+y}2\le\frac12$, i.e. on the region $QJQ$, which is the domain used here. The
-consequences for the tight lower bound and for (6.25) are discussed at
-`Auto.DIR.g_QJQ_tightLowerBound` and `Auto.DIR.eqn_6_25`. -/
-theorem two_Q_sub_Q_pos_mono (β : ℝ) (hβ : β ∈ Icc (1 / 2) β₁) :
-    (∀ x ∈ Icc (1 / 4 : ℝ) (1 / 2), ∀ y ∈ Icc (1 / 2 : ℝ) (3 / 4),
-        2 * Q β ((x + y) / 2) - Q β x > 0) ∧
-      (∀ x ∈ Icc (1 / 4 : ℝ) (1 / 2),
-        MonotoneOn (fun y ↦ 2 * Q β ((x + y) / 2) - Q β x) (Icc (1 / 2) (1 - x))) ∧
-      ∀ y ∈ Icc (1 / 2 : ℝ) (3 / 4),
-        AntitoneOn (fun x ↦ 2 * Q β ((x + y) / 2) - Q β x) (Icc (1 / 4) (1 / 2)) := by
-  sorry
-
 section Proof_Claim_2
 
 /-- [DIR], §6.5, proof of item 2: first, $2Q_\beta(\frac{x+y}2)-Q_\beta(x)\ge Q_\beta(y)>0$
@@ -181,57 +116,7 @@ theorem two_Q_sub_Q_ge (β : ℝ) (hβ : β ∈ Icc (1 / 2) β₁) (x y : ℝ)
     2 * Q β ((x + y) / 2) - Q β x ≥ Q β y ∧ Q β y > 0 := by
   sorry
 
-/-- [DIR], §6.5, proof of item 2: the quantity is increasing in $y$ since $Q_\beta'>0$ on
-$[0,\frac12]$. -/
-theorem deriv_Q_pos (β : ℝ) (hβ : β ∈ Icc (1 / 2) β₁) (x : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 2)) :
-    deriv (Q β) x > 0 := by
-  sorry
-
-/-- [DIR], §6.5, proof of item 2: finally, the $x$-derivative is
-$$Q_\beta'(\tfrac{x+y}2)-Q_\beta'(x)=Q_\beta''(\xi)\tfrac{y-x}2<0$$
-where $\xi$ is a value in $[x,(x+y)/2]$ (for $x<y$). -/
-theorem two_Q_sub_Q_deriv_x (β : ℝ) (hβ : β ∈ Icc (1 / 2) β₁) (x y : ℝ)
-    (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2)) (hy : y ∈ Icc (1 / 2 : ℝ) (3 / 4)) (hxy : x < y) :
-    deriv (fun x ↦ 2 * Q β ((x + y) / 2) - Q β x) x =
-        deriv (Q β) ((x + y) / 2) - deriv (Q β) x ∧
-      ∃ ξ ∈ Icc x ((x + y) / 2), deriv (Q β) ((x + y) / 2) - deriv (Q β) x =
-        deriv (deriv (Q β)) ξ * ((y - x) / 2) ∧ deriv (deriv (Q β)) ξ * ((y - x) / 2) < 0 := by
-  sorry
-
 end Proof_Claim_2
-
-/-- [DIR], §6.5, item 3: the function $x\mapsto Q_\beta'(x)$ is decreasing and positive on
-$[0,\frac12]$ by Lemma 5.8 (for $\beta\in[\frac12,\beta_1]$). -/
-theorem deriv_Q_antitoneOn_pos (β : ℝ) (hβ : β ∈ Icc (1 / 2) β₁) :
-    AntitoneOn (deriv (Q β)) (Icc 0 (1 / 2)) ∧ ∀ x ∈ Icc (0 : ℝ) (1 / 2), deriv (Q β) x > 0 := by
-  sorry
-
-/-- The lower bound ([DIR], §6.5)
-$$\underline{g_{QJQ,\beta}}(\underline x,\overline x,\underline y,\overline y)=\underline y
--\overline x+J(\overline y)J'(\overline y)-(2Q_\beta(\tfrac{\underline x+\overline y}2)
--Q_\beta(\underline x))Q'_\beta(\tfrac{\underline x+\underline y}2).$$ -/
-noncomputable def g_QJQ_lo (β xl xu yl yu : ℝ) : ℝ :=
-  yl - xu + J yu * derivWithin J (Icc (1 / 2) 1) yu -
-    (2 * Q β ((xl + yu) / 2) - Q β xl) * deriv (Q β) ((xl + yl) / 2)
-
-/-- [DIR], §6.5: therefore, a tight lower bound of $g_{QJQ,\beta}$ (on
-$[\frac14,\frac12]\times[\frac12,\frac34]$, for $\beta\in[\frac12,\beta_1]$) is given by
-$\underline{g_{QJQ,\beta}}$.
-
-**Discrepancy with the paper.** The paper derives this from the termwise monotonicity items 1–3.
-On the part of the rectangle with $\frac{x+y}2>\frac12$ this justification breaks down twice:
-item 2 ("increasing in $y$") fails there (see `Auto.DIR.two_Q_sub_Q_pos_mono`), and
-$Q_\beta'(\frac{x+y}2)$ may be negative, in which case multiplying the upper bound
-$2Q_\beta(\frac{\underline x+\overline y}2)-Q_\beta(\underline x)$ of the first factor by the upper
-bound $Q_\beta'(\frac{\underline x+\underline y}2)$ of the second does not give an upper bound of
-the product. The statement itself nevertheless appears to be true: the loss is compensated by the
-terms $\underline y-\overline x$ and $J(\overline y)J'(\overline y)$ (note $(JJ')'=(J')^2-2<-1$),
-and random searches over subrectangles and points of the full rectangle (for $\beta=\frac12$ and
-$\beta=\beta_1$) found no violation of the lower bound property. The statement is kept on the full
-rectangle as in the paper; only its proof in the paper is incomplete. -/
-theorem g_QJQ_tightLowerBound (β : ℝ) (hβ : β ∈ Icc (1 / 2) β₁) :
-    IsTightLowerBound₂ (g_QJQ β) (g_QJQ_lo β) (1 / 4) (1 / 2) (1 / 2) (3 / 4) := by
-  sorry
 
 /-- **(6.25)** ([DIR], §6.5) (🚗). Calling
 $\textsc{Partition}_2(\underline{g_{QJQ,\beta}},[\frac14,\frac12]\times[\frac12,\frac34])$ for
@@ -300,11 +185,6 @@ theorem p_QJQ_monotoneOn (β : ℝ) (hβ : β ∈ ({β₁, 1 / 2} : Set ℝ)) :
 $\beta\in\{\beta_1,\frac12\}$. -/
 theorem p_QJQ_quarter (β : ℝ) (hβ : β ∈ ({β₁, 1 / 2} : Set ℝ)) :
     p_QJQ β (1 / 4) > 10 ^ (-4 : ℤ) := by
-  sorry
-
-/-- [DIR], §6.5: (actually $p_\beta(\frac14)$ is decreasing in $\beta$) (stated for
-$\beta\in[\frac12,\beta_1]$). -/
-theorem p_QJQ_quarter_antitoneOn : AntitoneOn (fun β ↦ p_QJQ β (1 / 4)) (Icc (1 / 2) β₁) := by
   sorry
 
 end Auto.DIR

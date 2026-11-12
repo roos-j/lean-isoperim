@@ -6,7 +6,6 @@ Authors: Claude
 module
 
 public import Isoperim.DIR.«3_Variants_Bobkov_Inequality».«3_0_Variants_Bobkov_Inequality»
-public import Isoperim.DIR.«4_Computer_Assisted_Proofs».«4_1_Dyadic_Partitioning»
 
 /-!
 # [DIR] §6.6 Case $QJ$: $\frac14\le x\le\frac12\le y\le1$, $x+y\ge1$
@@ -128,83 +127,11 @@ theorem g_QJ_deriv_x_nonpos (β c : ℝ) (hβc : (β, c) = (β₀, 1) ∨ (β, c
     (hxy : 1 ≤ x + y) : deriv (fun x ↦ g_QJ β c x y) x ≤ 0 := by
   sorry
 
-/-- The expression for $-\beta\partial_xg_{QJ,\beta,c}(x,y)$ ([DIR], §6.6.1; not named in the
-paper):
-$$(y-x)^{\frac1\beta-1}+c^{\frac1\beta}(2J(\tfrac{x+y}2)-Q_\beta(x))^{\frac1\beta-1}
-(J'(\tfrac{x+y}2)-Q'_\beta(x)).$$ -/
-noncomputable def dg_QJ (β c x y : ℝ) : ℝ :=
-  (y - x) ^ (1 / β - 1) +
-    c ^ (1 / β) * (2 * Jw w₀ ((x + y) / 2) - Q β x) ^ (1 / β - 1) *
-      (deriv (Jw w₀) ((x + y) / 2) - deriv (Q β) x)
-
-/-- [DIR], §6.6.1: calculate
-$$-\beta\partial_xg_{QJ,\beta,c}(x,y)=(y-x)^{\frac1\beta-1}+c^{\frac1\beta}
-(2J(\tfrac{x+y}2)-Q_\beta(x))^{\frac1\beta-1}(J'(\tfrac{x+y}2)-Q'_\beta(x))$$
-(on triangle I, for $\beta\in[\frac12,1]$, $c>0$; $J$ at $\frac{x+y}2$ read as $J_{w_0}$). -/
-theorem g_QJ_deriv_x (β c : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1) (hc : 0 < c) (x y : ℝ)
-    (hx : x ∈ Icc (3 / 8 : ℝ) (1 / 2)) (hy : y ∈ Icc (1 / 2 : ℝ) (5 / 8)) (hxy : 1 ≤ x + y) :
-    -β * deriv (fun x ↦ g_QJ β c x y) x = dg_QJ β c x y := by
-  sorry
-
 /-- [DIR], §6.6.1: it suffices to show that this is positive: if
 $-\beta\partial_xg_{QJ,\beta,c}(x,y)>0$ then $\partial_xg_{QJ,\beta,c}(x,y)\le0$ (for
 $\beta>0$). -/
 theorem g_QJ_deriv_x_nonpos_of_pos (β c x y : ℝ) (hβ : 0 < β)
     (h : -β * deriv (fun x ↦ g_QJ β c x y) x > 0) : deriv (fun x ↦ g_QJ β c x y) x ≤ 0 := by
-  sorry
-
-/-- The lower interval enclosure (6.2) applied to $J_{w_0}$ ([DIR], §6.6.1, "the enclosures for
-$J$ (see (6.2))", with $J$ read as $J_{w_0}$ as explained at `Auto.DIR.g_QJ`):
-$\underline J(\underline x,\overline x)=\min(J_{w_0}(\underline x),J_{w_0}(\overline x))$. -/
-noncomputable def Jw₀_lo (xl xu : ℝ) : ℝ := min (Jw w₀ xl) (Jw w₀ xu)
-
-open Classical in
-/-- The upper interval enclosure (6.2) applied to $J_{w_0}$ ([DIR], §6.6.1, cf.
-`Auto.DIR.Jw₀_lo`): $\overline J(\underline x,\overline x)=J_{w_0}(\overline x)$ if
-$\overline x<x_0$, $J_{w_0}(\underline x)$ if $\underline x>x_0$, and $J_{w_0}(x_0)$ else.
-(This is an enclosure on $[1-w_0,1]$, where $J_{w_0}$ increases up to $x_0=1-\frac{w_0}2$ and
-decreases after.) -/
-noncomputable def Jw₀_hi (xl xu : ℝ) : ℝ :=
-  if xu < x₀ then Jw w₀ xu else if xl > x₀ then Jw w₀ xl else Jw w₀ x₀
-
-/-- The upper enclosure of $|J'|$ of §6.1.1 applied to $J_{w_0}$ ([DIR], §6.6.1, cf.
-`Auto.DIR.Jw₀_lo`):
-$\overline{|J'|}(\underline x,\overline x)=\max(|J_{w_0}'(\underline x)|,|J_{w_0}'(\overline x)|)$.
--/
-noncomputable def absDJw₀_hi (xl xu : ℝ) : ℝ := max |deriv (Jw w₀) xl| |deriv (Jw w₀) xu|
-
-open Classical in
-/-- The lower bound ([DIR], §6.6.1)
-$$\underline{g_{QJ,1,\beta,c}}(\underline x,\overline x,\underline y,\overline y)
-=(\underline y-\overline x)^{\frac1\beta-1}+c^{\frac1\beta}(2\underline J(\tfrac{\underline x
-+\underline y}2,\tfrac{\overline x+\overline y}2)-Q_\beta(\overline x))^{\frac1\beta-1}
-J'(\tfrac{\overline x+\overline y}2)\mathbf 1_{\frac{\overline x+\overline y}2<x_0}$$
-$$-c^{\frac1\beta}(2\overline J(\tfrac{\underline x+\underline y}2,\tfrac{\overline x
-+\overline y}2)-Q_\beta(\underline x))^{\frac1\beta-1}\overline{|J'|}(\tfrac{\underline x
-+\underline y}2,\tfrac{\overline x+\overline y}2)\mathbf 1_{\text{not}\;\frac{\overline x
-+\overline y}2<x_0}$$
-$$-c^{\frac1\beta}(2\overline J(\tfrac{\underline x+\underline y}2,\tfrac{\overline x
-+\overline y}2)-Q_\beta(\underline x))^{\frac1\beta-1}Q'_\beta(\underline x).$$
-Here $J$, $J'$, $\underline J$, $\overline J$, $\overline{|J'|}$ at (enclosures of) $\frac{x+y}2$
-are read for $J_{w_0}$ (`Auto.DIR.Jw₀_lo`, `Auto.DIR.Jw₀_hi`, `Auto.DIR.absDJw₀_hi`), see the
-discrepancy note at `Auto.DIR.g_QJ`. -/
-noncomputable def g_QJ_1_lo (β c xl xu yl yu : ℝ) : ℝ :=
-  (yl - xu) ^ (1 / β - 1) +
-    c ^ (1 / β) * (2 * Jw₀_lo ((xl + yl) / 2) ((xu + yu) / 2) - Q β xu) ^ (1 / β - 1) *
-      deriv (Jw w₀) ((xu + yu) / 2) * (if (xu + yu) / 2 < x₀ then 1 else 0) -
-    c ^ (1 / β) * (2 * Jw₀_hi ((xl + yl) / 2) ((xu + yu) / 2) - Q β xl) ^ (1 / β - 1) *
-      absDJw₀_hi ((xl + yl) / 2) ((xu + yu) / 2) * (if ¬ (xu + yu) / 2 < x₀ then 1 else 0) -
-    c ^ (1 / β) * (2 * Jw₀_hi ((xl + yl) / 2) ((xu + yu) / 2) - Q β xl) ^ (1 / β - 1) *
-      deriv (Q β) xl
-
-/-- [DIR], §6.6.1: recalling Lemma 5.8 and the enclosures for $J$, $|J'|$ (see (6.2)), a tight
-lower bound of this expression (on $[\frac14,\frac12]\times[\frac12,\frac58]$, for
-$(\beta,c)\in\{(\beta_0,1),(\frac12,c_0)\}$) can be given by $\underline{g_{QJ,1,\beta,c}}$
-(with $J$ at $\frac{x+y}2$ read as $J_{w_0}$, see `Auto.DIR.g_QJ`; the lower bound property was
-spot-checked numerically on random subrectangles). -/
-theorem g_QJ_1_tightLowerBound (β c : ℝ)
-    (hβc : (β, c) = (β₀, 1) ∨ (β, c) = (1 / 2, c₀)) :
-    IsTightLowerBound₂ (dg_QJ β c) (g_QJ_1_lo β c) (1 / 4) (1 / 2) (1 / 2) (5 / 8) := by
   sorry
 
 /-- **(6.26)** ([DIR], §6.6.1) (🚗). Running
@@ -286,26 +213,6 @@ theorem prop_6_12_stronger (x y : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2))
     (hy : y ∈ Icc (5 / 8 : ℝ) 1) (hxy : 1 ≤ x + y) (h : g_QJ_2 x y ≥ 0) :
     G₁ β₀ (b β₀) x y ≥ 0 ∧ G₁ (1 / 2) (c₀ • b (1 / 2)) x y ≥ 0 := by
   sorry
-
-section Proof_Proposition_6_12
-
-/-- The lower bound ([DIR], proof of Proposition 6.12)
-$$\underline{g_{QJ,2}}(\underline x,\overline x,\underline y,\overline y)=((\underline y
--\overline x)^2+J(\overline y)^2)^{1/2}+Q_{\frac12}(\underline x)-2\overline J(\tfrac{\underline x
-+\underline y}2,\tfrac{\overline x+\overline y}2),$$
-with $\overline J$ the enclosure of $J_{w_0}$ (`Auto.DIR.Jw₀_hi`), see `Auto.DIR.g_QJ_2`. -/
-noncomputable def g_QJ_2_lo (xl xu yl yu : ℝ) : ℝ :=
-  ((yl - xu) ^ 2 + J yu ^ 2) ^ (1 / 2 : ℝ) + Q (1 / 2) xl -
-    2 * Jw₀_hi ((xl + yl) / 2) ((xu + yu) / 2)
-
-/-- [DIR], proof of Proposition 6.12: a tight lower bound (of $g_{QJ,2}$ on
-$[\frac14,\frac12]\times[\frac58,1]$) is given by $\underline{g_{QJ,2}}$ (with $J$ at
-$\frac{x+y}2$ read as $J_{w_0}$, see `Auto.DIR.g_QJ_2`). -/
-theorem g_QJ_2_tightLowerBound :
-    IsTightLowerBound₂ g_QJ_2 g_QJ_2_lo (1 / 4) (1 / 2) (5 / 8) 1 := by
-  sorry
-
-end Proof_Proposition_6_12
 
 end Far_From_Diagonal
 

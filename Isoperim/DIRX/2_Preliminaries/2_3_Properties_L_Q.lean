@@ -37,10 +37,4 @@ theorem lemma_2_3 :
     StrictConcaveOn ℝ (Icc 0 1) L ∧ ∀ x ∈ Ioo 0 (exp (-√3 / 2)), iteratedDeriv 3 L x > 0 := by
   sorry
 
-/-- **Lemma 2.4** ([Q], [DIRX]). If $x\in[0,\frac12]$, then $Q(x)\ge0$, $Q'(x)>0$, and
-$Q''(x)<0$. -/
-theorem lemma_2_4 (x : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 2)) :
-    Q x ≥ 0 ∧ deriv Q x > 0 ∧ deriv (deriv Q) x < 0 := by
-  sorry
-
 end Auto.DIRX

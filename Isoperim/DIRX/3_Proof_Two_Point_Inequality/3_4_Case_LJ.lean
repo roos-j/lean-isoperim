@@ -6,7 +6,6 @@ Authors: Claude
 module
 
 public import Isoperim.DIRX.«2_Preliminaries».«2_2_Properties_J»
-public import Isoperim.DIR.«4_Computer_Assisted_Proofs».«4_1_Dyadic_Partitioning»
 
 /-!
 # [DIRX] §3.4 Case LJ
@@ -87,19 +86,6 @@ section Case_I
 
 /-- $h_{LJ,1}(c)=h_{LJ}(c-\frac14,c)$ ([DIRX], §3.4, Case I). -/
 noncomputable def h_LJ₁ (c : ℝ) : ℝ := h_LJ (c - 1 / 4) c
-
-/-- The tight lower bound ([DIRX], §3.4, Case I)
-$$\underline{h_{LJ,1}}(\underline c,\overline c)=2\underline c-\tfrac12
-+(\sqrt2-1)\underline{\mathrm{J}}(2\underline c-\tfrac14,2\overline c-\tfrac14)+L(\tfrac14)
--2\overline{\mathrm{J}}(\underline c,\overline c).$$ -/
-noncomputable def h_LJ₁_lo (cl cu : ℝ) : ℝ :=
-  2 * cl - 1 / 2 + (√2 - 1) * JX_lo (2 * cl - 1 / 4) (2 * cu - 1 / 4) + L (1 / 4) -
-    2 * JX_hi cl cu
-
-/-- [DIRX], §3.4, Case I: $\underline{h_{LJ,1}}$ is a tight lower bound for $h_{LJ,1}$ on
-$[\frac12,\frac58]$. -/
-theorem h_LJ₁_lo_tight : IsTightLowerBound₁ h_LJ₁ h_LJ₁_lo (1 / 2) (5 / 8) := by
-  sorry
 
 /-- **(3.8)** ([DIRX], §3.4, Case I) (🚗). Dyadic partitioning yields
 $$h_{LJ,1}(c)>0.01\quad\text{for all } c\in[\tfrac12,\tfrac58].$$ -/

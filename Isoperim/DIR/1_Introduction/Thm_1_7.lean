@@ -33,50 +33,6 @@ namespace Auto.DIR
 open Real Set
 open scoped ContDiff
 
-/-- $x^*=\min(x,1-x)$ ([DIR], §1.3). Written `x ⁎`. -/
-noncomputable def star (x : ℝ) : ℝ := min x (1 - x)
-
-@[inherit_doc] notation:max x:max "⁎" => star x
-
-/-- [DIR], §1.3: the classical isoperimetric inequality
-$\mathbf{E}h_A\ge|A|^*\log_2(1/|A|^*)$, with equality when $A$ is a subcube or the complement of
-a subcube (the inequality follows from (1.3)). -/
-theorem classical_isoperimetric (n : ℕ) (hn : 1 ≤ n) :
-    (∀ A : Set ({0,1}^n), 𝐄 h_{A} ≥ ｜A｜⁎ * log₂ (1 / ｜A｜⁎)) ∧
-    (∀ A : Set ({0,1}^n), IsSubcube A ∨ IsSubcube Aᶜ →
-      𝐄 h_{A} = ｜A｜⁎ * log₂ (1 / ｜A｜⁎)) := by
-  sorry
-
-/-- [DIR], §1.3: $\mathbf{E}h_A=\mathbf{E}h_{A^c}$. -/
-theorem expect_hA_compl (n : ℕ) (A : Set ({0,1}^n)) : 𝐄 h_{A} = 𝐄 h_{Aᶜ} := by
-  sorry
-
-/-- [DIR], §1.3: generally $\mathbf{E}h_A^\beta\ne\mathbf{E}h_{A^c}^\beta$ for $\beta\ne1$ (there
-are sets for which equality fails; stated for $\beta>0$). -/
-theorem expect_hA_rpow_compl_ne (β : ℝ) (hβ₀ : 0 < β) (hβ : β ≠ 1) :
-    ∃ (n : ℕ) (A : Set ({0,1}^n)), 𝐄 h_{A} ^ β ≠ 𝐄 h_{Aᶜ} ^ β := by
-  sorry
-
-/-- **(1.5)** ([DIR], §1.3). For any given $\beta\in[\beta_0,1]$ and $A\subset\{0,1\}^n$,
-$$\mathbf{E}h_A^\beta\ge|A|^*(\log_2(1/|A|^*))^\beta.$$
-
-**Discrepancy with the paper.** The paper asserts (1.5) for every $\beta\in[\beta_0,1]$ ("we are
-able to prove"), but proves it only for $|A|\le\frac12$ (Theorem 1.1) and, for $|A|>\frac12$,
-only for $\beta=\beta_0$ ("In particular, this [(1.6)] implies (1.5) for $\beta=\beta_0$"). For
-$\beta\in(\beta_0,1]$ and $|A|>\frac12$ the only justification is Remark 1.8 (details omitted);
-Hölder's inequality (Lemma 5.1) does not suffice, since the right-hand side
-$(1-|A|)(\log_2\frac1{1-|A|})^\beta$ increases with $\beta$ while Lemma 5.1 loses the factor
-$(\frac{1-|A|}{|A|})^{\beta/\beta_0-1}$. The Lean statement is kept as in the paper; its proof
-for $\beta>\beta_0$, $|A|>\frac12$ is an unresolved gap (it depends on `Auto.DIR.rem_1_8`). -/
-theorem eqn_1_5 (n : ℕ) (hn : 1 ≤ n) (β : ℝ) (hβ : β ∈ Icc β₀ 1) (A : Set ({0,1}^n)) :
-    𝐄 h_{A} ^ β ≥ ｜A｜⁎ * (log₂ (1 / ｜A｜⁎)) ^ β := by
-  sorry
-
-/-- [DIR], §1.3 (cited from [BIM23]): (1.5) holds for $\beta=\log_2(3/2)$. -/
-theorem eqn_1_5_bim (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) :
-    𝐄 h_{A} ^ log₂ (3 / 2) ≥ ｜A｜⁎ * (log₂ (1 / ｜A｜⁎)) ^ log₂ (3 / 2) := by
-  sorry
-
 /-- The defining properties of the function $J$ of [DIR], §1.3: $f$ is smooth on
 $(\frac12,1)$, continuous at the endpoints (i.e. on $[\frac12,1]$), and satisfies
 $f''f=-2$ on $(\frac12,1)$, $f(\frac12)=\frac12$, $f(1)=0$. -/
@@ -102,27 +58,6 @@ $|A|\ge\frac12$,
 $$\mathbf{E}h_A^\beta\ge\max\big(J(|A|),(1-|A|)(\log_2(1/(1-|A|)))^\beta\big). \tag{1.6}$$ -/
 theorem thm_1_7 (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) (hA : ｜A｜ ≥ 1 / 2) :
     𝐄 h_{A} ^ β₀ ≥ max (J ｜A｜) ((1 - ｜A｜) * (log₂ (1 / (1 - ｜A｜))) ^ β₀) := by
-  sorry
-
-/-- [DIR], §1.3, after Theorem 1.7: in particular, Theorem 1.7 implies (1.5) for
-$\beta=\beta_0$ (for $|A|\ge\frac12$, where $|A|^*=1-|A|$). -/
-theorem eqn_1_5_of_thm_1_7 (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) (hA : ｜A｜ ≥ 1 / 2) :
-    𝐄 h_{A} ^ β₀ ≥ ｜A｜⁎ * (log₂ (1 / ｜A｜⁎)) ^ β₀ := by
-  sorry
-
-/-- [DIR], §1.3, after Theorem 1.7: the inequality (1.6) improves (1.5) when
-$\frac12<|A|<1-10^{-10^{380}}$, i.e. $J(x)>(1-x)(\log_2(1/(1-x)))^{\beta_0}$ for such $x$
-(see Lemma 5.13). -/
-theorem eqn_1_6_improves (x : ℝ) (hx : x ∈ Ioo (1 / 2) (1 - (10 : ℝ) ^ (-(10 : ℝ) ^ 380))) :
-    J x > (1 - x) * (log₂ (1 / (1 - x))) ^ β₀ := by
-  sorry
-
-/-- **Remark 1.8** ([DIR]). The restriction to the hardest case $\beta=\beta_0$ in Theorem 1.7 is
-only for technical reasons: the conclusion holds for all $\beta\in[\beta_0,1]$ (details omitted
-in the paper). -/
-theorem rem_1_8 (n : ℕ) (hn : 1 ≤ n) (β : ℝ) (hβ : β ∈ Icc β₀ 1) (A : Set ({0,1}^n))
-    (hA : ｜A｜ ≥ 1 / 2) :
-    𝐄 h_{A} ^ β ≥ max (J ｜A｜) ((1 - ｜A｜) * (log₂ (1 / (1 - ｜A｜))) ^ β) := by
   sorry
 
 end Auto.DIR

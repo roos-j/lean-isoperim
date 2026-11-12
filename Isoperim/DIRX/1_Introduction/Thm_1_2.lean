@@ -44,11 +44,6 @@ theorem thm_1_2 (n : ℕ) (hn : 1 ≤ n) (A B W : Set ({0,1}^n))
     |∇(A, B)| + √n * ｜W｜ ≥ 1 / 2 := by
   sorry
 
-/-- [DIRX], §1, Theorem 1.2: this settles the conjecture of Kahn and Park [KP20, Conjecture 1.3]
-(formalized in [DIR] as `Auto.DIR.KahnParkConjecture`, with $n^{0.5}$ in place of $\sqrt n$). -/
-theorem kahnParkConjecture : KahnParkConjecture := by
-  sorry
-
 /-- [DIRX], §1, proof of Theorem 1.2: for a partition $(A,B,W)$ of $\{0,1\}^n$ with
 $|B\cup W|=|A|=\frac12$,
 $$\tfrac12\le\mathbf{E}\sqrt{h_{B\cup W}}\le\mathbf{E}(h_{B\cup W}\mathbf{1}_B)

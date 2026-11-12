@@ -32,18 +32,6 @@ $u,v$ for all $a\le x\le y\le b$. -/
 def IsMonotoneTwoPoint (𝓛 : ℝ → ℝ → ℝ → ℝ → ℝ) (a b : ℝ) : Prop :=
   ∀ x y, a ≤ x → x ≤ y → y ≤ b → ∀ u u' v v', u ≤ u' → v ≤ v' → 𝓛 x y u v ≤ 𝓛 x y u' v'
 
-/-- [DIR], §5.2, (5.1): a well-known observation is that if $B_1,B_2$ satisfy
-$\mathcal{L}(x,y,B(x),B(y))\ge B(\frac{x+y}2)$ for all $a\le x\le y\le b$, then the same holds
-for $B=\max(B_1,B_2)$. -/
-theorem eqn_5_1_max (𝓛 : ℝ → ℝ → ℝ → ℝ → ℝ) (a b : ℝ) (h𝓛 : IsMonotoneTwoPoint 𝓛 a b)
-    (B₁ B₂ : ℝ → ℝ)
-    (h₁ : ∀ x y, a ≤ x → x ≤ y → y ≤ b → 𝓛 x y (B₁ x) (B₁ y) ≥ B₁ ((x + y) / 2))
-    (h₂ : ∀ x y, a ≤ x → x ≤ y → y ≤ b → 𝓛 x y (B₂ x) (B₂ y) ≥ B₂ ((x + y) / 2)) :
-    ∀ x y, a ≤ x → x ≤ y → y ≤ b →
-      𝓛 x y (max (B₁ x) (B₂ x)) (max (B₁ y) (B₂ y)) ≥
-        max (B₁ ((x + y) / 2)) (B₂ ((x + y) / 2)) := by
-  sorry
-
 /-- **Lemma 5.2** ([DIR]). Assume for $a\le x\le y\le b$ that
 1. (5.1) holds for $B_1$ when $B_1(\frac{x+y}2)\ge B_2(\frac{x+y}2)$;
 2. (5.1) holds for $B_2$ when $B_1(\frac{x+y}2)<B_2(\frac{x+y}2)$.
@@ -78,56 +66,6 @@ theorem lemma_5_2_chain (𝓛 : ℝ → ℝ → ℝ → ℝ → ℝ) (a b : ℝ)
 
 end Proof_Lemma_5_2
 
-/-- **Lemma 5.3** ([DIR]). Let $\beta\in[\frac12,1)$ and $t,s>0$. Then
-$$(t^{1/\beta}+s^{1/\beta})^\beta\ge t+(2^\beta-1)s$$
-holds if and only if $t\le s$. -/
-theorem lemma_5_3 (β : ℝ) (hβ : β ∈ Ico (1 / 2 : ℝ) 1) (t s : ℝ) (ht : 0 < t) (hs : 0 < s) :
-    (t ^ (1 / β) + s ^ (1 / β)) ^ β ≥ t + (2 ^ β - 1) * s ↔ t ≤ s := by
-  sorry
-
-section Proof_Lemma_5_3
-
-/-- [DIR], proof of Lemma 5.3: dividing by $s>0$, the inequality can be equivalently written as
-$((ts^{-1})^{\frac1\beta}+1)^\beta\ge ts^{-1}+2^\beta-1$. -/
-theorem lemma_5_3_div (β : ℝ) (hβ : β ∈ Ico (1 / 2 : ℝ) 1) (t s : ℝ) (ht : 0 < t)
-    (hs : 0 < s) :
-    (t ^ (1 / β) + s ^ (1 / β)) ^ β ≥ t + (2 ^ β - 1) * s ↔
-      ((t * s⁻¹) ^ (1 / β) + 1) ^ β ≥ t * s⁻¹ + 2 ^ β - 1 := by
-  sorry
-
-/-- [DIR], proof of Lemma 5.3: writing $a=ts^{-1}$, raising the inequality to the power
-$\frac1\beta$, and subtracting the right-hand side, it suffices to show that
-$a^{\frac1\beta}+1-(a+2^\beta-1)^{\frac1\beta}\ge0$ holds if and only if $0\le a\le1$ (for
-$a>0$). -/
-theorem lemma_5_3_reduction (β : ℝ) (hβ : β ∈ Ico (1 / 2 : ℝ) 1) (a : ℝ) (ha : 0 < a) :
-    ((a ^ (1 / β) + 1) ^ β ≥ a + 2 ^ β - 1 ↔ a ^ (1 / β) + 1 - (a + 2 ^ β - 1) ^ (1 / β) ≥ 0) ∧
-    (a ^ (1 / β) + 1 - (a + 2 ^ β - 1) ^ (1 / β) ≥ 0 ↔ a ≤ 1) := by
-  sorry
-
-/-- [DIR], proof of Lemma 5.3: when $a=1$, the left-hand side vanishes. -/
-theorem lemma_5_3_at_one (β : ℝ) (hβ : β ∈ Ico (1 / 2 : ℝ) 1) :
-    (1 : ℝ) ^ (1 / β) + 1 - (1 + 2 ^ β - 1) ^ (1 / β) = 0 := by
-  sorry
-
-/-- [DIR], proof of Lemma 5.3: the left-hand side is strictly decreasing in $a>0$; differentiating
-in $a$, it suffices to show $a^{\frac1\beta-1}-(a+2^\beta-1)^{\frac1\beta-1}<0$ for each $a>0$,
-which holds because $\frac1\beta-1>0$. -/
-theorem lemma_5_3_strictAnti (β : ℝ) (hβ : β ∈ Ico (1 / 2 : ℝ) 1) :
-    (∀ a : ℝ, 0 < a → a ^ (1 / β - 1) - (a + 2 ^ β - 1) ^ (1 / β - 1) < 0) ∧
-    StrictAntiOn (fun a : ℝ ↦ a ^ (1 / β) + 1 - (a + 2 ^ β - 1) ^ (1 / β)) (Set.Ioi 0) := by
-  sorry
-
-end Proof_Lemma_5_3
-
-/-- [DIR], §5.2, after Lemma 5.3:
-$$G_\beta[B](x,y)=\begin{cases}G^1_\beta[B](x,y),&\text{if } y-x\le B(y),\\
-G^2_\beta[B](x,y),&\text{if } y-x\ge B(y)\end{cases}$$
-(for $\beta\in[\frac12,1)$, $x<y$ and $B(y)>0$, where Lemma 5.3 applies). -/
-theorem G_eq_cases (β : ℝ) (hβ : β ∈ Ico (1 / 2 : ℝ) 1) (B : ℝ → ℝ) (x y : ℝ) (hxy : x < y)
-    (hB : 0 < B y) :
-    (y - x ≤ B y → G β B x y = G₁ β B x y) ∧ (y - x ≥ B y → G β B x y = G₂ β B x y) := by
-  sorry
-
 /-- [DIR], §5.2: on the diagonal we have $G^1_\beta[B](x,x)=0$ (for $B(x)\ge0$, $\beta>0$). -/
 theorem G₁_diag (β : ℝ) (hβ : 0 < β) (B : ℝ → ℝ) (x : ℝ) (hB : 0 ≤ B x) :
     G₁ β B x x = 0 := by
@@ -151,12 +89,6 @@ theorem lemma_5_4 (𝓘 : Set ℝ) (h𝓘 : 𝓘.OrdConnected) (B : ℝ → ℝ)
     ∃ E₁ : ℝ, G₁ β B x (x + h) =
         β * B (x + h) ^ (1 - 1 / β) * h ^ (1 / β) + (B x + B (x + h) - 2 * B (x + 1 / 2 * h)) - E₁ ∧
       0 ≤ E₁ ∧ E₁ ≤ 1 / 2 * β * (1 - β) * B (x + h) ^ (1 - 2 / β) * h ^ (2 / β) := by
-  sorry
-
-/-- **Remark 5.5** ([DIR]). In our applications, $B$ is always concave, so
-$B(x)+B(x+h)-2B(x+h/2)\le0$. -/
-theorem rem_5_5 (𝓘 : Set ℝ) (B : ℝ → ℝ) (hB : ConcaveOn ℝ 𝓘 B) (x h : ℝ) (hx : x ∈ 𝓘)
-    (hxh : x + h ∈ 𝓘) : B x + B (x + h) - 2 * B (x + h / 2) ≤ 0 := by
   sorry
 
 section Proof_Lemma_5_4

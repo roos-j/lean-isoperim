@@ -170,65 +170,6 @@ theorem eqn_2_5 (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) :
 
 /-! ### Remark 2.1 -/
 
-/-- **Remark 2.1** ([DIRX]). The result remains valid for an interval of values $w$: there is a
-non-degenerate interval $[a,b]$ such that (2.4) holds for all $w\in[a,b]$. -/
-theorem rem_2_1 :
-    ∃ a b : ℝ, a < b ∧ Icc a b ⊆ Ioc (1 / 2) 1 ∧
-      ∀ w ∈ Icc a b, ∀ x y : ℝ, 0 ≤ x → x ≤ y → y ≤ 1 → G (B_{w}) x y ≥ 0 := by
-  sorry
-
-/-- The optimal (smallest) value $w_*$ of $w$ for which (2.4) holds ([DIRX], Remark 2.1):
-$w_*=\inf\{w\in(\frac12,1] : G[B_w](x,y)\ge0\text{ for all }0\le x\le y\le1\}$. -/
-noncomputable def wStar : ℝ :=
-  sInf {w : ℝ | w ∈ Ioc (1 / 2 : ℝ) 1 ∧ ∀ x y : ℝ, 0 ≤ x → x ≤ y → y ≤ 1 → G (B_{w}) x y ≥ 0}
-
 /-! ### Remark 2.2 -/
-
-/-- **Remark 2.2** ([DIRX]), first claim: (2.5) improves on [DIR, (2.7)]
-($\mathcal{B}_{\frac12}\ge0.997\cdot b_{\frac12}$, `Auto.DIR.cor_2_5`) for all values
-$|A|\le\frac12$: $B_{w_1}(x)>0.997\,b_{\frac12}(x)$ for $x\in(0,\frac12]$ (`b` is
-$b_\beta$ of [DIR], (2.3)). -/
-theorem rem_2_2_improves (x : ℝ) (hx : x ∈ Ioc (0 : ℝ) (1 / 2)) :
-    B_{w₁} x > 0.997 * b (1 / 2) x := by
-  sorry
-
-/-- **Remark 2.2** ([DIRX]): for $|A|$ near $1$, [DIR, (2.7)] is slightly stronger than (2.5):
-there is $\delta>0$ with $0.997\,b_{\frac12}(x)>B_{w_1}(x)$ for $x\in(1-\delta,1)$. -/
-theorem rem_2_2_near_one :
-    ∃ δ > 0, ∀ x ∈ Ioo (1 - δ) 1, 0.997 * b (1 / 2) x > B_{w₁} x := by
-  sorry
-
-/-- **Remark 2.2** ([DIRX]): the estimate $\mathbf{E}h_A^\beta\ge\mathrm{J}(|A|)$ for
-$\beta\ge\frac12$ and $|A|\ge\frac12$ follows from (2.5). -/
-theorem rem_2_2_rpow_ge_J (n : ℕ) (hn : 1 ≤ n) (β : ℝ) (hβ : 1 / 2 ≤ β) (A : Set ({0,1}^n))
-    (hA : ｜A｜ ≥ 1 / 2) :
-    𝐄 h_{A} ^ β ≥ J ｜A｜ := by
-  sorry
-
-/-- **Remark 2.2** ([DIRX]): for all values $x=|A|>\frac12$, [DIR, (2.6)]
-($\mathcal{B}_{\beta_0}\ge b_{\beta_0}$, where $b_{\beta_0}(x)$ is the function $J$ of [DIR] for
-$x\ge\frac12$) is stronger than the estimate $\mathbf{E}h_A^\beta\ge\mathrm{J}(|A|)$:
-$b_{\beta_0}(x)>\mathrm{J}(x)$ for $x\in(\frac12,1)$. -/
-theorem rem_2_2_stronger (x : ℝ) (hx : x ∈ Ioo (1 / 2 : ℝ) 1) : b β₀ x > J x := by
-  sorry
-
-/-- **Remark 2.2** ([DIRX]), last claim: for $\beta\ge\beta_0$ and $|A|>\frac12$ the best known
-lower bound is that of [DIR, Theorem 1.7] (cited as "[DIR24, Thm. 1.6]"),
-$\mathbf{E}h_A^{\beta_0}\ge\max(J(|A|),(1-|A|)(\log_2(1/(1-|A|)))^{\beta_0})$
-(`Auto.DIR.thm_1_7`, stated there for $\beta=\beta_0$), which further improves on [DIR, (2.6)]
-($\mathcal{B}_{\beta_0}\ge b_{\beta_0}$) as $|A|\to1-$: there is $\delta>0$ with
-$(1-x)(\log_2(1/(1-x)))^{\beta_0}>b_{\beta_0}(x)$ for $x\in(1-\delta,1)$ (by [DIR], (2.9) this can
-only happen for $x>1-10^{-10^{380}}$). The comparison "best known" itself is not a
-mathematical claim and is not formalized.
-
-**Discrepancy with the paper.** [DIRX] cites "[DIR24, Thm. 1.6]". This is the theorem number of
-the first arXiv version of [DIR]; in the revised version [DIR] (arXiv:2407.12674v2, formalized
-here) the inequality $\mathbf{E}h_A^\beta\ge\max(J(|A|),(1-|A|)(\log_2(1/(1-|A|)))^\beta)$ is
-Theorem 1.7 (`Auto.DIR.thm_1_7`), while Theorem 1.6 of v2 is a different statement (the bound
-(1.4) of [DIR] for $\mathbf{E}\sqrt{h_A}$, `Auto.DIR.thm_1_6`). The Lean
-statement refers to v2's Theorem 1.7. -/
-theorem rem_2_2_thm_1_7_improves :
-    ∃ δ > 0, ∀ x ∈ Ioo (1 - δ) 1, (1 - x) * (log₂ (1 / (1 - x))) ^ β₀ > b β₀ x := by
-  sorry
 
 end Auto.DIRX

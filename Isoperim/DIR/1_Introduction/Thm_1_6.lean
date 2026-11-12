@@ -48,12 +48,4 @@ theorem isoProfile_one_asymp :
     Tendsto (fun x ↦ 𝓑 1 x / (x * log₂ (1 / x))) (𝓝[𝒬 ∩ Set.Ioi 0] 0) (𝓝 1) := by
   sorry
 
-/-- [DIR], §1.2: at $|A|=\frac12$ the bound (1.4) proves only
-$\mathcal{B}_{\frac12}(\frac12)\ge0.207$, i.e.
-$\frac12\sqrt{\log_2 2+1}-\frac12\ge 0.207$ (and $<0.208$). -/
-theorem eqn_1_4_at_half :
-    0.207 ≤ 1 / 2 * √(log₂ (1 / (1 / 2)) + 1) - 1 / 2 ∧
-      1 / 2 * √(log₂ (1 / (1 / 2)) + 1) - 1 / 2 < (0.208 : ℝ) := by
-  sorry
-
 end Auto.DIR
