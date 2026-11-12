@@ -5,7 +5,13 @@ Authors: Claude
 -/
 module
 
+public import Isoperim.DIR.«1_Introduction».Definitions
 public import Isoperim.DIR.«2_Envelope_Functions».«2_0_Envelope_Functions»
+public import Isoperim.DIR.«2_Envelope_Functions».Definitions
+public import Isoperim.DIR.«3_Variants_Bobkov_Inequality».«3_0_Variants_Bobkov_Inequality»
+public import Isoperim.DIR.«5_Auxiliary_Estimates».«5_2_Two_Point_Inequalities»
+public import Isoperim.DIR.«5_Auxiliary_Estimates».«5_3_Properties_L_Q»
+public import Isoperim.DIR.«5_Auxiliary_Estimates».«5_4_Lower_Bounds_Gaussian_Isoperimetric_Profile»
 
 /-!
 # [DIR] §2.2 Proofs of Theorems 1.1, 1.5, 1.7
@@ -18,10 +24,8 @@ cube near the critical exponent*, arXiv:2407.12674v2, §2.2.
 The claims made in the course of these proofs are stated below in the order of the paper; the
 theorems themselves are `Auto.DIR.thm_1_1`, `Auto.DIR.thm_1_5`, `Auto.DIR.thm_1_7`.
 
-## Notation introduced here
 
-* `b̃ β x` : the function $\tilde b_\beta(x)$;
-* `L̃ x` : the function $\tilde L(x)=L_{\beta_0}(1-x)\mathbf{1}_{x\ge\frac12}$.
+The definitions and notation used here are in `Definitions.lean` of this folder.
 -/
 
 @[expose] public section
@@ -31,7 +35,6 @@ namespace Auto.DIR
 open Real Set
 
 section Proof_Theorem_1_1
-
 /-- [DIR], §2.2, proof of Theorem 1.1: $b_\beta(x)=Q_\beta(x)\ge L_\beta(x)$ for
 $x\in[\frac14,\frac12]$ (here $\beta=\beta_0$). -/
 theorem b_eq_Q_ge_L (x : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
@@ -46,7 +49,6 @@ theorem eqn_1_1_β₀ (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) (hA : ｜A｜
 end Proof_Theorem_1_1
 
 section Proof_Theorem_1_5
-
 /-- [DIR], §2.2, proof of Theorem 1.5 (implicit): $b_{\frac12}(2^{-k})=2^{-k}\sqrt k$ for $k\ge1$,
 so that (2.7) gives the lower bound of Theorem 1.5. -/
 theorem b_half_two_pow (k : ℕ) (hk : 1 ≤ k) : b (1 / 2) (2⁻¹ ^ k) = 2⁻¹ ^ k * √k := by
@@ -64,36 +66,11 @@ theorem thm_1_5_upper (k : ℕ) (hk : 1 ≤ k) : 2⁻¹ ^ k * √k ≥ 𝓑 (1 /
 end Proof_Theorem_1_5
 
 section Proof_Theorem_1_7
-
-/-- The function $\tilde b_\beta$ ([DIR], §2.2, proof of Theorem 1.7):
-$$\tilde b_\beta(x)=\begin{cases}L_\beta(x)&x\in[0,\frac14],\\ Q_\beta(x)&x\in[\frac14,\frac12],
-\\ \max(J(x),L_\beta(1-x))&x\in[\frac12,1].\end{cases}$$ -/
-noncomputable def btilde (β x : ℝ) : ℝ :=
-  if x ≤ 1 / 4 then L β x else if x ≤ 1 / 2 then Q β x else max (J x) (L β (1 - x))
-
-@[inherit_doc] notation "b̃" => btilde
-
-/-- **(2.8)** ([DIR], §2.2). $\tilde b_{\beta_0}$ also satisfies the two-point inequality
-$$G_{\beta_0}[\tilde b_{\beta_0}](x,y)\ge0$$
-for all $0\le x\le y\le1$. -/
-theorem eqn_2_8 (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y) (hy : y ≤ 1) :
-    G β₀ (b̃ β₀) x y ≥ 0 := by
-  sorry
-
-/-- [DIR], §2.2: $J(x)$ and $L_\beta(1-x)$ are equal to $\frac12$ at $x=\frac12$. -/
-theorem J_half_eq_L_half (β : ℝ) : J (1 / 2) = 1 / 2 ∧ L β (1 - 1 / 2) = 1 / 2 := by
-  sorry
-
 /-- **(2.9)** ([DIR], §2.2, shown in Lemma 5.13).
 $$J(x)>L_{\beta_0}(1-x)\quad\text{for}\quad x\in(\tfrac12,1-10^{-10^{380}}).$$ -/
 theorem eqn_2_9 (x : ℝ) (hx : x ∈ Ioo (1 / 2) (1 - (10 : ℝ) ^ (-(10 : ℝ) ^ 380))) :
     J x > L β₀ (1 - x) := by
   sorry
-
-/-- The function $\tilde L(x)=L_{\beta_0}(1-x)\mathbf{1}_{x\ge\frac12}$ ([DIR], §2.2). -/
-noncomputable def Ltilde (x : ℝ) : ℝ := if 1 / 2 ≤ x then L β₀ (1 - x) else 0
-
-@[inherit_doc] notation "L̃" => Ltilde
 
 /-- [DIR], §2.2: $\tilde b_{\beta_0}(x)=\max(b_{\beta_0}(x),\tilde L(x))$ for $x\in[0,1]$. -/
 theorem btilde_eq_max (x : ℝ) (hx : x ∈ Icc (0 : ℝ) 1) : b̃ β₀ x = max (b β₀ x) (L̃ x) := by
@@ -112,6 +89,13 @@ $y\ge x=2\frac{x+y}2-y\ge\frac12$ (for $0\le x\le y\le1$). -/
 theorem b_lt_Ltilde_imp (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y) (hy : y ≤ 1)
     (h : b β₀ ((x + y) / 2) < L̃ ((x + y) / 2)) :
     (x + y) / 2 ≥ 1 - (10 : ℝ) ^ (-(10 : ℝ) ^ 380) ∧ y ≥ x ∧ x ≥ 1 / 2 := by
+  sorry
+
+/-- **(2.8)** ([DIR], §2.2). $\tilde b_{\beta_0}$ also satisfies the two-point inequality
+$$G_{\beta_0}[\tilde b_{\beta_0}](x,y)\ge0$$
+for all $0\le x\le y\le1$. -/
+theorem eqn_2_8 (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y) (hy : y ≤ 1) :
+    G β₀ (b̃ β₀) x y ≥ 0 := by
   sorry
 
 /-- [DIR], §2.2, proof of Theorem 1.7 (implicit in "it suffices to show" and "Theorem 1.7

@@ -5,7 +5,9 @@ Authors: Claude
 -/
 module
 
-public import Isoperim.DIR.«1_Introduction».Thm_1_1
+public import Isoperim.DIR.«1_Introduction».Definitions
+public import Isoperim.DIR.«2_Envelope_Functions».«2_0_Envelope_Functions»
+public import Isoperim.DIR.«7_Proof_Poincare_Inequality».«7_0_Proof_Poincare_Inequality»
 
 /-!
 # [DIR] §1 Introduction: Theorem 1.10
@@ -18,10 +20,8 @@ cube near the critical exponent*, arXiv:2407.12674v2.
 This file covers §1.5 *Sharp Poincaré inequalities* (Theorem 1.10), the paragraph *Structure of
 the paper* and the acknowledgments.
 
-## Notation introduced here
 
-* `‖f‖_[p]` : $\|f\|_p=(\mathbf{E}|f|^p)^{1/p}$;
-* `∇f` : the function $x\mapsto|\nabla f(x)|$, so that `‖∇f‖_[p]` is $\|\nabla f\|_p$.
+The definitions and notation used here are in `Definitions.lean` of this folder.
 -/
 
 @[expose] public section
@@ -29,29 +29,6 @@ the paper* and the acknowledgments.
 namespace Auto.DIR
 
 open Real Set
-
-/-! ### §1.5 Sharp Poincaré inequalities -/
-
-/-- $\|f\|_p=(\mathbf{E}|f|^p)^{1/p}$ ([DIR], §1.5), for functions with values in a normed
-space (e.g. `ℝ` or `ℂ`). Written `‖f‖_[p]`. -/
-noncomputable def pNorm {n : ℕ} {M : Type*} [NormedAddCommGroup M] (p : ℝ) (f : ({0,1}^n) → M) :
-    ℝ :=
-  (𝐄 (fun x ↦ ‖f x‖ ^ p)) ^ (1 / p)
-
-@[inherit_doc] notation "‖" f "‖_[" p "]" => pNorm p f
-
-/-- The length of the discrete gradient ([DIR], §1.5),
-$|\nabla f|^2=\sum_{i=1}^n|\tfrac12(f(x)-f(x\oplus e_i))|^2$. Written `∇f` (as a function of
-$x$). -/
-noncomputable def gradNorm {n : ℕ} {M : Type*} [NormedAddCommGroup M] [NormedSpace ℝ M]
-    (f : ({0,1}^n) → M) (x : {0,1}^n) : ℝ :=
-  √(∑ i, ‖(1 / 2 : ℝ) • (f x - f (x + e i))‖ ^ 2)
-
-@[inherit_doc] notation:max "∇" f:max => gradNorm f
-
-/-- A *half-cube* of $\{0,1\}^n$: a set $\{x : x_i=a\}$ for some coordinate $i$ and bit $a$
-([DIR], Theorem 1.10). -/
-def IsHalfCube {n : ℕ} (A : Set ({0,1}^n)) : Prop := ∃ (i : Fin n) (a : ZMod 2), A = {x | x i = a}
 
 /-- **Theorem 1.10** ([DIR]). For all $p\ge2\beta_0=1.00114$ and $f:\{0,1\}^n\to\{0,1\}$,
 $$\|\nabla f\|_p\ge\|f-\mathbf{E}f\|_p. \tag{1.7}$$

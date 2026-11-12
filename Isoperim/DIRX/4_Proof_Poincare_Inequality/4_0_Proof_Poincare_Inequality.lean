@@ -5,8 +5,12 @@ Authors: Claude
 -/
 module
 
-public import Isoperim.DIR.«1_Introduction».Thm_1_10
+public import Isoperim.DIR.«1_Introduction».Definitions
+public import Isoperim.DIR.«2_Envelope_Functions».Definitions
+public import Isoperim.DIRX.«1_Introduction».Definitions
+public import Isoperim.DIRX.«2_Preliminaries».«2_1_Reduction_Two_Point_Inequality»
 public import Isoperim.DIRX.«2_Preliminaries».«2_2_Properties_J»
+public import Isoperim.DIRX.«2_Preliminaries».Definitions
 
 /-!
 # [DIRX] §4 Proof of the Poincaré inequality
@@ -37,14 +41,16 @@ open Auto.DIR
 open Real Set
 
 local notation "B_{" w "}" => BX w
-local notation "L" => LX
-local notation "Q" => QX
+
+local notation "L" => Auto.DIR.L (1 / 2)
+
+local notation "Q" => Auto.DIR.Q (1 / 2)
+
 local notation "J" => JX
 
 /-! ### §4 Proof of the Poincaré inequality -/
 
 section Proof_Theorem_1_3
-
 /-- [DIRX], §4: every Boolean-valued function $f$ can be written as $f=\mathbf{1}_A$ for some
 $A\subset\{0,1\}^n$. -/
 theorem bool_eq_indicator (n : ℕ) (f : ({0,1}^n) → ℝ) (hf : ∀ x, f x = 0 ∨ f x = 1) :
@@ -63,11 +69,6 @@ noncomputable def G_PX (x : ℝ) : ℝ := 1 / 2 * (B_{w₁} x + B_{w₁} (1 - x)
 
 local notation "G_P" => G_PX
 
-/-- **(4.1)** ([DIRX], §4).
-$$G_P(x)=\tfrac12(B_{w_1}(x)+B_{w_1}(1-x))-2x(1-x)\ge0$$ for all $x\in[0,1]$. -/
-theorem eqn_4_1 (x : ℝ) (hx : x ∈ Icc (0 : ℝ) 1) : G_P x ≥ 0 := by
-  sorry
-
 /-- [DIRX], §4: by (2.5), (4.1) suffices to prove Theorem 1.3 (the inequality (1.3)). -/
 theorem thm_1_3_of_eqn_4_1 (h : ∀ x ∈ Icc (0 : ℝ) 1, G_P x ≥ 0) (n : ℕ) (hn : 1 ≤ n)
     (f : ({0,1}^n) → ℝ) (hf : ∀ x, f x = 0 ∨ f x = 1) :
@@ -79,7 +80,6 @@ theorem G_PX_symm (x : ℝ) : G_P x = G_P (1 - x) := by
   sorry
 
 section Case_I
-
 /-! ### Case I: $x\in[0,\frac1{64}]$ -/
 
 /-- [DIRX], §4, Case I: for $x\in[0,\frac1{64}]$,
@@ -115,7 +115,6 @@ theorem G_PX_I (x : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 64)) : G_P x ≥ 0.2 * x
 end Case_I
 
 section Case_II
-
 /-! ### Case II: $x\in[\frac1{64},\frac14]$ -/
 
 /-- **(4.2)** ([DIRX], §4, Case II) (🚗). Dyadic partitioning shows that $G_P(x)>10^{-4}$ for all
@@ -126,16 +125,6 @@ theorem eqn_4_2 (x : ℝ) (hx : x ∈ Icc (1 / 64 : ℝ) (1 / 4)) : G_P x > (10 
 end Case_II
 
 section Case_III
-
-/-! ### Case III: $x\in[\frac14,\frac12]$ -/
-
-/-- [DIRX], §4, Case III: for $x\in[\frac14,\frac12]$,
-$G_P(x)=\frac12(Q(x)+\mathrm{J}(1-x))-2x(1-x)\ge0$. -/
-theorem G_PX_III (x : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
-    G_P x = 1 / 2 * (Q x + J (1 - x)) - 2 * x * (1 - x) ∧
-      1 / 2 * (Q x + J (1 - x)) - 2 * x * (1 - x) ≥ 0 := by
-  sorry
-
 /-- [DIRX], §4, Case III: the left-hand side vanishes at $x=\frac12$. -/
 theorem G_PX_half : 1 / 2 * (Q (1 / 2) + J (1 - 1 / 2)) - 2 * (1 / 2) * (1 - 1 / 2) = 0 := by
   sorry
@@ -158,7 +147,21 @@ $x\in[\frac14,\frac12]$, which finishes the proof of (4.1). -/
 theorem eqn_4_3 (x : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2)) : h_P₂ x > (10 : ℝ) ^ (-4 : ℤ) := by
   sorry
 
+/-! ### Case III: $x\in[\frac14,\frac12]$ -/
+
+/-- [DIRX], §4, Case III: for $x\in[\frac14,\frac12]$,
+$G_P(x)=\frac12(Q(x)+\mathrm{J}(1-x))-2x(1-x)\ge0$. -/
+theorem G_PX_III (x : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
+    G_P x = 1 / 2 * (Q x + J (1 - x)) - 2 * x * (1 - x) ∧
+      1 / 2 * (Q x + J (1 - x)) - 2 * x * (1 - x) ≥ 0 := by
+  sorry
+
 end Case_III
+
+/-- **(4.1)** ([DIRX], §4).
+$$G_P(x)=\tfrac12(B_{w_1}(x)+B_{w_1}(1-x))-2x(1-x)\ge0$$ for all $x\in[0,1]$. -/
+theorem eqn_4_1 (x : ℝ) (hx : x ∈ Icc (0 : ℝ) 1) : G_P x ≥ 0 := by
+  sorry
 
 end Proof_Theorem_1_3
 

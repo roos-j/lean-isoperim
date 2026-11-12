@@ -5,7 +5,9 @@ Authors: Claude
 -/
 module
 
-public import Isoperim.DIR.«1_Introduction».Thm_1_5
+public import Isoperim.DIR.«1_Introduction».Definitions
+public import Isoperim.DIR.«2_Envelope_Functions».«2_2_Proofs_Theorems_1_1_1_5_1_7»
+public import Isoperim.DIR.«3_Variants_Bobkov_Inequality».«3_0_Variants_Bobkov_Inequality»
 
 /-!
 # [DIR] §1 Introduction: Theorem 1.7
@@ -18,12 +20,8 @@ cube near the critical exponent*, arXiv:2407.12674v2.
 This file covers §1.3 *Classical isoperimetric inequality*: (1.5), the function $J$,
 Theorem 1.7 and Remark 1.8.
 
-## Notation introduced here
 
-* `x ⁎` : $x^*=\min(x,1-x)$;
-* `Aᶜ` : the complement $A^c$ (Mathlib notation);
-* `J` : the function $J$ of §1.3; derivatives are written `deriv J`, `deriv (deriv J)`,
-  `iteratedDeriv k J`.
+The definitions and notation used here are in `Definitions.lean` of this folder.
 -/
 
 @[expose] public section
@@ -31,27 +29,8 @@ Theorem 1.7 and Remark 1.8.
 namespace Auto.DIR
 
 open Real Set
+
 open scoped ContDiff
-
-/-- The defining properties of the function $J$ of [DIR], §1.3: $f$ is smooth on
-$(\frac12,1)$, continuous at the endpoints (i.e. on $[\frac12,1]$), and satisfies
-$f''f=-2$ on $(\frac12,1)$, $f(\frac12)=\frac12$, $f(1)=0$. -/
-def IsJ (f : ℝ → ℝ) : Prop :=
-  ContDiffOn ℝ ∞ f (Ioo (1 / 2) 1) ∧ ContinuousOn f (Icc (1 / 2) 1) ∧
-    (∀ x ∈ Ioo (1 / 2 : ℝ) 1, deriv (deriv f) x * f x = -2) ∧ f (1 / 2) = 1 / 2 ∧ f 1 = 0
-
-/-- [DIR], §1.3: there is a unique smooth function on $(\frac12,1)$, continuous at the endpoints,
-satisfying $J''J=-2$, $J(\frac12)=\frac12$, $J(1)=0$ (uniqueness on $[\frac12,1]$). -/
-theorem existsUnique_J :
-    (∃ f, IsJ f) ∧ ∀ f g, IsJ f → IsJ g → EqOn f g (Icc (1 / 2) 1) := by
-  sorry
-
-open Classical in
-/-- The function $J$ ([DIR], §1.3): the unique smooth function on $(\frac12,1)$ continuous at the
-endpoints satisfying $J''J=-2$, $J(\frac12)=\frac12$, $J(1)=0$ (see `Auto.DIR.existsUnique_J`).
-Only its values on $[\frac12,1]$ are meaningful. It can be expressed in terms of the Gaussian
-isoperimetric profile $I(x)$, see (3.4). -/
-noncomputable def J : ℝ → ℝ := if h : ∃ f, IsJ f then h.choose else 0
 
 /-- **Theorem 1.7** ([DIR]). For $\beta=\beta_0=0.50057$ and $A\subset\{0,1\}^n$ with
 $|A|\ge\frac12$,

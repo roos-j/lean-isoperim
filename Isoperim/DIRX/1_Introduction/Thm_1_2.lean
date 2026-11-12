@@ -5,7 +5,8 @@ Authors: Claude
 -/
 module
 
-public import Isoperim.DIR.«1_Introduction».Thm_1_1
+public import Isoperim.DIR.«1_Introduction».Definitions
+public import Isoperim.DIRX.«1_Introduction».Thm_1_1
 
 /-!
 # [DIRX] §1 Introduction: Theorem 1.2
@@ -30,20 +31,6 @@ open Auto.DIR
 
 open Real
 
-/-! ### Applications -/
-
-/-- **Theorem 1.2** ([DIRX]). Let $(A,B,W)$ be a partition of $\{0,1\}^n$ and assume
-$|A|=\frac12$. Then
-$$|\nabla(A,B)|+\sqrt n\,|W|\ge\tfrac12.$$
-Here $|W|=\mathbf{E}\mathbf{1}_W$ and
-$|\nabla(A,B)|=2^{-n}\#\{(x,y)\in\mathcal{E} : x\in A,y\in B\}$, where $\mathcal{E}$ is the set of
-edges of $\{0,1\}^n$. -/
-theorem thm_1_2 (n : ℕ) (hn : 1 ≤ n) (A B W : Set ({0,1}^n))
-    (hAB : Disjoint A B) (hAW : Disjoint A W) (hBW : Disjoint B W)
-    (hcover : A ∪ B ∪ W = Set.univ) (hA : ｜A｜ = 1 / 2) :
-    |∇(A, B)| + √n * ｜W｜ ≥ 1 / 2 := by
-  sorry
-
 /-- [DIRX], §1, proof of Theorem 1.2: for a partition $(A,B,W)$ of $\{0,1\}^n$ with
 $|B\cup W|=|A|=\frac12$,
 $$\tfrac12\le\mathbf{E}\sqrt{h_{B\cup W}}\le\mathbf{E}(h_{B\cup W}\mathbf{1}_B)
@@ -57,6 +44,20 @@ theorem thm_1_2_chain (n : ℕ) (hn : 1 ≤ n) (A B W : Set ({0,1}^n))
       𝐄 (h_{B ∪ W} * 𝟏_{B}) + 𝐄 (fun x ↦ √(h_{B ∪ W} x) * 𝟏_{W} x) ∧
     𝐄 (h_{B ∪ W} * 𝟏_{B}) + 𝐄 (fun x ↦ √(h_{B ∪ W} x) * 𝟏_{W} x) ≤
       |∇(A, B)| + √n * ｜W｜ := by
+  sorry
+
+/-! ### Applications -/
+
+/-- **Theorem 1.2** ([DIRX]). Let $(A,B,W)$ be a partition of $\{0,1\}^n$ and assume
+$|A|=\frac12$. Then
+$$|\nabla(A,B)|+\sqrt n\,|W|\ge\tfrac12.$$
+Here $|W|=\mathbf{E}\mathbf{1}_W$ and
+$|\nabla(A,B)|=2^{-n}\#\{(x,y)\in\mathcal{E} : x\in A,y\in B\}$, where $\mathcal{E}$ is the set of
+edges of $\{0,1\}^n$. -/
+theorem thm_1_2 (n : ℕ) (hn : 1 ≤ n) (A B W : Set ({0,1}^n))
+    (hAB : Disjoint A B) (hAW : Disjoint A W) (hBW : Disjoint B W)
+    (hcover : A ∪ B ∪ W = Set.univ) (hA : ｜A｜ = 1 / 2) :
+    |∇(A, B)| + √n * ｜W｜ ≥ 1 / 2 := by
   sorry
 
 end Auto.DIRX

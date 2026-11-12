@@ -5,7 +5,10 @@ Authors: Claude
 -/
 module
 
+public import Isoperim.DIR.«1_Introduction».Definitions
+public import Isoperim.DIR.«2_Envelope_Functions».Definitions
 public import Isoperim.DIR.«3_Variants_Bobkov_Inequality».«3_0_Variants_Bobkov_Inequality»
+public import Isoperim.DIR.«5_Auxiliary_Estimates».«5_3_Properties_L_Q»
 
 /-!
 # [DIR] §6.5 Case $QJQ$: $\frac14\le x\le\frac12\le y$, $x+y\le1$
@@ -53,12 +56,29 @@ $$G_{QJQ,\beta}(x,y)=(y-x)^2+J(y)^2-(2Q_\beta(\tfrac{x+y}2)-Q_\beta(x))^2.$$ -/
 noncomputable def G_QJQ (β x y : ℝ) : ℝ :=
   (y - x) ^ 2 + J y ^ 2 - (2 * Q β ((x + y) / 2) - Q β x) ^ 2
 
-/-- **Proposition 6.9** ([DIR], $QJQ$). Let $\beta_1=\frac12+\frac{31}{1024}\approx0.53$. For all
-$(x,y)\in[\frac14,\frac12]\times[\frac12,\frac34]$ and $\beta\in[\frac12,\beta_1]$:
-$$G_{QJQ,\beta}(x,y)=(y-x)^2+J(y)^2-(2Q_\beta(\tfrac{x+y}2)-Q_\beta(x))^2\ge0. \tag{6.23}$$ -/
-theorem prop_6_9 (x y : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2)) (hy : y ∈ Icc (1 / 2 : ℝ) (3 / 4))
-    (β : ℝ) (hβ : β ∈ Icc (1 / 2) β₁) : G_QJQ β x y ≥ 0 := by
+/-- The function ([DIR], (6.24))
+$$g_{QJQ,\beta}(x,y)=(y-x)+J(y)J'(y)-(2Q_\beta(\tfrac{x+y}2)-Q_\beta(x))Q_\beta'(\tfrac{x+y}2).$$
+(Here $J'(y)$ is `derivWithin J (Icc (1 / 2) 1) y`, one-sided at $y=\frac12$.) -/
+noncomputable def g_QJQ (β x y : ℝ) : ℝ :=
+  (y - x) + J y * derivWithin J (Icc (1 / 2) 1) y -
+    (2 * Q β ((x + y) / 2) - Q β x) * deriv (Q β) ((x + y) / 2)
+
+/-- [DIR], §6.5: the $y$-derivative of the left-hand side in (6.23) is $2$ times
+$g_{QJQ,\beta}(x,y)$ (6.24). (Stated for $y\in(\frac12,\frac34]$, where the two-sided derivative
+of `J` at $y$ is meaningful.) -/
+theorem G_QJQ_deriv_y (β x y : ℝ) (hy : y ∈ Ioc (1 / 2 : ℝ) (3 / 4)) :
+    deriv (fun y ↦ G_QJQ β x y) y = 2 * g_QJQ β x y := by
   sorry
+
+section Proof_Claim_2
+/-- [DIR], §6.5, proof of item 2: first, $2Q_\beta(\frac{x+y}2)-Q_\beta(x)\ge Q_\beta(y)>0$
+follows since $Q_\beta$ is concave. -/
+theorem two_Q_sub_Q_ge (β : ℝ) (hβ : β ∈ Icc (1 / 2) β₁) (x y : ℝ)
+    (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2)) (hy : y ∈ Icc (1 / 2 : ℝ) (3 / 4)) :
+    2 * Q β ((x + y) / 2) - Q β x ≥ Q β y ∧ Q β y > 0 := by
+  sorry
+
+end Proof_Claim_2
 
 /-- [DIR], §6.5: from (5.9) we see that for each fixed $(x,y)$ the left-hand side in (6.23) is
 either monotone increasing or decreasing in $\beta$ (for $\beta\in[\frac12,\beta_1]$). -/
@@ -85,39 +105,6 @@ theorem prop_6_9_of_endpoints
     (hβ : β ∈ Icc (1 / 2) β₁) : G_QJQ β x y ≥ 0 := by
   sorry
 
-/-- The function ([DIR], (6.24))
-$$g_{QJQ,\beta}(x,y)=(y-x)+J(y)J'(y)-(2Q_\beta(\tfrac{x+y}2)-Q_\beta(x))Q_\beta'(\tfrac{x+y}2).$$
-(Here $J'(y)$ is `derivWithin J (Icc (1 / 2) 1) y`, one-sided at $y=\frac12$.) -/
-noncomputable def g_QJQ (β x y : ℝ) : ℝ :=
-  (y - x) + J y * derivWithin J (Icc (1 / 2) 1) y -
-    (2 * Q β ((x + y) / 2) - Q β x) * deriv (Q β) ((x + y) / 2)
-
-/-- [DIR], §6.5: the $y$-derivative of the left-hand side in (6.23) is $2$ times
-$g_{QJQ,\beta}(x,y)$ (6.24). (Stated for $y\in(\frac12,\frac34]$, where the two-sided derivative
-of `J` at $y$ is meaningful.) -/
-theorem G_QJQ_deriv_y (β x y : ℝ) (hy : y ∈ Ioc (1 / 2 : ℝ) (3 / 4)) :
-    deriv (fun y ↦ G_QJQ β x y) y = 2 * g_QJQ β x y := by
-  sorry
-
-/-- [DIR], §6.5: we begin by showing that this quantity is strictly positive for all
-$(x,y)\in[\frac14,\frac12]\times[\frac12,\frac34]$, thus reducing to the case $y=\frac12$:
-for $\beta\in\{\frac12,\beta_1\}$, $G_{QJQ,\beta}(x,y)\ge G_{QJQ,\beta}(x,\frac12)$. -/
-theorem G_QJQ_ge_G_QJQ_half (β : ℝ) (hβ : β ∈ ({1 / 2, β₁} : Set ℝ)) (x y : ℝ)
-    (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2)) (hy : y ∈ Icc (1 / 2 : ℝ) (3 / 4)) :
-    G_QJQ β x y ≥ G_QJQ β x (1 / 2) := by
-  sorry
-
-section Proof_Claim_2
-
-/-- [DIR], §6.5, proof of item 2: first, $2Q_\beta(\frac{x+y}2)-Q_\beta(x)\ge Q_\beta(y)>0$
-follows since $Q_\beta$ is concave. -/
-theorem two_Q_sub_Q_ge (β : ℝ) (hβ : β ∈ Icc (1 / 2) β₁) (x y : ℝ)
-    (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2)) (hy : y ∈ Icc (1 / 2 : ℝ) (3 / 4)) :
-    2 * Q β ((x + y) / 2) - Q β x ≥ Q β y ∧ Q β y > 0 := by
-  sorry
-
-end Proof_Claim_2
-
 /-- **(6.25)** ([DIR], §6.5) (🚗). Calling
 $\textsc{Partition}_2(\underline{g_{QJQ,\beta}},[\frac14,\frac12]\times[\frac12,\frac34])$ for
 $\beta\in\{\frac12,\beta_1\}$ shows that
@@ -137,19 +124,19 @@ theorem eqn_6_25 (β : ℝ) (hβ : β ∈ ({1 / 2, β₁} : Set ℝ)) (x y : ℝ
     g_QJQ β x y > 10 ^ (-5 : ℤ) := by
   sorry
 
+/-- [DIR], §6.5: we begin by showing that this quantity is strictly positive for all
+$(x,y)\in[\frac14,\frac12]\times[\frac12,\frac34]$, thus reducing to the case $y=\frac12$:
+for $\beta\in\{\frac12,\beta_1\}$, $G_{QJQ,\beta}(x,y)\ge G_{QJQ,\beta}(x,\frac12)$. -/
+theorem G_QJQ_ge_G_QJQ_half (β : ℝ) (hβ : β ∈ ({1 / 2, β₁} : Set ℝ)) (x y : ℝ)
+    (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2)) (hy : y ∈ Icc (1 / 2 : ℝ) (3 / 4)) :
+    G_QJQ β x y ≥ G_QJQ β x (1 / 2) := by
+  sorry
+
 /-- [DIR], §6.5: to finish the proof it now suffices to show (6.23) for $y=\frac12$, that is
 $$(\tfrac12-x)^2+\tfrac14-(2Q_\beta(\tfrac x2+\tfrac14)-Q_\beta(x))^2\ge0$$
 for $x\in[\frac14,\frac12]$ (here $J(\frac12)=\frac12$). -/
 theorem G_QJQ_y_half_eq (β x : ℝ) :
     G_QJQ β x (1 / 2) = (1 / 2 - x) ^ 2 + 1 / 4 - (2 * Q β (x / 2 + 1 / 4) - Q β x) ^ 2 := by
-  sorry
-
-/-- [DIR], §6.5: the inequality
-$(\frac12-x)^2+\frac14-(2Q_\beta(\frac x2+\frac14)-Q_\beta(x))^2\ge0$ for $x\in[\frac14,\frac12]$
-and $\beta\in\{\frac12,\beta_1\}$. -/
-theorem G_QJQ_y_half_nonneg (β : ℝ) (hβ : β ∈ ({1 / 2, β₁} : Set ℝ)) (x : ℝ)
-    (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
-    (1 / 2 - x) ^ 2 + 1 / 4 - (2 * Q β (x / 2 + 1 / 4) - Q β x) ^ 2 ≥ 0 := by
   sorry
 
 /-- The cubic polynomial ([DIR], §6.5)
@@ -185,6 +172,21 @@ theorem p_QJQ_monotoneOn (β : ℝ) (hβ : β ∈ ({β₁, 1 / 2} : Set ℝ)) :
 $\beta\in\{\beta_1,\frac12\}$. -/
 theorem p_QJQ_quarter (β : ℝ) (hβ : β ∈ ({β₁, 1 / 2} : Set ℝ)) :
     p_QJQ β (1 / 4) > 10 ^ (-4 : ℤ) := by
+  sorry
+
+/-- [DIR], §6.5: the inequality
+$(\frac12-x)^2+\frac14-(2Q_\beta(\frac x2+\frac14)-Q_\beta(x))^2\ge0$ for $x\in[\frac14,\frac12]$
+and $\beta\in\{\frac12,\beta_1\}$. -/
+theorem G_QJQ_y_half_nonneg (β : ℝ) (hβ : β ∈ ({1 / 2, β₁} : Set ℝ)) (x : ℝ)
+    (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
+    (1 / 2 - x) ^ 2 + 1 / 4 - (2 * Q β (x / 2 + 1 / 4) - Q β x) ^ 2 ≥ 0 := by
+  sorry
+
+/-- **Proposition 6.9** ([DIR], $QJQ$). Let $\beta_1=\frac12+\frac{31}{1024}\approx0.53$. For all
+$(x,y)\in[\frac14,\frac12]\times[\frac12,\frac34]$ and $\beta\in[\frac12,\beta_1]$:
+$$G_{QJQ,\beta}(x,y)=(y-x)^2+J(y)^2-(2Q_\beta(\tfrac{x+y}2)-Q_\beta(x))^2\ge0. \tag{6.23}$$ -/
+theorem prop_6_9 (x y : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2)) (hy : y ∈ Icc (1 / 2 : ℝ) (3 / 4))
+    (β : ℝ) (hβ : β ∈ Icc (1 / 2) β₁) : G_QJQ β x y ≥ 0 := by
   sorry
 
 end Auto.DIR

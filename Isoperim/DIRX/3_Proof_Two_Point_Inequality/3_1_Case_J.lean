@@ -5,7 +5,10 @@ Authors: Claude
 -/
 module
 
+public import Isoperim.DIR.«2_Envelope_Functions».Definitions
+public import Isoperim.DIR.«3_Variants_Bobkov_Inequality».«3_0_Variants_Bobkov_Inequality»
 public import Isoperim.DIRX.«2_Preliminaries».«2_2_Properties_J»
+public import Isoperim.DIRX.«2_Preliminaries».Definitions
 
 /-!
 # [DIRX] §3 Proof of the two-point inequality, §3.1 Case J
@@ -35,20 +38,15 @@ open Auto.DIR
 
 open Real Set
 
-local notation "G₁" => G₁X
-local notation "G" => GX
+local notation "G₁" => Auto.DIR.G₁ (1 / 2)
+
+local notation "G" => Auto.DIR.G (1 / 2)
+
 local notation "B_{" w "}" => BX w
+
 local notation "J" => JX
+
 local notation "γ" => γX
-
-/-! ### §3 Proof of the two-point inequality -/
-
-/-! ### §3.1 Case J: $\frac12\le x\le y\le1$ -/
-
-/-- [DIRX], §3.1 (Case $J$): $G[B_{w_1}](x,y)\ge0$ for $\frac12\le x\le y\le1$. -/
-theorem caseJ (x y : ℝ) (hx : 1 / 2 ≤ x) (hxy : x ≤ y) (hy : y ≤ 1) :
-    G (B_{w₁}) x y ≥ 0 := by
-  sorry
 
 /-- [DIRX], §3.1: for $\frac12\le x\le y\le1$,
 $G_1[B_{w_1}](x,y)=\sqrt{(y-x)^2+\mathrm{J}(y)^2}+\mathrm{J}(x)-2\mathrm{J}(\frac{x+y}2)$ (so that
@@ -57,21 +55,8 @@ theorem caseJ_G₁_eq (x y : ℝ) (hx : 1 / 2 ≤ x) (hxy : x ≤ y) (hy : y ≤
     G₁ (B_{w₁}) x y = √((y - x) ^ 2 + J y ^ 2) + J x - 2 * J ((x + y) / 2) := by
   sorry
 
-/-- **(3.1)** ([DIRX], §3.1). For $\frac12\le x\le y\le1$,
-$$\sqrt{(y-x)^2+\mathrm{J}(y)^2}+\mathrm{J}(x)\ge2\mathrm{J}(\tfrac{x+y}2).$$ -/
-theorem eqn_3_1 (x y : ℝ) (hx : 1 / 2 ≤ x) (hxy : x ≤ y) (hy : y ≤ 1) :
-    √((y - x) ^ 2 + J y ^ 2) + J x ≥ 2 * J ((x + y) / 2) := by
-  sorry
-
 /-- $c_*=\min(c-\frac12,1-c)$ ([DIRX], §3.1). -/
 noncomputable def cStar (c : ℝ) : ℝ := min (c - 1 / 2) (1 - c)
-
-/-- [DIRX], §3.1: with $c=\frac{x+y}2$, $u=\frac{y-x}2$, it suffices to show
-$\sqrt{4u^2+\mathrm{J}(c+u)^2}\ge2\mathrm{J}(c)-\mathrm{J}(c-u)$ for all $0\le u\le c_*$ and
-$c\in[\frac12,1]$. -/
-theorem caseJ_cu (c u : ℝ) (hc : c ∈ Icc (1 / 2 : ℝ) 1) (hu : u ∈ Icc 0 (cStar c)) :
-    √(4 * u ^ 2 + J (c + u) ^ 2) ≥ 2 * J c - J (c - u) := by
-  sorry
 
 /-- [DIRX], §3.1: by concavity of $\mathrm{J}$, the right-hand side
 $2\mathrm{J}(c)-\mathrm{J}(c-u)$ is non-negative (for $c\in[\frac12,1]$, $0\le u\le c_*$). -/
@@ -113,26 +98,12 @@ theorem FX_deriv2 (c u : ℝ) (hc : c ∈ Icc (1 / 2 : ℝ) 1) (hu : u ∈ Icc 0
       2 * (deriv J (c + u) ^ 2 - deriv J (c - u) ^ 2) + 8 - 4 * γ * (J c / J (c - u)) := by
   sorry
 
-/-- **(3.2)** ([DIRX], §3.1). $F_c''(u)\ge0$ for $u\in[0,c_*]$ and $c\in[\frac12,1]$ (at points
-with $c+u<1$; at $c+u=1$ the derivative $\mathrm{J}'(1)$ is infinite and $F_c''$ is not
-defined). -/
-theorem eqn_3_2 (c u : ℝ) (hc : c ∈ Icc (1 / 2 : ℝ) 1) (hu : u ∈ Icc 0 (cStar c))
-    (hcu : c + u < 1) : deriv (deriv (F_{c})) u ≥ 0 := by
-  sorry
-
 /-- [DIRX], §3.1: $F_c(0)=F_c'(0)=0$ (for $c\in[\frac12,1)$). -/
 theorem FX_zero (c : ℝ) (hc : c ∈ Ico (1 / 2 : ℝ) 1) :
     F_{c} 0 = 0 ∧ deriv (F_{c}) 0 = 0 := by
   sorry
 
-/-- [DIRX], §3.1: (3.2) together with $F_c(0)=F_c'(0)=0$ implies $F_c(u)\ge0$ for
-$u\in[0,c_*]$ (and $c\in[\frac12,1]$). -/
-theorem FX_nonneg (c u : ℝ) (hc : c ∈ Icc (1 / 2 : ℝ) 1) (hu : u ∈ Icc 0 (cStar c)) :
-    F_{c} u ≥ 0 := by
-  sorry
-
 section Case_I
-
 /-! ### Case I: $x=c-u\ge x_1$ -/
 
 /-- [DIRX], §3.1, Case I: $\gamma\le2$. -/
@@ -169,7 +140,6 @@ theorem caseJ_I (c u : ℝ) (hc : c ∈ Icc (1 / 2 : ℝ) 1) (hu : u ∈ Icc 0 (
 end Case_I
 
 section Case_II
-
 /-! ### Case II: $x=c-u\in[\frac12,x_1]$ -/
 
 /-- [DIRX], §3.1, Case II: for $x=c-u\in[\frac12,x_1]$ (and $y=c+u<1$), using the monotonicity
@@ -192,5 +162,40 @@ theorem caseJ_II_eval :
   sorry
 
 end Case_II
+
+/-- **(3.2)** ([DIRX], §3.1). $F_c''(u)\ge0$ for $u\in[0,c_*]$ and $c\in[\frac12,1]$ (at points
+with $c+u<1$; at $c+u=1$ the derivative $\mathrm{J}'(1)$ is infinite and $F_c''$ is not
+defined). -/
+theorem eqn_3_2 (c u : ℝ) (hc : c ∈ Icc (1 / 2 : ℝ) 1) (hu : u ∈ Icc 0 (cStar c))
+    (hcu : c + u < 1) : deriv (deriv (F_{c})) u ≥ 0 := by
+  sorry
+
+/-- [DIRX], §3.1: (3.2) together with $F_c(0)=F_c'(0)=0$ implies $F_c(u)\ge0$ for
+$u\in[0,c_*]$ (and $c\in[\frac12,1]$). -/
+theorem FX_nonneg (c u : ℝ) (hc : c ∈ Icc (1 / 2 : ℝ) 1) (hu : u ∈ Icc 0 (cStar c)) :
+    F_{c} u ≥ 0 := by
+  sorry
+
+/-- [DIRX], §3.1: with $c=\frac{x+y}2$, $u=\frac{y-x}2$, it suffices to show
+$\sqrt{4u^2+\mathrm{J}(c+u)^2}\ge2\mathrm{J}(c)-\mathrm{J}(c-u)$ for all $0\le u\le c_*$ and
+$c\in[\frac12,1]$. -/
+theorem caseJ_cu (c u : ℝ) (hc : c ∈ Icc (1 / 2 : ℝ) 1) (hu : u ∈ Icc 0 (cStar c)) :
+    √(4 * u ^ 2 + J (c + u) ^ 2) ≥ 2 * J c - J (c - u) := by
+  sorry
+
+/-- **(3.1)** ([DIRX], §3.1). For $\frac12\le x\le y\le1$,
+$$\sqrt{(y-x)^2+\mathrm{J}(y)^2}+\mathrm{J}(x)\ge2\mathrm{J}(\tfrac{x+y}2).$$ -/
+theorem eqn_3_1 (x y : ℝ) (hx : 1 / 2 ≤ x) (hxy : x ≤ y) (hy : y ≤ 1) :
+    √((y - x) ^ 2 + J y ^ 2) + J x ≥ 2 * J ((x + y) / 2) := by
+  sorry
+
+/-! ### §3 Proof of the two-point inequality -/
+
+/-! ### §3.1 Case J: $\frac12\le x\le y\le1$ -/
+
+/-- [DIRX], §3.1 (Case $J$): $G[B_{w_1}](x,y)\ge0$ for $\frac12\le x\le y\le1$. -/
+theorem caseJ (x y : ℝ) (hx : 1 / 2 ≤ x) (hxy : x ≤ y) (hy : y ≤ 1) :
+    G (B_{w₁}) x y ≥ 0 := by
+  sorry
 
 end Auto.DIRX

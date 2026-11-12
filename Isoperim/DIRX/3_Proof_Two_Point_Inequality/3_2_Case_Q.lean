@@ -5,7 +5,10 @@ Authors: Claude
 -/
 module
 
-public import Isoperim.DIRX.«2_Preliminaries».«2_1_Reduction_Two_Point_Inequality»
+public import Isoperim.DIR.«2_Envelope_Functions».Definitions
+public import Isoperim.DIR.«5_Auxiliary_Estimates».«5_3_Properties_L_Q»
+public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_2_Case_Q»
+public import Isoperim.DIRX.«2_Preliminaries».Definitions
 
 /-!
 # [DIRX] §3.2 Case Q
@@ -28,18 +31,15 @@ open Auto.DIR
 
 open Real Set
 
-local notation "G₁" => G₁X
-local notation "G" => GX
+local notation "G₁" => Auto.DIR.G₁ (1 / 2)
+
+local notation "G" => Auto.DIR.G (1 / 2)
+
 local notation "B_{" w "}" => BX w
-local notation "L" => LX
-local notation "Q" => QX
 
-/-! ### §3.2 Case Q: $0\le x\le y\le\frac12$ -/
+local notation "L" => Auto.DIR.L (1 / 2)
 
-/-- [DIRX], §3.2 (Case $Q$): $G[B_{w_1}](x,y)\ge0$ for $0\le x\le y\le\frac12$. -/
-theorem caseQ (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y) (hy : y ≤ 1 / 2) :
-    G (B_{w₁}) x y ≥ 0 := by
-  sorry
+local notation "Q" => Auto.DIR.Q (1 / 2)
 
 /-- [DIRX], §3.2 (cited from [DIR], Proposition 6.2 with $\beta=\frac12$, `Auto.DIR.prop_6_2`):
 $G_1[\max(L,Q)](x,y)\ge0$ for $0\le x\le y\le\frac12$. -/
@@ -50,6 +50,13 @@ theorem caseQ_G₁_max (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y) (hy : y ≤ 1 
 /-- [DIRX], §3.2: this implies the claim, since $B_w=\max(L,Q)$ on $[0,\frac12]$ (by [DIR],
 Lemma 5.9, `Auto.DIR.lemma_5_9`). -/
 theorem BX_eq_max (w x : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 2)) : B_{w} x = max (L x) (Q x) := by
+  sorry
+
+/-! ### §3.2 Case Q: $0\le x\le y\le\frac12$ -/
+
+/-- [DIRX], §3.2 (Case $Q$): $G[B_{w_1}](x,y)\ge0$ for $0\le x\le y\le\frac12$. -/
+theorem caseQ (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y) (hy : y ≤ 1 / 2) :
+    G (B_{w₁}) x y ≥ 0 := by
   sorry
 
 end Auto.DIRX

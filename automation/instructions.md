@@ -19,7 +19,25 @@ The user's current explicit instructions take precedence over both. Raw prompts 
   (6.4) (the counter skips it, an artifact of the `\auto` tag macro); auto-tagged (🚗) equations
   each take one number.
 
-## Layout (user requirement, 2026-11-11)
+## Changes of plan (user requirement, 2026-11-12T00:56+00:00, raw entry 4)
+
+- Scope of the formalization: only what is logically needed (by the papers' arguments) for the
+  theorems stated in the introductions ([DIR] Thm 1.1, 1.5, 1.6, 1.7, 1.10, Cor. 1.9; [DIRX]
+  Thm 1.1, 1.2, 1.3). Everything else (remarks, cited history, conjectures, [DIRX] §5, …) was
+  removed.
+- The computer-assisted-proof sections ([DIR] §4, [DIRX] §2.4) and everything that only served
+  them (tight lower bounds, partitions, enclosures) were removed; computer-verified (🚗) claims
+  are kept and are to be proved directly (e.g. with LeanCert).
+- Paper prose is no longer copied into comments: only docstrings (and module docstrings) remain.
+- Each introduction folder and [DIR] §2, [DIRX] §2 have a `Definitions.lean` with the
+  definitions (and the elementary facts about them needed elsewhere).
+- Strict forward reasoning: within a file every declaration comes after all its statement and
+  proof prerequisites; files import every file containing a prerequisite; no import cycles.
+  Verified (see `automation/forward_reasoning.md`). Files are no longer in paper order.
+- [DIRX] reuses [DIR] definitions wherever they coincide (`L`, `Q`, `G₁`, `G₂`, `G` at
+  $\beta=\frac12$, `Q_spec`, `I_characterization`).
+
+## Layout (user requirement, 2026-11-11; superseded in part by the changes above)
 
 ```
 Isoperim.lean                       # imports every module below
@@ -138,6 +156,11 @@ lake build
   analysis of the paper's arguments) in `automation/forward_reasoning.md`, including whether the
   proof dependencies force import loops between files. Still no proofs.
 
+- **2026-11-12T00:56+00:00** (raw entry 4): `Definitions.lean` per introduction folder and [DIRX] §2 (confirm no
+  import loops); minimal reordering for forward reasoning plus all needed imports (confirm);
+  [DIRX] reuses [DIR] definitions; remove descriptive paper comments; remove the
+  computer-assisted sections; remove everything not needed for the introduction theorems.
+
 ## Settled decisions
 
 - Proof-section claims reference later results only in comments (setup phase). When proofs are
@@ -148,12 +171,8 @@ lake build
 
 ## Current status / next step
 
-Setup phase complete, followed by the audits requested on 2026-11-11 (22:51 UTC): metacode
-removed (`｜A｜` is a plain `notation`), all ErrorReport items fixed or documented with
-`**Discrepancy with the paper.**` paragraphs at their places, a second correctness audit
-(`automation/ErrorReport.md`, section "Audit round 2"), and the forward-reasoning audit
-(`automation/forward_reasoning.md`). `lake build` succeeds; linters report only `sorry` warnings.
-
-Open decisions for the user before the proof phase: how to resolve the file-level import loops
-forced by the paper-structured layout (options (a)–(c) in `automation/forward_reasoning.md` §2),
-and the unresolved paper gaps listed in `automation/ErrorReport.md`.
+Restructuring of 2026-11-12 complete: 540 declarations (all `sorry`), `lake build` succeeds,
+linters report only `sorry` warnings, forward order and imports verified
+(`automation/forward_reasoning.md`). Next step: proof phase, in the module order of
+`Isoperim.lean`; first add the facts listed in §4 of `automation/forward_reasoning.md` that the
+paper proofs use but the scaffold does not state.

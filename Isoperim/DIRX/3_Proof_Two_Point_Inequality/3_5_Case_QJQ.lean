@@ -5,7 +5,10 @@ Authors: Claude
 -/
 module
 
+public import Isoperim.DIR.«2_Envelope_Functions».Definitions
+public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_5_Case_QJQ»
 public import Isoperim.DIRX.«2_Preliminaries».«2_2_Properties_J»
+public import Isoperim.DIRX.«2_Preliminaries».Definitions
 
 /-!
 # [DIRX] §3.5 Case QJQ
@@ -34,27 +37,17 @@ open Auto.DIR
 
 open Real Set
 
-local notation "G₁" => G₁X
-local notation "G" => GX
+local notation "G₁" => Auto.DIR.G₁ (1 / 2)
+
+local notation "G" => Auto.DIR.G (1 / 2)
+
 local notation "B_{" w "}" => BX w
-local notation "Q" => QX
+
+local notation "Q" => Auto.DIR.Q (1 / 2)
+
 local notation "J" => JX
+
 local notation "γ" => γX
-
-/-! ### §3.5 Case QJQ: $\frac14\le x\le\frac12\le y$, $x+y\le1$ -/
-
-/-- [DIRX], §3.5 (Case $QJQ$): $G[B_{w_1}](x,y)\ge0$ for $\frac14\le x\le\frac12\le y$,
-$x+y\le1$. -/
-theorem caseQJQ (x y : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2)) (hy : 1 / 2 ≤ y)
-    (hxy : x + y ≤ 1) : G (B_{w₁}) x y ≥ 0 := by
-  sorry
-
-/-- **(3.9)** ([DIRX], §3.5). For all $(x,y)\in[\frac14,\frac12]\times[\frac12,\frac34]$,
-$$(y-x)^2+\mathrm{J}(y)^2-(2Q(\tfrac{x+y}2)-Q(x))^2\ge0.$$ -/
-theorem eqn_3_9 (x y : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2))
-    (hy : y ∈ Icc (1 / 2 : ℝ) (3 / 4)) :
-    (y - x) ^ 2 + J y ^ 2 - (2 * Q ((x + y) / 2) - Q x) ^ 2 ≥ 0 := by
-  sorry
 
 /-- [DIRX], §3.5: (3.9) implies Case $QJQ$, since in this region
 $G_1[B_{w_1}](x,y)=\sqrt{(y-x)^2+\mathrm{J}(y)^2}+Q(x)-2Q(\frac{x+y}2)$. -/
@@ -100,6 +93,21 @@ $[\frac14,\frac12]\times[\frac{33}{64},\frac34]$. -/
 theorem eqn_3_12 (x y : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2))
     (hy : y ∈ Icc (33 / 64 : ℝ) (3 / 4)) :
     (y - x) ^ 2 + J y ^ 2 - (2 * Q ((x + y) / 2) - Q x) ^ 2 > (10 : ℝ) ^ (-7 : ℤ) := by
+  sorry
+
+/-- **(3.9)** ([DIRX], §3.5). For all $(x,y)\in[\frac14,\frac12]\times[\frac12,\frac34]$,
+$$(y-x)^2+\mathrm{J}(y)^2-(2Q(\tfrac{x+y}2)-Q(x))^2\ge0.$$ -/
+theorem eqn_3_9 (x y : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2))
+    (hy : y ∈ Icc (1 / 2 : ℝ) (3 / 4)) :
+    (y - x) ^ 2 + J y ^ 2 - (2 * Q ((x + y) / 2) - Q x) ^ 2 ≥ 0 := by
+  sorry
+
+/-! ### §3.5 Case QJQ: $\frac14\le x\le\frac12\le y$, $x+y\le1$ -/
+
+/-- [DIRX], §3.5 (Case $QJQ$): $G[B_{w_1}](x,y)\ge0$ for $\frac14\le x\le\frac12\le y$,
+$x+y\le1$. -/
+theorem caseQJQ (x y : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2)) (hy : 1 / 2 ≤ y)
+    (hxy : x + y ≤ 1) : G (B_{w₁}) x y ≥ 0 := by
   sorry
 
 end Auto.DIRX

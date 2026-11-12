@@ -5,7 +5,9 @@ Authors: Claude
 -/
 module
 
-public import Isoperim.DIRX.«2_Preliminaries».«2_1_Reduction_Two_Point_Inequality»
+public import Isoperim.DIR.«3_Variants_Bobkov_Inequality».«3_0_Variants_Bobkov_Inequality»
+public import Isoperim.DIR.«5_Auxiliary_Estimates».«5_4_Lower_Bounds_Gaussian_Isoperimetric_Profile»
+public import Isoperim.DIRX.«2_Preliminaries».Definitions
 
 /-!
 # [DIRX] §2.2 Properties of the function J
@@ -20,16 +22,8 @@ domain is $[\frac12,1]$; it is smooth on $(1-w_1,1)\supset[\frac12,1)$, while at
 derivative is infinite (so `deriv J 1` is a junk value), and statements about derivatives are
 restricted accordingly.
 
-## Notation introduced here
 
-* `γ` : the constant $\gamma=(4w_1^2I(\frac1{2w_1})^2)^{-1}$ (Lean name `γX`);
-* `x₁` : $x_1=1-\frac{w_1}2=\frac{35}{64}$;
-* `ε x` : the quantity $\varepsilon$ in the proof of (2.6) (Lean name `εX`);
-* `JX_lo xl xu`, `JX_hi xl xu` : the interval enclosure $\underline{\mathrm{J}}(\underline x,
-  \overline x)$, $\overline{\mathrm{J}}(\underline x,\overline x)$ of (2.7);
-* `absDJX_lo xl xu`, `absDJX_hi xl xu` : the interval enclosure
-  $\underline{|\mathrm{J}'|}(\underline x,\overline x)$, $\overline{|\mathrm{J}'|}(\underline x,
-  \overline x)$ of $|\mathrm{J}'|$.
+The definitions and notation used here are in `Definitions.lean` of this folder.
 -/
 
 @[expose] public section
@@ -39,21 +33,14 @@ namespace Auto.DIRX
 open Auto.DIR
 
 open Real Set
+
 open scoped ContDiff
 
 local notation "J" => JX
 
-/-! ### §2.2 Properties of the function J -/
-
-/-- The constant $\gamma=(4w_1^2I(\frac1{2w_1})^2)^{-1}$ ([DIRX], §2.2). Written `γ`. -/
-noncomputable def γX : ℝ := (4 * w₁ ^ 2 * I (1 / (2 * w₁)) ^ 2)⁻¹
-
 local notation "γ" => γX
 
-/-- [DIRX], §2.2: $\mathrm{J}\cdot\mathrm{J}''=-\gamma$ (on $(1-w_1,1)\supset[\frac12,1)$, where
-$\mathrm{J}$ is smooth). -/
-theorem JX_mul_deriv2 : ∀ x ∈ Ioo (1 - w₁) 1, J x * deriv (deriv J) x = -γ := by
-  sorry
+local notation "ε" => εX
 
 /-- [DIRX], §2.2: $\mathrm{J}$ is smooth on $(1-w_1,1)$ and continuous on $[1-w_1,1]$ (implicit
 in the paper, needed to make sense of $\mathrm{J}''$). -/
@@ -61,25 +48,21 @@ theorem JX_contDiff :
     ContDiffOn ℝ ∞ J (Ioo (1 - w₁) 1) ∧ ContinuousOn J (Icc (1 - w₁) 1) := by
   sorry
 
-/-- [DIRX], §2.2: in particular, $\mathrm{J}$ is concave (on $[\frac12,1]$), and
-$\mathrm{J}\ge0$ there. -/
-theorem JX_concave : ConcaveOn ℝ (Icc (1 / 2) 1) J ∧ ∀ x ∈ Icc (1 / 2 : ℝ) 1, 0 ≤ J x := by
+/-- [DIRX], §2.2: $\mathrm{J}\cdot\mathrm{J}''=-\gamma$ (on $(1-w_1,1)\supset[\frac12,1)$, where
+$\mathrm{J}$ is smooth). -/
+theorem JX_mul_deriv2 : ∀ x ∈ Ioo (1 - w₁) 1, J x * deriv (deriv J) x = -γ := by
   sorry
 
 /-- [DIRX], §2.2: $\gamma\in[1.945,1.946]$. -/
 theorem γX_mem : γ ∈ Icc (1.945 : ℝ) 1.946 := by
   sorry
 
-/-- $x_1=1-\frac{w_1}2$ ([DIRX], §2.2). -/
-noncomputable def x₁ : ℝ := 1 - w₁ / 2
-
-/-- **(2.6)** ([DIRX], §2.2). For $x\in(0,\frac1{64}]$,
-$$\mathrm{J}(1-x)>x\sqrt{\log(w_1/x)}.$$ -/
-theorem eqn_2_6 (x : ℝ) (hx : x ∈ Ioc (0 : ℝ) (1 / 64)) : J (1 - x) > x * √(log (w₁ / x)) := by
+/-- [DIRX], §2.2: in particular, $\mathrm{J}$ is concave (on $[\frac12,1]$), and
+$\mathrm{J}\ge0$ there. -/
+theorem JX_concave : ConcaveOn ℝ (Icc (1 / 2) 1) J ∧ ∀ x ∈ Icc (1 / 2 : ℝ) 1, 0 ≤ J x := by
   sorry
 
 section Proof_Eqn_2_6
-
 /-- [DIRX], proof of (2.6) (cited from [DIR], Proposition 5.11, `Auto.DIR.prop_5_11`): for
 $x\in(0,\frac15]$,
 $$I(x)\ge\sqrt2\cdot x\sqrt{\log(1/x)}\Big(1-\frac12\frac{\log\log(1/x)}{\log(1/x)}
@@ -88,14 +71,6 @@ theorem I_lower (x : ℝ) (hx : x ∈ Ioc (0 : ℝ) (1 / 5)) :
     I x ≥ √2 * x * √(log (1 / x)) *
       (1 - 1 / 2 * log (log (1 / x)) / log (1 / x) - log (2 * √π) / log (1 / x)) := by
   sorry
-
-/-- The quantity
-$\varepsilon=\frac12\frac{\log\log(w_1/x)}{\log(w_1/x)}+\frac{\log(2\sqrt\pi)}{\log(w_1/x)}$
-([DIRX], proof of (2.6)). Written `ε x`. -/
-noncomputable def εX (x : ℝ) : ℝ :=
-  1 / 2 * log (log (w₁ / x)) / log (w₁ / x) + log (2 * √π) / log (w₁ / x)
-
-local notation "ε" => εX
 
 /-- [DIRX], proof of (2.6): thus, for $x\in(0,\frac1{64}]$,
 $$\mathrm{J}(1-x)\ge\frac{\sqrt2}{2w_1}I(\tfrac1{2w_1})^{-1}(1-\varepsilon)x\sqrt{\log(w_1/x)},$$
@@ -117,14 +92,19 @@ theorem eqn_2_6_eval : √2 / (2 * w₁) * (I (1 / (2 * w₁)))⁻¹ * (1 - ε (
 
 end Proof_Eqn_2_6
 
-/-- [DIRX], §2.2: $\mathrm{J}$ is increasing on $[\frac12,x_1]$ and decreasing on $[x_1,1]$. -/
-theorem JX_mono : MonotoneOn J (Icc (1 / 2) x₁) ∧ AntitoneOn J (Icc x₁ 1) := by
+/-- **(2.6)** ([DIRX], §2.2). For $x\in(0,\frac1{64}]$,
+$$\mathrm{J}(1-x)>x\sqrt{\log(w_1/x)}.$$ -/
+theorem eqn_2_6 (x : ℝ) (hx : x ∈ Ioc (0 : ℝ) (1 / 64)) : J (1 - x) > x * √(log (w₁ / x)) := by
   sorry
 
 /-- [DIRX], §2.2: $\mathrm{J}'(x_1)=0$ and $\mathrm{J}''<0$ (on $(1-w_1,1)$), so $\mathrm{J}'$ is
 strictly decreasing (on $(1-w_1,1)\supset[\frac12,1)$). -/
 theorem deriv_JX : deriv J x₁ = 0 ∧ (∀ x ∈ Ioo (1 - w₁) 1, deriv (deriv J) x < 0) ∧
     StrictAntiOn (deriv J) (Ioo (1 - w₁) 1) := by
+  sorry
+
+/-- [DIRX], §2.2: $\mathrm{J}$ is increasing on $[\frac12,x_1]$ and decreasing on $[x_1,1]$. -/
+theorem JX_mono : MonotoneOn J (Icc (1 / 2) x₁) ∧ AntitoneOn J (Icc x₁ 1) := by
   sorry
 
 end Auto.DIRX

@@ -5,7 +5,18 @@ Authors: Claude
 -/
 module
 
-public import Isoperim.DIR.«3_Variants_Bobkov_Inequality».«3_0_Variants_Bobkov_Inequality»
+public import Isoperim.DIR.«1_Introduction».Definitions
+public import Isoperim.DIR.«2_Envelope_Functions».«2_0_Envelope_Functions»
+public import Isoperim.DIR.«2_Envelope_Functions».Definitions
+public import Isoperim.DIR.«5_Auxiliary_Estimates».«5_3_Properties_L_Q»
+public import Isoperim.DIRX.«2_Preliminaries».«2_2_Properties_J»
+public import Isoperim.DIRX.«2_Preliminaries».Definitions
+public import Isoperim.DIRX.«3_Proof_Two_Point_Inequality».«3_1_Case_J»
+public import Isoperim.DIRX.«3_Proof_Two_Point_Inequality».«3_2_Case_Q»
+public import Isoperim.DIRX.«3_Proof_Two_Point_Inequality».«3_3_Case_LJQ»
+public import Isoperim.DIRX.«3_Proof_Two_Point_Inequality».«3_4_Case_LJ»
+public import Isoperim.DIRX.«3_Proof_Two_Point_Inequality».«3_5_Case_QJQ»
+public import Isoperim.DIRX.«3_Proof_Two_Point_Inequality».«3_6_Case_QJ»
 
 /-!
 # [DIRX] §2 Preliminaries, §2.1 Reduction to a two-point inequality
@@ -21,20 +32,8 @@ main two-point inequality (2.4), the isoperimetric inequality (2.5) and Remarks 
 
 The Gaussian isoperimetric profile `I` is reused from [DIR] (`Auto.DIR.I`, §3 of [DIR]).
 
-## Notation introduced here
 
-The Lean names of the [DIRX] objects carry an `X` suffix to avoid clashes with the corresponding
-(different) objects of [DIR]; they are displayed via the following `local notation`, which is
-declared in every [DIRX] file using them:
-
-* `G₁ B x y`, `G₂ B x y`, `G B x y` : $G_1[B](x,y)$, $G_2[B](x,y)$, $G[B](x,y)$ of (2.1)
-  (Lean names `G₁X`, `G₂X`, `GX`);
-* `L x`, `Q x` : $L(x)=x\sqrt{\log_2(1/x)}$ and the cubic $Q(x)$ (Lean names `LX`, `QX`);
-* `J_{w} x` : $\mathrm{J}_w(x)$ (Lean name `JXw`);
-* `B_{w} x` : $B_w(x)$ of (2.2) (Lean name `BX`);
-* `w₁` : $w_1=\frac{29}{32}$ of (2.3);
-* `J x` : $\mathrm{J}(x)=\mathrm{J}_{w_1}(x)$ (Lean name `JX`);
-* `wStar` : the optimal value $w_*$ of Remark 2.1.
+The definitions and notation used here are in `Definitions.lean` of this folder.
 -/
 
 @[expose] public section
@@ -47,25 +46,17 @@ open Real Set
 
 /-! ### §2.1 Reduction to a two-point inequality -/
 
-/-- **(2.1)** ([DIRX], §2.1). For $0\le x\le y\le1$ and $B:[0,1]\to[0,\infty)$,
-$$G_1[B](x,y)=\sqrt{(y-x)^2+B(y)^2}+B(x)-2B(\tfrac{x+y}2).$$
-Written `G₁ B x y`. -/
-noncomputable def G₁X (B : ℝ → ℝ) (x y : ℝ) : ℝ :=
-  √((y - x) ^ 2 + B y ^ 2) + B x - 2 * B ((x + y) / 2)
+local notation "G₁" => Auto.DIR.G₁ (1 / 2)
 
-local notation "G₁" => G₁X
+local notation "G₂" => Auto.DIR.G₂ (1 / 2)
 
-/-- ([DIRX], §2.1, display after (2.1)).
-$$G_2[B](x,y)=y-x+(\sqrt2-1)B(y)+B(x)-2B(\tfrac{x+y}2).$$ Written `G₂ B x y`. -/
-noncomputable def G₂X (B : ℝ → ℝ) (x y : ℝ) : ℝ :=
-  y - x + (√2 - 1) * B y + B x - 2 * B ((x + y) / 2)
+local notation "G" => Auto.DIR.G (1 / 2)
 
-local notation "G₂" => G₂X
+local notation "J_{" w "}" => JXw w
 
-/-- ([DIRX], §2.1, after (2.1)). $G=\max(G_1,G_2)$. Written `G B x y`. -/
-noncomputable def GX (B : ℝ → ℝ) (x y : ℝ) : ℝ := max (G₁ B x y) (G₂ B x y)
+local notation "B_{" w "}" => BX w
 
-local notation "G" => GX
+local notation "J" => JX
 
 /-- [DIRX], §2.1 (cited from Kahn–Park [KP20]; this is the case $\beta=\frac12$ of
 `Auto.DIR.prop_2_1`). If $B:[0,1]\to[0,\infty)$ satisfies $B(0)=B(1)=0$ and the two-point
@@ -77,69 +68,9 @@ theorem kahn_park (B : ℝ → ℝ) (hB : ∀ x ∈ Icc (0 : ℝ) 1, 0 ≤ B x) 
     𝐄 (fun x ↦ √(h_{A} x)) ≥ B ｜A｜ := by
   sorry
 
-/-- $L(x)=x\sqrt{\log_2(1/x)}$ for $x\in(0,1]$ and $L(0)=0$ ([DIRX], §2.1). The value $L(0)=0$
-holds by definition since $0\cdot a=0$ in Lean. Written `L x`. -/
-noncomputable def LX (x : ℝ) : ℝ := x * √(log₂ (1 / x))
+local notation "L" => Auto.DIR.L (1 / 2)
 
-local notation "L" => LX
-
-/-- The cubic $Q(x)=\frac23x(1-x)(2^{5/2}-3+4(3-2^{3/2})x)$ ([DIRX], §2.1). Written `Q x`. -/
-noncomputable def QX (x : ℝ) : ℝ :=
-  2 / 3 * x * (1 - x) * (2 ^ (5 / 2 : ℝ) - 3 + 4 * (3 - 2 ^ (3 / 2 : ℝ)) * x)
-
-local notation "Q" => QX
-
-/-- [DIRX], §2.1: $Q$ is the unique cubic interpolating polynomial such that $Q(0)=Q(1)=0$,
-$Q(\frac12)=\frac12$ and $Q(\frac14)=2^{-3/2}$, i.e.
-$Q(x)=\frac23x(1-x)(2^{5/2}-3+4(3-2^{3/2})x)$: $Q$ is a polynomial of degree $\le3$ with these
-four values, and every polynomial of degree $\le3$ with these four values equals $Q$. -/
-theorem QX_spec :
-    (∃ p : Polynomial ℝ, p.natDegree ≤ 3 ∧ ∀ x, p.eval x = Q x) ∧
-      Q 0 = 0 ∧ Q 1 = 0 ∧ Q (1 / 2) = 1 / 2 ∧ Q (1 / 4) = 2 ^ (-3 / 2 : ℝ) ∧
-      ∀ p : Polynomial ℝ, p.natDegree ≤ 3 → p.eval 0 = 0 → p.eval 1 = 0 →
-        p.eval (1 / 2) = 1 / 2 → p.eval (1 / 4) = 2 ^ (-3 / 2 : ℝ) → ∀ x, p.eval x = Q x := by
-  sorry
-
-/-- [DIRX], §2.1: the Gaussian isoperimetric profile $I$ (`Auto.DIR.I` of [DIR], §3) is the unique
-function on $[0,1]$ such that $I(0)=I(1)=0$, $I\cdot I''=-1$ (among non-negative functions that
-are continuous on $[0,1]$ and twice continuously differentiable on $(0,1)$; non-negativity is
-implicit in the paper since $-I$ satisfies the same conditions). This is
-`Auto.DIR.I_characterization`. -/
-theorem I_characterization :
-    (I 0 = 0 ∧ I 1 = 0 ∧ ∀ x ∈ Ioo (0 : ℝ) 1, I x * deriv (deriv I) x = -1) ∧
-    ∀ g : ℝ → ℝ, ContinuousOn g (Icc 0 1) → ContDiffOn ℝ 2 g (Ioo 0 1) →
-      (∀ x ∈ Icc (0 : ℝ) 1, 0 ≤ g x) → g 0 = 0 → g 1 = 0 →
-      (∀ x ∈ Ioo (0 : ℝ) 1, g x * deriv (deriv g) x = -1) → EqOn g I (Icc 0 1) := by
-  sorry
-
-/-- $\mathrm{J}_w(x)=\frac12I(\frac1{2w})^{-1}I(\frac{1-x}w)$ for a parameter $w\in(\frac12,1]$
-([DIRX], §2.1). It is meaningful for $x\in[1-w,1]$ (outside this range `I` takes the junk value
-$0$). Written `J_{w} x`. -/
-noncomputable def JXw (w x : ℝ) : ℝ := 1 / 2 * (I (1 / (2 * w)))⁻¹ * I ((1 - x) / w)
-
-local notation "J_{" w "}" => JXw w
-
-/-- [DIRX], §2.1: $\mathrm{J}_w(\frac12)=\frac12$ and $\mathrm{J}_w(1)=0$ for $w\in(\frac12,1]$. -/
-theorem JXw_half_one (w : ℝ) (hw : w ∈ Ioc (1 / 2 : ℝ) 1) :
-    J_{w} (1 / 2) = 1 / 2 ∧ J_{w} 1 = 0 := by
-  sorry
-
-/-- **(2.2)** ([DIRX], §2.1). The Bellman function
-$$B_w(x)=\begin{cases}L(x)&x\in[0,\frac14],\\ Q(x)&x\in[\frac14,\frac12],\\
-\mathrm{J}_w(x)&x\in[\frac12,1].\end{cases}$$
-Only the values on $[0,1]$ are meaningful. Written `B_{w} x`. -/
-noncomputable def BX (w x : ℝ) : ℝ :=
-  if x ≤ 1 / 4 then L x else if x ≤ 1 / 2 then Q x else J_{w} x
-
-local notation "B_{" w "}" => BX w
-
-/-- **(2.3)** ([DIRX], §2.1). The parameter $w=w_1=\frac{29}{32}$. -/
-noncomputable def w₁ : ℝ := 29 / 32
-
-/-- The function $\mathrm{J}=\mathrm{J}_{w_1}$ ([DIRX], §2.1, after (2.3)). Written `J x`. -/
-noncomputable def JX : ℝ → ℝ := J_{w₁}
-
-local notation "J" => JX
+local notation "Q" => Auto.DIR.Q (1 / 2)
 
 /-- [DIRX], §2.1 (cited from [DIR], Lemma 5.9 (2), `Auto.DIR.lemma_5_9`): $B_w(x)\ge L(x)$ for
 $x\in[0,\frac12]$. -/

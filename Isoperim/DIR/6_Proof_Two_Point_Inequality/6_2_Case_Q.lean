@@ -5,6 +5,9 @@ Authors: Claude
 -/
 module
 
+public import Isoperim.DIR.«1_Introduction».Definitions
+public import Isoperim.DIR.«2_Envelope_Functions».Definitions
+public import Isoperim.DIR.«5_Auxiliary_Estimates».«5_2_Two_Point_Inequalities»
 public import Isoperim.DIR.«5_Auxiliary_Estimates».«5_3_Properties_L_Q»
 
 /-!
@@ -34,13 +37,6 @@ namespace Auto.DIR
 
 open Real Set Filter Topology
 
-/-- **Proposition 6.2** ([DIR], §6.2). For $\beta\in\{\frac12,\beta_0\}$ and
-$0\le x\le y\le\frac12$:
-$$G^1_\beta[\max(L_\beta,Q_\beta)](x,y)\ge0.$$ -/
-theorem prop_6_2 (β : ℝ) (hβ : β = 1 / 2 ∨ β = β₀) (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y)
-    (hy : y ≤ 1 / 2) : G₁ β (fun t ↦ max (L β t) (Q β t)) x y ≥ 0 := by
-  sorry
-
 /-- [DIR], §6.2 (cited from [BIM23, Lemma 2.2]): $G^1_\beta[L_\beta](x,y)\ge0$ for all
 $0\le x\le y\le\frac12$ (for $\beta\in[\frac12,1]$). -/
 theorem caseQ_G₁_L (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1) (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y)
@@ -62,14 +58,7 @@ theorem caseQ_reduction (β : ℝ) (hβ : β = 1 / 2 ∨ β = β₀)
     G₁ β (fun t ↦ max (L β t) (Q β t)) x y ≥ 0 := by
   sorry
 
-/-- **(6.6)** ([DIR], §6.2). For $\beta\in\{\frac12,\beta_0\}$ and $0\le x\le y\le\frac12$ with
-$\frac{x+y}2\ge\frac14$: $$G^1_\beta[Q_\beta](x,y)\ge0.$$ -/
-theorem eqn_6_6 (β : ℝ) (hβ : β = 1 / 2 ∨ β = β₀) (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y)
-    (hy : y ≤ 1 / 2) (hxy' : (x + y) / 2 ≥ 1 / 4) : G₁ β (Q β) x y ≥ 0 := by
-  sorry
-
 section Case_Q_II
-
 /-! ### §6.2.1 Near diagonal: $0\le y-x\le\frac14$, $\frac{x+y}2\ge\frac14$ -/
 
 /-- [DIR], §6.2.1: in the region II ($0\le y-x\le\frac14$, $\frac{x+y}2\ge\frac14$) we have
@@ -158,14 +147,7 @@ theorem caseQ_II_g_Q_1_half_concave (y : ℝ) (hy : y ∈ Icc (1 / 4 : ℝ) (1 /
         ∀ h ∈ Ioc (0 : ℝ) (1 / 4), g_Q_1 (1 / 2) h y ≥ min g₀ (g_Q_1 (1 / 2) (1 / 4) y) := by
   sorry
 
-/-- [DIR], §6.2.1, claim (1): $g_{Q,1,\frac12}(0,y)\ge0$ for all $y\in[\frac14,\frac12]$, where
-$g_{Q,1,\frac12}(0,y)$ is the continuous extension $\lim_{h\to0^+}g_{Q,1,\frac12}(h,y)$. -/
-theorem caseQ_II_claim_1 (y : ℝ) (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
-    ∃ g₀ ≥ 0, Tendsto (fun h ↦ g_Q_1 (1 / 2) h y) (𝓝[>] 0) (𝓝 g₀) := by
-  sorry
-
 section Proof_Claim_1
-
 /-- [DIR], §6.2.1, proof of claim (1):
 $g_{Q,1,\frac12}(0,y)=\frac12Q_{\frac12}(y)^{-1}-(\alpha_0+4\alpha_1y)$, i.e.
 $g_{Q,1,\frac12}(h,y)\to\frac12Q_{\frac12}(y)^{-1}-(\alpha_0+4\alpha_1y)$ as $h\to0^+$. -/
@@ -204,13 +186,13 @@ theorem caseQ_II_claim_1_mono :
 
 end Proof_Claim_1
 
-/-- [DIR], §6.2.1, claim (2): $g_{Q,1,\frac12}(\frac14,y)>0$ for all $y\in[\frac14,\frac12]$. -/
-theorem caseQ_II_claim_2 (y : ℝ) (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
-    g_Q_1 (1 / 2) (1 / 4) y > 0 := by
+/-- [DIR], §6.2.1, claim (1): $g_{Q,1,\frac12}(0,y)\ge0$ for all $y\in[\frac14,\frac12]$, where
+$g_{Q,1,\frac12}(0,y)$ is the continuous extension $\lim_{h\to0^+}g_{Q,1,\frac12}(h,y)$. -/
+theorem caseQ_II_claim_1 (y : ℝ) (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
+    ∃ g₀ ≥ 0, Tendsto (fun h ↦ g_Q_1 (1 / 2) h y) (𝓝[>] 0) (𝓝 g₀) := by
   sorry
 
 section Proof_Claim_2
-
 /-- **(6.8)** ([DIR], §6.2.1, proof of claim (2)) (🚗).
 $$\underline{g_{Q,1,\frac12}}(\tfrac14,\tfrac14,\tfrac14,\tfrac38)>0.01\quad\text{and}\quad
 \underline{g_{Q,1,\frac12}}(\tfrac14,\tfrac14,\tfrac38,\tfrac12)>0.001.$$ -/
@@ -221,6 +203,11 @@ theorem eqn_6_8 :
 
 end Proof_Claim_2
 
+/-- [DIR], §6.2.1, claim (2): $g_{Q,1,\frac12}(\frac14,y)>0$ for all $y\in[\frac14,\frac12]$. -/
+theorem caseQ_II_claim_2 (y : ℝ) (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
+    g_Q_1 (1 / 2) (1 / 4) y > 0 := by
+  sorry
+
 /-- [DIR], §6.2.1 (conclusion): (6.6) near the diagonal, for $\beta\in\{\frac12,\beta_0\}$ and
 $0\le h\le\frac14\le y\le\frac12$: $G^1_\beta[Q_\beta](y-h,y)\ge0$. -/
 theorem caseQ_II (β : ℝ) (hβ : β = 1 / 2 ∨ β = β₀) (h y : ℝ) (hh : h ∈ Icc (0 : ℝ) (1 / 4))
@@ -230,7 +217,6 @@ theorem caseQ_II (β : ℝ) (hβ : β = 1 / 2 ∨ β = β₀) (h y : ℝ) (hh : 
 end Case_Q_II
 
 section Case_Q_III
-
 /-! ### §6.2.2 Far from diagonal: $\frac14\le y-x\le\frac12$, $\frac{x+y}2\ge\frac14$ -/
 
 /-- The function ([DIR], §6.2.2)
@@ -238,47 +224,6 @@ $$G_{Q,\beta}(h,y)=\log(h^{\frac1\beta}+Q_\beta(y)^{\frac1\beta})
 -\tfrac1\beta\log(2Q_\beta(y-\tfrac h2)-Q_\beta(y-h)).$$ -/
 noncomputable def G_Q (β h y : ℝ) : ℝ :=
   log (h ^ (1 / β) + Q β y ^ (1 / β)) - 1 / β * log (2 * Q β (y - h / 2) - Q β (y - h))
-
-/-- [DIR], §6.2.2: on the triangle III ($x=y-h\ge0$, $h\ge\frac14$, $y\le\frac12$,
-$\frac{x+y}2\ge\frac14$), (6.6) is equivalent to $G_{Q,\beta}(h,y)\ge0$ (for
-$\beta\in\{\frac12,\beta_0\}$). -/
-theorem caseQ_III_iff_G_Q (β : ℝ) (hβ : β = 1 / 2 ∨ β = β₀) (h y : ℝ) (hx : 0 ≤ y - h)
-    (hh : 1 / 4 ≤ h) (hy : y ≤ 1 / 2) (hm : y - h / 2 ≥ 1 / 4) :
-    G₁ β (Q β) (y - h) y ≥ 0 ↔ G_Q β h y ≥ 0 := by
-  sorry
-
-/-- **Lemma 6.4** ([DIR]). For $\beta\in\{\beta_0,\frac12\}$ and $y\in[\frac14,\frac12]$, the
-function $h\mapsto\partial_hG_{Q,\beta}(h,y)$ vanishes at most once on the interval
-$[\frac14,\frac12]$. Also, $\partial_hG_{Q,\beta}(\frac14,y)>0$.
-
-**Discrepancy with the paper.** The proof of Lemma 6.4 given in the paper (end of §6.2.2) only
-shows the first claim (via $g_{Q,2,\beta}=-\partial_hp_{y,\beta}>0$, i.e. $p_{y,\beta}$ strictly
-decreasing). The second claim $\partial_hG_{Q,\beta}(\frac14,y)>0$, equivalently
-$p_{y,\beta}(\frac14)>0$ by (6.11) and `Auto.DIR.eqn_6_11_eq_p_Q`, is not argued anywhere,
-although it is needed for `Auto.DIR.caseQ_III_min` (without it, an interior minimum of
-$h\mapsto G_{Q,\beta}(h,y)$ would not be excluded). It is true numerically:
-$\min_{y\in[\frac14,\frac12]}\partial_hG_{Q,\beta}(\frac14,y)\approx0.0367$ for $\beta=\beta_0$
-and $\approx0.0361$ for $\beta=\frac12$. The Lean statement keeps both claims as in the paper.
--/
-theorem lemma_6_4 (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : ℝ)
-    (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
-    {h ∈ Icc (1 / 4 : ℝ) (1 / 2) | deriv (fun h ↦ G_Q β h y) h = 0}.Subsingleton ∧
-      deriv (fun h ↦ G_Q β h y) (1 / 4) > 0 := by
-  sorry
-
-/-- [DIR], §6.2.2: Lemma 6.4 implies that $h\mapsto G_{Q,\beta}(h,y)$ achieves its minimum on
-$[\frac14,y]$ at $h=\frac14$ or at $h=y$ (for $\beta\in\{\beta_0,\frac12\}$,
-$y\in[\frac14,\frac12]$). -/
-theorem caseQ_III_min (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : ℝ)
-    (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
-    ∀ h ∈ Icc (1 / 4) y, G_Q β h y ≥ min (G_Q β (1 / 4) y) (G_Q β y y) := by
-  sorry
-
-/-- [DIR], §6.2.2: by the near diagonal case, $G_{Q,\beta}(\frac14,y)\ge0$ for
-$\beta\in\{\beta_0,\frac12\}$ and $y\in[\frac14,\frac12]$. -/
-theorem caseQ_III_G_Q_quarter (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : ℝ)
-    (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) : G_Q β (1 / 4) y ≥ 0 := by
-  sorry
 
 /-- [DIR], §6.2.2: $G_{Q,\beta}(y,y)=\log(y^{\frac1\beta}+Q_\beta(y)^{\frac1\beta})
 -\frac1\beta\log(2Q_\beta(\frac y2))$, and for $y\in[\frac14,\frac12]$,
@@ -314,17 +259,6 @@ theorem caseQ_III_iff_f_QIII (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : �
 
 /-- [DIR], §6.2.2: $f_\beta(\frac12)=0$ (for $\beta\in\{\beta_0,\frac12\}$). -/
 theorem f_QIII_half (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) : f_QIII β (1 / 2) = 0 := by
-  sorry
-
-/-- [DIR], §6.2.2 (claim): $f_\beta'\le0$ on $[\frac14,\frac12]$ (for
-$\beta\in\{\beta_0,\frac12\}$). -/
-theorem deriv_f_QIII_nonpos (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : ℝ)
-    (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) : deriv (f_QIII β) y ≤ 0 := by
-  sorry
-
-/-- [DIR], §6.2.2: $f_\beta\ge0$ on $[\frac14,\frac12]$ (for $\beta\in\{\beta_0,\frac12\}$). -/
-theorem f_QIII_nonneg (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : ℝ)
-    (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) : f_QIII β y ≥ 0 := by
   sorry
 
 /-- [DIR], §6.2.2: for $y\in[\frac14,\frac12]$ and $\beta\in\{\beta_0,\frac12\}$,
@@ -489,7 +423,24 @@ theorem deriv_f_QIII_0_neg_Icc_eighth (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 
     (hy : y ∈ Icc (1 / 8 : ℝ) (1 / 2)) : deriv (f_QIII_0 β) y < 0 := by
   sorry
 
+/-- [DIR], §6.2.2 (claim): $f_\beta'\le0$ on $[\frac14,\frac12]$ (for
+$\beta\in\{\beta_0,\frac12\}$). -/
+theorem deriv_f_QIII_nonpos (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : ℝ)
+    (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) : deriv (f_QIII β) y ≤ 0 := by
+  sorry
+
+/-- [DIR], §6.2.2: $f_\beta\ge0$ on $[\frac14,\frac12]$ (for $\beta\in\{\beta_0,\frac12\}$). -/
+theorem f_QIII_nonneg (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : ℝ)
+    (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) : f_QIII β y ≥ 0 := by
+  sorry
+
 section Proof_Lemma_6_4
+/-- [DIR], proof of Lemma 6.4: $2Q_\beta(y-\frac h2)-Q_\beta(y-h)>0$ (by strict concavity of
+$Q_\beta$) for $h,y\in[\frac14,\frac12]$ and $\beta\in\{\beta_0,\frac12\}$. -/
+theorem lemma_6_4_denom_pos (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (h y : ℝ)
+    (hh : h ∈ Icc (1 / 4 : ℝ) (1 / 2)) (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
+    2 * Q β (y - h / 2) - Q β (y - h) > 0 := by
+  sorry
 
 /-- [DIR], proof of Lemma 6.4: for $h,y\in[\frac14,\frac12]$ and $\beta\in\{\beta_0,\frac12\}$,
 $$\beta\partial_hG_{Q,\beta}(h,y)=\frac{h^{\frac1\beta-1}}{h^{\frac1\beta}+Q_\beta(y)^{\frac1\beta}}
@@ -500,13 +451,6 @@ theorem lemma_6_4_deriv (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (h y : ℝ)
       h ^ (1 / β - 1) / (h ^ (1 / β) + Q β y ^ (1 / β))
         - (deriv (Q β) (y - h) - deriv (Q β) (y - h / 2))
           / (2 * Q β (y - h / 2) - Q β (y - h)) := by
-  sorry
-
-/-- [DIR], proof of Lemma 6.4: $2Q_\beta(y-\frac h2)-Q_\beta(y-h)>0$ (by strict concavity of
-$Q_\beta$) for $h,y\in[\frac14,\frac12]$ and $\beta\in\{\beta_0,\frac12\}$. -/
-theorem lemma_6_4_denom_pos (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (h y : ℝ)
-    (hh : h ∈ Icc (1 / 4 : ℝ) (1 / 2)) (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
-    2 * Q β (y - h / 2) - Q β (y - h) > 0 := by
   sorry
 
 /-- **(6.11)** ([DIR], proof of Lemma 6.4). Multiplying $\beta\partial_hG_{Q,\beta}(h,y)$ by the
@@ -569,6 +513,60 @@ theorem eqn_6_12 (β : ℝ) (hβ : β = 1 / 2 ∨ β = β₀) (h y : ℝ)
 
 end Proof_Lemma_6_4
 
+/-- [DIR], §6.2.2: on the triangle III ($x=y-h\ge0$, $h\ge\frac14$, $y\le\frac12$,
+$\frac{x+y}2\ge\frac14$), (6.6) is equivalent to $G_{Q,\beta}(h,y)\ge0$ (for
+$\beta\in\{\frac12,\beta_0\}$). -/
+theorem caseQ_III_iff_G_Q (β : ℝ) (hβ : β = 1 / 2 ∨ β = β₀) (h y : ℝ) (hx : 0 ≤ y - h)
+    (hh : 1 / 4 ≤ h) (hy : y ≤ 1 / 2) (hm : y - h / 2 ≥ 1 / 4) :
+    G₁ β (Q β) (y - h) y ≥ 0 ↔ G_Q β h y ≥ 0 := by
+  sorry
+
+/-- **Lemma 6.4** ([DIR]). For $\beta\in\{\beta_0,\frac12\}$ and $y\in[\frac14,\frac12]$, the
+function $h\mapsto\partial_hG_{Q,\beta}(h,y)$ vanishes at most once on the interval
+$[\frac14,\frac12]$. Also, $\partial_hG_{Q,\beta}(\frac14,y)>0$.
+
+**Discrepancy with the paper.** The proof of Lemma 6.4 given in the paper (end of §6.2.2) only
+shows the first claim (via $g_{Q,2,\beta}=-\partial_hp_{y,\beta}>0$, i.e. $p_{y,\beta}$ strictly
+decreasing). The second claim $\partial_hG_{Q,\beta}(\frac14,y)>0$, equivalently
+$p_{y,\beta}(\frac14)>0$ by (6.11) and `Auto.DIR.eqn_6_11_eq_p_Q`, is not argued anywhere,
+although it is needed for `Auto.DIR.caseQ_III_min` (without it, an interior minimum of
+$h\mapsto G_{Q,\beta}(h,y)$ would not be excluded). It is true numerically:
+$\min_{y\in[\frac14,\frac12]}\partial_hG_{Q,\beta}(\frac14,y)\approx0.0367$ for $\beta=\beta_0$
+and $\approx0.0361$ for $\beta=\frac12$. The Lean statement keeps both claims as in the paper.
+-/
+theorem lemma_6_4 (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : ℝ)
+    (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
+    {h ∈ Icc (1 / 4 : ℝ) (1 / 2) | deriv (fun h ↦ G_Q β h y) h = 0}.Subsingleton ∧
+      deriv (fun h ↦ G_Q β h y) (1 / 4) > 0 := by
+  sorry
+
+/-- [DIR], §6.2.2: Lemma 6.4 implies that $h\mapsto G_{Q,\beta}(h,y)$ achieves its minimum on
+$[\frac14,y]$ at $h=\frac14$ or at $h=y$ (for $\beta\in\{\beta_0,\frac12\}$,
+$y\in[\frac14,\frac12]$). -/
+theorem caseQ_III_min (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : ℝ)
+    (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
+    ∀ h ∈ Icc (1 / 4) y, G_Q β h y ≥ min (G_Q β (1 / 4) y) (G_Q β y y) := by
+  sorry
+
+/-- [DIR], §6.2.2: by the near diagonal case, $G_{Q,\beta}(\frac14,y)\ge0$ for
+$\beta\in\{\beta_0,\frac12\}$ and $y\in[\frac14,\frac12]$. -/
+theorem caseQ_III_G_Q_quarter (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : ℝ)
+    (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) : G_Q β (1 / 4) y ≥ 0 := by
+  sorry
+
 end Case_Q_III
+
+/-- **(6.6)** ([DIR], §6.2). For $\beta\in\{\frac12,\beta_0\}$ and $0\le x\le y\le\frac12$ with
+$\frac{x+y}2\ge\frac14$: $$G^1_\beta[Q_\beta](x,y)\ge0.$$ -/
+theorem eqn_6_6 (β : ℝ) (hβ : β = 1 / 2 ∨ β = β₀) (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y)
+    (hy : y ≤ 1 / 2) (hxy' : (x + y) / 2 ≥ 1 / 4) : G₁ β (Q β) x y ≥ 0 := by
+  sorry
+
+/-- **Proposition 6.2** ([DIR], §6.2). For $\beta\in\{\frac12,\beta_0\}$ and
+$0\le x\le y\le\frac12$:
+$$G^1_\beta[\max(L_\beta,Q_\beta)](x,y)\ge0.$$ -/
+theorem prop_6_2 (β : ℝ) (hβ : β = 1 / 2 ∨ β = β₀) (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y)
+    (hy : y ≤ 1 / 2) : G₁ β (fun t ↦ max (L β t) (Q β t)) x y ≥ 0 := by
+  sorry
 
 end Auto.DIR

@@ -5,7 +5,9 @@ Authors: Claude
 -/
 module
 
-public import Mathlib
+public import Isoperim.DIR.«1_Introduction».Definitions
+public import Isoperim.DIR.«2_Envelope_Functions».«2_2_Proofs_Theorems_1_1_1_5_1_7»
+public import Isoperim.DIR.«5_Auxiliary_Estimates».«5_1_Small_Exponents_Large_Exponents»
 
 /-!
 # [DIR] §1 Introduction: Theorem 1.1
@@ -20,20 +22,8 @@ repository layout (one file per theorem of the introduction, corollaries in the 
 theorem they follow from), it also contains §1.4 *Towards a conjecture of Kahn and Park* with
 Corollary 1.9, which in the paper appears after Remark 1.8.
 
-## Notation introduced here
 
-* `{0,1}^n` : the Hamming cube, realized as `Fin n → ZMod 2`, so that bitwise addition `x ⊕ y`
-  of the paper is the addition `x + y` of `(ZMod 2)^n`;
-* `e i` : the `i`-th unit vector, so that `x + e i` is `x` with the `i`-th bit flipped;
-* `h_{A}` : the function $h_A$;
-* `𝐄 f` : the expectation $\mathbf{E} f = 2^{-n}\sum_{x} f(x)$;
-* `𝟏_{A}` : the indicator function $\mathbf{1}_A$ (real valued);
-* `｜A｜` : the normalized size $|A| = \mathbf{E}\mathbf{1}_A$ of a set `A ⊆ {0,1}^n`
-  (written with the full-width bar `｜`, U+FF5C; `|a|` keeps its usual meaning `abs a`);
-* `log₂` : the binary logarithm `Real.logb 2`;
-* `|∇(A, B)|` : the edge boundary measure of Corollary 1.9.
-
-Real powers `t ^ β` with `β : ℝ` are `Real.rpow`; for functions, `f ^ β` is the pointwise power.
+The definitions and notation used here are in `Definitions.lean` of this folder.
 -/
 
 @[expose] public section
@@ -41,58 +31,6 @@ Real powers `t ^ β` with `β : ℝ` are `Real.rpow`; for functions, `f ^ β` is
 namespace Auto.DIR
 
 open Real Finset
-
-/-- The Hamming cube $\{0,1\}^n$ ([DIR], §1, first paragraph). We realize it as
-`Fin n → ZMod 2`, so that the bitwise addition $x\oplus y$ of [DIR, §3] is `x + y`. -/
-abbrev Cube (n : ℕ) : Type := Fin n → ZMod 2
-
-@[inherit_doc] notation "{0,1}^" n => Cube n
-
-/-- The unit vector $e_i\in\{0,1\}^n$; $x\oplus e_i$ (written `x + e i`) is $x$ with the $i$-th
-bit flipped ([DIR], §1.5 and §3). Two vertices are joined by an edge iff they differ by some
-`e i`. -/
-def e {n : ℕ} (i : Fin n) : {0,1}^n := Pi.single i 1
-
-/-- $h_A(x)$ ([DIR], §1, first paragraph): for $x\in A$ the number of edges connecting $x$ with
-the complement of $A$, i.e. the number of $i$ with $x\oplus e_i\notin A$; and $h_A(x)=0$ if
-$x\notin A$. -/
-noncomputable def hA {n : ℕ} (A : Set ({0,1}^n)) (x : {0,1}^n) : ℝ :=
-  open Classical in
-  if x ∈ A then (#{i : Fin n | x + e i ∉ A} : ℝ) else 0
-
-@[inherit_doc] notation "h_{" A "}" => hA A
-
-/-- The expectation $\mathbf{E}f=2^{-n}\sum_{x\in\{0,1\}^n}f(x)$ ([DIR], §1, after Theorem 1.1),
-for functions with values in any real vector space (e.g. `ℝ` or `ℂ`). -/
-noncomputable def expect {n : ℕ} {M : Type*} [AddCommGroup M] [Module ℝ M]
-    (f : ({0,1}^n) → M) : M :=
-  ((2 : ℝ)⁻¹ ^ n) • ∑ x, f x
-
-@[inherit_doc] notation:max "𝐄 " f:75 => expect f
-
-/-- The (real-valued) indicator function $\mathbf{1}_A$. -/
-notation "𝟏_{" A "}" => Set.indicator A (fun _ => (1 : ℝ))
-
-/-- The normalized size $|A|=\mathbf{E}\mathbf{1}_A$ of $A\subset\{0,1\}^n$
-([DIR], §1, after Theorem 1.1). Written `｜A｜` (full-width bars). -/
-noncomputable def dens {n : ℕ} (A : Set ({0,1}^n)) : ℝ := 𝐄 𝟏_{A}
-
-/-- The notation `｜A｜` for `Auto.DIR.dens A`, the paper's $|A|$. It uses the full-width vertical
-bar `｜` (U+FF5C): the ASCII `|` cannot be used by a plain `notation` without clashing with
-Mathlib's `|a|` and with set-builder notation `{x ∈ s | p x}`. -/
-notation:max "｜" A "｜" => dens A
-
-/-- The binary logarithm $\log_2$. -/
-notation "log₂" => Real.logb 2
-
-/-- The threshold exponent $\beta_0=0.50057$ ([DIR], Theorem 1.1). -/
-noncomputable def β₀ : ℝ := 0.50057
-
-/-- A *subcube* of $\{0,1\}^n$: a set obtained by fixing the values of some coordinates, i.e.
-$\{x : x_i=a_i \text{ for } i\in S\}$ (e.g. the codimension $k$ subcube
-$\{x\in\{0,1\}^n : x_1=\dots=x_k=0\}$ of [DIR], §1.1). -/
-def IsSubcube {n : ℕ} (A : Set ({0,1}^n)) : Prop :=
-  ∃ (S : Finset (Fin n)) (a : {0,1}^n), A = {x | ∀ i ∈ S, x i = a i}
 
 /-- **Theorem 1.1** ([DIR]). For all $\beta\ge\beta_0=0.50057$ and $A\subset\{0,1\}^n$ with
 $|A|\le\frac12$,
@@ -103,34 +41,6 @@ theorem thm_1_1 (n : ℕ) (hn : 1 ≤ n) (β : ℝ) (hβ : β₀ ≤ β) :
       𝐄 h_{A} ^ β ≥ ｜A｜ * (log₂ (1 / ｜A｜)) ^ β) ∧
     (∀ A : Set ({0,1}^n), ｜A｜ ≤ 1 / 2 → IsSubcube A →
       𝐄 h_{A} ^ β = ｜A｜ * (log₂ (1 / ｜A｜)) ^ β) := by
-  sorry
-
-/-! ### §1.4 Towards a conjecture of Kahn and Park
-
-In the paper this subsection follows Remark 1.8 (§1.3). It is placed here since Corollary 1.9
-is a corollary of Theorem 1.1. -/
-
-/-- The set $\mathcal{E}$ of edges of $\{0,1\}^n$ ([DIR], Corollary 1.9), as ordered pairs
-$(x,y)$ of vertices differing in exactly one bit. -/
-def edges (n : ℕ) : Set (({0,1}^n) × ({0,1}^n)) := {p | ∃ i, p.2 = p.1 + e i}
-
-/-- The edge boundary measure
-$|\nabla(A,B)|=2^{-n}\#\{(x,y)\in\mathcal{E} : x\in A, y\in B\}$ ([DIR], Corollary 1.9).
-Written `|∇(A, B)|`. -/
-noncomputable def edgeMeasure {n : ℕ} (A B : Set ({0,1}^n)) : ℝ :=
-  (2 : ℝ)⁻¹ ^ n * (Set.ncard {p ∈ edges n | p.1 ∈ A ∧ p.2 ∈ B} : ℝ)
-
-@[inherit_doc] notation "|∇(" A ", " B ")|" => edgeMeasure A B
-
-/-- **Corollary 1.9** ([DIR]). Let $(A,B,W)$ be a partition of $\{0,1\}^n$ and assume
-$|A|=\frac12$. Then
-$$|\nabla(A,B)|+n^{0.50057}|W|\ge\tfrac12,$$
-where $|\nabla(A,B)|=2^{-n}\#\{(x,y)\in\mathcal{E} : x\in A, y\in B\}$,
-$|W|=\mathbf{E}\mathbf{1}_W$, and $\mathcal{E}$ is the set of edges of $\{0,1\}^n$. -/
-theorem cor_1_9 (n : ℕ) (hn : 1 ≤ n) (A B W : Set ({0,1}^n))
-    (hAB : Disjoint A B) (hAW : Disjoint A W) (hBW : Disjoint B W)
-    (hcover : A ∪ B ∪ W = Set.univ) (hA : ｜A｜ = 1 / 2) :
-    |∇(A, B)| + (n : ℝ) ^ (0.50057 : ℝ) * ｜W｜ ≥ 1 / 2 := by
   sorry
 
 /-- [DIR], §1.4, display after Corollary 1.9: for a partition $(A,B,W)$ of $\{0,1\}^n$ with
@@ -144,6 +54,17 @@ theorem cor_1_9_chain (n : ℕ) (hn : 1 ≤ n) (A B W : Set ({0,1}^n))
     𝐄 h_{B ∪ W} ^ β₀ ≤ 𝐄 (h_{B ∪ W} * 𝟏_{B}) + 𝐄 (h_{B ∪ W} ^ β₀ * 𝟏_{W}) ∧
     𝐄 (h_{B ∪ W} * 𝟏_{B}) + 𝐄 (h_{B ∪ W} ^ β₀ * 𝟏_{W}) ≤
       |∇(A, B)| + (n : ℝ) ^ (0.50057 : ℝ) * ｜W｜ := by
+  sorry
+
+/-- **Corollary 1.9** ([DIR]). Let $(A,B,W)$ be a partition of $\{0,1\}^n$ and assume
+$|A|=\frac12$. Then
+$$|\nabla(A,B)|+n^{0.50057}|W|\ge\tfrac12,$$
+where $|\nabla(A,B)|=2^{-n}\#\{(x,y)\in\mathcal{E} : x\in A, y\in B\}$,
+$|W|=\mathbf{E}\mathbf{1}_W$, and $\mathcal{E}$ is the set of edges of $\{0,1\}^n$. -/
+theorem cor_1_9 (n : ℕ) (hn : 1 ≤ n) (A B W : Set ({0,1}^n))
+    (hAB : Disjoint A B) (hAW : Disjoint A W) (hBW : Disjoint B W)
+    (hcover : A ∪ B ∪ W = Set.univ) (hA : ｜A｜ = 1 / 2) :
+    |∇(A, B)| + (n : ℝ) ^ (0.50057 : ℝ) * ｜W｜ ≥ 1 / 2 := by
   sorry
 
 end Auto.DIR

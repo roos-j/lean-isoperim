@@ -5,7 +5,11 @@ Authors: Claude
 -/
 module
 
+public import Isoperim.DIR.«1_Introduction».Definitions
+public import Isoperim.DIR.«2_Envelope_Functions».Definitions
 public import Isoperim.DIR.«3_Variants_Bobkov_Inequality».«3_0_Variants_Bobkov_Inequality»
+public import Isoperim.DIR.«5_Auxiliary_Estimates».«5_3_Properties_L_Q»
+public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_1_Case_J»
 
 /-!
 # [DIR] §6.4 Case $LJ$: $0\le x\le\frac14$, $\frac12\le y\le1$, $1\le x+y$
@@ -40,16 +44,7 @@ theorem caseLJ_region (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 4)) (hy : y ∈
     (hxy : 1 ≤ x + y) : y ∈ Icc (3 / 4 : ℝ) 1 := by
   sorry
 
-/-- **Proposition 6.8** ([DIR], Case $LJ$). For $(x,y)\in[0,\frac14]\times[\frac34,1]$,
-$1\le x+y$, and $\beta\in[\frac12,1]$,
-$$y-x+(2^\beta-1)J(y)+L_\beta(x)-2J(\tfrac{x+y}2)\ge0.$$ -/
-theorem prop_6_8 (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 4)) (hy : y ∈ Icc (3 / 4 : ℝ) 1)
-    (hxy : 1 ≤ x + y) (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1) :
-    y - x + (2 ^ β - 1) * J y + L β x - 2 * J ((x + y) / 2) ≥ 0 := by
-  sorry
-
 section Proof_Proposition_6_8
-
 /-- [DIR], proof of Proposition 6.8: the left-hand side is increasing in $\beta$ (for
 $\beta\in[\frac12,1]$), so it suffices to prove the claim for $\beta=\frac12$. -/
 theorem prop_6_8_monotoneOn_beta (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 4))
@@ -66,14 +61,6 @@ noncomputable def g_LJ (x y : ℝ) : ℝ := y - x + (√2 - 1) * J y + L (1 / 2)
 $\beta=\frac12$ (as $2^{1/2}=\sqrt2$). -/
 theorem g_LJ_eq (x y : ℝ) :
     g_LJ x y = y - x + (2 ^ (1 / 2 : ℝ) - 1) * J y + L (1 / 2) x - 2 * J ((x + y) / 2) := by
-  sorry
-
-/-- [DIR], proof of Proposition 6.8: we claim that if $(x,y)\in(0,\frac14]\times[\frac34,1]$
-and $1\le x+y$, then $\partial_x^2g_{LJ}(x,y)\le0$. (Stated for $1<x+y$, where
-$\frac{x+y}2\in(\frac12,1)$ and the derivative of `J` is meaningful.) -/
-theorem g_LJ_deriv2_nonpos (x y : ℝ) (hx : x ∈ Ioc (0 : ℝ) (1 / 4))
-    (hy : y ∈ Icc (3 / 4 : ℝ) 1) (hxy : 1 < x + y) :
-    deriv (deriv (fun x ↦ g_LJ x y)) x ≤ 0 := by
   sorry
 
 /-- [DIR], proof of Proposition 6.8: using $JJ''=-2$ we have
@@ -161,6 +148,14 @@ theorem g_LJ_deriv3_nonneg (x y : ℝ) (hx : x ∈ Ioc (0 : ℝ) (1 / 4))
     iteratedDeriv 3 (fun x ↦ g_LJ x y) x ≥ 0 := by
   sorry
 
+/-- [DIR], proof of Proposition 6.8: we claim that if $(x,y)\in(0,\frac14]\times[\frac34,1]$
+and $1\le x+y$, then $\partial_x^2g_{LJ}(x,y)\le0$. (Stated for $1<x+y$, where
+$\frac{x+y}2\in(\frac12,1)$ and the derivative of `J` is meaningful.) -/
+theorem g_LJ_deriv2_nonpos (x y : ℝ) (hx : x ∈ Ioc (0 : ℝ) (1 / 4))
+    (hy : y ∈ Icc (3 / 4 : ℝ) 1) (hxy : 1 < x + y) :
+    deriv (deriv (fun x ↦ g_LJ x y)) x ≤ 0 := by
+  sorry
+
 /-- [DIR], proof of Proposition 6.8: it remains to show non-negativity on the boundary of the
 region $LJ$: if $g_{LJ}\ge0$ on the boundary pieces $y=1$, $x+y=1$ and $x=\frac14$, then
 $g_{LJ}\ge0$ on the region $\{(x,y)\in[0,\frac14]\times[\frac34,1] : 1\le x+y\}$ (by concavity
@@ -243,28 +238,12 @@ noncomputable def t_LJ (y : ℝ) : ℝ := y / 2 + 1 / 8
 there). -/
 noncomputable def r_LJ (y : ℝ) : ℝ := J y / J (t_LJ y)
 
-/-- [DIR], proof of Proposition 6.8: $f''(y)\le0\iff r(y)\le2(\sqrt2-1)$ (for $y\in(\frac34,1)$). -/
-theorem f_LJ_deriv2_nonpos_iff (y : ℝ) (hy : y ∈ Ioo (3 / 4 : ℝ) 1) :
-    deriv (deriv f_LJ) y ≤ 0 ↔ r_LJ y ≤ 2 * (√2 - 1) := by
-  sorry
-
-/-- [DIR], proof of Proposition 6.8: we claim that $r$ is decreasing on $[\frac34,1)$. -/
-theorem r_LJ_antitoneOn : AntitoneOn r_LJ (Ico (3 / 4) 1) := by
-  sorry
-
 /-- [DIR], proof of Proposition 6.8:
 $$r'(y)=\frac{J'(y)J(t(y))-\frac12J(y)J'(t(y))}{J(t(y))^2}$$
 (for $y\in(\frac34,1)$). -/
 theorem r_LJ_deriv (y : ℝ) (hy : y ∈ Ioo (3 / 4 : ℝ) 1) :
     deriv r_LJ y =
       (deriv J y * J (t_LJ y) - 1 / 2 * J y * deriv J (t_LJ y)) / J (t_LJ y) ^ 2 := by
-  sorry
-
-/-- [DIR], proof of Proposition 6.8: so (to show $r'(y)\le0$) it is enough to show
-$$\frac{2J'(y)}{J(y)}\le\frac{J'(t(y))}{J(t(y))}$$
-(for $y\in(\frac34,1)$). -/
-theorem r_LJ_deriv_nonpos_of (y : ℝ) (hy : y ∈ Ioo (3 / 4 : ℝ) 1)
-    (h : 2 * deriv J y / J y ≤ deriv J (t_LJ y) / J (t_LJ y)) : deriv r_LJ y ≤ 0 := by
   sorry
 
 /-- The function $h(u)=\frac{J'(u)}{J(u)}$ ([DIR], proof of Proposition 6.8; denoted $h$
@@ -296,10 +275,26 @@ theorem h_LJ_nonpos (y : ℝ) (hy : y ∈ Ico (3 / 4 : ℝ) 1) :
     deriv J y < 0 ∧ J y > 0 ∧ h_LJ y ≤ 0 := by
   sorry
 
+/-- [DIR], proof of Proposition 6.8: $f''(y)\le0\iff r(y)\le2(\sqrt2-1)$ (for $y\in(\frac34,1)$). -/
+theorem f_LJ_deriv2_nonpos_iff (y : ℝ) (hy : y ∈ Ioo (3 / 4 : ℝ) 1) :
+    deriv (deriv f_LJ) y ≤ 0 ↔ r_LJ y ≤ 2 * (√2 - 1) := by
+  sorry
+
+/-- [DIR], proof of Proposition 6.8: so (to show $r'(y)\le0$) it is enough to show
+$$\frac{2J'(y)}{J(y)}\le\frac{J'(t(y))}{J(t(y))}$$
+(for $y\in(\frac34,1)$). -/
+theorem r_LJ_deriv_nonpos_of (y : ℝ) (hy : y ∈ Ioo (3 / 4 : ℝ) 1)
+    (h : 2 * deriv J y / J y ≤ deriv J (t_LJ y) / J (t_LJ y)) : deriv r_LJ y ≤ 0 := by
+  sorry
+
 /-- [DIR], proof of Proposition 6.8: hence $2h(y)\le h(t(y))$, proving $r'(y)\le0$
 (for $y\in(\frac34,1)$). -/
 theorem two_h_LJ_le (y : ℝ) (hy : y ∈ Ioo (3 / 4 : ℝ) 1) :
     2 * h_LJ y ≤ h_LJ (t_LJ y) ∧ deriv r_LJ y ≤ 0 := by
+  sorry
+
+/-- [DIR], proof of Proposition 6.8: we claim that $r$ is decreasing on $[\frac34,1)$. -/
+theorem r_LJ_antitoneOn : AntitoneOn r_LJ (Ico (3 / 4) 1) := by
   sorry
 
 /-- [DIR], proof of Proposition 6.8: therefore $r(y)-2(\sqrt2-1)$ is decreasing
@@ -355,5 +350,13 @@ theorem g_LJ_nonneg (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 4)) (hy : y ∈ I
   sorry
 
 end Proof_Proposition_6_8
+
+/-- **Proposition 6.8** ([DIR], Case $LJ$). For $(x,y)\in[0,\frac14]\times[\frac34,1]$,
+$1\le x+y$, and $\beta\in[\frac12,1]$,
+$$y-x+(2^\beta-1)J(y)+L_\beta(x)-2J(\tfrac{x+y}2)\ge0.$$ -/
+theorem prop_6_8 (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 4)) (hy : y ∈ Icc (3 / 4 : ℝ) 1)
+    (hxy : 1 ≤ x + y) (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1) :
+    y - x + (2 ^ β - 1) * J y + L β x - 2 * J ((x + y) / 2) ≥ 0 := by
+  sorry
 
 end Auto.DIR

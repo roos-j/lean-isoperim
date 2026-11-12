@@ -5,7 +5,10 @@ Authors: Claude
 -/
 module
 
+public import Isoperim.DIR.«2_Envelope_Functions».Definitions
 public import Isoperim.DIRX.«2_Preliminaries».«2_2_Properties_J»
+public import Isoperim.DIRX.«2_Preliminaries».Definitions
+public import Isoperim.DIRX.«3_Proof_Two_Point_Inequality».«3_1_Case_J»
 
 /-!
 # [DIRX] §3.6 Case QJ
@@ -38,38 +41,19 @@ open Auto.DIR
 
 open Real Set
 
-local notation "G₁" => G₁X
-local notation "G" => GX
+local notation "G₁" => Auto.DIR.G₁ (1 / 2)
+
+local notation "G" => Auto.DIR.G (1 / 2)
+
 local notation "B_{" w "}" => BX w
-local notation "Q" => QX
+
+local notation "Q" => Auto.DIR.Q (1 / 2)
+
 local notation "J" => JX
-
-/-! ### §3.6 Case QJ: $\frac14\le x\le\frac12\le y\le1$, $x+y\ge1$ -/
-
-/-- [DIRX], §3.6 (Case $QJ$): $G[B_{w_1}](x,y)\ge0$ for $\frac14\le x\le\frac12\le y\le1$,
-$x+y\ge1$. -/
-theorem caseQJ (x y : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2)) (hy : y ∈ Icc (1 / 2 : ℝ) 1)
-    (hxy : 1 ≤ x + y) : G (B_{w₁}) x y ≥ 0 := by
-  sorry
 
 /-! ### §3.6.1 Near diagonal: $3/8\le x\le1/2$, $1/2\le y\le5/8$, $x+y\ge1$ -/
 
 section Near_Diagonal
-
-/-- [DIRX], §3.6.1: for $\frac38\le x\le\frac12\le y\le\frac58$ (and $x+y\ge1$, the standing
-assumption of Case $QJ$), $G_1[B_w](x,y)\ge0$ (with $w=w_1$).
-
-**Discrepancy with the paper.** The sentence states the claim for
-$\frac38\le x\le\frac12\le y\le\frac58$ without the condition $x+y\ge1$ (which appears in the
-heading of §3.6.1 and of Case $QJ$). The proof via $g_{QJ}$ uses
-$B_w(\frac{x+y}2)=\mathrm{J}(\frac{x+y}2)$, which requires $\frac{x+y}2\ge\frac12$; for
-$x+y<1$ one has $B_w(\frac{x+y}2)=Q(\frac{x+y}2)$ and these points belong to Case $QJQ$
-(§3.5). The Lean statement adds the hypothesis `hxy : 1 ≤ x + y`, matching the heading; this is
-all that is needed for `caseQJ`. -/
-theorem caseQJ_near (x y : ℝ) (hx : x ∈ Icc (3 / 8 : ℝ) (1 / 2))
-    (hy : y ∈ Icc (1 / 2 : ℝ) (5 / 8)) (hxy : 1 ≤ x + y) : G₁ (B_{w₁}) x y ≥ 0 := by
-  sorry
-
 /-- $g_{QJ}(x,y)=(y-x)^2+\mathrm{J}(y)^2-(2\mathrm{J}(\frac{x+y}2)-Q(x))^2$ ([DIRX], §3.6.1).
 Written `g_QJ x y`. -/
 noncomputable def g_QJX (x y : ℝ) : ℝ := (y - x) ^ 2 + J y ^ 2 - (2 * J ((x + y) / 2) - Q x) ^ 2
@@ -93,12 +77,6 @@ from §3.1, (3.1)). -/
 theorem g_QJ_half (y : ℝ) (hy : y ∈ Icc (1 / 2 : ℝ) (5 / 8)) : g_QJ (1 / 2) y ≥ 0 := by
   sorry
 
-/-- [DIRX], §3.6.1: if $\partial_xg_{QJ}<0$ on $[\frac38,\frac12]\times[\frac12,\frac58]$, then
-$g_{QJ}(x,y)\ge g_{QJ}(\frac12,y)\ge0$ there, which finishes the proof of this case. -/
-theorem g_QJ_nonneg (x y : ℝ) (hx : x ∈ Icc (3 / 8 : ℝ) (1 / 2))
-    (hy : y ∈ Icc (1 / 2 : ℝ) (5 / 8)) : g_QJ x y ≥ g_QJ (1 / 2) y ∧ g_QJ x y ≥ 0 := by
-  sorry
-
 /-- **(3.13)** ([DIRX], §3.6.1) (🚗). Dyadic partitioning yields
 $$-\tfrac12\partial_xg_{QJ}>10^{-5}\quad\text{on}\quad
 [\tfrac14,\tfrac12]\times[\tfrac12,\tfrac58].$$
@@ -108,12 +86,31 @@ theorem eqn_3_13 (x y : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2))
     -(1 / 2) * deriv (fun t ↦ g_QJ t y) x > (10 : ℝ) ^ (-5 : ℤ) := by
   sorry
 
+/-- [DIRX], §3.6.1: if $\partial_xg_{QJ}<0$ on $[\frac38,\frac12]\times[\frac12,\frac58]$, then
+$g_{QJ}(x,y)\ge g_{QJ}(\frac12,y)\ge0$ there, which finishes the proof of this case. -/
+theorem g_QJ_nonneg (x y : ℝ) (hx : x ∈ Icc (3 / 8 : ℝ) (1 / 2))
+    (hy : y ∈ Icc (1 / 2 : ℝ) (5 / 8)) : g_QJ x y ≥ g_QJ (1 / 2) y ∧ g_QJ x y ≥ 0 := by
+  sorry
+
+/-- [DIRX], §3.6.1: for $\frac38\le x\le\frac12\le y\le\frac58$ (and $x+y\ge1$, the standing
+assumption of Case $QJ$), $G_1[B_w](x,y)\ge0$ (with $w=w_1$).
+
+**Discrepancy with the paper.** The sentence states the claim for
+$\frac38\le x\le\frac12\le y\le\frac58$ without the condition $x+y\ge1$ (which appears in the
+heading of §3.6.1 and of Case $QJ$). The proof via $g_{QJ}$ uses
+$B_w(\frac{x+y}2)=\mathrm{J}(\frac{x+y}2)$, which requires $\frac{x+y}2\ge\frac12$; for
+$x+y<1$ one has $B_w(\frac{x+y}2)=Q(\frac{x+y}2)$ and these points belong to Case $QJQ$
+(§3.5). The Lean statement adds the hypothesis `hxy : 1 ≤ x + y`, matching the heading; this is
+all that is needed for `caseQJ`. -/
+theorem caseQJ_near (x y : ℝ) (hx : x ∈ Icc (3 / 8 : ℝ) (1 / 2))
+    (hy : y ∈ Icc (1 / 2 : ℝ) (5 / 8)) (hxy : 1 ≤ x + y) : G₁ (B_{w₁}) x y ≥ 0 := by
+  sorry
+
 end Near_Diagonal
 
 /-! ### §3.6.2 Far from diagonal: $\frac14\le x\le\frac12$, $\frac58\le y\le1$, $x+y\ge1$ -/
 
 section Far_From_Diagonal
-
 /-- $h_{QJ,2}(x,y)=\sqrt{(y-x)^2+\mathrm{J}(y)^2}+Q(x)-2\mathrm{J}(\frac{x+y}2)$ ([DIRX], (3.14)).
 -/
 noncomputable def h_QJ₂ (x y : ℝ) : ℝ := √((y - x) ^ 2 + J y ^ 2) + Q x - 2 * J ((x + y) / 2)
@@ -132,5 +129,13 @@ theorem eqn_3_14 (x y : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2))
   sorry
 
 end Far_From_Diagonal
+
+/-! ### §3.6 Case QJ: $\frac14\le x\le\frac12\le y\le1$, $x+y\ge1$ -/
+
+/-- [DIRX], §3.6 (Case $QJ$): $G[B_{w_1}](x,y)\ge0$ for $\frac14\le x\le\frac12\le y\le1$,
+$x+y\ge1$. -/
+theorem caseQJ (x y : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2)) (hy : y ∈ Icc (1 / 2 : ℝ) 1)
+    (hxy : 1 ≤ x + y) : G (B_{w₁}) x y ≥ 0 := by
+  sorry
 
 end Auto.DIRX

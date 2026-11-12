@@ -5,7 +5,11 @@ Authors: Claude
 -/
 module
 
+public import Isoperim.DIR.«2_Envelope_Functions».Definitions
+public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_3_Case_LJQ»
 public import Isoperim.DIRX.«2_Preliminaries».«2_2_Properties_J»
+public import Isoperim.DIRX.«2_Preliminaries».«2_3_Properties_L_Q»
+public import Isoperim.DIRX.«2_Preliminaries».Definitions
 
 /-!
 # [DIRX] §3.3 Case LJQ
@@ -37,24 +41,21 @@ open Auto.DIR
 
 open Real Set
 
-local notation "G₂" => G₂X
-local notation "G" => GX
+local notation "G₂" => Auto.DIR.G₂ (1 / 2)
+
+local notation "G" => Auto.DIR.G (1 / 2)
+
 local notation "B_{" w "}" => BX w
-local notation "L" => LX
-local notation "Q" => QX
+
+local notation "L" => Auto.DIR.L (1 / 2)
+
+local notation "Q" => Auto.DIR.Q (1 / 2)
+
 local notation "J" => JX
+
 local notation "γ" => γX
 
-/-! ### §3.3 Case LJQ: $0\le x\le\frac14$, $\frac12\le y\le1$, $x+y\le1$ -/
-
-/-- [DIRX], §3.3 (Case $LJQ$): $G[B_{w_1}](x,y)\ge0$ for $0\le x\le\frac14$,
-$\frac12\le y\le1$, $x+y\le1$. -/
-theorem caseLJQ (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 4)) (hy : y ∈ Icc (1 / 2 : ℝ) 1)
-    (hxy : x + y ≤ 1) : G (B_{w₁}) x y ≥ 0 := by
-  sorry
-
 section Case_I
-
 /-! ### Case I: $\frac1{16}\le x\le\frac14$, $\frac12\le y\le\frac34$ -/
 
 /-- **(3.3)** ([DIRX], §3.3, Case I) (🚗). By dyadic partitioning,
@@ -68,7 +69,6 @@ theorem eqn_3_3 (x y : ℝ) (hx : x ∈ Icc (1 / 16 : ℝ) (1 / 4))
 end Case_I
 
 section Case_II
-
 /-! ### Case II -/
 
 /-- $G_{LJQ}(x,y)=y-x+(\sqrt2-1)\mathrm{J}(y)+L(x)-2Q(\frac{x+y}2)$ ([DIRX], §3.3, Case II).
@@ -83,27 +83,6 @@ theorem G₂_BX_eq_G_LJQ (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 4)) (hy : y 
     (hxy : x + y ≤ 1) : G₂ (B_{w₁}) x y = G_LJQ x y := by
   sorry
 
-/-- [DIRX], §3.3, Case II: if $x\in[0,\frac14]$, $y\in[\frac12,1]$ (and $x+y\le1$, the standing
-assumption of Case $LJQ$, which the proof below uses), and if in addition $x\le\frac1{16}$ or
-$y\ge\frac34$ holds, then $G_{LJQ}(x,y)\ge0$.
-
-**Discrepancy with the paper.** The paper states this claim for $x\in[0,\frac14]$,
-$y\in[\frac12,1]$ with $x\le\frac1{16}$ or $y\ge\frac34$, without repeating the condition
-$x+y\le1$ from the heading of §3.3. Without it the claim is not what the proof shows: for
-$y\ge\frac34$ the proof uses concavity in $x$ on $[0,1-y]$ and the boundary $x=1-y$, and only for
-$x+y\le1$ is $G_{LJQ}=G_2[B_{w_1}]$ (since then $\frac{x+y}2\le\frac12$ and
-$B_{w_1}(\frac{x+y}2)=Q(\frac{x+y}2)$). The Lean statement adds the hypothesis `hxy : x + y ≤ 1`
-(the standing assumption of Case $LJQ$); this is all that is needed for `caseLJQ`. -/
-theorem caseLJQ_II (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 4)) (hy : y ∈ Icc (1 / 2 : ℝ) 1)
-    (hxy : x + y ≤ 1) (h : x ≤ 1 / 16 ∨ y ≥ 3 / 4) : G_LJQ x y ≥ 0 := by
-  sorry
-
-/-- [DIRX], §3.3, Case II: for fixed $y\in[0,1]$, the function $x\mapsto G_{LJQ}(x,y)$ is strictly
-concave on $[0,\frac14]$. -/
-theorem G_LJQ_strictConcave (y : ℝ) (hy : y ∈ Icc (0 : ℝ) 1) :
-    StrictConcaveOn ℝ (Icc 0 (1 / 4)) (fun x ↦ G_LJQ x y) := by
-  sorry
-
 /-- **(3.4)** ([DIRX], §3.3; shown in [DIR], Lemma 6.7, `Auto.DIR.lemma_6_7`). For
 $x\in(0,\frac14]$ and $y\in[0,1]$,
 $$\partial_x^2G_{LJQ}(x,y)=L''(x)-\tfrac12Q''(\tfrac{x+y}2)<0.$$ -/
@@ -111,6 +90,12 @@ theorem eqn_3_4 (x y : ℝ) (hx : x ∈ Ioc (0 : ℝ) (1 / 4)) (hy : y ∈ Icc (
     deriv (deriv (fun t ↦ G_LJQ t y)) x =
         deriv (deriv L) x - 1 / 2 * deriv (deriv Q) ((x + y) / 2) ∧
       deriv (deriv L) x - 1 / 2 * deriv (deriv Q) ((x + y) / 2) < 0 := by
+  sorry
+
+/-- [DIRX], §3.3, Case II: for fixed $y\in[0,1]$, the function $x\mapsto G_{LJQ}(x,y)$ is strictly
+concave on $[0,\frac14]$. -/
+theorem G_LJQ_strictConcave (y : ℝ) (hy : y ∈ Icc (0 : ℝ) 1) :
+    StrictConcaveOn ℝ (Icc 0 (1 / 4)) (fun x ↦ G_LJQ x y) := by
   sorry
 
 /-- [DIRX], §3.3, Case II: by concavity in $x$ it remains to verify non-negativity of $G_{LJQ}$
@@ -126,7 +111,6 @@ theorem caseLJQ_II_of_boundary
   sorry
 
 section Boundary_x_eq_0
-
 /-- $f(y)=G_{LJQ}(0,y)$ ([DIRX], §3.3, Case II). Written `f y`. -/
 noncomputable def fX (y : ℝ) : ℝ := G_LJQ 0 y
 
@@ -208,7 +192,6 @@ theorem fX_nonneg (y : ℝ) (hy : y ∈ Icc (1 / 2 : ℝ) 1) : f y ≥ 0 := by
 end Boundary_x_eq_0
 
 section Boundary_x_eq_1_16
-
 /-- **(3.7)** ([DIRX], §3.3) (🚗). Dyadic partitioning yields
 $$G_{LJQ}(\tfrac1{16},y)>10^{-4}$$ for all $y\in[\frac12,\frac34]$. -/
 theorem eqn_3_7 (y : ℝ) (hy : y ∈ Icc (1 / 2 : ℝ) (3 / 4)) :
@@ -218,7 +201,6 @@ theorem eqn_3_7 (y : ℝ) (hy : y ∈ Icc (1 / 2 : ℝ) (3 / 4)) :
 end Boundary_x_eq_1_16
 
 section Boundary_x_eq_1_sub_y
-
 /-- [DIRX], §3.3: for $y\in(\frac34,1)$,
 $\frac{d^2}{dy^2}G_{LJQ}(1-y,y)=(\sqrt2-1)\mathrm{J}''(y)+L''(1-y)\le0$, using
 $\mathrm{J}''\le0$ and $L''\le0$ (Lemma 2.3). -/
@@ -243,6 +225,29 @@ theorem G_LJQ_diag_nonneg (y : ℝ) (hy : y ∈ Icc (3 / 4 : ℝ) 1) : G_LJQ (1 
 
 end Boundary_x_eq_1_sub_y
 
+/-- [DIRX], §3.3, Case II: if $x\in[0,\frac14]$, $y\in[\frac12,1]$ (and $x+y\le1$, the standing
+assumption of Case $LJQ$, which the proof below uses), and if in addition $x\le\frac1{16}$ or
+$y\ge\frac34$ holds, then $G_{LJQ}(x,y)\ge0$.
+
+**Discrepancy with the paper.** The paper states this claim for $x\in[0,\frac14]$,
+$y\in[\frac12,1]$ with $x\le\frac1{16}$ or $y\ge\frac34$, without repeating the condition
+$x+y\le1$ from the heading of §3.3. Without it the claim is not what the proof shows: for
+$y\ge\frac34$ the proof uses concavity in $x$ on $[0,1-y]$ and the boundary $x=1-y$, and only for
+$x+y\le1$ is $G_{LJQ}=G_2[B_{w_1}]$ (since then $\frac{x+y}2\le\frac12$ and
+$B_{w_1}(\frac{x+y}2)=Q(\frac{x+y}2)$). The Lean statement adds the hypothesis `hxy : x + y ≤ 1`
+(the standing assumption of Case $LJQ$); this is all that is needed for `caseLJQ`. -/
+theorem caseLJQ_II (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 4)) (hy : y ∈ Icc (1 / 2 : ℝ) 1)
+    (hxy : x + y ≤ 1) (h : x ≤ 1 / 16 ∨ y ≥ 3 / 4) : G_LJQ x y ≥ 0 := by
+  sorry
+
 end Case_II
+
+/-! ### §3.3 Case LJQ: $0\le x\le\frac14$, $\frac12\le y\le1$, $x+y\le1$ -/
+
+/-- [DIRX], §3.3 (Case $LJQ$): $G[B_{w_1}](x,y)\ge0$ for $0\le x\le\frac14$,
+$\frac12\le y\le1$, $x+y\le1$. -/
+theorem caseLJQ (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 4)) (hy : y ∈ Icc (1 / 2 : ℝ) 1)
+    (hxy : x + y ≤ 1) : G (B_{w₁}) x y ≥ 0 := by
+  sorry
 
 end Auto.DIRX

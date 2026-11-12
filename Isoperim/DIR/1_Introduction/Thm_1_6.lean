@@ -5,7 +5,9 @@ Authors: Claude
 -/
 module
 
+public import Isoperim.DIR.«1_Introduction».Definitions
 public import Isoperim.DIR.«1_Introduction».Thm_1_5
+public import Isoperim.DIR.«3_Variants_Bobkov_Inequality».«3_0_Variants_Bobkov_Inequality»
 
 /-!
 # [DIR] §1 Introduction: Theorem 1.6
@@ -24,18 +26,6 @@ namespace Auto.DIR
 
 open Real Filter Topology
 
-/-- **Theorem 1.6** ([DIR]). For all $A\subset\{0,1\}^n$,
-$$\mathbf{E}\sqrt{h_A}\ge|A|\sqrt{\log_2(1/|A|)+1}-|A| \tag{1.4}$$
-and as a consequence,
-$$\mathcal{B}_{\frac12}(x)\sim x\sqrt{\log_2(1/x)}\quad\text{as } x\to0^+,$$
-where $f(x)\sim g(x)$ as $x\to x_*$ means $\lim_{x\to x_*}\frac{f(x)}{g(x)}=1$ (the limit is taken
-along $x\in\mathcal{Q}$, where $\mathcal{B}_{\frac12}$ is defined). -/
-theorem thm_1_6 :
-    (∀ (n : ℕ), 1 ≤ n → ∀ A : Set ({0,1}^n),
-      𝐄 (fun x ↦ √(h_{A} x)) ≥ ｜A｜ * √(log₂ (1 / ｜A｜) + 1) - ｜A｜) ∧
-    Tendsto (fun x ↦ 𝓑 (1 / 2) x / (x * √(log₂ (1 / x)))) (𝓝[𝒬 ∩ Set.Ioi 0] 0) (𝓝 1) := by
-  sorry
-
 /-- [DIR], §1.2, after Theorem 1.6: the upper bound follows from Cauchy–Schwarz,
 $\mathbf{E}\sqrt{h_A}\le\sqrt{|A|\,\mathbf{E}h_A}$, which gives
 $\mathcal{B}_{\frac12}(x)\le\sqrt{x\,\mathcal{B}_1(x)}$ for $x\in\mathcal{Q}$. -/
@@ -46,6 +36,18 @@ theorem isoProfile_half_le_sqrt (x : ℝ) (hx : x ∈ 𝒬) : 𝓑 (1 / 2) x ≤
 $\mathcal{B}_1(x)\sim x\log_2(1/x)$ as $x\to0^+$ (along $x\in\mathcal{Q}$). -/
 theorem isoProfile_one_asymp :
     Tendsto (fun x ↦ 𝓑 1 x / (x * log₂ (1 / x))) (𝓝[𝒬 ∩ Set.Ioi 0] 0) (𝓝 1) := by
+  sorry
+
+/-- **Theorem 1.6** ([DIR]). For all $A\subset\{0,1\}^n$,
+$$\mathbf{E}\sqrt{h_A}\ge|A|\sqrt{\log_2(1/|A|)+1}-|A| \tag{1.4}$$
+and as a consequence,
+$$\mathcal{B}_{\frac12}(x)\sim x\sqrt{\log_2(1/x)}\quad\text{as } x\to0^+,$$
+where $f(x)\sim g(x)$ as $x\to x_*$ means $\lim_{x\to x_*}\frac{f(x)}{g(x)}=1$ (the limit is taken
+along $x\in\mathcal{Q}$, where $\mathcal{B}_{\frac12}$ is defined). -/
+theorem thm_1_6 :
+    (∀ (n : ℕ), 1 ≤ n → ∀ A : Set ({0,1}^n),
+      𝐄 (fun x ↦ √(h_{A} x)) ≥ ｜A｜ * √(log₂ (1 / ｜A｜) + 1) - ｜A｜) ∧
+    Tendsto (fun x ↦ 𝓑 (1 / 2) x / (x * √(log₂ (1 / x)))) (𝓝[𝒬 ∩ Set.Ioi 0] 0) (𝓝 1) := by
   sorry
 
 end Auto.DIR

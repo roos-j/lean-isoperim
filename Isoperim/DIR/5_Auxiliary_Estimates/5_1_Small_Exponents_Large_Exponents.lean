@@ -5,7 +5,7 @@ Authors: Claude
 -/
 module
 
-public import Isoperim.DIR.«1_Introduction».Thm_1_1
+public import Isoperim.DIR.«1_Introduction».Definitions
 
 /-!
 # [DIR] §5 Auxiliary estimates, §5.1 Small exponents versus large exponents
@@ -22,6 +22,18 @@ namespace Auto.DIR
 
 open Real
 
+section Proof_Lemma_5_1
+/-- [DIR], proof of Lemma 5.1: let $p=\tilde\beta/\beta\ge1$. By the assumption and Hölder's
+inequality,
+$$B(|A|)\le\mathbf{E}h_A^\beta\le(\mathbf{E}h_A^{p\beta})^{\frac1p}|A|^{1-\frac1p},$$
+which implies the claim. -/
+theorem lemma_5_1_holder (n : ℕ) (A : Set ({0,1}^n)) (B : ℝ → ℝ) (β : ℝ) (hβ : 0 < β)
+    (h : 𝐄 h_{A} ^ β ≥ B ｜A｜) (p : ℝ) (hp : 1 ≤ p) :
+    B ｜A｜ ≤ 𝐄 h_{A} ^ β ∧ 𝐄 h_{A} ^ β ≤ (𝐄 h_{A} ^ (p * β)) ^ (1 / p) * ｜A｜ ^ (1 - 1 / p) := by
+  sorry
+
+end Proof_Lemma_5_1
+
 /-! ### §5.1 Small exponents versus large exponents -/
 
 /-- **Lemma 5.1** ([DIR]). If $\mathbf{E}h_A^\beta\ge B(|A|)>0$ holds for some $\beta>0$, then for
@@ -37,18 +49,5 @@ theorem lemma_5_1 :
       ∀ β : ℝ, β₀ ≤ β → ∀ (n : ℕ), 1 ≤ n → ∀ A : Set ({0,1}^n), ｜A｜ ≤ 1 / 2 →
         𝐄 h_{A} ^ β ≥ ｜A｜ * (log₂ (1 / ｜A｜)) ^ β) := by
   sorry
-
-section Proof_Lemma_5_1
-
-/-- [DIR], proof of Lemma 5.1: let $p=\tilde\beta/\beta\ge1$. By the assumption and Hölder's
-inequality,
-$$B(|A|)\le\mathbf{E}h_A^\beta\le(\mathbf{E}h_A^{p\beta})^{\frac1p}|A|^{1-\frac1p},$$
-which implies the claim. -/
-theorem lemma_5_1_holder (n : ℕ) (A : Set ({0,1}^n)) (B : ℝ → ℝ) (β : ℝ) (hβ : 0 < β)
-    (h : 𝐄 h_{A} ^ β ≥ B ｜A｜) (p : ℝ) (hp : 1 ≤ p) :
-    B ｜A｜ ≤ 𝐄 h_{A} ^ β ∧ 𝐄 h_{A} ^ β ≤ (𝐄 h_{A} ^ (p * β)) ^ (1 / p) * ｜A｜ ^ (1 - 1 / p) := by
-  sorry
-
-end Proof_Lemma_5_1
 
 end Auto.DIR

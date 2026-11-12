@@ -5,8 +5,16 @@ Authors: Claude
 -/
 module
 
-public import Isoperim.DIR.«1_Introduction».Thm_1_5
-public import Isoperim.DIR.«1_Introduction».Thm_1_7
+public import Isoperim.DIR.«1_Introduction».Definitions
+public import Isoperim.DIR.«2_Envelope_Functions».Definitions
+public import Isoperim.DIR.«3_Variants_Bobkov_Inequality».«3_0_Variants_Bobkov_Inequality»
+public import Isoperim.DIR.«5_Auxiliary_Estimates».«5_3_Properties_L_Q»
+public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_1_Case_J»
+public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_2_Case_Q»
+public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_3_Case_LJQ»
+public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_4_Case_LJ»
+public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_5_Case_QJQ»
+public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_6_Case_QJ»
 
 /-!
 # [DIR] §2 Envelope functions (beginning of §2, before §2.1)
@@ -20,12 +28,8 @@ This file covers the part of §2 preceding §2.1: the two-point functionals (2.1
 the functions $L_\beta$, $Q_\beta$, $b_\beta$ (2.3), Theorem 2.2 (main two-point inequality),
 Remarks 2.3, 2.4, Corollary 2.5 and Remark 2.6.
 
-## Notation introduced here
 
-* `G₁ β B x y`, `G₂ β B x y`, `G β B x y` : $G^1_\beta[B](x,y)$, $G^2_\beta[B](x,y)$,
-  $G_\beta[B](x,y)$ of (2.1);
-* `L β x`, `Q β x`, `b β x` : $L_\beta(x)$, $Q_\beta(x)$, $b_\beta(x)$;
-* `c • B` : the function $c\cdot B$ (pointwise scalar multiple).
+The definitions and notation used here are in `Definitions.lean` of this folder.
 -/
 
 @[expose] public section
@@ -33,20 +37,6 @@ Remarks 2.3, 2.4, Corollary 2.5 and Remark 2.6.
 namespace Auto.DIR
 
 open Real Set
-
-/-- **(2.1)** ([DIR], §2). For $B:[0,1]\to[0,\infty)$, $\beta\ge\frac12$, $0\le x\le y\le1$,
-$$G^1_\beta[B](x,y)=((y-x)^{1/\beta}+B(y)^{1/\beta})^\beta+B(x)-2B(\tfrac{x+y}2).$$ -/
-noncomputable def G₁ (β : ℝ) (B : ℝ → ℝ) (x y : ℝ) : ℝ :=
-  ((y - x) ^ (1 / β) + B y ^ (1 / β)) ^ β + B x - 2 * B ((x + y) / 2)
-
-/-- ([DIR], §2, display after (2.1)).
-$$G^2_\beta[B](x,y)=y-x+(2^\beta-1)B(y)+B(x)-2B(\tfrac{x+y}2).$$ -/
-noncomputable def G₂ (β : ℝ) (B : ℝ → ℝ) (x y : ℝ) : ℝ :=
-  y - x + (2 ^ β - 1) * B y + B x - 2 * B ((x + y) / 2)
-
-/-- ([DIR], §2, display after (2.1)).
-$$G_\beta[B](x,y)=\max(G^1_\beta[B](x,y),G^2_\beta[B](x,y)).$$ -/
-noncomputable def G (β : ℝ) (B : ℝ → ℝ) (x y : ℝ) : ℝ := max (G₁ β B x y) (G₂ β B x y)
 
 /-- **Proposition 2.1** ([DIR], proved by Kahn and Park [KP20]). Let $\beta\ge\frac12$. Suppose
 $B:[0,1]\to[0,\infty)$ satisfies $B(0)=B(1)=0$ and that the following two-point inequality
@@ -59,37 +49,6 @@ theorem prop_2_1 (β : ℝ) (hβ : 1 / 2 ≤ β) (B : ℝ → ℝ) (hB : ∀ x �
     (h22 : ∀ x y : ℝ, 0 ≤ x → x ≤ y → y ≤ 1 → G β B x y ≥ 0) :
     ∀ x ∈ 𝒬, 𝓑 β x ≥ B x := by
   sorry
-
-/-- $L_\beta(x)=x(\log_2(1/x))^\beta$ ([DIR], §2). (At $x=0$ Lean's conventions give
-$L_\beta(0)=0$, the continuous extension.) -/
-noncomputable def L (β x : ℝ) : ℝ := x * (log₂ (1 / x)) ^ β
-
-/-- The cubic $Q_\beta$ ([DIR], §2): the unique cubic interpolation polynomial with
-$Q_\beta(0)=Q_\beta(1)=0$, $Q_\beta(\frac12)=\frac12$ and $Q_\beta(\frac14)=2^{\beta-2}$, i.e.
-$Q_\beta(x)=\frac23x(1-x)(2^{\beta+2}-3+4(3-2^{\beta+1})x)$ (see `Auto.DIR.Q_spec` for the
-interpolation property). -/
-noncomputable def Q (β x : ℝ) : ℝ :=
-  2 / 3 * x * (1 - x) * (2 ^ (β + 2) - 3 + 4 * (3 - 2 ^ (β + 1)) * x)
-
-/-- [DIR], §2: $Q_\beta$ is the unique cubic interpolation polynomial such that
-$Q_\beta(0)=Q_\beta(1)=0$, $Q_\beta(\frac12)=\frac12$ and $Q_\beta(\frac14)=2^{\beta-2}$; then
-$Q_\beta(x)=\frac23x(1-x)(2^{\beta+2}-3+4(3-2^{\beta+1})x)$. -/
-theorem Q_spec (β : ℝ) :
-    (∃! p : Polynomial ℝ, p.natDegree ≤ 3 ∧ p.eval 0 = 0 ∧ p.eval 1 = 0 ∧
-      p.eval (1 / 2) = 1 / 2 ∧ p.eval (1 / 4) = 2 ^ (β - 2)) ∧
-    ∀ p : Polynomial ℝ, p.natDegree ≤ 3 → p.eval 0 = 0 → p.eval 1 = 0 →
-      p.eval (1 / 2) = 1 / 2 → p.eval (1 / 4) = 2 ^ (β - 2) → ∀ x, p.eval x = Q β x := by
-  sorry
-
-/-- **(2.3)** ([DIR], §2).
-$$b_\beta(x)=\begin{cases}L_\beta(x)&x\in[0,\frac14],\\ Q_\beta(x)&x\in[\frac14,\frac12],\\
-J(x)&x\in[\frac12,1].\end{cases}$$
-Only the values on $[0,1]$ are meaningful. -/
-noncomputable def b (β x : ℝ) : ℝ :=
-  if x ≤ 1 / 4 then L β x else if x ≤ 1 / 2 then Q β x else J x
-
-/-- The constant $c_0=0.997$ ([DIR], Theorem 2.2). -/
-noncomputable def c₀ : ℝ := 0.997
 
 /-- **Theorem 2.2** (Main two-point inequality, [DIR]). Let $\beta_0=0.50057$ and $c_0=0.997$.
 Then for all $0\le x\le y\le1$:

@@ -5,6 +5,10 @@ Authors: Claude
 -/
 module
 
+public import Isoperim.DIR.«1_Introduction».Definitions
+public import Isoperim.DIR.«2_Envelope_Functions».Definitions
+public import Isoperim.DIR.«3_Variants_Bobkov_Inequality».«3_0_Variants_Bobkov_Inequality»
+public import Isoperim.DIR.«5_Auxiliary_Estimates».«5_3_Properties_L_Q»
 public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_1_Case_J»
 
 /-!
@@ -33,7 +37,6 @@ namespace Auto.DIR
 open Real Set Filter Topology
 
 section Case_LJQ_I
-
 /-! ### §6.3.1 Case I: $\frac1{16}\le x\le\frac14$, $\frac12\le y\le\frac34$ -/
 
 /-- **(6.13)** ([DIR], §6.3.1) (🚗). For $\beta\in\{\beta_0,\frac12\}$ and
@@ -55,7 +58,6 @@ theorem eqn_6_13 (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (x y : ℝ)
 end Case_LJQ_I
 
 section Case_LJQ_II
-
 /-! ### §6.3.2 Case II -/
 
 /-- The function ([DIR], Proposition 6.6)
@@ -63,31 +65,7 @@ $$G_{LJQ,\beta}(x,y)=y-x+(2^\beta-1)J(y)+L_\beta(x)-2Q_\beta(\tfrac{x+y}2).$$ -/
 noncomputable def G_LJQ (β x y : ℝ) : ℝ :=
   y - x + (2 ^ β - 1) * J y + L β x - 2 * Q β ((x + y) / 2)
 
-/-- **Proposition 6.6** ([DIR]). Let $\beta\in[\frac12,1]$, $x\in[0,\frac14]$ and
-$y\in[\frac12,1]$. If in addition $x\le\frac1{16}$ or $y\ge\frac34$ holds, then
-$$G_{LJQ,\beta}(x,y)=y-x+(2^\beta-1)J(y)+L_\beta(x)-2Q_\beta(\tfrac{x+y}2)\ge0.$$
-
-**Discrepancy with the paper.** The proposition as printed does not assume $x+y\le1$. This is
-the standing assumption of Case $LJQ$ (title of §6.3, needed for $b_\beta(\frac{x+y}2)=
-Q_\beta(\frac{x+y}2)$), and the proof only covers it: the reduction via Lemma 6.7 checks the
-boundary pieces $x=0$, $x=\frac1{16}$ and $x=1-y$ (claims (1)–(3)), which bound region II only
-under $x+y\le1$ (for $y\ge\frac34$ and $x+y>1$ the piece $x=\frac14$ would be needed). The Lean
-statement adds the hypothesis $x+y\le1$. (Numerically the printed statement without it also
-appears to hold: on a grid, $\min G_{LJQ,\beta}$ over the part with $x+y>1$ is
-$\approx0.0055$, $0.013$, $0.025$ for $\beta=\frac12,\frac34,1$.) -/
-theorem prop_6_6 (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1) (x y : ℝ)
-    (hx : x ∈ Icc (0 : ℝ) (1 / 4)) (hy : y ∈ Icc (1 / 2 : ℝ) 1) (hxy : x + y ≤ 1)
-    (h : x ≤ 1 / 16 ∨ y ≥ 3 / 4) : G_LJQ β x y ≥ 0 := by
-  sorry
-
-/-- **Lemma 6.7** ([DIR]). For every $\beta\in[\frac12,1]$ and $y\in[0,1]$ the function
-$x\mapsto G_{LJQ,\beta}(x,y)$ is strictly concave on $[0,\frac14]$. -/
-theorem lemma_6_7 (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1) (y : ℝ) (hy : y ∈ Icc (0 : ℝ) 1) :
-    StrictConcaveOn ℝ (Icc 0 (1 / 4)) (fun x ↦ G_LJQ β x y) := by
-  sorry
-
 section Proof_Lemma_6_7
-
 /-- [DIR], proof of Lemma 6.7: for $x\in(0,\frac14]$,
 $\partial_x^2G_{LJQ,\beta}(x,y)=L_\beta''(x)-\frac12Q_\beta''(\frac{x+y}2)$. -/
 theorem lemma_6_7_deriv2 (β x y : ℝ) (hx : x ∈ Ioc (0 : ℝ) (1 / 4)) :
@@ -132,8 +110,13 @@ theorem lemma_6_7_eval (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1) :
 
 end Proof_Lemma_6_7
 
-section Proof_Proposition_6_6
+/-- **Lemma 6.7** ([DIR]). For every $\beta\in[\frac12,1]$ and $y\in[0,1]$ the function
+$x\mapsto G_{LJQ,\beta}(x,y)$ is strictly concave on $[0,\frac14]$. -/
+theorem lemma_6_7 (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1) (y : ℝ) (hy : y ∈ Icc (0 : ℝ) 1) :
+    StrictConcaveOn ℝ (Icc 0 (1 / 4)) (fun x ↦ G_LJQ β x y) := by
+  sorry
 
+section Proof_Proposition_6_6
 /-- [DIR], §6.3.2: Lemma 6.7 reduces Proposition 6.6 to checking the claim on the $x$-boundary of
 the region II, i.e. to claims (1)–(3) (for fixed $\beta\in[\frac12,1]$). -/
 theorem prop_6_6_reduction (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1)
@@ -144,26 +127,7 @@ theorem prop_6_6_reduction (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1)
     (h : x ≤ 1 / 16 ∨ y ≥ 3 / 4) : G_LJQ β x y ≥ 0 := by
   sorry
 
-/-- [DIR], §6.3.2, claim (1): $G_{LJQ,\beta}(0,y)\ge0$ for all $y\in[\frac12,1]$ (and
-$\beta\in[\frac12,1]$). -/
-theorem caseLJQ_claim_1 (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1) (y : ℝ)
-    (hy : y ∈ Icc (1 / 2 : ℝ) 1) : G_LJQ β 0 y ≥ 0 := by
-  sorry
-
-/-- [DIR], §6.3.2, claim (2): $G_{LJQ,\beta}(\frac1{16},y)\ge0$ for all $y\in[\frac12,\frac34]$
-(and $\beta\in[\frac12,1]$). -/
-theorem caseLJQ_claim_2 (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1) (y : ℝ)
-    (hy : y ∈ Icc (1 / 2 : ℝ) (3 / 4)) : G_LJQ β (1 / 16) y ≥ 0 := by
-  sorry
-
-/-- [DIR], §6.3.2, claim (3): $G_{LJQ,\beta}(1-y,y)\ge0$ for all $y\in[\frac34,1]$ (and
-$\beta\in[\frac12,1]$). -/
-theorem caseLJQ_claim_3 (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1) (y : ℝ)
-    (hy : y ∈ Icc (3 / 4 : ℝ) 1) : G_LJQ β (1 - y) y ≥ 0 := by
-  sorry
-
 section Proof_Claim_1
-
 /-- The function $f_\beta(y)=G_{LJQ,\beta}(0,y)$ ([DIR], §6.3.2, proof of (1); denoted $f_\beta$
 in the paper). -/
 noncomputable def f_LJQ_1 (β y : ℝ) : ℝ := G_LJQ β 0 y
@@ -292,8 +256,13 @@ theorem f_LJQ_1_half_nonneg (y : ℝ) (hy : y ∈ Icc (1 / 2 : ℝ) 1) :
 
 end Proof_Claim_1
 
-section Proof_Claim_2
+/-- [DIR], §6.3.2, claim (1): $G_{LJQ,\beta}(0,y)\ge0$ for all $y\in[\frac12,1]$ (and
+$\beta\in[\frac12,1]$). -/
+theorem caseLJQ_claim_1 (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1) (y : ℝ)
+    (hy : y ∈ Icc (1 / 2 : ℝ) 1) : G_LJQ β 0 y ≥ 0 := by
+  sorry
 
+section Proof_Claim_2
 /-- **(6.17)** ([DIR], §6.3.2, proof of (2)) (🚗). For all $y\in[\frac12,\frac34]$ and all
 $\beta\in[\frac12,1]$: $$G_{LJQ,\beta}(\tfrac1{16},y)>10^{-5}.$$ -/
 theorem eqn_6_17 (y : ℝ) (hy : y ∈ Icc (1 / 2 : ℝ) (3 / 4)) (β : ℝ)
@@ -302,8 +271,13 @@ theorem eqn_6_17 (y : ℝ) (hy : y ∈ Icc (1 / 2 : ℝ) (3 / 4)) (β : ℝ)
 
 end Proof_Claim_2
 
-section Proof_Claim_3
+/-- [DIR], §6.3.2, claim (2): $G_{LJQ,\beta}(\frac1{16},y)\ge0$ for all $y\in[\frac12,\frac34]$
+(and $\beta\in[\frac12,1]$). -/
+theorem caseLJQ_claim_2 (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1) (y : ℝ)
+    (hy : y ∈ Icc (1 / 2 : ℝ) (3 / 4)) : G_LJQ β (1 / 16) y ≥ 0 := by
+  sorry
 
+section Proof_Claim_3
 /-- The function $f_\beta(y)=G_{LJQ,\beta}(1-y,y)$ ([DIR], §6.3.2, proof of (3); denoted
 $f_\beta$ in the paper). -/
 noncomputable def f_LJQ_3 (β y : ℝ) : ℝ := G_LJQ β (1 - y) y
@@ -343,7 +317,30 @@ theorem eqn_6_18 : f_LJQ_3 (1 / 2) (3 / 4) > 0.01 := by
 
 end Proof_Claim_3
 
+/-- [DIR], §6.3.2, claim (3): $G_{LJQ,\beta}(1-y,y)\ge0$ for all $y\in[\frac34,1]$ (and
+$\beta\in[\frac12,1]$). -/
+theorem caseLJQ_claim_3 (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1) (y : ℝ)
+    (hy : y ∈ Icc (3 / 4 : ℝ) 1) : G_LJQ β (1 - y) y ≥ 0 := by
+  sorry
+
 end Proof_Proposition_6_6
+
+/-- **Proposition 6.6** ([DIR]). Let $\beta\in[\frac12,1]$, $x\in[0,\frac14]$ and
+$y\in[\frac12,1]$. If in addition $x\le\frac1{16}$ or $y\ge\frac34$ holds, then
+$$G_{LJQ,\beta}(x,y)=y-x+(2^\beta-1)J(y)+L_\beta(x)-2Q_\beta(\tfrac{x+y}2)\ge0.$$
+
+**Discrepancy with the paper.** The proposition as printed does not assume $x+y\le1$. This is
+the standing assumption of Case $LJQ$ (title of §6.3, needed for $b_\beta(\frac{x+y}2)=
+Q_\beta(\frac{x+y}2)$), and the proof only covers it: the reduction via Lemma 6.7 checks the
+boundary pieces $x=0$, $x=\frac1{16}$ and $x=1-y$ (claims (1)–(3)), which bound region II only
+under $x+y\le1$ (for $y\ge\frac34$ and $x+y>1$ the piece $x=\frac14$ would be needed). The Lean
+statement adds the hypothesis $x+y\le1$. (Numerically the printed statement without it also
+appears to hold: on a grid, $\min G_{LJQ,\beta}$ over the part with $x+y>1$ is
+$\approx0.0055$, $0.013$, $0.025$ for $\beta=\frac12,\frac34,1$.) -/
+theorem prop_6_6 (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1) (x y : ℝ)
+    (hx : x ∈ Icc (0 : ℝ) (1 / 4)) (hy : y ∈ Icc (1 / 2 : ℝ) 1) (hxy : x + y ≤ 1)
+    (h : x ≤ 1 / 16 ∨ y ≥ 3 / 4) : G_LJQ β x y ≥ 0 := by
+  sorry
 
 end Case_LJQ_II
 

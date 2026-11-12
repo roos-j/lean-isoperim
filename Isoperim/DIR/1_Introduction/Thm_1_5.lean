@@ -5,7 +5,8 @@ Authors: Claude
 -/
 module
 
-public import Isoperim.DIR.«1_Introduction».Thm_1_1
+public import Isoperim.DIR.«1_Introduction».Definitions
+public import Isoperim.DIR.«2_Envelope_Functions».«2_2_Proofs_Theorems_1_1_1_5_1_7»
 
 /-!
 # [DIR] §1 Introduction: Theorem 1.5
@@ -19,10 +20,8 @@ This file covers §1.1 *Motivation, history and further results* (Definition 1.3
 Conjecture 1.4) and §1.2 *Results at the critical exponent* up to and including the discussion
 after Theorem 1.5.
 
-## Notation introduced here
 
-* `𝓑 β x` : the $\beta$-isoperimetric profile $\mathcal{B}_\beta(x)$ (Definition 1.3);
-* `𝒬` : the dyadic rationals in $[0,1]$.
+The definitions and notation used here are in `Definitions.lean` of this folder.
 -/
 
 @[expose] public section
@@ -31,48 +30,12 @@ namespace Auto.DIR
 
 open Real Finset
 
-/-! ### §1.1 Motivation, history and further results -/
-
-/-- **Definition 1.3** ([DIR]). The *$\beta$-isoperimetric profile* $\mathcal{B}_\beta$ for the
-Hamming cube is
-$$\mathcal{B}_\beta(x)=\inf_{n\ge1}\ \inf_{A\subset\{0,1\}^n,\,|A|=x}\mathbf{E}h_A^\beta.
-\tag{1.2}$$
-The double infimum is taken as a single infimum over all admissible pairs $(n, A)$. If no
-$A$ with $|A|=x$ exists (i.e. $x\notin\mathcal{Q}$, see `Auto.DIR.dyadic`), the value is the junk
-value $0$ (`Real.sInf_empty`); the paper only uses $\mathcal{B}_\beta$ on $\mathcal{Q}$. -/
-noncomputable def isoProfile (β x : ℝ) : ℝ :=
-  sInf {v : ℝ | ∃ n : ℕ, 1 ≤ n ∧ ∃ A : Set ({0,1}^n), ｜A｜ = x ∧ v = 𝐄 h_{A} ^ β}
-
-@[inherit_doc] notation "𝓑" => isoProfile
-
-/-- The dyadic rationals in $[0,1]$ ([DIR], §1.1):
-$\mathcal{Q}=\{k2^{-n} : n\ge0,\ 0\le k\le 2^n\}\subset[0,1]$. -/
-def dyadic : Set ℝ := {x | ∃ n k : ℕ, k ≤ 2 ^ n ∧ x = k / 2 ^ n}
-
-@[inherit_doc] notation "𝒬" => dyadic
-
-/-- [DIR], §1.1: the definition of $\mathcal{B}_\beta$ is restricted to $x\in\mathcal{Q}$,
-since otherwise there exists no $A$ with $|A|=x$; i.e. $|A|\in\mathcal{Q}$ for every
-$A\subset\{0,1\}^n$. -/
-theorem dens_mem_dyadic (n : ℕ) (A : Set ({0,1}^n)) : ｜A｜ ∈ 𝒬 := by
-  sorry
-
-/-- The sum $s(j)$ of the binary digits of $j$ ([DIR], (1.3)). -/
-def s (j : ℕ) : ℕ := (Nat.digits 2 j).sum
-
 /-- **(1.3)** ([DIR], §1.1, Hart [Hart76]). For $\beta=1$ the precise value is known for every
 $x=k2^{-n}\in\mathcal{Q}$:
 $$\mathcal{B}_1(x)=x\Big(n-\frac2k\sum_{j=1}^{k-1}s(j)\Big),$$
 where $s(j)$ is the sum of binary digits of $j$. (For the formula to make sense, $k\ge1$.) -/
 theorem eqn_1_3 (n k : ℕ) (hk : 1 ≤ k) (hkn : k ≤ 2 ^ n) :
     𝓑 1 (k / 2 ^ n) = k / 2 ^ n * (n - 2 / k * ∑ j ∈ Ico 1 k, (s j : ℝ)) := by
-  sorry
-
-/-- [DIR], §1.1: the example of a codimension $k$ subcube
-$A=\{x\in\{0,1\}^n : x_1=\dots=x_k=0\}$ shows that
-$\mathcal{B}_\beta(2^{-k})\le 2^{-k}k^\beta$. -/
-theorem isoProfile_two_pow_le (β : ℝ) (hβ : 0 < β) (k : ℕ) :
-    𝓑 β (2⁻¹ ^ k) ≤ 2⁻¹ ^ k * (k : ℝ) ^ β := by
   sorry
 
 /-! ### §1.2 Results at the critical exponent -/

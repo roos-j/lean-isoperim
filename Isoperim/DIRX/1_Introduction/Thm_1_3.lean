@@ -5,7 +5,8 @@ Authors: Claude
 -/
 module
 
-public import Isoperim.DIR.«1_Introduction».Thm_1_10
+public import Isoperim.DIR.«1_Introduction».Definitions
+public import Isoperim.DIRX.«4_Proof_Poincare_Inequality».«4_0_Proof_Poincare_Inequality»
 
 /-!
 # [DIRX] §1 Introduction: Theorem 1.3
@@ -24,11 +25,8 @@ The notation `‖f‖_[p]`, `∇f`, `IsHalfCube`, `poincareConst`, `poincareCons
 [DIR] (`Isoperim/DIR/1_Introduction/Thm_1_10.lean`). Boolean functions
 $f:\{0,1\}^n\to\{0,1\}$ are real functions with values in $\{0,1\}$.
 
-## Notation introduced here
 
-* `s_{f} x` : the sensitivity $s_f(x)$ of $f$ at $x$;
-* `probZ p z` : $\mathbf{P}(Z=z)$ for a random vector $Z$ in $\{0,1\}^n$ with i.i.d.
-  Bernoulli($p$) coordinates.
+The definitions and notation used here are in `Definitions.lean` of this folder.
 -/
 
 @[expose] public section
@@ -49,31 +47,6 @@ theorem thm_1_3 (n : ℕ) (hn : 1 ≤ n) :
       ‖∇f‖_[1] ≥ ‖f - fun _ ↦ 𝐄 f‖_[1]) ∧
     (∀ A : Set ({0,1}^n), IsHalfCube A →
       ‖∇𝟏_{A}‖_[1] = ‖𝟏_{A} - fun _ ↦ 𝐄 𝟏_{A}‖_[1]) := by
-  sorry
-
-open Classical in
-/-- The sensitivity $s_f(x)$ of $f$ at $x$ ([DIRX], §1, after (1.4) and §5): the number of
-single-bit flips of $x$ that change the value of $f(x)$, i.e. the number of indices $j$ with
-$f(x\oplus e_j)\ne f(x)$. Written `s_{f} x`. -/
-noncomputable def sensitivity {n : ℕ} (f : ({0,1}^n) → ℝ) (x : {0,1}^n) : ℝ :=
-  (Finset.univ.filter fun j ↦ f (x + e j) ≠ f x).card
-
-@[inherit_doc] notation "s_{" f "}" => sensitivity f
-
-/-- [DIRX], §1, after (1.4): for $f=\mathbf{1}_A$, $s_f(x)=h_A(x)+h_{A^c}(x)$. -/
-theorem sensitivity_indicator (n : ℕ) (A : Set ({0,1}^n)) (x : {0,1}^n) :
-    s_{𝟏_{A}} x = h_{A} x + h_{Aᶜ} x := by
-  sorry
-
-/-- [DIRX], §1, after (1.4): $h_A$ and $h_{A^c}$ have disjoint support. -/
-theorem hA_mul_hA_compl (n : ℕ) (A : Set ({0,1}^n)) (x : {0,1}^n) :
-    h_{A} x * h_{Aᶜ} x = 0 := by
-  sorry
-
-/-- [DIRX], §1, after (1.4): since $h_A$ and $h_{A^c}$ have disjoint support,
-$\sqrt{s_f}=\sqrt{h_A}+\sqrt{h_{A^c}}$ for $f=\mathbf{1}_A$. -/
-theorem sqrt_sensitivity_indicator (n : ℕ) (A : Set ({0,1}^n)) (x : {0,1}^n) :
-    √(s_{𝟏_{A}} x) = √(h_{A} x) + √(h_{Aᶜ} x) := by
   sorry
 
 /-! ### Acknowledgments -/

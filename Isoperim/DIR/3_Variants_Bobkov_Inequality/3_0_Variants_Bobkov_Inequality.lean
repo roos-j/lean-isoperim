@@ -5,7 +5,8 @@ Authors: Claude
 -/
 module
 
-public import Isoperim.DIR.«2_Envelope_Functions».«2_0_Envelope_Functions»
+public import Isoperim.DIR.«1_Introduction».Definitions
+public import Isoperim.DIR.«2_Envelope_Functions».Definitions
 
 /-!
 # [DIR] §3 Variants of Bobkov's inequality
@@ -89,7 +90,6 @@ theorem eqn_3_2_iff_G₁ (B : ℝ → ℝ) (x y : ℝ) (hxy : x ≤ y) (hBy : 0 
   sorry
 
 section Proof_Theorem_1_6
-
 /-- [DIR], §3, proof of Theorem 1.6 (cited from [BIM23, Lemma 2.2]): the function
 $L(x)=x\sqrt{\log_2(1/x)}$ satisfies (3.2) when $0\le x\le y\le\frac12$. -/
 theorem L_half_eqn_3_2 (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y) (hy : y ≤ 1 / 2) :
@@ -161,29 +161,32 @@ open Classical in
 $(0,1)$ by `Auto.DIR.existsUnique_w₀`; junk value $0$ if no such value existed). -/
 noncomputable def w₀ : ℝ := if h : ∃ w : ℝ, w ∈ Ioo 0 1 ∧ Jw w (1 / 2) = 1 / 2 then h.choose else 0
 
+/-- [DIR], §3: one computes $w_0\in[0.895,0.896]$. -/
+theorem w₀_mem : w₀ ∈ Icc (0.895 : ℝ) 0.896 := by
+  sorry
+
+/-- [DIR], §1.3: there is a unique smooth function on $(\frac12,1)$, continuous at the endpoints,
+satisfying $J''J=-2$, $J(\frac12)=\frac12$, $J(1)=0$ (uniqueness on $[\frac12,1]$). -/
+theorem existsUnique_J :
+    (∃ f, IsJ f) ∧ ∀ f g, IsJ f → IsJ g → EqOn f g (Icc (1 / 2) 1) := by
+  sorry
+
+/-- [DIR], §2.2: $J(x)$ and $L_\beta(1-x)$ are equal to $\frac12$ at $x=\frac12$. -/
+theorem J_half_eq_L_half (β : ℝ) : J (1 / 2) = 1 / 2 ∧ L β (1 - 1 / 2) = 1 / 2 := by
+  sorry
+
 /-- **(3.4)** ([DIR], §3). With $J$ the function of Theorem 1.7,
 $$J(x)=J_{w_0}(x)$$
 (for $x\in[\frac12,1]$), where $w_0$ is such that $J_{w_0}(\frac12)=\frac12$. -/
 theorem eqn_3_4 (x : ℝ) (hx : x ∈ Icc (1 / 2 : ℝ) 1) : J x = Jw w₀ x := by
   sorry
 
-/-- [DIR], §3: one computes $w_0\in[0.895,0.896]$. -/
-theorem w₀_mem : w₀ ∈ Icc (0.895 : ℝ) 0.896 := by
-  sorry
-
-/-- **Lemma 3.2** ([DIR]). If a non-negative function $I$ solves $I\cdot I''=-1$ (on an open
-interval $(a,b)$), then $I$ is concave and $(I')^2$ is convex (there). -/
-theorem lemma_3_2 (I : ℝ → ℝ) (a b : ℝ) (hI : ContDiffOn ℝ 2 I (Ioo a b))
-    (hI0 : ∀ x ∈ Ioo a b, 0 ≤ I x) (hII : ∀ x ∈ Ioo a b, I x * deriv (deriv I) x = -1) :
-    ConcaveOn ℝ (Ioo a b) I ∧ ConvexOn ℝ (Ioo a b) (fun x ↦ deriv I x ^ 2) := by
-  sorry
-
 section Proof_Lemma_3_2
 
 variable (I : ℝ → ℝ) (a b : ℝ) (hI : ContDiffOn ℝ 2 I (Ioo a b))
   (hI0 : ∀ x ∈ Ioo a b, 0 ≤ I x) (hII : ∀ x ∈ Ioo a b, I x * deriv (deriv I) x = -1)
-include hI hI0 hII
 
+include hI hI0 hII
 /-- [DIR], proof of Lemma 3.2: the first claim follows from $I''=-1/I\le0$. -/
 theorem lemma_3_2_deriv2 (x : ℝ) (hx : x ∈ Ioo a b) :
     deriv (deriv I) x = -1 / I x ∧ -1 / I x ≤ 0 := by
@@ -207,15 +210,11 @@ theorem lemma_3_2_sq_deriv2 (x : ℝ) (hx : x ∈ Ioo a b) :
 
 end Proof_Lemma_3_2
 
-/-- **Proposition 3.3** ([DIR]). Let $I$ be a non-negative function so that $I''\cdot I=-1$ and
-$I'\le0$ hold on an interval $\mathcal{I}=[a,b]$ (we assume $I$ continuous on $[a,b]$ and $C^2$ on
-$(a,b)$). Then for all $x,y\in\mathcal{I}$ with $x\le y$,
-$$\sqrt{\tfrac12(y-x)^2+I(y)^2}+I(x)\ge2I(\tfrac{x+y}2). \tag{3.5}$$ -/
-theorem prop_3_3 (I : ℝ → ℝ) (a b : ℝ) (hIc : ContinuousOn I (Icc a b))
-    (hI : ContDiffOn ℝ 2 I (Ioo a b)) (hI0 : ∀ x ∈ Icc a b, 0 ≤ I x)
-    (hII : ∀ x ∈ Ioo a b, deriv (deriv I) x * I x = -1) (hI' : ∀ x ∈ Ioo a b, deriv I x ≤ 0)
-    (x y : ℝ) (hx : x ∈ Icc a b) (hy : y ∈ Icc a b) (hxy : x ≤ y) :
-    √(1 / 2 * (y - x) ^ 2 + I y ^ 2) + I x ≥ 2 * I ((x + y) / 2) := by
+/-- **Lemma 3.2** ([DIR]). If a non-negative function $I$ solves $I\cdot I''=-1$ (on an open
+interval $(a,b)$), then $I$ is concave and $(I')^2$ is convex (there). -/
+theorem lemma_3_2 (I : ℝ → ℝ) (a b : ℝ) (hI : ContDiffOn ℝ 2 I (Ioo a b))
+    (hI0 : ∀ x ∈ Ioo a b, 0 ≤ I x) (hII : ∀ x ∈ Ioo a b, I x * deriv (deriv I) x = -1) :
+    ConcaveOn ℝ (Ioo a b) I ∧ ConvexOn ℝ (Ioo a b) (fun x ↦ deriv I x ^ 2) := by
   sorry
 
 section Proof_Proposition_3_3
@@ -223,8 +222,8 @@ section Proof_Proposition_3_3
 variable (I : ℝ → ℝ) (a b : ℝ) (hIc : ContinuousOn I (Icc a b))
   (hI : ContDiffOn ℝ 2 I (Ioo a b)) (hI0 : ∀ x ∈ Icc a b, 0 ≤ I x)
   (hII : ∀ x ∈ Ioo a b, deriv (deriv I) x * I x = -1) (hI' : ∀ x ∈ Ioo a b, deriv I x ≤ 0)
-include hIc hI hI0 hII hI'
 
+include hIc hI hI0 hII hI'
 /-- [DIR], proof of Proposition 3.3: with $c=\frac{x+y}2$, $u=\frac{y-x}2$, $c_*=\min(c-a,b-c)$,
 (3.5) amounts to $\sqrt{2u^2+I(c+u)^2}\ge2I(c)-I(c-u)$ for all $u\in[0,c_*]$. -/
 theorem prop_3_3_reduction (c : ℝ) (hc : c ∈ Icc a b) (u : ℝ) (hu : u ∈ Icc 0 (min (c -
@@ -306,11 +305,15 @@ theorem prop_3_3_Gc_nonneg (c : ℝ) (hc : c ∈ Ioo a b) :
 
 end Proof_Proposition_3_3
 
-/-- **Corollary 3.5** ([DIR]). Let $0<w\le1$. Then for all $1-\frac w2\le x\le y\le1$:
-$$\sqrt{(y-x)^2+J_w(y)^2}+J_w(x)\ge2J_w(\tfrac{x+y}2).$$ -/
-theorem cor_3_5 (w : ℝ) (hw : 0 < w) (hw1 : w ≤ 1) (x y : ℝ) (hx : 1 - w / 2 ≤ x)
-    (hxy : x ≤ y) (hy : y ≤ 1) :
-    √((y - x) ^ 2 + Jw w y ^ 2) + Jw w x ≥ 2 * Jw w ((x + y) / 2) := by
+/-- **Proposition 3.3** ([DIR]). Let $I$ be a non-negative function so that $I''\cdot I=-1$ and
+$I'\le0$ hold on an interval $\mathcal{I}=[a,b]$ (we assume $I$ continuous on $[a,b]$ and $C^2$ on
+$(a,b)$). Then for all $x,y\in\mathcal{I}$ with $x\le y$,
+$$\sqrt{\tfrac12(y-x)^2+I(y)^2}+I(x)\ge2I(\tfrac{x+y}2). \tag{3.5}$$ -/
+theorem prop_3_3 (I : ℝ → ℝ) (a b : ℝ) (hIc : ContinuousOn I (Icc a b))
+    (hI : ContDiffOn ℝ 2 I (Ioo a b)) (hI0 : ∀ x ∈ Icc a b, 0 ≤ I x)
+    (hII : ∀ x ∈ Ioo a b, deriv (deriv I) x * I x = -1) (hI' : ∀ x ∈ Ioo a b, deriv I x ≤ 0)
+    (x y : ℝ) (hx : x ∈ Icc a b) (hy : y ∈ Icc a b) (hxy : x ≤ y) :
+    √(1 / 2 * (y - x) ^ 2 + I y ^ 2) + I x ≥ 2 * I ((x + y) / 2) := by
   sorry
 
 /-- **Remark 3.6** ([DIR]). The range of $x,y$ is optimal: if $x<1-\frac w2$, the inequality fails,
@@ -323,6 +326,13 @@ theorem rem_3_6 (w : ℝ) (hw : 0 < w) (hw1 : w ≤ 1) :
     (∀ x ∈ Ioo (1 - w / 2) 1, deriv (Jw w) x < 0) ∧
     ∀ x ∈ Ico (1 - w) (1 - w / 2), ∃ y ∈ Ioc x 1,
       √((y - x) ^ 2 + Jw w y ^ 2) + Jw w x < 2 * Jw w ((x + y) / 2) := by
+  sorry
+
+/-- **Corollary 3.5** ([DIR]). Let $0<w\le1$. Then for all $1-\frac w2\le x\le y\le1$:
+$$\sqrt{(y-x)^2+J_w(y)^2}+J_w(x)\ge2J_w(\tfrac{x+y}2).$$ -/
+theorem cor_3_5 (w : ℝ) (hw : 0 < w) (hw1 : w ≤ 1) (x y : ℝ) (hx : 1 - w / 2 ≤ x)
+    (hxy : x ≤ y) (hy : y ≤ 1) :
+    √((y - x) ^ 2 + Jw w y ^ 2) + Jw w x ≥ 2 * Jw w ((x + y) / 2) := by
   sorry
 
 /-- The constant $x_0=1-\frac{w_0}2$ ([DIR], (3.6)). -/

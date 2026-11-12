@@ -5,7 +5,8 @@ Authors: Claude
 -/
 module
 
-public import Isoperim.DIR.«1_Introduction».Thm_1_1
+public import Isoperim.DIR.«1_Introduction».Definitions
+public import Isoperim.DIRX.«2_Preliminaries».«2_1_Reduction_Two_Point_Inequality»
 
 /-!
 # [DIRX] §1 Introduction: Theorem 1.1
@@ -21,11 +22,8 @@ following it (up to the subsection *Applications*).
 Notation for the Hamming cube is reused from [DIR] (`Isoperim/DIR/1_Introduction/Thm_1_1.lean`):
 `{0,1}^n`, `e i`, `h_{A}`, `𝐄 f`, `𝟏_{A}`, `|A|`, `log₂`, `IsSubcube`.
 
-## Notation introduced here
 
-* `∂A` : the vertex boundary $\partial A$ of $A$, i.e. the support of $h_A$. This is a
-  `local notation` (only active in this file): a global notation `∂ A` would clash with Mathlib's
-  scoped shadow notation `∂ 𝒜` (`open scoped FinsetFamily`) in every file importing this one.
+The definitions and notation used here are in `Definitions.lean` of this folder.
 -/
 
 @[expose] public section

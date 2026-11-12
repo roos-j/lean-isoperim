@@ -414,3 +414,10 @@ Remark 2.2: $J_{w_0}^{[DIR]}>\mathrm J$ on $(\frac12,1)$ (min difference $\to0$ 
 $\frac12^+$), $0.997J_{w_0}^{[DIR]}>\mathrm J$ exactly for $x>0.5687$ (so near $1$, as claimed);
 $w_0=0.895769$.
 
+
+## Restructuring of 2026-11-12
+
+- 2026-11-12T00:56+00:00 — Facts that the papers' proofs use but the scaffold does not state (e.g. positivity
+  and smoothness of $I$ and $J$, monotonicity of $G^1_\beta$ in $\beta$, $G_{1/2}[cB]\ge cG_{1/2}[B]$
+  for $0<c\le1$, the second claim of Lemma 6.4) are listed in `automation/forward_reasoning.md`,
+  §4. Unresolved; to be added in the proof phase.

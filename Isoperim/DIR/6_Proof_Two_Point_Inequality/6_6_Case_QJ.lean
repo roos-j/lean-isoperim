@@ -5,7 +5,11 @@ Authors: Claude
 -/
 module
 
+public import Isoperim.DIR.«1_Introduction».Definitions
+public import Isoperim.DIR.«2_Envelope_Functions».Definitions
 public import Isoperim.DIR.«3_Variants_Bobkov_Inequality».«3_0_Variants_Bobkov_Inequality»
+public import Isoperim.DIR.«5_Auxiliary_Estimates».«5_3_Properties_L_Q»
+public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_1_Case_J»
 
 /-!
 # [DIR] §6.6 Case $QJ$: $\frac14\le x\le\frac12\le y\le1$, $x+y\ge1$
@@ -58,26 +62,6 @@ theorem caseQJ_G₁_monotoneOn_beta (x y : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1
   sorry
 
 section Near_Diagonal
-
-/-! ### §6.6.1 Near diagonal: $3/8\le x\le1/2$, $1/2\le y\le5/8$, $x+y\ge1$ -/
-
-/-- **Proposition 6.11** ([DIR]). For $\frac38\le x\le\frac12\le y\le\frac58$ and
-$\beta\in[\beta_0,1]$,
-$$G^1_\beta[b_{\beta_0}](x,y)\ge0\quad\text{and}\quad
-G^1_{\frac12}[c_0\cdot b_{\frac12}](x,y)\ge0.$$
-
-**Discrepancy with the paper.** The proposition as printed does not assume $x+y\ge1$; it is the
-defining condition of triangle I (title of §6.6.1 and of Case $QJ$). For $x+y<1$ one has
-$b_\beta(\frac{x+y}2)=Q_\beta(\frac{x+y}2)$ instead of $J(\frac{x+y}2)$, and the proof (which
-works with $g_{QJ,\beta,c}$, i.e. with $J(\frac{x+y}2)$) does not cover this part. The Lean
-statement adds the hypothesis $x+y\ge1$. (Numerically the printed version also appears to hold
-on the part $x+y<1$ of $[\frac38,\frac12]\times[\frac12,\frac58]$, with very small margins near
-$(\frac12,\frac12)$, e.g. $\approx1.4\cdot10^{-7}$ at $(0.497,0.5)$; this is not claimed.) -/
-theorem prop_6_11 (x y : ℝ) (hx : x ∈ Icc (3 / 8 : ℝ) (1 / 2))
-    (hy : y ∈ Icc (1 / 2 : ℝ) (5 / 8)) (hxy : 1 ≤ x + y) (β : ℝ) (hβ : β ∈ Icc β₀ 1) :
-    G₁ β (b β₀) x y ≥ 0 ∧ G₁ (1 / 2) (c₀ • b (1 / 2)) x y ≥ 0 := by
-  sorry
-
 /-- [DIR], §6.6.1: by monotonicity in $\beta$, it suffices to consider $\beta=\beta_0$ to show the
 first part of the claim: $G^1_\beta[b_{\beta_0}](x,y)\ge G^1_{\beta_0}[b_{\beta_0}](x,y)$ for
 $\beta\in[\beta_0,1]$. -/
@@ -120,13 +104,6 @@ theorem G₁_nonneg_iff_g_QJ_nonneg (x y : ℝ) (hx : x ∈ Icc (3 / 8 : ℝ) (1
     G₁ β (c • b β) x y ≥ 0 ↔ g_QJ β c x y ≥ 0 := by
   sorry
 
-/-- [DIR], §6.6.1: we claim that $\partial_xg_{QJ,\beta,c}(x,y)\le0$ for each $y$ (on triangle I,
-for $(\beta,c)\in\{(\beta_0,1),(\frac12,c_0)\}$). -/
-theorem g_QJ_deriv_x_nonpos (β c : ℝ) (hβc : (β, c) = (β₀, 1) ∨ (β, c) = (1 / 2, c₀))
-    (x y : ℝ) (hx : x ∈ Icc (3 / 8 : ℝ) (1 / 2)) (hy : y ∈ Icc (1 / 2 : ℝ) (5 / 8))
-    (hxy : 1 ≤ x + y) : deriv (fun x ↦ g_QJ β c x y) x ≤ 0 := by
-  sorry
-
 /-- [DIR], §6.6.1: it suffices to show that this is positive: if
 $-\beta\partial_xg_{QJ,\beta,c}(x,y)>0$ then $\partial_xg_{QJ,\beta,c}(x,y)\le0$ (for
 $\beta>0$). -/
@@ -154,6 +131,13 @@ theorem eqn_6_26 (β c : ℝ)
     -β * deriv (fun x ↦ g_QJ β c x y) x > 10 ^ (-5 : ℤ) := by
   sorry
 
+/-- [DIR], §6.6.1: we claim that $\partial_xg_{QJ,\beta,c}(x,y)\le0$ for each $y$ (on triangle I,
+for $(\beta,c)\in\{(\beta_0,1),(\frac12,c_0)\}$). -/
+theorem g_QJ_deriv_x_nonpos (β c : ℝ) (hβc : (β, c) = (β₀, 1) ∨ (β, c) = (1 / 2, c₀))
+    (x y : ℝ) (hx : x ∈ Icc (3 / 8 : ℝ) (1 / 2)) (hy : y ∈ Icc (1 / 2 : ℝ) (5 / 8))
+    (hxy : 1 ≤ x + y) : deriv (fun x ↦ g_QJ β c x y) x ≤ 0 := by
+  sorry
+
 /-- [DIR], §6.6.1: thus it only remains to check that $g_{QJ,\beta,c}(\frac12,y)\ge0$ for all
 $y\in[\frac12,\frac58]$ and $(\beta,c)\in\{(\beta_0,1),(\frac12,c_0)\}$: this implies
 $g_{QJ,\beta,c}\ge0$ on triangle I. -/
@@ -177,10 +161,28 @@ theorem G₁_J_half_nonneg (β c : ℝ) (hβc : (β, c) = (β₀, 1) ∨ (β, c)
     (hy : y ∈ Icc (1 / 2 : ℝ) (5 / 8)) : G₁ β (c • J) (1 / 2) y ≥ 0 := by
   sorry
 
+/-! ### §6.6.1 Near diagonal: $3/8\le x\le1/2$, $1/2\le y\le5/8$, $x+y\ge1$ -/
+
+/-- **Proposition 6.11** ([DIR]). For $\frac38\le x\le\frac12\le y\le\frac58$ and
+$\beta\in[\beta_0,1]$,
+$$G^1_\beta[b_{\beta_0}](x,y)\ge0\quad\text{and}\quad
+G^1_{\frac12}[c_0\cdot b_{\frac12}](x,y)\ge0.$$
+
+**Discrepancy with the paper.** The proposition as printed does not assume $x+y\ge1$; it is the
+defining condition of triangle I (title of §6.6.1 and of Case $QJ$). For $x+y<1$ one has
+$b_\beta(\frac{x+y}2)=Q_\beta(\frac{x+y}2)$ instead of $J(\frac{x+y}2)$, and the proof (which
+works with $g_{QJ,\beta,c}$, i.e. with $J(\frac{x+y}2)$) does not cover this part. The Lean
+statement adds the hypothesis $x+y\ge1$. (Numerically the printed version also appears to hold
+on the part $x+y<1$ of $[\frac38,\frac12]\times[\frac12,\frac58]$, with very small margins near
+$(\frac12,\frac12)$, e.g. $\approx1.4\cdot10^{-7}$ at $(0.497,0.5)$; this is not claimed.) -/
+theorem prop_6_11 (x y : ℝ) (hx : x ∈ Icc (3 / 8 : ℝ) (1 / 2))
+    (hy : y ∈ Icc (1 / 2 : ℝ) (5 / 8)) (hxy : 1 ≤ x + y) (β : ℝ) (hβ : β ∈ Icc β₀ 1) :
+    G₁ β (b β₀) x y ≥ 0 ∧ G₁ (1 / 2) (c₀ • b (1 / 2)) x y ≥ 0 := by
+  sorry
+
 end Near_Diagonal
 
 section Far_From_Diagonal
-
 /-! ### §6.6.2 Far from diagonal: $1/4\le x\le1/2$, $5/8\le y\le1$, $x+y\ge1$ -/
 
 /-- The function ([DIR], (6.27))

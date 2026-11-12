@@ -5,8 +5,10 @@ Authors: Claude
 -/
 module
 
-public import Isoperim.DIR.«1_Introduction».Thm_1_10
+public import Isoperim.DIR.«1_Introduction».Definitions
+public import Isoperim.DIR.«2_Envelope_Functions».Definitions
 public import Isoperim.DIR.«3_Variants_Bobkov_Inequality».«3_0_Variants_Bobkov_Inequality»
+public import Isoperim.DIR.«5_Auxiliary_Estimates».«5_4_Lower_Bounds_Gaussian_Isoperimetric_Profile»
 
 /-!
 # [DIR] §7 Proof of the Poincaré inequality
@@ -74,14 +76,7 @@ $G_{P,\beta}(x)=2^{-2\beta}(b_\beta(x)+b_\beta(1-x))-x^{2\beta}(1-x)-x(1-x)^{2\b
 noncomputable def G_P (β x : ℝ) : ℝ :=
   2 ^ (-(2 * β)) * (b β x + b β (1 - x)) - x ^ (2 * β) * (1 - x) - x * (1 - x) ^ (2 * β)
 
-/-- **Proposition 7.1** ([DIR]). For all $x\in[0,1]$, $\beta\in[\frac12,\beta_0]$:
-$$G_{P,\beta}(x)=2^{-2\beta}(b_\beta(x)+b_\beta(1-x))-x^{2\beta}(1-x)-x(1-x)^{2\beta}\ge0.$$ -/
-theorem prop_7_1 (x : ℝ) (hx : x ∈ Icc (0 : ℝ) 1) (β : ℝ) (hβ : β ∈ Icc (1 / 2) β₀) :
-    G_P β x ≥ 0 := by
-  sorry
-
 section Proof_Proposition_7_1
-
 /-- [DIR], proof of Proposition 7.1: since $G_{P,\beta}(x)=G_{P,\beta}(1-x)$ it suffices to show
 this for $x\in[0,\frac12]$. Notice that $G_{P,\beta}$ vanishes at $x=0,\frac12,1$. -/
 theorem G_P_symm (β : ℝ) (hβ : β ∈ Icc (1 / 2) β₀) :
@@ -89,7 +84,6 @@ theorem G_P_symm (β : ℝ) (hβ : β ∈ Icc (1 / 2) β₀) :
   sorry
 
 section Case_I
-
 /-! ### Case I: $x\in[0,\frac1{64}]$ -/
 
 /-- [DIR], proof of Proposition 7.1, Case I: for $x\in[0,\frac1{64}]$ we need to show
@@ -131,7 +125,6 @@ theorem prop_7_1_case_I (β : ℝ) (hβ : β ∈ Icc (1 / 2) β₀) (x : ℝ)
 end Case_I
 
 section Case_II
-
 /-! ### Case II: $x\in[\frac1{64},\frac14]$ -/
 
 /-- **(7.3)** (🚗) ([DIR], proof of Proposition 7.1, Case II). Running
@@ -145,7 +138,6 @@ theorem eqn_7_3 (β : ℝ) (hβ : β ∈ Icc (1 / 2) β₀) (x : ℝ) (hx : x �
 end Case_II
 
 section Case_III
-
 /-! ### Case III: $x\in[\frac14,\frac12]$ -/
 
 /-- [DIR], proof of Proposition 7.1, Case III: for $x\in[\frac14,\frac12]$ we need to show
@@ -174,5 +166,11 @@ theorem eqn_7_4 (β : ℝ) (hβ : β ∈ Icc (1 / 2) β₀) (x : ℝ) (hx : x �
 end Case_III
 
 end Proof_Proposition_7_1
+
+/-- **Proposition 7.1** ([DIR]). For all $x\in[0,1]$, $\beta\in[\frac12,\beta_0]$:
+$$G_{P,\beta}(x)=2^{-2\beta}(b_\beta(x)+b_\beta(1-x))-x^{2\beta}(1-x)-x(1-x)^{2\beta}\ge0.$$ -/
+theorem prop_7_1 (x : ℝ) (hx : x ∈ Icc (0 : ℝ) 1) (β : ℝ) (hβ : β ∈ Icc (1 / 2) β₀) :
+    G_P β x ≥ 0 := by
+  sorry
 
 end Auto.DIR

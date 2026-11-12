@@ -5,7 +5,10 @@ Authors: Claude
 -/
 module
 
+public import Isoperim.DIR.«2_Envelope_Functions».Definitions
 public import Isoperim.DIRX.«2_Preliminaries».«2_2_Properties_J»
+public import Isoperim.DIRX.«2_Preliminaries».«2_3_Properties_L_Q»
+public import Isoperim.DIRX.«2_Preliminaries».Definitions
 
 /-!
 # [DIRX] §3.4 Case LJ
@@ -35,20 +38,17 @@ open Auto.DIR
 
 open Real Set
 
-local notation "G₂" => G₂X
-local notation "G" => GX
+local notation "G₂" => Auto.DIR.G₂ (1 / 2)
+
+local notation "G" => Auto.DIR.G (1 / 2)
+
 local notation "B_{" w "}" => BX w
-local notation "L" => LX
+
+local notation "L" => Auto.DIR.L (1 / 2)
+
 local notation "J" => JX
+
 local notation "γ" => γX
-
-/-! ### §3.4 Case LJ: $0\le x\le\frac14$, $\frac12\le y\le1$, $1\le x+y$ -/
-
-/-- [DIRX], §3.4 (Case $LJ$): $G[B_{w_1}](x,y)\ge0$ for $0\le x\le\frac14$, $\frac12\le y\le1$,
-$1\le x+y$. -/
-theorem caseLJ (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 4)) (hy : y ∈ Icc (1 / 2 : ℝ) 1)
-    (hxy : 1 ≤ x + y) : G (B_{w₁}) x y ≥ 0 := by
-  sorry
 
 /-- $h_{LJ}(u,c)=2u+(\sqrt2-1)\mathrm{J}(c+u)+L(c-u)-2\mathrm{J}(c)$ ([DIRX], §3.4). -/
 noncomputable def h_LJ (u c : ℝ) : ℝ := 2 * u + (√2 - 1) * J (c + u) + L (c - u) - 2 * J c
@@ -57,11 +57,6 @@ noncomputable def h_LJ (u c : ℝ) : ℝ := 2 * u + (√2 - 1) * J (c + u) + L (
 $c=(x+y)/2$, $G_2[B_{w_1}](x,y)=h_{LJ}(u,c)$. -/
 theorem G₂_BX_eq_h_LJ (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 4)) (hy : y ∈ Icc (1 / 2 : ℝ) 1)
     (hxy : 1 ≤ x + y) : G₂ (B_{w₁}) x y = h_LJ ((y - x) / 2) ((x + y) / 2) := by
-  sorry
-
-/-- [DIRX], §3.4: $h_{LJ}(u,c)\ge0$ for all $c\in[\frac12,\frac58]$ and $u\in[c-\frac14,1-c]$. -/
-theorem h_LJ_nonneg (u c : ℝ) (hc : c ∈ Icc (1 / 2 : ℝ) (5 / 8))
-    (hu : u ∈ Icc (c - 1 / 4) (1 - c)) : h_LJ u c ≥ 0 := by
   sorry
 
 /-- [DIRX], §3.4: using $\mathrm{J}\cdot\mathrm{J}''=-\gamma$,
@@ -81,7 +76,6 @@ theorem h_LJ_concave (c : ℝ) (hc : c ∈ Icc (1 / 2 : ℝ) (5 / 8)) :
   sorry
 
 section Case_I
-
 /-! ### Case I: $u=c-\frac14$ -/
 
 /-- $h_{LJ,1}(c)=h_{LJ}(c-\frac14,c)$ ([DIRX], §3.4, Case I). -/
@@ -95,7 +89,6 @@ theorem eqn_3_8 (c : ℝ) (hc : c ∈ Icc (1 / 2 : ℝ) (5 / 8)) : h_LJ₁ c > 0
 end Case_I
 
 section Case_II
-
 /-! ### Case II: $u=1-c$ -/
 
 /-- $g(c)=2(1-c)+L(2c-1)-2\mathrm{J}(c)$ ([DIRX], §3.4, Case II); this is $h_{LJ}(1-c,c)$.
@@ -106,10 +99,6 @@ local notation "g" => gX
 
 /-- [DIRX], §3.4, Case II: $h_{LJ}(1-c,c)=g(c)$. -/
 theorem h_LJ_eq_gX (c : ℝ) : h_LJ (1 - c) c = g c := by
-  sorry
-
-/-- [DIRX], §3.4, Case II: $g(c)\ge0$ for all $c\in[\frac12,\frac58]$. -/
-theorem gX_nonneg (c : ℝ) (hc : c ∈ Icc (1 / 2 : ℝ) (5 / 8)) : g c ≥ 0 := by
   sorry
 
 /-- [DIRX], §3.4, Case II: $g(\frac12)=0$. -/
@@ -153,6 +142,23 @@ is increasing on $[\frac12,\frac58]$. -/
 theorem gX_deriv_ge (c : ℝ) (hc : c ∈ Ioc (1 / 2 : ℝ) (5 / 8)) : deriv g c ≥ 0.17 := by
   sorry
 
+/-- [DIRX], §3.4, Case II: $g(c)\ge0$ for all $c\in[\frac12,\frac58]$. -/
+theorem gX_nonneg (c : ℝ) (hc : c ∈ Icc (1 / 2 : ℝ) (5 / 8)) : g c ≥ 0 := by
+  sorry
+
 end Case_II
+
+/-- [DIRX], §3.4: $h_{LJ}(u,c)\ge0$ for all $c\in[\frac12,\frac58]$ and $u\in[c-\frac14,1-c]$. -/
+theorem h_LJ_nonneg (u c : ℝ) (hc : c ∈ Icc (1 / 2 : ℝ) (5 / 8))
+    (hu : u ∈ Icc (c - 1 / 4) (1 - c)) : h_LJ u c ≥ 0 := by
+  sorry
+
+/-! ### §3.4 Case LJ: $0\le x\le\frac14$, $\frac12\le y\le1$, $1\le x+y$ -/
+
+/-- [DIRX], §3.4 (Case $LJ$): $G[B_{w_1}](x,y)\ge0$ for $0\le x\le\frac14$, $\frac12\le y\le1$,
+$1\le x+y$. -/
+theorem caseLJ (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 4)) (hy : y ∈ Icc (1 / 2 : ℝ) 1)
+    (hxy : 1 ≤ x + y) : G (B_{w₁}) x y ≥ 0 := by
+  sorry
 
 end Auto.DIRX

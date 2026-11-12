@@ -5,7 +5,7 @@ Authors: Claude
 -/
 module
 
-public import Isoperim.DIR.«2_Envelope_Functions».«2_0_Envelope_Functions»
+public import Isoperim.DIR.«2_Envelope_Functions».Definitions
 
 /-!
 # [DIR] §5.2 Two-point inequalities
@@ -32,6 +32,22 @@ $u,v$ for all $a\le x\le y\le b$. -/
 def IsMonotoneTwoPoint (𝓛 : ℝ → ℝ → ℝ → ℝ → ℝ) (a b : ℝ) : Prop :=
   ∀ x y, a ≤ x → x ≤ y → y ≤ b → ∀ u u' v v', u ≤ u' → v ≤ v' → 𝓛 x y u v ≤ 𝓛 x y u' v'
 
+section Proof_Lemma_5_2
+/-- [DIR], proof of Lemma 5.2: fix $a\le x\le y\le b$. If
+$B_1(\frac{x+y}2)\ge B_2(\frac{x+y}2)$, then
+$$\mathcal{L}(x,y,B(x),B(y))\ge\mathcal{L}(x,y,B_1(x),B_1(y))\ge B_1(\tfrac{x+y}2)
+=B(\tfrac{x+y}2)$$
+(with $B=\max(B_1,B_2)$), and the case $B_1(\frac{x+y}2)<B_2(\frac{x+y}2)$ is analogous. -/
+theorem lemma_5_2_chain (𝓛 : ℝ → ℝ → ℝ → ℝ → ℝ) (a b : ℝ) (h𝓛 : IsMonotoneTwoPoint 𝓛 a b)
+    (B₁ B₂ : ℝ → ℝ) (x y : ℝ) (hx : a ≤ x) (hxy : x ≤ y) (hy : y ≤ b)
+    (h₁ : 𝓛 x y (B₁ x) (B₁ y) ≥ B₁ ((x + y) / 2)) (hB : B₁ ((x + y) / 2) ≥ B₂ ((x + y) / 2)) :
+    𝓛 x y (max (B₁ x) (B₂ x)) (max (B₁ y) (B₂ y)) ≥ 𝓛 x y (B₁ x) (B₁ y) ∧
+      𝓛 x y (B₁ x) (B₁ y) ≥ B₁ ((x + y) / 2) ∧
+      B₁ ((x + y) / 2) = max (B₁ ((x + y) / 2)) (B₂ ((x + y) / 2)) := by
+  sorry
+
+end Proof_Lemma_5_2
+
 /-- **Lemma 5.2** ([DIR]). Assume for $a\le x\le y\le b$ that
 1. (5.1) holds for $B_1$ when $B_1(\frac{x+y}2)\ge B_2(\frac{x+y}2)$;
 2. (5.1) holds for $B_2$ when $B_1(\frac{x+y}2)<B_2(\frac{x+y}2)$.
@@ -49,50 +65,12 @@ theorem lemma_5_2 (𝓛 : ℝ → ℝ → ℝ → ℝ → ℝ) (a b : ℝ) (h�
         max (B₁ ((x + y) / 2)) (B₂ ((x + y) / 2)) := by
   sorry
 
-section Proof_Lemma_5_2
-
-/-- [DIR], proof of Lemma 5.2: fix $a\le x\le y\le b$. If
-$B_1(\frac{x+y}2)\ge B_2(\frac{x+y}2)$, then
-$$\mathcal{L}(x,y,B(x),B(y))\ge\mathcal{L}(x,y,B_1(x),B_1(y))\ge B_1(\tfrac{x+y}2)
-=B(\tfrac{x+y}2)$$
-(with $B=\max(B_1,B_2)$), and the case $B_1(\frac{x+y}2)<B_2(\frac{x+y}2)$ is analogous. -/
-theorem lemma_5_2_chain (𝓛 : ℝ → ℝ → ℝ → ℝ → ℝ) (a b : ℝ) (h𝓛 : IsMonotoneTwoPoint 𝓛 a b)
-    (B₁ B₂ : ℝ → ℝ) (x y : ℝ) (hx : a ≤ x) (hxy : x ≤ y) (hy : y ≤ b)
-    (h₁ : 𝓛 x y (B₁ x) (B₁ y) ≥ B₁ ((x + y) / 2)) (hB : B₁ ((x + y) / 2) ≥ B₂ ((x + y) / 2)) :
-    𝓛 x y (max (B₁ x) (B₂ x)) (max (B₁ y) (B₂ y)) ≥ 𝓛 x y (B₁ x) (B₁ y) ∧
-      𝓛 x y (B₁ x) (B₁ y) ≥ B₁ ((x + y) / 2) ∧
-      B₁ ((x + y) / 2) = max (B₁ ((x + y) / 2)) (B₂ ((x + y) / 2)) := by
-  sorry
-
-end Proof_Lemma_5_2
-
 /-- [DIR], §5.2: on the diagonal we have $G^1_\beta[B](x,x)=0$ (for $B(x)\ge0$, $\beta>0$). -/
 theorem G₁_diag (β : ℝ) (hβ : 0 < β) (B : ℝ → ℝ) (x : ℝ) (hB : 0 ≤ B x) :
     G₁ β B x x = 0 := by
   sorry
 
-/-- **Lemma 5.4** (Near diagonal lower bound, [DIR]). Let $B$ be a nonnegative function defined on
-an interval $\mathcal{I}$. Let $\beta\in(0,1)$. For $h\ge0$, and $x,x+h\in\mathcal{I}$,
-$$G^1_\beta[B](x,x+h)=\beta B(x+h)^{1-\frac1\beta}h^{\frac1\beta}+[B(x)+B(x+h)-2B(x+\tfrac12h)]
--E_1,$$
-where $E_1$ satisfies
-$$0\le E_1\le\tfrac12\beta(1-\beta)B(x+h)^{1-\frac2\beta}h^{\frac2\beta}=O(h^{\frac2\beta}).$$
-
-**Discrepancy with the paper.** The lemma only assumes $B\ge0$, but the right-hand sides contain
-the negative powers $B(x+h)^{1-\frac1\beta}$, $B(x+h)^{1-\frac2\beta}$ (and the proof divides by
-$B(x+h)$), so $B(x+h)>0$ is implicitly required; for $B(x+h)=0<h$ the identity is meaningless
-(with Lean's convention $0^{r}=0$ for $r\ne0$ the bound forces $E_1=0$ and the identity
-would force $h=0$). The Lean statement adds the hypothesis $B(x+h)>0$. -/
-theorem lemma_5_4 (𝓘 : Set ℝ) (h𝓘 : 𝓘.OrdConnected) (B : ℝ → ℝ) (hB : ∀ t ∈ 𝓘, 0 ≤ B t)
-    (β : ℝ) (hβ : β ∈ Ioo (0 : ℝ) 1) (x h : ℝ) (hh : 0 ≤ h) (hx : x ∈ 𝓘) (hxh : x + h ∈ 𝓘)
-    (hBpos : 0 < B (x + h)) :
-    ∃ E₁ : ℝ, G₁ β B x (x + h) =
-        β * B (x + h) ^ (1 - 1 / β) * h ^ (1 / β) + (B x + B (x + h) - 2 * B (x + 1 / 2 * h)) - E₁ ∧
-      0 ≤ E₁ ∧ E₁ ≤ 1 / 2 * β * (1 - β) * B (x + h) ^ (1 - 2 / β) * h ^ (2 / β) := by
-  sorry
-
 section Proof_Lemma_5_4
-
 /-- [DIR], proof of Lemma 5.4: it follows from Taylor's theorem that for $a\ge0$,
 $(1+a)^\beta=1+\beta a-\frac12\beta(1-\beta)\tilde a^2$ for some $\tilde a\in[0,a]$.
 
@@ -130,5 +108,25 @@ theorem lemma_5_4_expansion (β : ℝ) (hβ : β ∈ Ioo (0 : ℝ) 1) (Bxh h : �
   sorry
 
 end Proof_Lemma_5_4
+
+/-- **Lemma 5.4** (Near diagonal lower bound, [DIR]). Let $B$ be a nonnegative function defined on
+an interval $\mathcal{I}$. Let $\beta\in(0,1)$. For $h\ge0$, and $x,x+h\in\mathcal{I}$,
+$$G^1_\beta[B](x,x+h)=\beta B(x+h)^{1-\frac1\beta}h^{\frac1\beta}+[B(x)+B(x+h)-2B(x+\tfrac12h)]
+-E_1,$$
+where $E_1$ satisfies
+$$0\le E_1\le\tfrac12\beta(1-\beta)B(x+h)^{1-\frac2\beta}h^{\frac2\beta}=O(h^{\frac2\beta}).$$
+
+**Discrepancy with the paper.** The lemma only assumes $B\ge0$, but the right-hand sides contain
+the negative powers $B(x+h)^{1-\frac1\beta}$, $B(x+h)^{1-\frac2\beta}$ (and the proof divides by
+$B(x+h)$), so $B(x+h)>0$ is implicitly required; for $B(x+h)=0<h$ the identity is meaningless
+(with Lean's convention $0^{r}=0$ for $r\ne0$ the bound forces $E_1=0$ and the identity
+would force $h=0$). The Lean statement adds the hypothesis $B(x+h)>0$. -/
+theorem lemma_5_4 (𝓘 : Set ℝ) (h𝓘 : 𝓘.OrdConnected) (B : ℝ → ℝ) (hB : ∀ t ∈ 𝓘, 0 ≤ B t)
+    (β : ℝ) (hβ : β ∈ Ioo (0 : ℝ) 1) (x h : ℝ) (hh : 0 ≤ h) (hx : x ∈ 𝓘) (hxh : x + h ∈ 𝓘)
+    (hBpos : 0 < B (x + h)) :
+    ∃ E₁ : ℝ, G₁ β B x (x + h) =
+        β * B (x + h) ^ (1 - 1 / β) * h ^ (1 / β) + (B x + B (x + h) - 2 * B (x + 1 / 2 * h)) - E₁ ∧
+      0 ≤ E₁ ∧ E₁ ≤ 1 / 2 * β * (1 - β) * B (x + h) ^ (1 - 2 / β) * h ^ (2 / β) := by
+  sorry
 
 end Auto.DIR

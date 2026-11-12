@@ -5,6 +5,8 @@ Authors: Claude
 -/
 module
 
+public import Isoperim.DIR.«1_Introduction».Definitions
+public import Isoperim.DIR.«2_Envelope_Functions».Definitions
 public import Isoperim.DIR.«3_Variants_Bobkov_Inequality».«3_0_Variants_Bobkov_Inequality»
 
 /-!
@@ -38,17 +40,7 @@ namespace Auto.DIR
 
 open Real Set Filter Topology MeasureTheory
 
-/-- **Proposition 5.11** ([DIR]). For all $0<x\le\frac15$:
-$$I(x)\ge\sqrt2\cdot x\sqrt{\log(1/x)}\Big(1-\frac12\frac{\log\log(1/x)}{\log(1/x)}
--\frac{\log(2\pi^{1/2})}{\log(1/x)}\Big).$$ -/
-theorem prop_5_11 (x : ℝ) (hx : x ∈ Ioc (0 : ℝ) (1 / 5)) :
-    I x ≥ √2 * x * √(log (1 / x)) *
-      (1 - 1 / 2 * (log (log (1 / x)) / log (1 / x)) - log (2 *
-          π ^ (1 / 2 : ℝ)) / log (1 / x)) := by
-  sorry
-
 section Proof_Proposition_5_11
-
 /-- [DIR], proof of Proposition 5.11: let $t<0$. Integration by parts shows
 $\int_{-\infty}^te^{-s^2/2}\,ds=-t^{-1}e^{-t^2/2}-\int_{-\infty}^ts^{-2}e^{-s^2/2}\,ds$. -/
 theorem prop_5_11_ibp (t : ℝ) (ht : t < 0) :
@@ -127,10 +119,13 @@ theorem prop_5_11_final (ε : ℝ) (hε₀ : 0 ≤ ε) (hε : ε ≤ 1) : √(1 
 
 end Proof_Proposition_5_11
 
-/-- **Corollary 5.12** ([DIR]). For $0<x\le\frac1{64}$,
-$$J(1-x)\ge x\sqrt{\log(w_0/x)},$$
-where we recall that $w_0\in(0,1)$ is the unique value such that $J_{w_0}(\frac12)=\frac12$. -/
-theorem cor_5_12 (x : ℝ) (hx : x ∈ Ioc (0 : ℝ) (1 / 64)) : J (1 - x) ≥ x * √(log (w₀ / x)) := by
+/-- **Proposition 5.11** ([DIR]). For all $0<x\le\frac15$:
+$$I(x)\ge\sqrt2\cdot x\sqrt{\log(1/x)}\Big(1-\frac12\frac{\log\log(1/x)}{\log(1/x)}
+-\frac{\log(2\pi^{1/2})}{\log(1/x)}\Big).$$ -/
+theorem prop_5_11 (x : ℝ) (hx : x ∈ Ioc (0 : ℝ) (1 / 5)) :
+    I x ≥ √2 * x * √(log (1 / x)) *
+      (1 - 1 / 2 * (log (log (1 / x)) / log (1 / x)) - log (2 *
+          π ^ (1 / 2 : ℝ)) / log (1 / x)) := by
   sorry
 
 /-- [DIR], §5.4, after Corollary 5.12: from (3.4), $J(1-x)=\sqrt2w_0I(xw_0^{-1})$ (for
@@ -160,13 +155,13 @@ theorem two_one_sub_εJ :
         εJ x) > 1 := by
   sorry
 
-/-- **Lemma 5.13** ([DIR]). For all $x\in(\frac12,1-10^{-10^{380}})$, $J(x)>L_{\beta_0}(1-x)$. -/
-theorem lemma_5_13 (x : ℝ) (hx : x ∈ Ioo (1 / 2) (1 - (10 : ℝ) ^ (-(10 : ℝ) ^ 380))) :
-    J x > L β₀ (1 - x) := by
+/-- **Corollary 5.12** ([DIR]). For $0<x\le\frac1{64}$,
+$$J(1-x)\ge x\sqrt{\log(w_0/x)},$$
+where we recall that $w_0\in(0,1)$ is the unique value such that $J_{w_0}(\frac12)=\frac12$. -/
+theorem cor_5_12 (x : ℝ) (hx : x ∈ Ioc (0 : ℝ) (1 / 64)) : J (1 - x) ≥ x * √(log (w₀ / x)) := by
   sorry
 
 section Proof_Lemma_5_13
-
 /-- **(5.11)** (🚗) ([DIR], proof of Lemma 5.13). Running
 $\textsc{Partition}_1(\underline{g_{JL,\beta_0}},[\frac12,\frac{2047}{2048}])$ shows
 $$-\partial_x^2[J(x)-L_\beta(1-x)]>0.08$$
@@ -199,14 +194,6 @@ theorem lemma_5_13_case_2 (s : ℝ) (hs : s ∈ Ioo 0 (1 / 2048)) :
 $u\in(7,10^{381})$. -/
 theorem lemma_5_13_u_range (s : ℝ) (hs : s ∈ Ioo ((10 : ℝ) ^ (-(10 : ℝ) ^ 380)) (1 / 2048)) :
     log (w₀ / s) ∈ Ioo 7 ((10 : ℝ) ^ 381) := by
-  sorry
-
-/-- **(5.12)** ([DIR], proof of Lemma 5.13). It suffices to show
-$$2u-\log(u)-\log(4\pi)-(\log2)^{-\beta_0}u^{\frac12}(u^{\beta_0}+\log(w_0^{-1})^{\beta_0})>0$$
-for all $u\in[7,10^{381}]$. -/
-theorem eqn_5_12 (u : ℝ) (hu : u ∈ Icc 7 ((10 : ℝ) ^ 381)) :
-    2 * u - log u - log (4 * π) - (log 2) ^ (-β₀) * u ^ (1 / 2 : ℝ) * (u ^ β₀ + (log w₀⁻¹) ^ β₀) >
-        0 := by
   sorry
 
 /-- [DIR], proof of Lemma 5.13: here we have used $\log(1/s)=u+\log(w_0^{-1})$ and
@@ -246,6 +233,19 @@ theorem eqn_5_12_small (u : ℝ) (hu : u ∈ Icc (7 : ℝ) 1200) :
         0 := by
   sorry
 
+/-- **(5.12)** ([DIR], proof of Lemma 5.13). It suffices to show
+$$2u-\log(u)-\log(4\pi)-(\log2)^{-\beta_0}u^{\frac12}(u^{\beta_0}+\log(w_0^{-1})^{\beta_0})>0$$
+for all $u\in[7,10^{381}]$. -/
+theorem eqn_5_12 (u : ℝ) (hu : u ∈ Icc 7 ((10 : ℝ) ^ 381)) :
+    2 * u - log u - log (4 * π) - (log 2) ^ (-β₀) * u ^ (1 / 2 : ℝ) * (u ^ β₀ + (log w₀⁻¹) ^ β₀) >
+        0 := by
+  sorry
+
 end Proof_Lemma_5_13
+
+/-- **Lemma 5.13** ([DIR]). For all $x\in(\frac12,1-10^{-10^{380}})$, $J(x)>L_{\beta_0}(1-x)$. -/
+theorem lemma_5_13 (x : ℝ) (hx : x ∈ Ioo (1 / 2) (1 - (10 : ℝ) ^ (-(10 : ℝ) ^ 380))) :
+    J x > L β₀ (1 - x) := by
+  sorry
 
 end Auto.DIR
