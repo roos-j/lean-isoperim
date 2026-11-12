@@ -9,6 +9,7 @@ public import Isoperim.DIR.«1_Introduction».Definitions
 public import Isoperim.DIR.«2_Envelope_Functions».Definitions
 public import Isoperim.DIR.«3_Variants_Bobkov_Inequality».«3_0_Variants_Bobkov_Inequality»
 public import Isoperim.DIR.«5_Auxiliary_Estimates».«5_3_Properties_L_Q»
+public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_5_Case_QJQ_aux»
 
 /-!
 # [DIR] §6.5 Case $QJQ$: $\frac14\le x\le\frac12\le y$, $x+y\le1$
@@ -152,7 +153,9 @@ $\frac14(1-2x)^3p_\beta(x)$. -/
 theorem G_QJQ_y_half_factor (β x : ℝ) :
     (2⁻¹ - x) ^ 2 + 4⁻¹ - (2 * Q β (x / 2 + 4⁻¹) - Q β x) ^ 2 =
       4⁻¹ * (1 - 2 * x) ^ 3 * p_QJQ β x := by
-  sorry
+  simp only [Q, p_QJQ, add_comm β, two_rpow_add, two_rpow_two_mul]
+  norm_num
+  ring
 
 /-- [DIR], §6.5: plugging in $\beta=\beta_1,\frac12$ one sees that the coefficients of
 $x,x^2,x^3$ (in $p_\beta$) are positive. -/
@@ -160,19 +163,36 @@ theorem p_QJQ_coeffs_pos (β : ℝ) (hβ : β ∈ ({β₁, 2⁻¹} : Set ℝ)) :
     (18 : ℝ) - 3 * 2 ^ (3 + β) + 2 ^ (3 + 2 * β) > 0 ∧
       (2 : ℝ) ^ (5 + β) - 3 * 2 ^ (2 + 2 * β) - 21 > 0 ∧
       (8 : ℝ) + 3 * 2 ^ (1 + 2 * β) - 7 * 2 ^ (1 + β) > 0 := by
-  sorry
+  have hβ' : β ∈ Icc (2⁻¹ : ℝ) (2⁻¹ + 31 / 1024) := by
+    rcases hβ with rfl | rfl <;> norm_num [β₁]
+  obtain ⟨h1, h2⟩ := two_rpow_bounds β hβ'
+  simp only [two_rpow_add, two_rpow_two_mul]
+  norm_num
+  refine ⟨?_, ?_, ?_⟩ <;> nlinarith
 
 /-- [DIR], §6.5: so $p_\beta$ is an increasing function (on $[0,\infty)$, for
 $\beta\in\{\beta_1,\frac12\}$). -/
 theorem p_QJQ_monotoneOn (β : ℝ) (hβ : β ∈ ({β₁, 2⁻¹} : Set ℝ)) :
     MonotoneOn (p_QJQ β) (Ici 0) := by
-  sorry
+  obtain ⟨c3, c2, c1⟩ := p_QJQ_coeffs_pos β hβ
+  intro x hx y hy hxy
+  simp only [mem_Ici] at hx hy
+  simp only [p_QJQ]
+  have e3 := pow_le_pow_left₀ hx hxy 3
+  have e2 := pow_le_pow_left₀ hx hxy 2
+  nlinarith [mul_le_mul_of_nonneg_left e3 c3.le, mul_le_mul_of_nonneg_left e2 c2.le,
+    mul_le_mul_of_nonneg_left hxy c1.le]
 
 /-- [DIR], §6.5: finally, at $x=\frac14$ one computes $p_\beta(\frac14)>10^{-4}>0$ for
 $\beta\in\{\beta_1,\frac12\}$. -/
 theorem p_QJQ_quarter (β : ℝ) (hβ : β ∈ ({β₁, 2⁻¹} : Set ℝ)) :
     p_QJQ β 4⁻¹ > 10 ^ (-4 : ℤ) := by
-  sorry
+  have hβ' : β ∈ Icc (2⁻¹ : ℝ) (2⁻¹ + 31 / 1024) := by
+    rcases hβ with rfl | rfl <;> norm_num [β₁]
+  obtain ⟨h1, h2⟩ := two_rpow_bounds β hβ'
+  simp only [p_QJQ, two_rpow_add, two_rpow_two_mul]
+  norm_num
+  nlinarith
 
 /-- [DIR], §6.5: the inequality
 $(\frac12-x)^2+\frac14-(2Q_\beta(\frac x2+\frac14)-Q_\beta(x))^2\ge0$ for $x\in[\frac14,\frac12]$
@@ -180,7 +200,16 @@ and $\beta\in\{\frac12,\beta_1\}$. -/
 theorem G_QJQ_y_half_nonneg (β : ℝ) (hβ : β ∈ ({2⁻¹, β₁} : Set ℝ)) (x : ℝ)
     (hx : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
     (2⁻¹ - x) ^ 2 + 4⁻¹ - (2 * Q β (x / 2 + 4⁻¹) - Q β x) ^ 2 ≥ 0 := by
-  sorry
+  have hβ' : β ∈ ({β₁, 2⁻¹} : Set ℝ) := by
+    rcases hβ with rfl | rfl <;> simp
+  have hp := p_QJQ_monotoneOn β hβ' (show (4⁻¹ : ℝ) ∈ Ici 0 by norm_num)
+    (show x ∈ Ici 0 from le_trans (by norm_num) hx.1) hx.1
+  have hq := p_QJQ_quarter β hβ'
+  rw [G_QJQ_y_half_factor]
+  have : 0 ≤ 1 - 2 * x := by linarith [hx.2]
+  have : (0 : ℝ) < 10 ^ (-4 : ℤ) := by positivity
+  have : 0 ≤ p_QJQ β x := by linarith
+  positivity
 
 /-- **Proposition 6.9** ([DIR], $QJQ$). Let $\beta_1=\frac12+\frac{31}{1024}\approx0.53$. For all
 $(x,y)\in[\frac14,\frac12]\times[\frac12,\frac34]$ and $\beta\in[\frac12,\beta_1]$:

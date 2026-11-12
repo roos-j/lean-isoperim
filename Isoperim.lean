@@ -15,6 +15,7 @@ public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_1_Case_J»
 public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_2_Case_Q»
 public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_3_Case_LJQ»
 public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_4_Case_LJ»
+public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_5_Case_QJQ_aux»
 public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_5_Case_QJQ»
 public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_6_Case_QJ»
 public import Isoperim.DIR.«2_Envelope_Functions».«2_0_Envelope_Functions»
