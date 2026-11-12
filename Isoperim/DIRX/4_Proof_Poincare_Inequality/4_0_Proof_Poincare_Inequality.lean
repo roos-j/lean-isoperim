@@ -7,6 +7,7 @@ module
 
 public import Isoperim.DIR.«1_Introduction».Definitions
 public import Isoperim.DIR.«2_Envelope_Functions».Definitions
+public import Isoperim.DIR.«7_Proof_Poincare_Inequality».«7_0_Proof_Poincare_Inequality»
 public import Isoperim.DIRX.«1_Introduction».Definitions
 public import Isoperim.DIRX.«2_Preliminaries».«2_1_Reduction_Two_Point_Inequality»
 public import Isoperim.DIRX.«2_Preliminaries».«2_2_Properties_J»

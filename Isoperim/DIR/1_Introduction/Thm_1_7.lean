@@ -7,6 +7,7 @@ module
 
 public import Isoperim.DIR.«1_Introduction».Definitions
 public import Isoperim.DIR.«2_Envelope_Functions».«2_2_Proofs_Theorems_1_1_1_5_1_7»
+public import Isoperim.DIR.«2_Envelope_Functions».Definitions
 public import Isoperim.DIR.«3_Variants_Bobkov_Inequality».«3_0_Variants_Bobkov_Inequality»
 
 /-!

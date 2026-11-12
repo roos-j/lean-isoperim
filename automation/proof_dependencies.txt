@@ -1,8 +1,9 @@
 # Proof dependencies of every declaration
 
 Format: `name [kind, Task k] : dependencies`. Dependencies = declarations occurring in the statement
-(or definition body) plus the claims used by the paper's proof (analysis of the papers).
-A proof may only be started when every listed dependency is completely proved (no `sorry`).
+(or definition body), extracted from Lean, plus the claims used by the paper's proof (union of two
+independent analyses of the papers). A proof may only be started when every listed dependency is
+completely proved (no `sorry`). Definitions are listed under Task 1 (they need no proof).
 
 Auto.DIR.Cube [def, Task 4] : 
 Auto.DIR.E_J [def, Task 2] : Auto.DIR.J
@@ -12,17 +13,17 @@ Auto.DIR.G_P [def, Task 4] : Auto.DIR.b
 Auto.DIR.G_P_symm [thm, Task 4] : Auto.DIR.G_P, Auto.DIR.Q_spec, Auto.DIR.existsUnique_J, Auto.DIR.β₀
 Auto.DIR.G_Q [def, Task 3] : Auto.DIR.Q
 Auto.DIR.G_QJQ [def, Task 2] : Auto.DIR.J, Auto.DIR.Q
-Auto.DIR.G_QJQ_deriv_y [thm, Task 2] : Auto.DIR.G_QJQ, Auto.DIR.g_QJQ
-Auto.DIR.G_QJQ_ge_G_QJQ_half [thm, Task 2] : Auto.DIR.G_QJQ, Auto.DIR.G_QJQ_deriv_y, Auto.DIR.eqn_6_25, Auto.DIR.β₁
+Auto.DIR.G_QJQ_deriv_y [thm, Task 2] : Auto.DIR.G_QJQ, Auto.DIR.existsUnique_J, Auto.DIR.g_QJQ
+Auto.DIR.G_QJQ_ge_G_QJQ_half [thm, Task 2] : Auto.DIR.G_QJQ, Auto.DIR.G_QJQ_deriv_y, Auto.DIR.eqn_6_25, Auto.DIR.existsUnique_J, Auto.DIR.β₁
 Auto.DIR.G_QJQ_ge_min [thm, Task 2] : Auto.DIR.G_QJQ, Auto.DIR.G_QJQ_monotone_or_antitone, Auto.DIR.β₁
 Auto.DIR.G_QJQ_monotone_or_antitone [thm, Task 2] : Auto.DIR.G_QJQ, Auto.DIR.eqn_5_9, Auto.DIR.two_Q_sub_Q_ge, Auto.DIR.β₁
-Auto.DIR.G_QJQ_y_half_eq [thm, Task 2] : Auto.DIR.G_QJQ, Auto.DIR.Q, Auto.DIR.existsUnique_J
+Auto.DIR.G_QJQ_y_half_eq [thm, Task 2] : Auto.DIR.G_QJQ, Auto.DIR.J_half_eq_L_half, Auto.DIR.Q, Auto.DIR.existsUnique_J
 Auto.DIR.G_QJQ_y_half_factor [thm, Task 1] : Auto.DIR.Q, Auto.DIR.Q_spec, Auto.DIR.p_QJQ
 Auto.DIR.G_QJQ_y_half_nonneg [thm, Task 1] : Auto.DIR.G_QJQ_y_half_factor, Auto.DIR.Q, Auto.DIR.p_QJQ_monotoneOn, Auto.DIR.p_QJQ_quarter, Auto.DIR.β₁
 Auto.DIR.G₁ [def, Task 1] : 
 Auto.DIR.G₁_J_half_nonneg [thm, Task 2] : Auto.DIR.G₁, Auto.DIR.J, Auto.DIR.c₀, Auto.DIR.eqn_3_6, Auto.DIR.prop_6_1, Auto.DIR.β₀
 Auto.DIR.G₁_diag [thm, Task 3] : Auto.DIR.G₁
-Auto.DIR.G₁_nonneg_iff_g_QJ_nonneg [thm, Task 2] : Auto.DIR.G₁, Auto.DIR.b, Auto.DIR.eqn_3_4, Auto.DIR.g_QJ, Auto.DIR.two_J_sub_Q_pos
+Auto.DIR.G₁_nonneg_iff_g_QJ_nonneg [thm, Task 2] : Auto.DIR.G₁, Auto.DIR.J_half_eq_L_half, Auto.DIR.J_monotoneOn_antitoneOn, Auto.DIR.Q_spec, Auto.DIR.b, Auto.DIR.eqn_3_4, Auto.DIR.eqn_3_6, Auto.DIR.existsUnique_J, Auto.DIR.g_QJ, Auto.DIR.two_J_sub_Q_pos
 Auto.DIR.G₂ [def, Task 1] : 
 Auto.DIR.I [def, Task 1] : Auto.DIR.Φ, Auto.DIR.φ
 Auto.DIR.I_characterization [thm, Task 1] : Auto.DIR.I
@@ -32,10 +33,10 @@ Auto.DIR.IsMonotoneTwoPoint [def, Task 3] :
 Auto.DIR.IsSubcube [def, Task 4] : Auto.DIR.Cube
 Auto.DIR.J [def, Task 1] : Auto.DIR.IsJ
 Auto.DIR.J_eqn_3_2 [thm, Task 4] : Auto.DIR.J, Auto.DIR.cor_3_5, Auto.DIR.eqn_3_4, Auto.DIR.w₀_mem, Auto.DIR.x₀
-Auto.DIR.J_half_eq_L_half [thm, Task 4] : Auto.DIR.J, Auto.DIR.L, Auto.DIR.existsUnique_J
-Auto.DIR.J_inv_le_two [thm, Task 2] : Auto.DIR.J, Auto.DIR.J_monotoneOn_antitoneOn, Auto.DIR.existsUnique_J, Auto.DIR.w₀
-Auto.DIR.J_inv_monotoneOn_Ico_x₀ [thm, Task 2] : Auto.DIR.J, Auto.DIR.J_monotoneOn_antitoneOn, Auto.DIR.w₀
-Auto.DIR.J_monotoneOn_antitoneOn [thm, Task 2] : Auto.DIR.J, Auto.DIR.eqn_3_4, Auto.DIR.rem_3_6, Auto.DIR.x₀
+Auto.DIR.J_half_eq_L_half [thm, Task 1] : Auto.DIR.J, Auto.DIR.L, Auto.DIR.existsUnique_J
+Auto.DIR.J_inv_le_two [thm, Task 2] : Auto.DIR.J, Auto.DIR.J_half_eq_L_half, Auto.DIR.J_monotoneOn_antitoneOn, Auto.DIR.existsUnique_J, Auto.DIR.w₀
+Auto.DIR.J_inv_monotoneOn_Ico_x₀ [thm, Task 2] : Auto.DIR.J, Auto.DIR.J_monotoneOn_antitoneOn, Auto.DIR.existsUnique_J, Auto.DIR.w₀
+Auto.DIR.J_monotoneOn_antitoneOn [thm, Task 2] : Auto.DIR.J, Auto.DIR.eqn_3_4, Auto.DIR.rem_3_6, Auto.DIR.w₀_mem, Auto.DIR.x₀
 Auto.DIR.J_one_sub [thm, Task 4] : Auto.DIR.I, Auto.DIR.J, Auto.DIR.eqn_3_4, Auto.DIR.w₀, Auto.DIR.w₀_mem
 Auto.DIR.Jw [def, Task 1] : Auto.DIR.I
 Auto.DIR.Jw_spec [thm, Task 1] : Auto.DIR.I_characterization, Auto.DIR.Jw
@@ -53,75 +54,75 @@ Auto.DIR.Q [def, Task 1] :
 Auto.DIR.Q_deriv2_monotone_β [thm, Task 1] : Auto.DIR.Q, Auto.DIR.eqn_5_7
 Auto.DIR.Q_spec [thm, Task 1] : Auto.DIR.Q
 Auto.DIR.R [def, Task 3] : Auto.DIR.Q
-Auto.DIR.R_derivs_one_div_β [thm, Task 3] : Auto.DIR.R, Auto.DIR.R_eq, Auto.DIR.β₀
+Auto.DIR.R_derivs_one_div_β [thm, Task 3] : Auto.DIR.R, Auto.DIR.R_eq, Auto.DIR.α₁_pos_iff, Auto.DIR.β₀
 Auto.DIR.R_eq [thm, Task 3] : Auto.DIR.Q_spec, Auto.DIR.R
 Auto.DIR.a₀ [def, Task 1] : 
 Auto.DIR.a₁ [def, Task 1] : 
 Auto.DIR.a₂ [def, Task 1] : 
 Auto.DIR.b [def, Task 1] : Auto.DIR.J, Auto.DIR.L, Auto.DIR.Q
 Auto.DIR.b_eq_Q_ge_L [thm, Task 3] : Auto.DIR.L, Auto.DIR.Q, Auto.DIR.b, Auto.DIR.lemma_5_9, Auto.DIR.β₀
-Auto.DIR.b_half_two_pow [thm, Task 4] : Auto.DIR.b
-Auto.DIR.b_lt_Ltilde_imp [thm, Task 5] : Auto.DIR.J_half_eq_L_half, Auto.DIR.Ltilde, Auto.DIR.b, Auto.DIR.eqn_2_9, Auto.DIR.lemma_5_8, Auto.DIR.β₀
-Auto.DIR.boolean_eq_indicator [thm, Task 5] : Auto.DIR.Cube, Auto.DIR.ind
+Auto.DIR.b_half_two_pow [thm, Task 4] : Auto.DIR.Q_spec, Auto.DIR.b
+Auto.DIR.b_lt_Ltilde_imp [thm, Task 5] : Auto.DIR.J_half_eq_L_half, Auto.DIR.Ltilde, Auto.DIR.Q_spec, Auto.DIR.b, Auto.DIR.eqn_2_9, Auto.DIR.lemma_5_8, Auto.DIR.β₀
+Auto.DIR.boolean_eq_indicator [thm, Task 4] : Auto.DIR.Cube, Auto.DIR.ind
 Auto.DIR.btilde [def, Task 4] : Auto.DIR.J, Auto.DIR.L, Auto.DIR.Q
-Auto.DIR.btilde_eq_max [thm, Task 4] : Auto.DIR.J_half_eq_L_half, Auto.DIR.Ltilde, Auto.DIR.b, Auto.DIR.btilde, Auto.DIR.lemma_5_8, Auto.DIR.β₀
-Auto.DIR.caseJ_G₁_mono_β [thm, Task 2] : Auto.DIR.G₁, Auto.DIR.J, Auto.DIR.β₀
+Auto.DIR.btilde_eq_max [thm, Task 4] : Auto.DIR.J_half_eq_L_half, Auto.DIR.Ltilde, Auto.DIR.Q_spec, Auto.DIR.b, Auto.DIR.btilde, Auto.DIR.lemma_5_8, Auto.DIR.β₀
+Auto.DIR.caseJ_G₁_mono_β [thm, Task 2] : Auto.DIR.G₁, Auto.DIR.J, Auto.DIR.J_half_eq_L_half, Auto.DIR.J_monotoneOn_antitoneOn, Auto.DIR.eqn_3_6, Auto.DIR.existsUnique_J, Auto.DIR.β₀
 Auto.DIR.caseJ_I [thm, Task 2] : Auto.DIR.G₁, Auto.DIR.J, Auto.DIR.caseJ_I_G₁_ge_g_J_1, Auto.DIR.c₀, Auto.DIR.eqn_6_3, Auto.DIR.existsUnique_J, Auto.DIR.β₀
 Auto.DIR.caseJ_II [thm, Task 2] : Auto.DIR.G₁, Auto.DIR.J, Auto.DIR.caseJ_II_iff_g_J_2, Auto.DIR.eqn_6_5, Auto.DIR.nine_div_sixteen_gt_x₀, Auto.DIR.x₀
-Auto.DIR.caseJ_II_iff_g_J_2 [thm, Task 2] : Auto.DIR.G₁, Auto.DIR.J, Auto.DIR.caseJ_II_nonneg, Auto.DIR.g_J_2
+Auto.DIR.caseJ_II_iff_g_J_2 [thm, Task 2] : Auto.DIR.G₁, Auto.DIR.J, Auto.DIR.J_half_eq_L_half, Auto.DIR.J_monotoneOn_antitoneOn, Auto.DIR.caseJ_II_nonneg, Auto.DIR.eqn_3_6, Auto.DIR.existsUnique_J, Auto.DIR.g_J_2
 Auto.DIR.caseJ_II_nonneg [thm, Task 2] : Auto.DIR.J
-Auto.DIR.caseJ_II_suffices [thm, Task 2] : Auto.DIR.G₁, Auto.DIR.J, Auto.DIR.c₀, Auto.DIR.β₀
+Auto.DIR.caseJ_II_suffices [thm, Task 2] : Auto.DIR.G₁, Auto.DIR.J, Auto.DIR.J_half_eq_L_half, Auto.DIR.J_monotoneOn_antitoneOn, Auto.DIR.c₀, Auto.DIR.eqn_3_6, Auto.DIR.existsUnique_J, Auto.DIR.β₀
 Auto.DIR.caseJ_I_G₁_ge_g_J_1 [thm, Task 2] : Auto.DIR.G₁, Auto.DIR.J, Auto.DIR.caseJ_I_neardiag_bound, Auto.DIR.g_J_1
-Auto.DIR.caseJ_I_neardiag_bound [thm, Task 2] : Auto.DIR.G₁, Auto.DIR.J, Auto.DIR.J_monotoneOn_antitoneOn, Auto.DIR.existsUnique_J, Auto.DIR.lemma_5_4
+Auto.DIR.caseJ_I_neardiag_bound [thm, Task 2] : Auto.DIR.G₁, Auto.DIR.J, Auto.DIR.J_half_eq_L_half, Auto.DIR.J_monotoneOn_antitoneOn, Auto.DIR.eqn_3_6, Auto.DIR.existsUnique_J, Auto.DIR.lemma_5_4
 Auto.DIR.caseJ_I_region_subset [thm, Task 2] : Auto.DIR.x₀, Auto.DIR.x₀_lt_five_div_eight
 Auto.DIR.caseLJQ_claim_1 [thm, Task 2] : Auto.DIR.G_LJQ, Auto.DIR.f_LJQ_1_ge_min, Auto.DIR.f_LJQ_1_half_nonneg, Auto.DIR.f_LJQ_1_one_nonneg
 Auto.DIR.caseLJQ_claim_2 [thm, Task 2] : Auto.DIR.G_LJQ, Auto.DIR.eqn_6_17
 Auto.DIR.caseLJQ_claim_3 [thm, Task 2] : Auto.DIR.G_LJQ, Auto.DIR.eqn_6_18, Auto.DIR.f_LJQ_3_half_concaveOn, Auto.DIR.f_LJQ_3_half_one, Auto.DIR.f_LJQ_3_monotoneOn_β
 Auto.DIR.caseLJ_region [thm, Task 2] : 
 Auto.DIR.caseQJQ_region [thm, Task 2] : 
-Auto.DIR.caseQJ_G₁_monotoneOn_beta [thm, Task 2] : Auto.DIR.G₁, Auto.DIR.J
+Auto.DIR.caseQJ_G₁_monotoneOn_beta [thm, Task 2] : Auto.DIR.G₁, Auto.DIR.J, Auto.DIR.J_half_eq_L_half, Auto.DIR.J_monotoneOn_antitoneOn, Auto.DIR.eqn_3_6, Auto.DIR.existsUnique_J
 Auto.DIR.caseQ_G₁_L [thm, Task 3] : Auto.DIR.G₁, Auto.DIR.L
-Auto.DIR.caseQ_I [thm, Task 3] : Auto.DIR.G₁, Auto.DIR.L, Auto.DIR.Q, Auto.DIR.caseQ_G₁_L, Auto.DIR.lemma_5_2, Auto.DIR.lemma_5_9, Auto.DIR.β₀
+Auto.DIR.caseQ_I [thm, Task 3] : Auto.DIR.G₁, Auto.DIR.L, Auto.DIR.Q, Auto.DIR.caseQ_G₁_L, Auto.DIR.lemma_5_2, Auto.DIR.lemma_5_2_chain, Auto.DIR.lemma_5_9, Auto.DIR.β₀
 Auto.DIR.caseQ_II [thm, Task 3] : Auto.DIR.G₁, Auto.DIR.G₁_diag, Auto.DIR.Q, Auto.DIR.caseQ_II_claim_1, Auto.DIR.caseQ_II_claim_2, Auto.DIR.caseQ_II_g_Q_1_half_concave, Auto.DIR.caseQ_II_neardiag_bound, Auto.DIR.caseQ_II_β₀, Auto.DIR.β₀
-Auto.DIR.caseQ_III_G_Q_diag [thm, Task 3] : Auto.DIR.G_Q, Auto.DIR.Q, Auto.DIR.Q_spec, Auto.DIR.β₀
+Auto.DIR.caseQ_III_G_Q_diag [thm, Task 3] : Auto.DIR.G_Q, Auto.DIR.Q, Auto.DIR.Q_spec, Auto.DIR.lemma_5_8, Auto.DIR.β₀
 Auto.DIR.caseQ_III_G_Q_quarter [thm, Task 3] : Auto.DIR.G_Q, Auto.DIR.caseQ_II, Auto.DIR.caseQ_III_iff_G_Q, Auto.DIR.lemma_5_8, Auto.DIR.lemma_6_4_denom_pos, Auto.DIR.β₀
 Auto.DIR.caseQ_III_iff_G_Q [thm, Task 3] : Auto.DIR.G_Q, Auto.DIR.G₁, Auto.DIR.Q, Auto.DIR.lemma_5_8, Auto.DIR.lemma_6_4_denom_pos, Auto.DIR.β₀
 Auto.DIR.caseQ_III_iff_f_QIII [thm, Task 3] : Auto.DIR.Q, Auto.DIR.f_QIII, Auto.DIR.lemma_5_8, Auto.DIR.β₀
 Auto.DIR.caseQ_III_min [thm, Task 3] : Auto.DIR.G_Q, Auto.DIR.lemma_6_4, Auto.DIR.β₀
 Auto.DIR.caseQ_III_suffices_f_QIII_0 [thm, Task 3] : Auto.DIR.deriv_f_QIII_nonpos_iff, Auto.DIR.f_QIII, Auto.DIR.f_QIII_0, Auto.DIR.f_QIII_deriv_eq_sub, Auto.DIR.β₀
 Auto.DIR.caseQ_II_claim_1 [thm, Task 3] : Auto.DIR.caseQ_II_claim_1_iff, Auto.DIR.caseQ_II_claim_1_limit, Auto.DIR.caseQ_II_claim_1_mono, Auto.DIR.caseQ_II_claim_1_subst, Auto.DIR.g_Q_1
-Auto.DIR.caseQ_II_claim_1_iff [thm, Task 3] : Auto.DIR.Q, Auto.DIR.Q_spec, Auto.DIR.α₀, Auto.DIR.α₁
+Auto.DIR.caseQ_II_claim_1_iff [thm, Task 3] : Auto.DIR.Q, Auto.DIR.Q_spec, Auto.DIR.lemma_5_8, Auto.DIR.α₀, Auto.DIR.α₁
 Auto.DIR.caseQ_II_claim_1_limit [thm, Task 3] : Auto.DIR.Q, Auto.DIR.caseQ_II_g_Q_1_half_eq, Auto.DIR.g_Q_1, Auto.DIR.α₀, Auto.DIR.α₁
-Auto.DIR.caseQ_II_claim_1_mono [thm, Task 3] : Auto.DIR.α₁
+Auto.DIR.caseQ_II_claim_1_mono [thm, Task 3] : Auto.DIR.α₁, Auto.DIR.α₁_pos_iff
 Auto.DIR.caseQ_II_claim_1_subst [thm, Task 3] : Auto.DIR.Q, Auto.DIR.Q_spec, Auto.DIR.α₀, Auto.DIR.α₁
-Auto.DIR.caseQ_II_claim_2 [thm, Task 3] : Auto.DIR.eqn_6_8, Auto.DIR.g_Q_1
+Auto.DIR.caseQ_II_claim_2 [thm, Task 3] : Auto.DIR.caseQ_II_g_Q_1_eq, Auto.DIR.eqn_6_8, Auto.DIR.g_Q_1, Auto.DIR.lemma_5_8, Auto.DIR.α₁_pos_iff
 Auto.DIR.caseQ_II_g_Q_1_eq [thm, Task 3] : Auto.DIR.Q, Auto.DIR.caseQ_II_second_difference, Auto.DIR.g_Q_1, Auto.DIR.α₀, Auto.DIR.α₁
-Auto.DIR.caseQ_II_g_Q_1_half_concave [thm, Task 3] : Auto.DIR.caseQ_II_g_Q_1_half_deriv2, Auto.DIR.g_Q_1
+Auto.DIR.caseQ_II_g_Q_1_half_concave [thm, Task 3] : Auto.DIR.caseQ_II_g_Q_1_half_deriv2, Auto.DIR.caseQ_II_g_Q_1_half_eq, Auto.DIR.g_Q_1
 Auto.DIR.caseQ_II_g_Q_1_half_deriv2 [thm, Task 3] : Auto.DIR.Q, Auto.DIR.Q_spec, Auto.DIR.caseQ_II_g_Q_1_half_eq, Auto.DIR.g_Q_1, Auto.DIR.lemma_5_8
 Auto.DIR.caseQ_II_g_Q_1_half_eq [thm, Task 3] : Auto.DIR.Q, Auto.DIR.caseQ_II_g_Q_1_eq, Auto.DIR.g_Q_1, Auto.DIR.α₀, Auto.DIR.α₁
 Auto.DIR.caseQ_II_neardiag_bound [thm, Task 3] : Auto.DIR.G₁, Auto.DIR.Q, Auto.DIR.Q_spec, Auto.DIR.g_Q_1, Auto.DIR.lemma_5_4, Auto.DIR.lemma_5_8, Auto.DIR.β₀
 Auto.DIR.caseQ_II_second_difference [thm, Task 3] : Auto.DIR.Q, Auto.DIR.Q_spec, Auto.DIR.eqn_5_5, Auto.DIR.α₀, Auto.DIR.α₁, Auto.DIR.α₁_pos_iff, Auto.DIR.β₀
 Auto.DIR.caseQ_II_y_ge [thm, Task 3] : 
 Auto.DIR.caseQ_II_β₀ [thm, Task 3] : Auto.DIR.G₁, Auto.DIR.Q, Auto.DIR.caseQ_II_neardiag_bound, Auto.DIR.eqn_6_7, Auto.DIR.β₀
-Auto.DIR.caseQ_reduction [thm, Task 3] : Auto.DIR.G₁, Auto.DIR.L, Auto.DIR.Q, Auto.DIR.caseQ_G₁_L, Auto.DIR.caseQ_I, Auto.DIR.lemma_5_2, Auto.DIR.lemma_5_9, Auto.DIR.β₀
-Auto.DIR.convex_sub_ge [thm, Task 4] : 
+Auto.DIR.caseQ_reduction [thm, Task 3] : Auto.DIR.G₁, Auto.DIR.L, Auto.DIR.Q, Auto.DIR.caseQ_G₁_L, Auto.DIR.caseQ_I, Auto.DIR.lemma_5_2, Auto.DIR.lemma_5_2_chain, Auto.DIR.lemma_5_8, Auto.DIR.lemma_5_9, Auto.DIR.β₀
+Auto.DIR.convex_sub_ge [thm, Task 1] : 
 Auto.DIR.cor_1_9 [thm, Task 5] : Auto.DIR.Cube, Auto.DIR.cor_1_9_chain, Auto.DIR.dens, Auto.DIR.edgeMeasure
 Auto.DIR.cor_1_9_chain [thm, Task 5] : Auto.DIR.Cube, Auto.DIR.dens, Auto.DIR.edgeMeasure, Auto.DIR.expect, Auto.DIR.h, Auto.DIR.ind, Auto.DIR.thm_1_1, Auto.DIR.β₀
-Auto.DIR.cor_2_5 [thm, Task 5] : Auto.DIR.b, Auto.DIR.dyadic, Auto.DIR.eqn_3_4, Auto.DIR.isoProfile, Auto.DIR.lemma_5_8, Auto.DIR.prop_2_1, Auto.DIR.thm_2_2, Auto.DIR.β₀
+Auto.DIR.cor_2_5 [thm, Task 5] : Auto.DIR.b, Auto.DIR.dyadic, Auto.DIR.eqn_3_4, Auto.DIR.existsUnique_J, Auto.DIR.isoProfile, Auto.DIR.lemma_5_8, Auto.DIR.prop_2_1, Auto.DIR.thm_2_2, Auto.DIR.β₀
 Auto.DIR.cor_3_5 [thm, Task 4] : Auto.DIR.Jw, Auto.DIR.Jw_spec, Auto.DIR.prop_3_3, Auto.DIR.rem_3_6
 Auto.DIR.cor_5_12 [thm, Task 4] : Auto.DIR.J, Auto.DIR.J_one_sub, Auto.DIR.eqn_5_10, Auto.DIR.two_one_sub_εJ, Auto.DIR.w₀, Auto.DIR.w₀_mem
 Auto.DIR.c₀ [def, Task 2] : 
 Auto.DIR.dens [def, Task 4] : Auto.DIR.Cube, Auto.DIR.expect, Auto.DIR.ind
 Auto.DIR.dens_mem_dyadic [thm, Task 4] : Auto.DIR.Cube, Auto.DIR.dens, Auto.DIR.dyadic
 Auto.DIR.deriv2_f_QIII_0_pos [thm, Task 3] : Auto.DIR.eqn_6_9, Auto.DIR.f_QIII_0, Auto.DIR.iteratedDeriv_three_f_QIII_0_nonneg, Auto.DIR.β₀
-Auto.DIR.deriv_J_nonpos [thm, Task 2] : Auto.DIR.J, Auto.DIR.deriv_J_x₀, Auto.DIR.w₀
-Auto.DIR.deriv_J_x₀ [thm, Task 2] : Auto.DIR.J, Auto.DIR.eqn_3_4, Auto.DIR.iteratedDeriv_two_J, Auto.DIR.rem_3_6, Auto.DIR.x₀
-Auto.DIR.deriv_f_QIII [thm, Task 3] : Auto.DIR.R, Auto.DIR.R_eq, Auto.DIR.f_QIII, Auto.DIR.β₀
+Auto.DIR.deriv_J_nonpos [thm, Task 2] : Auto.DIR.J, Auto.DIR.J_monotoneOn_antitoneOn, Auto.DIR.deriv_J_x₀, Auto.DIR.existsUnique_J, Auto.DIR.w₀
+Auto.DIR.deriv_J_x₀ [thm, Task 2] : Auto.DIR.J, Auto.DIR.J_half_eq_L_half, Auto.DIR.J_monotoneOn_antitoneOn, Auto.DIR.eqn_3_4, Auto.DIR.eqn_3_6, Auto.DIR.existsUnique_J, Auto.DIR.iteratedDeriv_two_J, Auto.DIR.rem_3_6, Auto.DIR.w₀_mem, Auto.DIR.x₀
+Auto.DIR.deriv_f_QIII [thm, Task 3] : Auto.DIR.R, Auto.DIR.R_eq, Auto.DIR.f_QIII, Auto.DIR.lemma_5_8, Auto.DIR.β₀
 Auto.DIR.deriv_f_QIII_0_neg [thm, Task 3] : Auto.DIR.deriv2_f_QIII_0_pos, Auto.DIR.eqn_6_10, Auto.DIR.f_QIII_0, Auto.DIR.β₀
-Auto.DIR.deriv_f_QIII_0_neg_Icc_eighth [thm, Task 3] : Auto.DIR.deriv_f_QIII_0_neg, Auto.DIR.eqn_6_10, Auto.DIR.f_QIII_0, Auto.DIR.β₀
+Auto.DIR.deriv_f_QIII_0_neg_Icc_eighth [thm, Task 3] : Auto.DIR.R_derivs_one_div_β, Auto.DIR.R_eq, Auto.DIR.deriv_f_QIII_0_neg, Auto.DIR.eqn_6_10, Auto.DIR.f_QIII_0, Auto.DIR.f_QIII_0_eq_mul, Auto.DIR.β₀
 Auto.DIR.deriv_f_QIII_nonpos [thm, Task 3] : Auto.DIR.caseQ_III_suffices_f_QIII_0, Auto.DIR.deriv_f_QIII_0_neg_Icc_eighth, Auto.DIR.f_QIII, Auto.DIR.β₀
 Auto.DIR.deriv_f_QIII_nonpos_iff [thm, Task 3] : Auto.DIR.f_QIII, Auto.DIR.β₀
-Auto.DIR.derivs_f_LJQ_1_half [thm, Task 2] : Auto.DIR.J, Auto.DIR.Q, Auto.DIR.f_LJQ_1, Auto.DIR.f_LJQ_1_eq, Auto.DIR.iteratedDeriv_two_J
+Auto.DIR.derivs_f_LJQ_1_half [thm, Task 2] : Auto.DIR.J, Auto.DIR.Q, Auto.DIR.existsUnique_J, Auto.DIR.f_LJQ_1, Auto.DIR.f_LJQ_1_eq, Auto.DIR.iteratedDeriv_two_J
 Auto.DIR.derivs_f_QIII_1 [thm, Task 3] : Auto.DIR.R, Auto.DIR.R_eq, Auto.DIR.f_QIII_1, Auto.DIR.β₀
 Auto.DIR.derivs_f_QIII_1_nonpos [thm, Task 3] : Auto.DIR.R_derivs_one_div_β, Auto.DIR.derivs_f_QIII_1, Auto.DIR.f_QIII_1, Auto.DIR.f_QIII_1_nonneg_f_QIII_2_nonpos, Auto.DIR.β₀
 Auto.DIR.derivs_f_QIII_2 [thm, Task 3] : Auto.DIR.R, Auto.DIR.R_derivs_one_div_β, Auto.DIR.R_eq, Auto.DIR.f_QIII_2, Auto.DIR.β₀
@@ -151,7 +152,7 @@ Auto.DIR.eqn_5_6 [thm, Task 1] : Auto.DIR.Q, Auto.DIR.α₀, Auto.DIR.α₁
 Auto.DIR.eqn_5_7 [thm, Task 1] : Auto.DIR.Q, Auto.DIR.eqn_5_6, Auto.DIR.α₀, Auto.DIR.α₁
 Auto.DIR.eqn_5_8 [thm, Task 1] : Auto.DIR.Q, Auto.DIR.eqn_5_7, Auto.DIR.α₁
 Auto.DIR.eqn_5_9 [thm, Task 1] : Auto.DIR.Q
-Auto.DIR.eqn_6_1 [thm, Task 2] : Auto.DIR.J, Auto.DIR.iteratedDeriv_three_J, Auto.DIR.iteratedDeriv_two_J
+Auto.DIR.eqn_6_1 [thm, Task 2] : Auto.DIR.J, Auto.DIR.J_half_eq_L_half, Auto.DIR.J_monotoneOn_antitoneOn, Auto.DIR.eqn_3_6, Auto.DIR.existsUnique_J, Auto.DIR.iteratedDeriv_three_J, Auto.DIR.iteratedDeriv_two_J
 Auto.DIR.eqn_6_10 [thm, Task 3] : Auto.DIR.f_QIII_0, Auto.DIR.β₀
 Auto.DIR.eqn_6_11 [thm, Task 3] : Auto.DIR.G_Q, Auto.DIR.Q, Auto.DIR.lemma_6_4_denom_pos, Auto.DIR.lemma_6_4_deriv, Auto.DIR.β₀
 Auto.DIR.eqn_6_11_eq_p_Q [thm, Task 3] : Auto.DIR.Q, Auto.DIR.lemma_6_4_poly, Auto.DIR.p_Q
@@ -174,7 +175,7 @@ Auto.DIR.eqn_6_6 [thm, Task 3] : Auto.DIR.G₁, Auto.DIR.Q, Auto.DIR.caseQ_II, A
 Auto.DIR.eqn_6_7 [thm, Task 3] : Auto.DIR.g_Q_1, Auto.DIR.β₀
 Auto.DIR.eqn_6_8 [thm, Task 3] : Auto.DIR.g_Q_1_lo
 Auto.DIR.eqn_6_9 [thm, Task 3] : Auto.DIR.f_QIII_0, Auto.DIR.β₀
-Auto.DIR.eqn_7_1 [thm, Task 5] : Auto.DIR.Cube, Auto.DIR.expect, Auto.DIR.gradNorm, Auto.DIR.h, Auto.DIR.ind, Auto.DIR.pNorm
+Auto.DIR.eqn_7_1 [thm, Task 4] : Auto.DIR.Cube, Auto.DIR.expect, Auto.DIR.gradNorm, Auto.DIR.h, Auto.DIR.ind, Auto.DIR.pNorm
 Auto.DIR.eqn_7_2 [thm, Task 4] : Auto.DIR.g_P_1, Auto.DIR.w₀_mem
 Auto.DIR.eqn_7_3 [thm, Task 4] : Auto.DIR.G_P, Auto.DIR.β₀
 Auto.DIR.eqn_7_4 [thm, Task 4] : Auto.DIR.g_P_3, Auto.DIR.β₀
@@ -187,31 +188,31 @@ Auto.DIR.f_LJQ_1 [def, Task 2] : Auto.DIR.G_LJQ
 Auto.DIR.f_LJQ_1_deriv_β [thm, Task 2] : Auto.DIR.eqn_5_9, Auto.DIR.f_LJQ_1, Auto.DIR.f_LJQ_1_eq
 Auto.DIR.f_LJQ_1_eq [thm, Task 2] : Auto.DIR.J, Auto.DIR.Q, Auto.DIR.f_LJQ_1
 Auto.DIR.f_LJQ_1_ge_min [thm, Task 2] : Auto.DIR.f_LJQ_1, Auto.DIR.f_LJQ_1_monotone_or_antitone
-Auto.DIR.f_LJQ_1_half_deriv2_half [thm, Task 2] : Auto.DIR.derivs_f_LJQ_1_half, Auto.DIR.eqn_5_7, Auto.DIR.existsUnique_J, Auto.DIR.f_LJQ_1
+Auto.DIR.f_LJQ_1_half_deriv2_half [thm, Task 2] : Auto.DIR.J_half_eq_L_half, Auto.DIR.derivs_f_LJQ_1_half, Auto.DIR.eqn_5_7, Auto.DIR.existsUnique_J, Auto.DIR.f_LJQ_1
 Auto.DIR.f_LJQ_1_half_deriv2_zero_subsingleton [thm, Task 2] : Auto.DIR.f_LJQ_1, Auto.DIR.f_LJQ_1_half_deriv2_half, Auto.DIR.f_LJQ_1_half_deriv4
-Auto.DIR.f_LJQ_1_half_deriv4 [thm, Task 2] : Auto.DIR.eqn_5_8, Auto.DIR.eqn_6_1, Auto.DIR.f_LJQ_1, Auto.DIR.f_LJQ_1_eq
+Auto.DIR.f_LJQ_1_half_deriv4 [thm, Task 2] : Auto.DIR.derivs_f_LJQ_1_half, Auto.DIR.eqn_5_7, Auto.DIR.eqn_5_8, Auto.DIR.eqn_6_1, Auto.DIR.f_LJQ_1, Auto.DIR.f_LJQ_1_eq
 Auto.DIR.f_LJQ_1_half_deriv_half [thm, Task 2] : Auto.DIR.f_LJQ_1
-Auto.DIR.f_LJQ_1_half_endpoints [thm, Task 2] : Auto.DIR.Q_spec, Auto.DIR.existsUnique_J, Auto.DIR.f_LJQ_1, Auto.DIR.f_LJQ_1_eq
+Auto.DIR.f_LJQ_1_half_endpoints [thm, Task 2] : Auto.DIR.J_half_eq_L_half, Auto.DIR.Q_spec, Auto.DIR.existsUnique_J, Auto.DIR.f_LJQ_1, Auto.DIR.f_LJQ_1_eq
 Auto.DIR.f_LJQ_1_half_nonneg [thm, Task 2] : Auto.DIR.f_LJQ_1, Auto.DIR.f_LJQ_1_half_endpoints, Auto.DIR.f_LJQ_1_half_y₁
-Auto.DIR.f_LJQ_1_half_y₀ [thm, Task 2] : Auto.DIR.eqn_6_15, Auto.DIR.f_LJQ_1, Auto.DIR.f_LJQ_1_half_deriv2_half, Auto.DIR.f_LJQ_1_half_deriv2_zero_subsingleton, Auto.DIR.f_LJQ_1_half_deriv4
-Auto.DIR.f_LJQ_1_half_y₁ [thm, Task 2] : Auto.DIR.eqn_6_16, Auto.DIR.f_LJQ_1, Auto.DIR.f_LJQ_1_half_deriv_half, Auto.DIR.f_LJQ_1_half_y₀
+Auto.DIR.f_LJQ_1_half_y₀ [thm, Task 2] : Auto.DIR.derivs_f_LJQ_1_half, Auto.DIR.eqn_6_15, Auto.DIR.f_LJQ_1, Auto.DIR.f_LJQ_1_half_deriv2_half, Auto.DIR.f_LJQ_1_half_deriv2_zero_subsingleton, Auto.DIR.f_LJQ_1_half_deriv4
+Auto.DIR.f_LJQ_1_half_y₁ [thm, Task 2] : Auto.DIR.eqn_6_16, Auto.DIR.existsUnique_J, Auto.DIR.f_LJQ_1, Auto.DIR.f_LJQ_1_half_deriv_half, Auto.DIR.f_LJQ_1_half_y₀
 Auto.DIR.f_LJQ_1_monotone_or_antitone [thm, Task 2] : Auto.DIR.f_LJQ_1, Auto.DIR.f_LJQ_1_deriv_β
 Auto.DIR.f_LJQ_1_one_nonneg [thm, Task 2] : Auto.DIR.f_LJQ_1
 Auto.DIR.f_LJQ_3 [def, Task 2] : Auto.DIR.G_LJQ
 Auto.DIR.f_LJQ_3_eq [thm, Task 2] : Auto.DIR.J, Auto.DIR.L, Auto.DIR.Q_spec, Auto.DIR.f_LJQ_3
 Auto.DIR.f_LJQ_3_half_concaveOn [thm, Task 2] : Auto.DIR.existsUnique_J, Auto.DIR.f_LJQ_3, Auto.DIR.f_LJQ_3_half_deriv2
-Auto.DIR.f_LJQ_3_half_deriv2 [thm, Task 2] : Auto.DIR.J, Auto.DIR.L, Auto.DIR.deriv_J_x₀, Auto.DIR.f_LJQ_3, Auto.DIR.f_LJQ_3_eq, Auto.DIR.lemma_5_6
+Auto.DIR.f_LJQ_3_half_deriv2 [thm, Task 2] : Auto.DIR.J, Auto.DIR.L, Auto.DIR.deriv_J_x₀, Auto.DIR.existsUnique_J, Auto.DIR.f_LJQ_3, Auto.DIR.f_LJQ_3_eq, Auto.DIR.lemma_5_6
 Auto.DIR.f_LJQ_3_half_one [thm, Task 2] : Auto.DIR.existsUnique_J, Auto.DIR.f_LJQ_3, Auto.DIR.f_LJQ_3_eq
-Auto.DIR.f_LJQ_3_monotoneOn_β [thm, Task 2] : Auto.DIR.f_LJQ_3
-Auto.DIR.f_LJ_deriv2 [thm, Task 2] : Auto.DIR.J, Auto.DIR.f_LJ, Auto.DIR.iteratedDeriv_two_J
-Auto.DIR.f_LJ_deriv2_nonpos_iff [thm, Task 2] : Auto.DIR.f_LJ, Auto.DIR.f_LJ_deriv2, Auto.DIR.h_LJ_nonpos, Auto.DIR.r_LJ
+Auto.DIR.f_LJQ_3_monotoneOn_β [thm, Task 2] : Auto.DIR.J_half_eq_L_half, Auto.DIR.J_monotoneOn_antitoneOn, Auto.DIR.eqn_3_6, Auto.DIR.existsUnique_J, Auto.DIR.f_LJQ_3, Auto.DIR.f_LJQ_3_eq
+Auto.DIR.f_LJ_deriv2 [thm, Task 2] : Auto.DIR.J, Auto.DIR.existsUnique_J, Auto.DIR.f_LJ, Auto.DIR.iteratedDeriv_two_J
+Auto.DIR.f_LJ_deriv2_nonpos_iff [thm, Task 2] : Auto.DIR.J_half_eq_L_half, Auto.DIR.J_monotoneOn_antitoneOn, Auto.DIR.eqn_3_6, Auto.DIR.existsUnique_J, Auto.DIR.f_LJ, Auto.DIR.f_LJ_deriv2, Auto.DIR.h_LJ_nonpos, Auto.DIR.r_LJ
 Auto.DIR.f_LJ_deriv2_sign_change [thm, Task 2] : Auto.DIR.f_LJ, Auto.DIR.f_LJ_deriv2_nonpos_iff, Auto.DIR.r_LJ_sub_antitoneOn
-Auto.DIR.f_LJ_deriv_monotone_antitone [thm, Task 2] : Auto.DIR.f_LJ
-Auto.DIR.f_LJ_deriv_three_quarters [thm, Task 2] : Auto.DIR.J, Auto.DIR.f_LJ
+Auto.DIR.f_LJ_deriv_monotone_antitone [thm, Task 2] : Auto.DIR.existsUnique_J, Auto.DIR.f_LJ
+Auto.DIR.f_LJ_deriv_three_quarters [thm, Task 2] : Auto.DIR.J, Auto.DIR.eqn_3_4, Auto.DIR.existsUnique_J, Auto.DIR.f_LJ
 Auto.DIR.f_LJ_deriv_three_quarters_pos [thm, Task 2] : Auto.DIR.eqn_3_4, Auto.DIR.f_LJ, Auto.DIR.f_LJ_deriv_three_quarters, Auto.DIR.w₀_mem
 Auto.DIR.f_LJ_endpoints_nonneg [thm, Task 2] : Auto.DIR.eqn_6_21, Auto.DIR.eqn_6_22, Auto.DIR.f_LJ, Auto.DIR.f_LJ_eq
 Auto.DIR.f_LJ_eq [thm, Task 2] : Auto.DIR.f_LJ, Auto.DIR.g_LJ
-Auto.DIR.f_LJ_ge_min_endpoints [thm, Task 2] : Auto.DIR.f_LJ, Auto.DIR.f_LJ_deriv2_sign_change, Auto.DIR.f_LJ_deriv_monotone_antitone, Auto.DIR.f_LJ_deriv_three_quarters_pos
+Auto.DIR.f_LJ_ge_min_endpoints [thm, Task 2] : Auto.DIR.existsUnique_J, Auto.DIR.f_LJ, Auto.DIR.f_LJ_deriv2_sign_change, Auto.DIR.f_LJ_deriv_monotone_antitone, Auto.DIR.f_LJ_deriv_three_quarters_pos
 Auto.DIR.f_LJ_nonneg [thm, Task 2] : Auto.DIR.f_LJ, Auto.DIR.f_LJ_endpoints_nonneg, Auto.DIR.f_LJ_ge_min_endpoints
 Auto.DIR.f_QIII [def, Task 3] : Auto.DIR.R
 Auto.DIR.f_QIII_0 [def, Task 3] : Auto.DIR.R
@@ -221,26 +222,26 @@ Auto.DIR.f_QIII_1_nonneg_f_QIII_2_nonpos [thm, Task 3] : Auto.DIR.R, Auto.DIR.R_
 Auto.DIR.f_QIII_2 [def, Task 3] : Auto.DIR.R
 Auto.DIR.f_QIII_deriv_eq_sub [thm, Task 3] : Auto.DIR.deriv_f_QIII, Auto.DIR.f_QIII, Auto.DIR.f_QIII_0, Auto.DIR.β₀
 Auto.DIR.f_QIII_half [thm, Task 3] : Auto.DIR.Q_spec, Auto.DIR.f_QIII, Auto.DIR.β₀
-Auto.DIR.f_QIII_nonneg [thm, Task 3] : Auto.DIR.deriv_f_QIII_nonpos, Auto.DIR.f_QIII, Auto.DIR.f_QIII_half, Auto.DIR.β₀
+Auto.DIR.f_QIII_nonneg [thm, Task 3] : Auto.DIR.deriv_f_QIII, Auto.DIR.deriv_f_QIII_nonpos, Auto.DIR.f_QIII, Auto.DIR.f_QIII_half, Auto.DIR.β₀
 Auto.DIR.g_J_1 [def, Task 2] : Auto.DIR.E_J, Auto.DIR.J
 Auto.DIR.g_J_2 [def, Task 2] : Auto.DIR.J
 Auto.DIR.g_LJ [def, Task 2] : Auto.DIR.J, Auto.DIR.L
-Auto.DIR.g_LJ_deriv2_eq [thm, Task 2] : Auto.DIR.J, Auto.DIR.L, Auto.DIR.g_LJ, Auto.DIR.iteratedDeriv_two_J
+Auto.DIR.g_LJ_deriv2_eq [thm, Task 2] : Auto.DIR.J, Auto.DIR.L, Auto.DIR.existsUnique_J, Auto.DIR.g_LJ, Auto.DIR.iteratedDeriv_two_J
 Auto.DIR.g_LJ_deriv2_nonpos [thm, Task 2] : Auto.DIR.g_LJ, Auto.DIR.g_LJ_deriv2_nonpos_of_deriv3, Auto.DIR.g_LJ_deriv2_nonpos_of_le, Auto.DIR.g_LJ_deriv2_quarter_nonpos, Auto.DIR.g_LJ_deriv3_nonneg
 Auto.DIR.g_LJ_deriv2_nonpos_of_deriv3 [thm, Task 2] : Auto.DIR.g_LJ, Auto.DIR.w₀
 Auto.DIR.g_LJ_deriv2_nonpos_of_le [thm, Task 2] : Auto.DIR.J_inv_le_two, Auto.DIR.L_half_deriv2_monotoneOn_neg, Auto.DIR.eqn_6_19, Auto.DIR.g_LJ, Auto.DIR.g_LJ_deriv2_eq, Auto.DIR.w₀
 Auto.DIR.g_LJ_deriv2_quarter_nonpos [thm, Task 2] : Auto.DIR.J_inv_le_two, Auto.DIR.J_inv_monotoneOn_Ico_x₀, Auto.DIR.eqn_6_19, Auto.DIR.eqn_6_20, Auto.DIR.g_LJ, Auto.DIR.g_LJ_deriv2_eq
-Auto.DIR.g_LJ_deriv3_eq [thm, Task 2] : Auto.DIR.J, Auto.DIR.L, Auto.DIR.g_LJ, Auto.DIR.g_LJ_deriv2_eq
+Auto.DIR.g_LJ_deriv3_eq [thm, Task 2] : Auto.DIR.J, Auto.DIR.L, Auto.DIR.existsUnique_J, Auto.DIR.g_LJ, Auto.DIR.g_LJ_deriv2_eq
 Auto.DIR.g_LJ_deriv3_nonneg [thm, Task 2] : Auto.DIR.L_half_deriv3_nonneg, Auto.DIR.deriv_J_nonpos, Auto.DIR.g_LJ, Auto.DIR.g_LJ_deriv3_eq, Auto.DIR.w₀
-Auto.DIR.g_LJ_diag_deriv2 [thm, Task 2] : Auto.DIR.J, Auto.DIR.L, Auto.DIR.L_half_deriv2_monotoneOn_neg, Auto.DIR.deriv_J_x₀, Auto.DIR.g_LJ, Auto.DIR.g_LJ_diag_eq
-Auto.DIR.g_LJ_diag_eq [thm, Task 2] : Auto.DIR.J, Auto.DIR.L, Auto.DIR.existsUnique_J, Auto.DIR.g_LJ
+Auto.DIR.g_LJ_diag_deriv2 [thm, Task 2] : Auto.DIR.J, Auto.DIR.L, Auto.DIR.L_half_deriv2_monotoneOn_neg, Auto.DIR.deriv_J_x₀, Auto.DIR.existsUnique_J, Auto.DIR.g_LJ, Auto.DIR.g_LJ_diag_eq
+Auto.DIR.g_LJ_diag_eq [thm, Task 2] : Auto.DIR.J, Auto.DIR.J_half_eq_L_half, Auto.DIR.L, Auto.DIR.existsUnique_J, Auto.DIR.g_LJ
 Auto.DIR.g_LJ_diag_nonneg [thm, Task 2] : Auto.DIR.eqn_6_22, Auto.DIR.g_LJ, Auto.DIR.g_LJ_diag_deriv2, Auto.DIR.g_LJ_zero_one
 Auto.DIR.g_LJ_eq [thm, Task 2] : Auto.DIR.J, Auto.DIR.L, Auto.DIR.g_LJ
 Auto.DIR.g_LJ_nonneg [thm, Task 2] : Auto.DIR.f_LJ_eq, Auto.DIR.f_LJ_nonneg, Auto.DIR.g_LJ, Auto.DIR.g_LJ_diag_nonneg, Auto.DIR.g_LJ_nonneg_of_boundary, Auto.DIR.g_LJ_one_nonneg
-Auto.DIR.g_LJ_nonneg_of_boundary [thm, Task 2] : Auto.DIR.g_LJ, Auto.DIR.g_LJ_deriv2_nonpos
+Auto.DIR.g_LJ_nonneg_of_boundary [thm, Task 2] : Auto.DIR.existsUnique_J, Auto.DIR.g_LJ, Auto.DIR.g_LJ_deriv2_nonpos
 Auto.DIR.g_LJ_one_deriv2_nonpos [thm, Task 2] : Auto.DIR.g_LJ, Auto.DIR.g_LJ_deriv2_nonpos
 Auto.DIR.g_LJ_one_nonneg [thm, Task 2] : Auto.DIR.eqn_6_21, Auto.DIR.g_LJ, Auto.DIR.g_LJ_one_deriv2_nonpos, Auto.DIR.g_LJ_zero_one
-Auto.DIR.g_LJ_zero_one [thm, Task 2] : Auto.DIR.existsUnique_J, Auto.DIR.g_LJ
+Auto.DIR.g_LJ_zero_one [thm, Task 2] : Auto.DIR.J_half_eq_L_half, Auto.DIR.existsUnique_J, Auto.DIR.g_LJ
 Auto.DIR.g_P_1 [def, Task 4] : Auto.DIR.w₀, Auto.DIR.β₀
 Auto.DIR.g_P_3 [def, Task 4] : Auto.DIR.G_P
 Auto.DIR.g_QJ [def, Task 2] : Auto.DIR.J, Auto.DIR.Jw, Auto.DIR.Q, Auto.DIR.w₀
@@ -248,27 +249,27 @@ Auto.DIR.g_QJQ [def, Task 2] : Auto.DIR.J, Auto.DIR.Q
 Auto.DIR.g_QJ_2 [def, Task 2] : Auto.DIR.J, Auto.DIR.Jw, Auto.DIR.Q, Auto.DIR.w₀
 Auto.DIR.g_QJ_deriv_x_nonpos [thm, Task 2] : Auto.DIR.c₀, Auto.DIR.eqn_6_26, Auto.DIR.g_QJ, Auto.DIR.g_QJ_deriv_x_nonpos_of_pos, Auto.DIR.β₀
 Auto.DIR.g_QJ_deriv_x_nonpos_of_pos [thm, Task 2] : Auto.DIR.g_QJ
-Auto.DIR.g_QJ_half_nonneg_iff [thm, Task 2] : Auto.DIR.G₁, Auto.DIR.J, Auto.DIR.Q_spec, Auto.DIR.eqn_3_4, Auto.DIR.existsUnique_J, Auto.DIR.g_QJ, Auto.DIR.two_J_sub_Q_pos
+Auto.DIR.g_QJ_half_nonneg_iff [thm, Task 2] : Auto.DIR.G₁, Auto.DIR.J, Auto.DIR.J_half_eq_L_half, Auto.DIR.J_monotoneOn_antitoneOn, Auto.DIR.Q_spec, Auto.DIR.eqn_3_4, Auto.DIR.eqn_3_6, Auto.DIR.existsUnique_J, Auto.DIR.g_QJ, Auto.DIR.two_J_sub_Q_pos
 Auto.DIR.g_QJ_nonneg_of_half [thm, Task 2] : Auto.DIR.c₀, Auto.DIR.g_QJ, Auto.DIR.g_QJ_deriv_x_nonpos, Auto.DIR.β₀
 Auto.DIR.g_Q_1 [def, Task 3] : Auto.DIR.Q
 Auto.DIR.g_Q_1_lo [def, Task 3] : Auto.DIR.Q, Auto.DIR.α₀, Auto.DIR.α₁
 Auto.DIR.g_Q_2 [def, Task 3] : Auto.DIR.p_Q
 Auto.DIR.gradNorm [def, Task 4] : Auto.DIR.Cube, Auto.DIR.e
-Auto.DIR.grad_norm_ge [thm, Task 5] : Auto.DIR.Cube, Auto.DIR.dens, Auto.DIR.eqn_7_1, Auto.DIR.expect, Auto.DIR.gradNorm, Auto.DIR.h, Auto.DIR.ind, Auto.DIR.pNorm
+Auto.DIR.grad_norm_ge [thm, Task 4] : Auto.DIR.Cube, Auto.DIR.dens, Auto.DIR.eqn_7_1, Auto.DIR.expect, Auto.DIR.gradNorm, Auto.DIR.h, Auto.DIR.ind, Auto.DIR.pNorm
 Auto.DIR.h [def, Task 4] : Auto.DIR.Cube, Auto.DIR.e
 Auto.DIR.h_LJ [def, Task 2] : Auto.DIR.J
 Auto.DIR.h_LJ_antitoneOn [thm, Task 2] : Auto.DIR.h_LJ, Auto.DIR.h_LJ_deriv
-Auto.DIR.h_LJ_deriv [thm, Task 2] : Auto.DIR.J, Auto.DIR.h_LJ, Auto.DIR.iteratedDeriv_two_J
+Auto.DIR.h_LJ_deriv [thm, Task 2] : Auto.DIR.J, Auto.DIR.existsUnique_J, Auto.DIR.h_LJ, Auto.DIR.iteratedDeriv_two_J
 Auto.DIR.h_LJ_le_h_LJ_t [thm, Task 2] : Auto.DIR.h_LJ, Auto.DIR.h_LJ_antitoneOn, Auto.DIR.t_LJ
-Auto.DIR.h_LJ_nonpos [thm, Task 2] : Auto.DIR.J, Auto.DIR.J_monotoneOn_antitoneOn, Auto.DIR.deriv_J_x₀, Auto.DIR.eqn_3_6, Auto.DIR.h_LJ
+Auto.DIR.h_LJ_nonpos [thm, Task 2] : Auto.DIR.J, Auto.DIR.J_half_eq_L_half, Auto.DIR.J_monotoneOn_antitoneOn, Auto.DIR.deriv_J_x₀, Auto.DIR.eqn_3_6, Auto.DIR.existsUnique_J, Auto.DIR.h_LJ
 Auto.DIR.ind [def, Task 4] : Auto.DIR.Cube
-Auto.DIR.indicator_norms [thm, Task 5] : Auto.DIR.Cube, Auto.DIR.dens, Auto.DIR.expect, Auto.DIR.ind, Auto.DIR.pNorm
+Auto.DIR.indicator_norms [thm, Task 4] : Auto.DIR.Cube, Auto.DIR.dens, Auto.DIR.expect, Auto.DIR.ind, Auto.DIR.pNorm
 Auto.DIR.isoProfile [def, Task 4] : Auto.DIR.Cube, Auto.DIR.dens, Auto.DIR.expect, Auto.DIR.h
-Auto.DIR.isoProfile_ge_btilde [thm, Task 5] : Auto.DIR.btilde, Auto.DIR.dyadic, Auto.DIR.eqn_2_8, Auto.DIR.isoProfile, Auto.DIR.lemma_5_8, Auto.DIR.prop_2_1, Auto.DIR.β₀
+Auto.DIR.isoProfile_ge_btilde [thm, Task 5] : Auto.DIR.btilde, Auto.DIR.dyadic, Auto.DIR.eqn_2_8, Auto.DIR.existsUnique_J, Auto.DIR.isoProfile, Auto.DIR.lemma_5_8, Auto.DIR.prop_2_1, Auto.DIR.β₀
 Auto.DIR.isoProfile_half_le_sqrt [thm, Task 4] : Auto.DIR.dyadic, Auto.DIR.isoProfile
 Auto.DIR.isoProfile_one_asymp [thm, Task 5] : Auto.DIR.dyadic, Auto.DIR.eqn_1_3, Auto.DIR.isoProfile
 Auto.DIR.isoProfile_two_pow_le [thm, Task 4] : Auto.DIR.isoProfile
-Auto.DIR.iteratedDeriv_three_J [thm, Task 2] : Auto.DIR.J, Auto.DIR.iteratedDeriv_two_J
+Auto.DIR.iteratedDeriv_three_J [thm, Task 2] : Auto.DIR.J, Auto.DIR.existsUnique_J, Auto.DIR.iteratedDeriv_two_J
 Auto.DIR.iteratedDeriv_three_f_QIII_0 [thm, Task 3] : Auto.DIR.R_derivs_one_div_β, Auto.DIR.derivs_f_QIII_2, Auto.DIR.f_QIII_0, Auto.DIR.f_QIII_0_eq_mul, Auto.DIR.f_QIII_1, Auto.DIR.f_QIII_2, Auto.DIR.β₀
 Auto.DIR.iteratedDeriv_three_f_QIII_0_nonneg [thm, Task 3] : Auto.DIR.derivs_f_QIII_1_nonpos, Auto.DIR.derivs_f_QIII_2_nonpos, Auto.DIR.f_QIII_0, Auto.DIR.f_QIII_1_nonneg_f_QIII_2_nonpos, Auto.DIR.iteratedDeriv_three_f_QIII_0, Auto.DIR.β₀
 Auto.DIR.iteratedDeriv_two_J [thm, Task 2] : Auto.DIR.J, Auto.DIR.existsUnique_J
@@ -308,7 +309,7 @@ Auto.DIR.lemma_5_8_2_dbeta [thm, Task 1] : Auto.DIR.Q, Auto.DIR.eqn_5_6
 Auto.DIR.lemma_5_8_2_rewrite [thm, Task 1] : Auto.DIR.Q, Auto.DIR.eqn_5_6, Auto.DIR.α₁, Auto.DIR.α₁_pos_iff
 Auto.DIR.lemma_5_8_3_dbeta [thm, Task 1] : Auto.DIR.Q, Auto.DIR.eqn_5_7
 Auto.DIR.lemma_5_9 [thm, Task 3] : Auto.DIR.L, Auto.DIR.Q, Auto.DIR.lemma_5_9_1_endpoints, Auto.DIR.lemma_5_9_1_max, Auto.DIR.lemma_5_9_2_convex
-Auto.DIR.lemma_5_9_1_convex [thm, Task 3] : Auto.DIR.L, Auto.DIR.Q, Auto.DIR.eqn_5_8, Auto.DIR.lemma_5_6, Auto.DIR.lemma_5_8, Auto.DIR.rem_5_7
+Auto.DIR.lemma_5_9_1_convex [thm, Task 3] : Auto.DIR.L, Auto.DIR.Q, Auto.DIR.eqn_5_8, Auto.DIR.lemma_5_6, Auto.DIR.lemma_5_8, Auto.DIR.rem_5_7, Auto.DIR.α₁_pos_iff
 Auto.DIR.lemma_5_9_1_endpoint [thm, Task 3] : Auto.DIR.L, Auto.DIR.Q, Auto.DIR.eqn_5_2, Auto.DIR.eqn_5_6
 Auto.DIR.lemma_5_9_1_endpoints [thm, Task 3] : Auto.DIR.L, Auto.DIR.Q, Auto.DIR.Q_spec
 Auto.DIR.lemma_5_9_1_max [thm, Task 3] : Auto.DIR.L, Auto.DIR.Q, Auto.DIR.lemma_5_9_1_convex, Auto.DIR.lemma_5_9_1_endpoint, Auto.DIR.lemma_5_9_1_quarter, Auto.DIR.lemma_5_9_1_unique_zero
@@ -316,12 +317,12 @@ Auto.DIR.lemma_5_9_1_quarter [thm, Task 3] : Auto.DIR.L, Auto.DIR.Q, Auto.DIR.eq
 Auto.DIR.lemma_5_9_1_quarter_steps [thm, Task 3] : Auto.DIR.L, Auto.DIR.Q, Auto.DIR.eqn_5_2, Auto.DIR.eqn_5_6
 Auto.DIR.lemma_5_9_1_unique_zero [thm, Task 3] : Auto.DIR.L, Auto.DIR.Q, Auto.DIR.lemma_5_9_1_convex, Auto.DIR.lemma_5_9_1_endpoint, Auto.DIR.lemma_5_9_1_quarter
 Auto.DIR.lemma_5_9_2_concave [thm, Task 3] : Auto.DIR.L, Auto.DIR.Q, Auto.DIR.eqn_5_7, Auto.DIR.lemma_5_6
-Auto.DIR.lemma_5_9_2_convex [thm, Task 3] : Auto.DIR.L, Auto.DIR.Q, Auto.DIR.Q_spec, Auto.DIR.lemma_5_9_2_concave, Auto.DIR.lemma_5_9_2_half, Auto.DIR.lemma_5_9_2_quarter
+Auto.DIR.lemma_5_9_2_convex [thm, Task 3] : Auto.DIR.L, Auto.DIR.Q, Auto.DIR.Q_spec, Auto.DIR.lemma_5_9_1_endpoints, Auto.DIR.lemma_5_9_2_concave, Auto.DIR.lemma_5_9_2_half, Auto.DIR.lemma_5_9_2_quarter
 Auto.DIR.lemma_5_9_2_half [thm, Task 3] : Auto.DIR.L, Auto.DIR.Q, Auto.DIR.eqn_5_3, Auto.DIR.eqn_5_7
 Auto.DIR.lemma_5_9_2_quarter [thm, Task 3] : Auto.DIR.L, Auto.DIR.Q, Auto.DIR.eqn_5_3, Auto.DIR.eqn_5_7
 Auto.DIR.lemma_6_4 [thm, Task 3] : Auto.DIR.G_Q, Auto.DIR.eqn_6_12, Auto.DIR.lemma_6_4_of_strictAntiOn, Auto.DIR.β₀
-Auto.DIR.lemma_6_4_denom_pos [thm, Task 3] : Auto.DIR.Q, Auto.DIR.lemma_5_8, Auto.DIR.β₀
-Auto.DIR.lemma_6_4_deriv [thm, Task 3] : Auto.DIR.G_Q, Auto.DIR.Q, Auto.DIR.lemma_6_4_denom_pos, Auto.DIR.β₀
+Auto.DIR.lemma_6_4_denom_pos [thm, Task 3] : Auto.DIR.Q, Auto.DIR.eqn_5_7, Auto.DIR.lemma_5_8, Auto.DIR.β₀
+Auto.DIR.lemma_6_4_deriv [thm, Task 3] : Auto.DIR.G_Q, Auto.DIR.Q, Auto.DIR.lemma_5_8, Auto.DIR.lemma_6_4_denom_pos, Auto.DIR.β₀
 Auto.DIR.lemma_6_4_of_strictAntiOn [thm, Task 3] : Auto.DIR.G_Q, Auto.DIR.eqn_6_11, Auto.DIR.eqn_6_11_eq_p_Q, Auto.DIR.lemma_6_4_denom_pos, Auto.DIR.p_Q, Auto.DIR.β₀
 Auto.DIR.lemma_6_4_poly [thm, Task 3] : Auto.DIR.Q, Auto.DIR.Q_spec, Auto.DIR.eqn_5_6, Auto.DIR.α₀, Auto.DIR.α₁
 Auto.DIR.lemma_6_7 [thm, Task 1] : Auto.DIR.G_LJQ, Auto.DIR.eqn_6_14, Auto.DIR.lemma_6_7_deriv2, Auto.DIR.lemma_6_7_eval, Auto.DIR.lemma_6_7_mono, Auto.DIR.α₁_pos_iff
@@ -358,14 +359,14 @@ Auto.DIR.prop_5_11_t_bounds [thm, Task 4] : Auto.DIR.prop_5_11_t_formula, Auto.D
 Auto.DIR.prop_5_11_t_formula [thm, Task 4] : Auto.DIR.φ
 Auto.DIR.prop_6_1 [thm, Task 2] : Auto.DIR.G₁, Auto.DIR.J, Auto.DIR.caseJ_G₁_mono_β, Auto.DIR.caseJ_I, Auto.DIR.caseJ_II, Auto.DIR.caseJ_II_suffices, Auto.DIR.caseJ_I_region_subset, Auto.DIR.c₀, Auto.DIR.x₀, Auto.DIR.β₀
 Auto.DIR.prop_6_11 [thm, Task 2] : Auto.DIR.G₁, Auto.DIR.G₁_J_half_nonneg, Auto.DIR.G₁_nonneg_iff_g_QJ_nonneg, Auto.DIR.b, Auto.DIR.c₀, Auto.DIR.g_QJ_half_nonneg_iff, Auto.DIR.g_QJ_nonneg_of_half, Auto.DIR.prop_6_11_mono_beta, Auto.DIR.β₀
-Auto.DIR.prop_6_11_mono_beta [thm, Task 2] : Auto.DIR.G₁, Auto.DIR.b, Auto.DIR.caseQJ_G₁_monotoneOn_beta, Auto.DIR.β₀
+Auto.DIR.prop_6_11_mono_beta [thm, Task 2] : Auto.DIR.G₁, Auto.DIR.J_half_eq_L_half, Auto.DIR.Q_spec, Auto.DIR.b, Auto.DIR.caseQJ_G₁_monotoneOn_beta, Auto.DIR.β₀
 Auto.DIR.prop_6_12 [thm, Task 2] : Auto.DIR.g_QJ_2
-Auto.DIR.prop_6_12_stronger [thm, Task 2] : Auto.DIR.G₁, Auto.DIR.b, Auto.DIR.caseQJ_G₁_monotoneOn_beta, Auto.DIR.c₀, Auto.DIR.eqn_3_4, Auto.DIR.g_QJ_2, Auto.DIR.lemma_5_8, Auto.DIR.β₀
+Auto.DIR.prop_6_12_stronger [thm, Task 2] : Auto.DIR.G₁, Auto.DIR.J_half_eq_L_half, Auto.DIR.J_monotoneOn_antitoneOn, Auto.DIR.Q_spec, Auto.DIR.b, Auto.DIR.caseQJ_G₁_monotoneOn_beta, Auto.DIR.c₀, Auto.DIR.eqn_3_4, Auto.DIR.eqn_3_6, Auto.DIR.existsUnique_J, Auto.DIR.g_QJ_2, Auto.DIR.lemma_5_8, Auto.DIR.β₀
 Auto.DIR.prop_6_2 [thm, Task 3] : Auto.DIR.G₁, Auto.DIR.L, Auto.DIR.Q, Auto.DIR.caseQ_reduction, Auto.DIR.eqn_6_6, Auto.DIR.β₀
 Auto.DIR.prop_6_6 [thm, Task 2] : Auto.DIR.G_LJQ, Auto.DIR.caseLJQ_claim_1, Auto.DIR.caseLJQ_claim_2, Auto.DIR.caseLJQ_claim_3, Auto.DIR.prop_6_6_reduction
 Auto.DIR.prop_6_6_reduction [thm, Task 2] : Auto.DIR.G_LJQ, Auto.DIR.lemma_6_7
 Auto.DIR.prop_6_8 [thm, Task 2] : Auto.DIR.J, Auto.DIR.L, Auto.DIR.g_LJ_eq, Auto.DIR.g_LJ_nonneg, Auto.DIR.prop_6_8_monotoneOn_beta
-Auto.DIR.prop_6_8_monotoneOn_beta [thm, Task 2] : Auto.DIR.J, Auto.DIR.L
+Auto.DIR.prop_6_8_monotoneOn_beta [thm, Task 2] : Auto.DIR.J, Auto.DIR.J_half_eq_L_half, Auto.DIR.J_monotoneOn_antitoneOn, Auto.DIR.L, Auto.DIR.eqn_3_6, Auto.DIR.existsUnique_J
 Auto.DIR.prop_6_9 [thm, Task 2] : Auto.DIR.G_QJQ, Auto.DIR.G_QJQ_ge_G_QJQ_half, Auto.DIR.G_QJQ_y_half_eq, Auto.DIR.G_QJQ_y_half_nonneg, Auto.DIR.prop_6_9_of_endpoints, Auto.DIR.β₁
 Auto.DIR.prop_6_9_of_endpoints [thm, Task 2] : Auto.DIR.G_QJQ, Auto.DIR.G_QJQ_ge_min, Auto.DIR.β₁
 Auto.DIR.prop_7_1 [thm, Task 4] : Auto.DIR.G_P, Auto.DIR.G_P_symm, Auto.DIR.eqn_7_3, Auto.DIR.eqn_7_4, Auto.DIR.prop_7_1_case_I, Auto.DIR.prop_7_1_case_III_eq, Auto.DIR.β₀
@@ -374,9 +375,9 @@ Auto.DIR.prop_7_1_case_III_eq [thm, Task 4] : Auto.DIR.G_P, Auto.DIR.J, Auto.DIR
 Auto.DIR.prop_7_1_case_I_chain [thm, Task 4] : Auto.DIR.G_P, Auto.DIR.J, Auto.DIR.L, Auto.DIR.cor_5_12, Auto.DIR.g_P_1, Auto.DIR.prop_7_1_case_I_eq, Auto.DIR.β₀
 Auto.DIR.prop_7_1_case_I_eq [thm, Task 4] : Auto.DIR.G_P, Auto.DIR.J, Auto.DIR.L
 Auto.DIR.r_LJ [def, Task 2] : Auto.DIR.J, Auto.DIR.t_LJ
-Auto.DIR.r_LJ_antitoneOn [thm, Task 2] : Auto.DIR.r_LJ, Auto.DIR.two_h_LJ_le
-Auto.DIR.r_LJ_deriv [thm, Task 2] : Auto.DIR.J, Auto.DIR.r_LJ, Auto.DIR.t_LJ
-Auto.DIR.r_LJ_deriv_nonpos_of [thm, Task 2] : Auto.DIR.J, Auto.DIR.h_LJ_nonpos, Auto.DIR.r_LJ, Auto.DIR.r_LJ_deriv, Auto.DIR.t_LJ
+Auto.DIR.r_LJ_antitoneOn [thm, Task 2] : Auto.DIR.existsUnique_J, Auto.DIR.r_LJ, Auto.DIR.r_LJ_deriv, Auto.DIR.two_h_LJ_le
+Auto.DIR.r_LJ_deriv [thm, Task 2] : Auto.DIR.J, Auto.DIR.existsUnique_J, Auto.DIR.r_LJ, Auto.DIR.t_LJ
+Auto.DIR.r_LJ_deriv_nonpos_of [thm, Task 2] : Auto.DIR.J, Auto.DIR.J_half_eq_L_half, Auto.DIR.J_monotoneOn_antitoneOn, Auto.DIR.eqn_3_6, Auto.DIR.existsUnique_J, Auto.DIR.h_LJ_nonpos, Auto.DIR.r_LJ, Auto.DIR.r_LJ_deriv, Auto.DIR.t_LJ
 Auto.DIR.r_LJ_sub_antitoneOn [thm, Task 2] : Auto.DIR.r_LJ, Auto.DIR.r_LJ_antitoneOn
 Auto.DIR.rem_3_6 [thm, Task 1] : Auto.DIR.Jw
 Auto.DIR.rem_5_7 [thm, Task 1] : 
@@ -388,14 +389,14 @@ Auto.DIR.thm_1_5 [thm, Task 5] : Auto.DIR.isoProfile, Auto.DIR.thm_1_5_lower, Au
 Auto.DIR.thm_1_5_lower [thm, Task 5] : Auto.DIR.b_half_two_pow, Auto.DIR.cor_2_5, Auto.DIR.isoProfile
 Auto.DIR.thm_1_5_upper [thm, Task 4] : Auto.DIR.isoProfile, Auto.DIR.isoProfile_two_pow_le
 Auto.DIR.thm_1_6 [thm, Task 5] : Auto.DIR.Cube, Auto.DIR.dens, Auto.DIR.dyadic, Auto.DIR.expect, Auto.DIR.h, Auto.DIR.isoProfile, Auto.DIR.isoProfile_half_le_sqrt, Auto.DIR.isoProfile_one_asymp, Auto.DIR.proof_thm_1_6_chain
-Auto.DIR.thm_1_7 [thm, Task 5] : Auto.DIR.Cube, Auto.DIR.J, Auto.DIR.J_half_eq_L_half, Auto.DIR.dens, Auto.DIR.dens_mem_dyadic, Auto.DIR.expect, Auto.DIR.h, Auto.DIR.isoProfile_ge_btilde, Auto.DIR.β₀
-Auto.DIR.thm_2_2 [thm, Task 5] : Auto.DIR.G, Auto.DIR.J_eqn_3_2, Auto.DIR.J_half_eq_L_half, Auto.DIR.Q_spec, Auto.DIR.b, Auto.DIR.caseLJ_region, Auto.DIR.caseQJQ_region, Auto.DIR.c₀, Auto.DIR.eqn_3_2_iff_G₁, Auto.DIR.eqn_6_13, Auto.DIR.lemma_5_9, Auto.DIR.prop_6_1, Auto.DIR.prop_6_11, Auto.DIR.prop_6_12, Auto.DIR.prop_6_12_stronger, Auto.DIR.prop_6_2, Auto.DIR.prop_6_6, Auto.DIR.prop_6_8, Auto.DIR.prop_6_9, Auto.DIR.β₀, Auto.DIR.β₁_approx
+Auto.DIR.thm_1_7 [thm, Task 5] : Auto.DIR.Cube, Auto.DIR.J, Auto.DIR.J_half_eq_L_half, Auto.DIR.Q_spec, Auto.DIR.dens, Auto.DIR.dens_mem_dyadic, Auto.DIR.expect, Auto.DIR.h, Auto.DIR.isoProfile_ge_btilde, Auto.DIR.β₀
+Auto.DIR.thm_2_2 [thm, Task 5] : Auto.DIR.G, Auto.DIR.J_eqn_3_2, Auto.DIR.J_half_eq_L_half, Auto.DIR.Q_spec, Auto.DIR.b, Auto.DIR.caseJ_II_suffices, Auto.DIR.caseLJ_region, Auto.DIR.caseQJQ_region, Auto.DIR.c₀, Auto.DIR.eqn_3_2_iff_G₁, Auto.DIR.eqn_6_13, Auto.DIR.lemma_5_9, Auto.DIR.prop_6_1, Auto.DIR.prop_6_11, Auto.DIR.prop_6_12, Auto.DIR.prop_6_12_stronger, Auto.DIR.prop_6_2, Auto.DIR.prop_6_6, Auto.DIR.prop_6_8, Auto.DIR.prop_6_9, Auto.DIR.β₀, Auto.DIR.β₁_approx
 Auto.DIR.two_J_sub_Q_pos [thm, Task 2] : Auto.DIR.J, Auto.DIR.Q
-Auto.DIR.two_Q_sub_Q_ge [thm, Task 2] : Auto.DIR.Q, Auto.DIR.Q_spec, Auto.DIR.eqn_5_7, Auto.DIR.lemma_5_8, Auto.DIR.β₁
+Auto.DIR.two_Q_sub_Q_ge [thm, Task 2] : Auto.DIR.Q, Auto.DIR.Q_spec, Auto.DIR.eqn_5_5, Auto.DIR.eqn_5_7, Auto.DIR.lemma_5_8, Auto.DIR.α₁_pos_iff, Auto.DIR.β₁, Auto.DIR.β₁_approx
 Auto.DIR.two_h_LJ_le [thm, Task 2] : Auto.DIR.h_LJ, Auto.DIR.h_LJ_le_h_LJ_t, Auto.DIR.h_LJ_nonpos, Auto.DIR.r_LJ, Auto.DIR.r_LJ_deriv_nonpos_of, Auto.DIR.t_LJ
 Auto.DIR.two_one_sub_εJ [thm, Task 4] : Auto.DIR.w₀_mem, Auto.DIR.εJ
 Auto.DIR.w₀ [def, Task 1] : Auto.DIR.Jw
-Auto.DIR.w₀_mem [thm, Task 1] : Auto.DIR.w₀
+Auto.DIR.w₀_mem [thm, Task 1] : Auto.DIR.existsUnique_w₀, Auto.DIR.w₀
 Auto.DIR.x₀ [def, Task 1] : Auto.DIR.w₀
 Auto.DIR.x₀_lt_five_div_eight [thm, Task 2] : Auto.DIR.eqn_3_6, Auto.DIR.x₀
 Auto.DIR.«termB̃» [def, Task 1] : 
@@ -429,7 +430,7 @@ Auto.DIRX.G_LJQ_diag_concave [thm, Task 3] : Auto.DIRX.G_LJQX, Auto.DIRX.G_LJQ_d
 Auto.DIRX.G_LJQ_diag_deriv2 [thm, Task 3] : Auto.DIR.L, Auto.DIRX.G_LJQX, Auto.DIRX.JX, Auto.DIRX.JX_contDiff, Auto.DIRX.deriv_JX, Auto.DIRX.lemma_2_3
 Auto.DIRX.G_LJQ_diag_eval [thm, Task 3] : Auto.DIR.Q_spec, Auto.DIRX.G_LJQX, Auto.DIRX.JXw_half_one
 Auto.DIRX.G_LJQ_diag_nonneg [thm, Task 3] : Auto.DIRX.G_LJQX, Auto.DIRX.G_LJQ_diag_concave, Auto.DIRX.G_LJQ_diag_eval
-Auto.DIRX.G_LJQ_strictConcave [thm, Task 3] : Auto.DIRX.G_LJQX, Auto.DIRX.eqn_3_4
+Auto.DIRX.G_LJQ_strictConcave [thm, Task 3] : Auto.DIR.lemma_6_7, Auto.DIRX.G_LJQX, Auto.DIRX.eqn_3_4
 Auto.DIRX.G_PX [def, Task 4] : Auto.DIRX.BX, Auto.DIRX.w₁
 Auto.DIRX.G_PX_I [thm, Task 4] : Auto.DIRX.G_PX, Auto.DIRX.G_PX_I_lower, Auto.DIRX.G_PX_eq_I, Auto.DIRX.JXw_half_one, Auto.DIRX.g_P₁X_antitone_eval
 Auto.DIRX.G_PX_III [thm, Task 4] : Auto.DIR.Q, Auto.DIR.Q_spec, Auto.DIRX.G_PX, Auto.DIRX.G_PX_III_anti, Auto.DIRX.G_PX_half, Auto.DIRX.JX, Auto.DIRX.JXw_half_one, Auto.DIRX.eqn_4_3
@@ -444,22 +445,22 @@ Auto.DIRX.G₂_BX_eq_G_LJQ [thm, Task 3] : Auto.DIR.G₂, Auto.DIR.Q_spec, Auto.
 Auto.DIRX.G₂_BX_eq_h_LJ [thm, Task 3] : Auto.DIR.G₂, Auto.DIR.Q_spec, Auto.DIRX.BX, Auto.DIRX.JXw_half_one, Auto.DIRX.h_LJ, Auto.DIRX.w₁
 Auto.DIRX.I_lower [thm, Task 4] : Auto.DIR.I, Auto.DIR.prop_5_11
 Auto.DIRX.JX [def, Task 1] : Auto.DIRX.JXw, Auto.DIRX.w₁
-Auto.DIRX.JX_concave [thm, Task 3] : Auto.DIRX.JX, Auto.DIRX.JX_contDiff, Auto.DIRX.JX_mul_deriv2, Auto.DIRX.γX_mem
-Auto.DIRX.JX_contDiff [thm, Task 1] : Auto.DIRX.JX, Auto.DIRX.w₁
+Auto.DIRX.JX_concave [thm, Task 3] : Auto.DIR.lemma_3_2, Auto.DIRX.JX, Auto.DIRX.JX_contDiff, Auto.DIRX.JX_mul_deriv2, Auto.DIRX.γX_mem
+Auto.DIRX.JX_contDiff [thm, Task 1] : Auto.DIR.I_characterization, Auto.DIRX.JX, Auto.DIRX.w₁
 Auto.DIRX.JX_mono [thm, Task 3] : Auto.DIRX.JX, Auto.DIRX.JX_contDiff, Auto.DIRX.deriv_JX, Auto.DIRX.x₁
 Auto.DIRX.JX_mul_deriv2 [thm, Task 3] : Auto.DIR.I_characterization, Auto.DIRX.JX, Auto.DIRX.JX_contDiff, Auto.DIRX.w₁, Auto.DIRX.γX
 Auto.DIRX.JXw [def, Task 1] : Auto.DIR.I
 Auto.DIRX.JXw_half_one [thm, Task 1] : Auto.DIR.I_characterization, Auto.DIRX.JXw
-Auto.DIRX.bool_eq_indicator [thm, Task 5] : Auto.DIR.Cube, Auto.DIR.ind
+Auto.DIRX.bool_eq_indicator [thm, Task 4] : Auto.DIR.Cube, Auto.DIR.boolean_eq_indicator, Auto.DIR.ind
 Auto.DIRX.cStar [def, Task 3] : 
 Auto.DIRX.caseJ [thm, Task 3] : Auto.DIR.G, Auto.DIRX.BX, Auto.DIRX.caseJ_G₁_eq, Auto.DIRX.eqn_3_1, Auto.DIRX.w₁
 Auto.DIRX.caseJ_G₁_eq [thm, Task 3] : Auto.DIR.G₁, Auto.DIR.Q_spec, Auto.DIRX.BX, Auto.DIRX.JX, Auto.DIRX.JXw_half_one, Auto.DIRX.w₁
 Auto.DIRX.caseJ_I [thm, Task 3] : Auto.DIRX.FX, Auto.DIRX.cStar, Auto.DIRX.caseJ_I_convex, Auto.DIRX.caseJ_I_lower, Auto.DIRX.caseJ_I_sq_deriv, Auto.DIRX.x₁
-Auto.DIRX.caseJ_II [thm, Task 3] : Auto.DIRX.FX, Auto.DIRX.FX_deriv2, Auto.DIRX.JX, Auto.DIRX.JX_mono, Auto.DIRX.JXw_half_one, Auto.DIRX.cStar, Auto.DIRX.deriv_JX, Auto.DIRX.x₁, Auto.DIRX.γX, Auto.DIRX.γX_mem
+Auto.DIRX.caseJ_II [thm, Task 3] : Auto.DIRX.FX, Auto.DIRX.FX_deriv2, Auto.DIRX.JX, Auto.DIRX.JX_concave, Auto.DIRX.JX_mono, Auto.DIRX.JXw_half_one, Auto.DIRX.cStar, Auto.DIRX.deriv_JX, Auto.DIRX.x₁, Auto.DIRX.γX, Auto.DIRX.γX_mem
 Auto.DIRX.caseJ_II_eval [thm, Task 3] : Auto.DIRX.JX, Auto.DIRX.x₁, Auto.DIRX.γX
-Auto.DIRX.caseJ_I_convex [thm, Task 3] : Auto.DIR.lemma_3_2, Auto.DIRX.JX, Auto.DIRX.JX_concave, Auto.DIRX.JX_contDiff, Auto.DIRX.JX_mul_deriv2, Auto.DIRX.cStar, Auto.DIRX.γX_mem
-Auto.DIRX.caseJ_I_lower [thm, Task 3] : Auto.DIRX.FX, Auto.DIRX.FX_deriv2, Auto.DIRX.JX, Auto.DIRX.JX_mono, Auto.DIRX.cStar, Auto.DIRX.x₁, Auto.DIRX.γX_le_two, Auto.DIRX.γX_mem
-Auto.DIRX.caseJ_I_sq_deriv [thm, Task 3] : Auto.DIRX.JX, Auto.DIRX.JX_contDiff, Auto.DIRX.JX_mul_deriv2, Auto.DIRX.deriv_JX, Auto.DIRX.x₁, Auto.DIRX.γX, Auto.DIRX.γX_mem
+Auto.DIRX.caseJ_I_convex [thm, Task 3] : Auto.DIR.convex_sub_ge, Auto.DIR.lemma_3_2, Auto.DIRX.JX, Auto.DIRX.JX_concave, Auto.DIRX.JX_contDiff, Auto.DIRX.JX_mul_deriv2, Auto.DIRX.cStar, Auto.DIRX.γX_mem
+Auto.DIRX.caseJ_I_lower [thm, Task 3] : Auto.DIRX.FX, Auto.DIRX.FX_deriv2, Auto.DIRX.JX, Auto.DIRX.JX_concave, Auto.DIRX.JX_mono, Auto.DIRX.cStar, Auto.DIRX.x₁, Auto.DIRX.γX_le_two, Auto.DIRX.γX_mem
+Auto.DIRX.caseJ_I_sq_deriv [thm, Task 3] : Auto.DIRX.JX, Auto.DIRX.JX_concave, Auto.DIRX.JX_contDiff, Auto.DIRX.JX_mul_deriv2, Auto.DIRX.deriv_JX, Auto.DIRX.x₁, Auto.DIRX.γX, Auto.DIRX.γX_mem
 Auto.DIRX.caseJ_cu [thm, Task 3] : Auto.DIRX.FX_nonneg, Auto.DIRX.JX, Auto.DIRX.cStar, Auto.DIRX.caseJ_rhs_nonneg, Auto.DIRX.caseJ_sq_iff
 Auto.DIRX.caseJ_rhs_nonneg [thm, Task 3] : Auto.DIRX.JX, Auto.DIRX.JX_concave, Auto.DIRX.cStar
 Auto.DIRX.caseJ_sq_iff [thm, Task 3] : Auto.DIRX.JX, Auto.DIRX.cStar, Auto.DIRX.caseJ_rhs_nonneg
@@ -473,10 +474,10 @@ Auto.DIRX.caseQJQ [thm, Task 3] : Auto.DIR.G, Auto.DIRX.BX, Auto.DIRX.caseQJQ_of
 Auto.DIRX.caseQJQ_of_eqn_3_9 [thm, Task 3] : Auto.DIR.G₁, Auto.DIR.Q, Auto.DIR.Q_spec, Auto.DIRX.BX, Auto.DIRX.JX, Auto.DIRX.JXw_half_one, Auto.DIRX.w₁
 Auto.DIRX.caseQJ_near [thm, Task 3] : Auto.DIR.G₁, Auto.DIRX.BX, Auto.DIRX.G₁_of_g_QJ, Auto.DIRX.g_QJ_nonneg, Auto.DIRX.w₁
 Auto.DIRX.caseQ_G₁_max [thm, Task 3] : Auto.DIR.G₁, Auto.DIR.L, Auto.DIR.Q, Auto.DIR.prop_6_2
-Auto.DIRX.deriv_JX [thm, Task 3] : Auto.DIRX.JX, Auto.DIRX.JX_concave, Auto.DIRX.JX_contDiff, Auto.DIRX.JX_mul_deriv2, Auto.DIRX.w₁, Auto.DIRX.x₁, Auto.DIRX.γX_mem
+Auto.DIRX.deriv_JX [thm, Task 3] : Auto.DIR.rem_3_6, Auto.DIRX.JX, Auto.DIRX.JX_concave, Auto.DIRX.JX_contDiff, Auto.DIRX.JX_mul_deriv2, Auto.DIRX.w₁, Auto.DIRX.x₁, Auto.DIRX.γX_mem
 Auto.DIRX.deriv_LX_JX_anti [thm, Task 3] : Auto.DIR.L, Auto.DIRX.JX, Auto.DIRX.deriv_JX, Auto.DIRX.lemma_2_3
 Auto.DIRX.eqn_2_4 [thm, Task 3] : Auto.DIR.G, Auto.DIRX.BX, Auto.DIRX.caseJ, Auto.DIRX.caseLJ, Auto.DIRX.caseLJQ, Auto.DIRX.caseQ, Auto.DIRX.caseQJ, Auto.DIRX.caseQJQ, Auto.DIRX.w₁
-Auto.DIRX.eqn_2_5 [thm, Task 5] : Auto.DIR.Cube, Auto.DIR.dens, Auto.DIR.expect, Auto.DIR.h, Auto.DIRX.BX, Auto.DIRX.BX_ge_LX, Auto.DIRX.JX_concave, Auto.DIRX.JXw_half_one, Auto.DIRX.eqn_2_4, Auto.DIRX.kahn_park, Auto.DIRX.w₁
+Auto.DIRX.eqn_2_5 [thm, Task 5] : Auto.DIR.Cube, Auto.DIR.dens, Auto.DIR.expect, Auto.DIR.h, Auto.DIR.lemma_5_8, Auto.DIRX.BX, Auto.DIRX.BX_ge_LX, Auto.DIRX.JX_concave, Auto.DIRX.JXw_half_one, Auto.DIRX.eqn_2_4, Auto.DIRX.kahn_park, Auto.DIRX.w₁
 Auto.DIRX.eqn_2_6 [thm, Task 4] : Auto.DIRX.JX, Auto.DIRX.eqn_2_6_eval, Auto.DIRX.eqn_2_6_step, Auto.DIRX.w₁, Auto.DIRX.εX_monotone
 Auto.DIRX.eqn_2_6_eval [thm, Task 4] : Auto.DIR.I, Auto.DIRX.w₁, Auto.DIRX.εX
 Auto.DIRX.eqn_2_6_step [thm, Task 4] : Auto.DIR.I, Auto.DIRX.I_lower, Auto.DIRX.JX, Auto.DIRX.w₁, Auto.DIRX.εX
@@ -487,7 +488,7 @@ Auto.DIRX.eqn_3_13 [thm, Task 3] : Auto.DIRX.g_QJX
 Auto.DIRX.eqn_3_14 [thm, Task 3] : Auto.DIRX.h_QJ₂
 Auto.DIRX.eqn_3_2 [thm, Task 3] : Auto.DIRX.FX, Auto.DIRX.cStar, Auto.DIRX.caseJ_I, Auto.DIRX.caseJ_II, Auto.DIRX.caseJ_II_eval
 Auto.DIRX.eqn_3_3 [thm, Task 3] : Auto.DIR.G, Auto.DIRX.BX, Auto.DIRX.w₁
-Auto.DIRX.eqn_3_4 [thm, Task 3] : Auto.DIR.L, Auto.DIR.Q, Auto.DIR.lemma_6_7, Auto.DIRX.G_LJQX
+Auto.DIRX.eqn_3_4 [thm, Task 3] : Auto.DIR.L, Auto.DIR.Q, Auto.DIR.eqn_6_14, Auto.DIR.lemma_6_7, Auto.DIR.lemma_6_7_deriv2, Auto.DIR.lemma_6_7_eval, Auto.DIR.lemma_6_7_mono, Auto.DIRX.G_LJQX
 Auto.DIRX.eqn_3_5 [thm, Task 3] : Auto.DIRX.JX, Auto.DIRX.JX_contDiff, Auto.DIRX.JX_mul_deriv2, Auto.DIRX.w₁, Auto.DIRX.γX
 Auto.DIRX.eqn_3_6 [thm, Task 3] : Auto.DIRX.fX
 Auto.DIRX.eqn_3_7 [thm, Task 3] : Auto.DIRX.G_LJQX
@@ -527,20 +528,20 @@ Auto.DIRX.hA_mul_hA_compl [thm, Task 4] : Auto.DIR.Cube, Auto.DIR.h
 Auto.DIRX.h_LJ [def, Task 3] : Auto.DIR.L, Auto.DIRX.JX
 Auto.DIRX.h_LJ_concave [thm, Task 3] : Auto.DIRX.JX_contDiff, Auto.DIRX.h_LJ, Auto.DIRX.h_LJ_deriv2
 Auto.DIRX.h_LJ_deriv2 [thm, Task 3] : Auto.DIR.L, Auto.DIRX.JX, Auto.DIRX.JX_concave, Auto.DIRX.JX_contDiff, Auto.DIRX.JX_mul_deriv2, Auto.DIRX.h_LJ, Auto.DIRX.lemma_2_3, Auto.DIRX.γX, Auto.DIRX.γX_mem
-Auto.DIRX.h_LJ_eq_gX [thm, Task 3] : Auto.DIRX.gX, Auto.DIRX.h_LJ
+Auto.DIRX.h_LJ_eq_gX [thm, Task 3] : Auto.DIRX.JXw_half_one, Auto.DIRX.gX, Auto.DIRX.h_LJ
 Auto.DIRX.h_LJ_nonneg [thm, Task 3] : Auto.DIRX.eqn_3_8, Auto.DIRX.gX_nonneg, Auto.DIRX.h_LJ, Auto.DIRX.h_LJ_concave, Auto.DIRX.h_LJ_eq_gX
 Auto.DIRX.h_LJ₁ [def, Task 3] : Auto.DIRX.h_LJ
 Auto.DIRX.h_P₂ [def, Task 4] : Auto.DIR.Q, Auto.DIRX.JX
 Auto.DIRX.h_QJQ₁ [def, Task 3] : Auto.DIR.Q, Auto.DIRX.JX
 Auto.DIRX.h_QJ₂ [def, Task 3] : Auto.DIR.Q, Auto.DIRX.JX
-Auto.DIRX.kahn_park [thm, Task 4] : Auto.DIR.Cube, Auto.DIR.G, Auto.DIR.dens, Auto.DIR.expect, Auto.DIR.h, Auto.DIR.prop_2_1
+Auto.DIRX.kahn_park [thm, Task 4] : Auto.DIR.Cube, Auto.DIR.G, Auto.DIR.dens, Auto.DIR.dens_mem_dyadic, Auto.DIR.expect, Auto.DIR.h, Auto.DIR.prop_2_1
 Auto.DIRX.lemma_2_3 [thm, Task 3] : Auto.DIR.L, Auto.DIR.lemma_5_6
-Auto.DIRX.norms_indicator [thm, Task 5] : Auto.DIR.Cube, Auto.DIR.dens, Auto.DIR.expect, Auto.DIR.gradNorm, Auto.DIR.h, Auto.DIR.ind, Auto.DIR.pNorm, Auto.DIRX.sqrt_sensitivity_indicator
+Auto.DIRX.norms_indicator [thm, Task 4] : Auto.DIR.Cube, Auto.DIR.dens, Auto.DIR.eqn_7_1, Auto.DIR.expect, Auto.DIR.gradNorm, Auto.DIR.h, Auto.DIR.ind, Auto.DIR.indicator_norms, Auto.DIR.pNorm, Auto.DIRX.sqrt_sensitivity_indicator
 Auto.DIRX.s [def, Task 4] : Auto.DIR.Cube, Auto.DIR.e
 Auto.DIRX.sensitivity_indicator [thm, Task 4] : Auto.DIR.Cube, Auto.DIR.h, Auto.DIR.ind, Auto.DIRX.s
 Auto.DIRX.sqrt_sensitivity_indicator [thm, Task 4] : Auto.DIR.Cube, Auto.DIR.h, Auto.DIR.ind, Auto.DIRX.hA_mul_hA_compl, Auto.DIRX.s, Auto.DIRX.sensitivity_indicator
 Auto.DIRX.thm_1_1 [thm, Task 5] : Auto.DIR.Cube, Auto.DIR.dens, Auto.DIR.expect, Auto.DIR.h, Auto.DIRX.eqn_2_4, Auto.DIRX.thm_1_1_of_eqn_2_4
-Auto.DIRX.thm_1_1_of_eqn_2_4 [thm, Task 5] : Auto.DIR.Cube, Auto.DIR.G, Auto.DIR.dens, Auto.DIR.expect, Auto.DIR.h, Auto.DIRX.BX, Auto.DIRX.BX_ge_LX, Auto.DIRX.JXw_half_one, Auto.DIRX.kahn_park
+Auto.DIRX.thm_1_1_of_eqn_2_4 [thm, Task 5] : Auto.DIR.Cube, Auto.DIR.G, Auto.DIR.dens, Auto.DIR.expect, Auto.DIR.h, Auto.DIR.lemma_5_8, Auto.DIRX.BX, Auto.DIRX.BX_ge_LX, Auto.DIRX.JXw_half_one, Auto.DIRX.kahn_park
 Auto.DIRX.thm_1_2 [thm, Task 5] : Auto.DIR.Cube, Auto.DIR.dens, Auto.DIR.edgeMeasure, Auto.DIRX.thm_1_2_chain
 Auto.DIRX.thm_1_2_chain [thm, Task 5] : Auto.DIR.Cube, Auto.DIR.dens, Auto.DIR.edgeMeasure, Auto.DIR.expect, Auto.DIR.h, Auto.DIR.ind, Auto.DIRX.thm_1_1
 Auto.DIRX.thm_1_3 [thm, Task 5] : Auto.DIR.Cube, Auto.DIR.IsHalfCube, Auto.DIR.expect, Auto.DIR.gradNorm, Auto.DIR.ind, Auto.DIR.pNorm, Auto.DIRX.eqn_4_1, Auto.DIRX.norms_indicator, Auto.DIRX.thm_1_3_of_eqn_4_1

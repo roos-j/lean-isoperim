@@ -1,5 +1,7 @@
 # Repository instructions
 
+> **Task agents (proof stage): your task prompt and declaration list are in `splitting.md`.**
+
 ## PROOF STAGE RULES (read first; binding for every coding agent)
 
 1. **Auxiliary files.** If a proof gets longer than 100 lines, or needs additional lemmas,
@@ -20,8 +22,10 @@
    are complete. The dependencies of every declaration (statement plus paper-proof
    dependencies) are listed in `automation/proof_dependencies.txt`; Lean's import order and
    file order are consistent with them.
-5. **Work split.** The work is split into Tasks 1–5 in `splitting.md` (Task 1 preparation;
-   Tasks 2, 3, 4 disjoint and parallel; Task 5 wrap-up). Work only on declarations of your task.
+5. **Work split. TASK AGENTS: START WITH `splitting.md`** — it contains your task prompt, the list
+   of your declarations, and the order of work. The work is split into Tasks 1–5 (Task 1
+   preparation; Tasks 2, 3, 4 disjoint and parallel; Task 5 wrap-up). Work only on declarations
+   of your task.
 6. **Commits.** See `CLAUDE.md` (author = prompting user, one-line `[claude]` message,
    `Co-authored-by: Claude` trailer).
 

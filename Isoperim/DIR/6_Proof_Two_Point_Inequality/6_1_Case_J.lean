@@ -38,13 +38,6 @@ namespace Auto.DIR
 
 open Real Set
 
-/-- [DIR], §6.1, after Proposition 6.1: by monotonicity in $\beta$, we only need to show
-$G^1_{\beta_0}[J]\ge0$ to show the first part: for $\beta\ge\beta_0$ and
-$\frac12\le x\le y\le1$, $G^1_{\beta_0}[J](x,y)\le G^1_\beta[J](x,y)$. -/
-theorem caseJ_G₁_mono_β (β : ℝ) (hβ : β₀ ≤ β) (x y : ℝ) (hx : 2⁻¹ ≤ x) (hxy : x ≤ y)
-    (hy : y ≤ 1) : G₁ β₀ J x y ≤ G₁ β J x y := by
-  sorry
-
 /-- [DIR], §6.1, Figure 4: $x_0<\frac58$. -/
 theorem x₀_lt_five_div_eight : x₀ < 5 / 8 := by
   sorry
@@ -87,15 +80,15 @@ theorem iteratedDeriv_three_J (x : ℝ) (hx : x ∈ Ioo (2⁻¹ : ℝ) 1) :
     iteratedDeriv 3 J x = 2 * deriv J x * J x ^ (-2 : ℤ) := by
   sorry
 
+/-- [DIR], §6.1.1: $J$ is increasing on $[\frac12,x_0]$ and decreasing on $[x_0,1]$. -/
+theorem J_monotoneOn_antitoneOn :
+    MonotoneOn J (Icc 2⁻¹ x₀) ∧ AntitoneOn J (Icc x₀ 1) := by
+  sorry
+
 /-- **(6.1)** ([DIR], §6.1.1): $J^{(4)}=-4(1+|J'|^2)J^{-3}<0$ on $(\frac12,1)$. -/
 theorem eqn_6_1 (x : ℝ) (hx : x ∈ Ioo (2⁻¹ : ℝ) 1) :
     iteratedDeriv 4 J x = -4 * (1 + |deriv J x| ^ 2) * J x ^ (-3 : ℤ) ∧
       iteratedDeriv 4 J x < 0 := by
-  sorry
-
-/-- [DIR], §6.1.1: $J$ is increasing on $[\frac12,x_0]$ and decreasing on $[x_0,1]$. -/
-theorem J_monotoneOn_antitoneOn :
-    MonotoneOn J (Icc 2⁻¹ x₀) ∧ AntitoneOn J (Icc x₀ 1) := by
   sorry
 
 /-- [DIR], §6.1.1 (application of Lemma 5.4). For $\beta\in(0,1)$, $c>0$, $\frac12\le x\le\frac58$
@@ -151,6 +144,13 @@ theorem caseJ_I (x h : ℝ) (hx : x ∈ Icc (2⁻¹ : ℝ) (5 / 8)) (hh : h ∈ 
   sorry
 
 end Case_J_I
+
+/-- [DIR], §6.1, after Proposition 6.1: by monotonicity in $\beta$, we only need to show
+$G^1_{\beta_0}[J]\ge0$ to show the first part: for $\beta\ge\beta_0$ and
+$\frac12\le x\le y\le1$, $G^1_{\beta_0}[J](x,y)\le G^1_\beta[J](x,y)$. -/
+theorem caseJ_G₁_mono_β (β : ℝ) (hβ : β₀ ≤ β) (x y : ℝ) (hx : 2⁻¹ ≤ x) (hxy : x ≤ y)
+    (hy : y ≤ 1) : G₁ β₀ J x y ≤ G₁ β J x y := by
+  sorry
 
 section Case_J_II
 /-! ### §6.1.2 Case II: $\frac12\le x\le x_0$, $\frac{11}{16}\le y\le 1$ -/
