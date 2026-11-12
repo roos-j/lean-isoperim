@@ -68,8 +68,8 @@ $x\in(0,\frac15]$,
 $$I(x)\ge\sqrt2\cdot x\sqrt{\log(1/x)}\Big(1-\frac12\frac{\log\log(1/x)}{\log(1/x)}
 -\frac{\log(2\sqrt\pi)}{\log(1/x)}\Big).$$ -/
 theorem I_lower (x : ℝ) (hx : x ∈ Ioc (0 : ℝ) (1 / 5)) :
-    I x ≥ √2 * x * √(log (1 / x)) *
-      (1 - 1 / 2 * log (log (1 / x)) / log (1 / x) - log (2 * √π) / log (1 / x)) := by
+    I x ≥ √2 * x * √(log x⁻¹) *
+      (1 - 1 / 2 * log (log x⁻¹) / log x⁻¹ - log (2 * √π) / log x⁻¹) := by
   sorry
 
 /-- [DIRX], proof of (2.6): thus, for $x\in(0,\frac1{64}]$,
@@ -77,7 +77,7 @@ $$\mathrm{J}(1-x)\ge\frac{\sqrt2}{2w_1}I(\tfrac1{2w_1})^{-1}(1-\varepsilon)x\sqr
 where $\varepsilon=\frac12\frac{\log\log(w_1/x)}{\log(w_1/x)}+\frac{\log(2\sqrt\pi)}{\log(w_1/x)}$.
 -/
 theorem eqn_2_6_step (x : ℝ) (hx : x ∈ Ioc (0 : ℝ) (1 / 64)) :
-    J (1 - x) ≥ √2 / (2 * w₁) * (I (1 / (2 * w₁)))⁻¹ * (1 - ε x) * x * √(log (w₁ / x)) := by
+    J (1 - x) ≥ √2 / (2 * w₁) * (I ((2 * w₁)⁻¹))⁻¹ * (1 - ε x) * x * √(log (w₁ / x)) := by
   sorry
 
 /-- [DIRX], proof of (2.6): $\varepsilon$ is an increasing function of $x$ (on
@@ -87,7 +87,7 @@ theorem εX_monotone : MonotoneOn ε (Ioc 0 (1 / 64)) := by
 
 /-- [DIRX], proof of (2.6): evaluating at $x=\frac1{64}$,
 $\frac{\sqrt2}{2w_1}I(\frac1{2w_1})^{-1}(1-\varepsilon(\frac1{64}))>1$. -/
-theorem eqn_2_6_eval : √2 / (2 * w₁) * (I (1 / (2 * w₁)))⁻¹ * (1 - ε (1 / 64)) > 1 := by
+theorem eqn_2_6_eval : √2 / (2 * w₁) * (I ((2 * w₁)⁻¹))⁻¹ * (1 - ε (1 / 64)) > 1 := by
   sorry
 
 end Proof_Eqn_2_6

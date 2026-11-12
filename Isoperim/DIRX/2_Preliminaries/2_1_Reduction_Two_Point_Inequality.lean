@@ -83,7 +83,7 @@ $B_w\ge L$ on $[0,\frac12]$). -/
 theorem thm_1_1_of_eqn_2_4
     (h : ∃ w ∈ Ioc (1 / 2 : ℝ) 1, ∀ x y : ℝ, 0 ≤ x → x ≤ y → y ≤ 1 → G (B_{w}) x y ≥ 0)
     (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) (hA : ｜A｜ ≤ 1 / 2) :
-    𝐄 (fun x ↦ √(h_{A} x)) ≥ ｜A｜ * √(log₂ (1 / ｜A｜)) := by
+    𝐄 (fun x ↦ √(h_{A} x)) ≥ ｜A｜ * √(log₂ ｜A｜⁻¹) := by
   sorry
 
 /-- **(2.4)** ([DIRX], §2.1; proved in §3 for $w=w_1$). For all $0\le x\le y\le1$,

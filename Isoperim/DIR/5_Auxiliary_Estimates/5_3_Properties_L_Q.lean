@@ -34,14 +34,14 @@ open Real Set Filter Topology
 /-- **(5.2)** ([DIR], §5.3). For $x\in(0,1)$,
 $$L'_\beta(x)=(\log2)^{-\beta}(\log\tfrac1x)^{-1+\beta}(-\beta+\log\tfrac1x).$$ -/
 theorem eqn_5_2 (β x : ℝ) (hx : x ∈ Ioo (0 : ℝ) 1) :
-    deriv (L β) x = (log 2) ^ (-β) * (log (1 / x)) ^ (-1 + β) * (-β + log (1 / x)) := by
+    deriv (L β) x = (log 2) ^ (-β) * (log x⁻¹) ^ (-1 + β) * (-β + log x⁻¹) := by
   sorry
 
 /-- **(5.3)** ([DIR], §5.3). For $x\in(0,1)$,
 $$L''_\beta(x)=-\beta(\log2)^{-\beta}x^{-1}(\log\tfrac1x)^{-2+\beta}(1-\beta+\log(x^{-1})).$$ -/
 theorem eqn_5_3 (β x : ℝ) (hx : x ∈ Ioo (0 : ℝ) 1) :
     deriv (deriv (L β)) x =
-      -β * (log 2) ^ (-β) * x⁻¹ * (log (1 / x)) ^ (-2 + β) * (1 - β + log x⁻¹) := by
+      -β * (log 2) ^ (-β) * x⁻¹ * (log x⁻¹) ^ (-2 + β) * (1 - β + log x⁻¹) := by
   sorry
 
 /-- **(5.4)** ([DIR], §5.3). For $x\in(0,1)$,
@@ -49,8 +49,8 @@ $$L'''_\beta(x)=\beta(\log2)^{-\beta}x^{-2}(\log\tfrac1x)^{-3+\beta}(\beta(3-\be
 +(\log\tfrac1x)^2).$$ -/
 theorem eqn_5_4 (β x : ℝ) (hx : x ∈ Ioo (0 : ℝ) 1) :
     iteratedDeriv 3 (L β) x =
-      β * (log 2) ^ (-β) * x ^ (-2 : ℤ) * (log (1 / x)) ^ (-3 + β) *
-        (β * (3 - β) - 2 + (log (1 / x)) ^ 2) := by
+      β * (log 2) ^ (-β) * x ^ (-2 : ℤ) * (log x⁻¹) ^ (-3 + β) *
+        (β * (3 - β) - 2 + (log x⁻¹) ^ 2) := by
   sorry
 
 /-- **Remark 5.7** ([DIR]). Note $e^{-\sqrt3/2}>e^{-1}>\frac14$. -/
@@ -59,17 +59,17 @@ theorem rem_5_7 : exp (-(√3 / 2)) > exp (-1) ∧ exp (-1) > (1 / 4 : ℝ) := b
 
 section Proof_Lemma_5_6
 /-- The coefficient $a_0(x)=1+\log\frac1x$ ([DIR], proof of Lemma 5.6 (2)). -/
-noncomputable def a₀ (x : ℝ) : ℝ := 1 + log (1 / x)
+noncomputable def a₀ (x : ℝ) : ℝ := 1 + log x⁻¹
 
 /-- The coefficient
 $a_1(x)=-2+\log\frac1{\log2}+(\log\frac1x)(\log\frac1{\log2})+\log\log\frac1x
 +(\log\frac1x)(\log\log\frac1x)$ ([DIR], proof of Lemma 5.6 (2)). -/
 noncomputable def a₁ (x : ℝ) : ℝ :=
-  -2 + log (1 / log 2) + log (1 / x) * log (1 / log 2) + log (log (1 / x)) +
-    log (1 / x) * log (log (1 / x))
+  -2 + log ((log 2)⁻¹) + log x⁻¹ * log ((log 2)⁻¹) + log (log x⁻¹) +
+    log x⁻¹ * log (log x⁻¹)
 
 /-- The coefficient $a_2(x)=\log\frac1{\log2}+\log\log\frac1x$ ([DIR], proof of Lemma 5.6 (2)). -/
-noncomputable def a₂ (x : ℝ) : ℝ := log (1 / log 2) + log (log (1 / x))
+noncomputable def a₂ (x : ℝ) : ℝ := log ((log 2)⁻¹) + log (log x⁻¹)
 
 /-- $\ell(x,\beta)=-a_2(x)\beta^2+a_1(x)\beta+a_0(x)$ ([DIR], proof of Lemma 5.6 (2)). -/
 noncomputable def ℓ (x β : ℝ) : ℝ := -a₂ x * β ^ 2 + a₁ x * β + a₀ x
@@ -102,8 +102,8 @@ theorem lemma_5_6_2_decreasing :
 /-- [DIR], proof of Lemma 5.6 (2): $\ell(e^{-1},\frac12)=1+\frac34\log\frac1{\log2}>0$ and
 $\ell(e^{-1},1)=\log\frac1{\log2}>0$. -/
 theorem lemma_5_6_2_values :
-    ℓ (exp (-1)) (1 / 2) = 1 + 3 / 4 * log (1 / log 2) ∧ 1 + 3 / 4 * log (1 / log 2) > 0 ∧
-    ℓ (exp (-1)) 1 = log (1 / log 2) ∧ log (1 / log 2) > 0 := by
+    ℓ (exp (-1)) (1 / 2) = 1 + 3 / 4 * log ((log 2)⁻¹) ∧ 1 + 3 / 4 * log ((log 2)⁻¹) > 0 ∧
+    ℓ (exp (-1)) 1 = log ((log 2)⁻¹) ∧ log ((log 2)⁻¹) > 0 := by
   sorry
 
 /-- [DIR], proof of Lemma 5.6 (2): we show $\partial_\beta\log(-L''_\beta(x))>0$, which means that
@@ -112,8 +112,8 @@ left-hand side equals $\beta^{-1}(1-\beta+\log\frac1x)^{-1}\ell(x,\beta)$. -/
 theorem lemma_5_6_2_log_deriv (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1) (x : ℝ)
     (hx : x ∈ Ioo 0 (exp (-1))) :
     deriv (fun β' ↦ log (-deriv (deriv (L β')) x)) β =
-        β⁻¹ * (1 - β + log (1 / x))⁻¹ * ℓ x β ∧
-      β⁻¹ * (1 - β + log (1 / x))⁻¹ * ℓ x β > 0 := by
+        β⁻¹ * (1 - β + log x⁻¹)⁻¹ * ℓ x β ∧
+      β⁻¹ * (1 - β + log x⁻¹)⁻¹ * ℓ x β > 0 := by
   sorry
 
 end Proof_Claim_2
@@ -127,10 +127,10 @@ $\beta=\frac12$ for $x$ gives $x=e^{-\sqrt3/2}$. (This also shows that $L'''_\be
 increasing in $\beta$.) -/
 theorem lemma_5_6_3_steps :
     (∀ β ∈ Icc (1 / 2 : ℝ) 1, ∀ x ∈ Ioo 0 (exp (-(√3 / 2))),
-      β * (3 - β) - 2 + (log (1 / x)) ^ 2 > 0) ∧
-    (∀ β : ℝ, StrictAntiOn (fun x ↦ β * (3 - β) - 2 + (log (1 / x)) ^ 2) (Ioo 0 1)) ∧
+      β * (3 - β) - 2 + (log x⁻¹) ^ 2 > 0) ∧
+    (∀ β : ℝ, StrictAntiOn (fun x ↦ β * (3 - β) - 2 + (log x⁻¹) ^ 2) (Ioo 0 1)) ∧
     (∀ β ∈ Icc (1 / 2 : ℝ) 1, deriv (fun β' ↦ β' * (3 - β')) β = 3 - 2 * β ∧ 3 - 2 * β ≥ 1) ∧
-    (1 / 2 * (3 - 1 / 2) - 2 + (log (1 / exp (-(√3 / 2)))) ^ 2 = (0 : ℝ)) := by
+    (1 / 2 * (3 - 1 / 2) - 2 + (log ((exp (-(√3 / 2)))⁻¹)) ^ 2 = (0 : ℝ)) := by
   sorry
 
 end Proof_Claim_3
@@ -140,15 +140,15 @@ section Proof_Claim_4
 $f_\beta(x)=-(3-\beta)(2-\beta)(1-\beta)+(1-\beta-2\log\frac1x)(\log\frac1x)^2
 +2(2-\beta)(1-\beta)\log\frac1x$ ([DIR], proof of Lemma 5.6 (4)). -/
 noncomputable def f_L4 (β x : ℝ) : ℝ :=
-  -(3 - β) * (2 - β) * (1 - β) + (1 - β - 2 * log (1 / x)) * (log (1 / x)) ^ 2 +
-    2 * (2 - β) * (1 - β) * log (1 / x)
+  -(3 - β) * (2 - β) * (1 - β) + (1 - β - 2 * log x⁻¹) * (log x⁻¹) ^ 2 +
+    2 * (2 - β) * (1 - β) * log x⁻¹
 
 /-- [DIR], proof of Lemma 5.6 (4): from (5.4) we compute
 $L^{(4)}_\beta(x)=x^{-3}\beta(\log2)^{-\beta}(\log\frac1x)^{\beta-4}f_\beta(x)$, so it suffices to
 show that $f_\beta(x)$ is negative. -/
 theorem lemma_5_6_4_formula (β x : ℝ) (hx : x ∈ Ioo (0 : ℝ) 1) :
     iteratedDeriv 4 (L β) x =
-      x ^ (-3 : ℤ) * β * (log 2) ^ (-β) * (log (1 / x)) ^ (β - 4) * f_L4 β x := by
+      x ^ (-3 : ℤ) * β * (log 2) ^ (-β) * (log x⁻¹) ^ (β - 4) * f_L4 β x := by
   sorry
 
 /-- [DIR], proof of Lemma 5.6 (4):
@@ -175,7 +175,7 @@ $12u^2-2u-3\ge0$ for $u\in[\log2,\infty)$, which can be verified by solving for 
 that the solutions are not greater than $\log2$. -/
 theorem lemma_5_6_4_quadratic :
     (∀ x ∈ Ioc (0 : ℝ) (1 / 2),
-      MonotoneOn (fun β ↦ 3 * (log (1 / x)) ^ 2 - (1 - β) * log (1 / x) - β ^ 2 + 3 * β - 2)
+      MonotoneOn (fun β ↦ 3 * (log x⁻¹) ^ 2 - (1 - β) * log x⁻¹ - β ^ 2 + 3 * β - 2)
         (Icc (1 / 2) 1)) ∧
     (∀ u : ℝ, log 2 ≤ u → 12 * u ^ 2 - 2 * u - 3 ≥ 0) ∧
     (∀ r : ℝ, 12 * r ^ 2 - 2 * r - 3 = 0 → r ≤ log 2) := by
@@ -188,8 +188,8 @@ $3(\log\frac1x)^2-(1-\beta)\log\frac1x-\beta^2+3\beta-2\ge0$ on $(0,\frac12]$. -
 theorem lemma_5_6_4_deriv (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1) (x : ℝ)
     (hx : x ∈ Ioc 0 (1 / 2)) :
     deriv (f_L4 β) x =
-        2 * x⁻¹ * (3 * (log (1 / x)) ^ 2 - (1 - β) * log (1 / x) - β ^ 2 + 3 * β - 2) ∧
-      3 * (log (1 / x)) ^ 2 - (1 - β) * log (1 / x) - β ^ 2 + 3 * β - 2 ≥ 0 := by
+        2 * x⁻¹ * (3 * (log x⁻¹) ^ 2 - (1 - β) * log x⁻¹ - β ^ 2 + 3 * β - 2) ∧
+      3 * (log x⁻¹) ^ 2 - (1 - β) * log x⁻¹ - β ^ 2 + 3 * β - 2 ≥ 0 := by
   sorry
 
 end Proof_Claim_4
@@ -329,7 +329,7 @@ $-3-\beta\log8+8(\log2)^2\le-3-\frac12\log8+8(\log2)^2<-0.06$. -/
 theorem lemma_5_9_1_quarter_steps :
     deriv (L (1 / 2)) (1 / 4) - deriv (Q (1 / 2)) (1 / 4) < -0.12 ∧
     (∀ β : ℝ, deriv (fun β' ↦ deriv (L β') (1 / 4) - deriv (Q β') (1 / 4)) β =
-      1 / log 64 * 2 ^ β * (-3 - β * log 8 + 8 * (log 2) ^ 2)) ∧
+      (log 64)⁻¹ * 2 ^ β * (-3 - β * log 8 + 8 * (log 2) ^ 2)) ∧
     (∀ β ∈ Icc (1 / 2 : ℝ) 1, -3 - β * log 8 + 8 * (log 2) ^ 2 ≤ -3 - 1 / 2 * log 8 + 8 *
         (log 2) ^ 2) ∧
     -3 - 1 / 2 * log 8 + 8 * (log 2) ^ 2 < (-0.06 : ℝ) := by

@@ -69,7 +69,7 @@ local notation "Q" => Auto.DIR.Q (1 / 2)
 /-- $\mathrm{J}_w(x)=\frac12I(\frac1{2w})^{-1}I(\frac{1-x}w)$ for a parameter $w\in(\frac12,1]$
 ([DIRX], §2.1). It is meaningful for $x\in[1-w,1]$ (outside this range `I` takes the junk value
 $0$). Written `J_{w} x`. -/
-noncomputable def JXw (w x : ℝ) : ℝ := 1 / 2 * (I (1 / (2 * w)))⁻¹ * I ((1 - x) / w)
+noncomputable def JXw (w x : ℝ) : ℝ := 1 / 2 * (I ((2 * w)⁻¹))⁻¹ * I ((1 - x) / w)
 
 local notation "J_{" w "}" => JXw w
 
@@ -98,7 +98,7 @@ local notation "J" => JX
 /-! ### §2.2 Properties of the function J -/
 
 /-- The constant $\gamma=(4w_1^2I(\frac1{2w_1})^2)^{-1}$ ([DIRX], §2.2). Written `γ`. -/
-noncomputable def γX : ℝ := (4 * w₁ ^ 2 * I (1 / (2 * w₁)) ^ 2)⁻¹
+noncomputable def γX : ℝ := (4 * w₁ ^ 2 * I ((2 * w₁)⁻¹) ^ 2)⁻¹
 
 local notation "γ" => γX
 

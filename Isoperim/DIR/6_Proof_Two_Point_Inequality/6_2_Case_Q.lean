@@ -72,15 +72,15 @@ $$g_{Q,1,\beta}(h,y)=\beta Q_\beta(y)^{1-\frac1\beta}
 -(2Q_\beta(y-\tfrac h2)-Q_\beta(y-h)-Q_\beta(y))h^{-\frac1\beta}
 -\tfrac12\beta(1-\beta)Q_\beta(y)^{1-\frac2\beta}h^{\frac1\beta}.$$ -/
 noncomputable def g_Q_1 (β h y : ℝ) : ℝ :=
-  β * Q β y ^ (1 - 1 / β) - (2 * Q β (y - h / 2) - Q β (y - h) - Q β y) * h ^ (-1 / β)
-    - 1 / 2 * β * (1 - β) * Q β y ^ (1 - 2 / β) * h ^ (1 / β)
+  β * Q β y ^ (1 - β⁻¹) - (2 * Q β (y - h / 2) - Q β (y - h) - Q β y) * h ^ (-β⁻¹)
+    - 1 / 2 * β * (1 - β) * Q β y ^ (1 - 2 / β) * h ^ β⁻¹
 
 /-- [DIR], §6.2.1 (application of Lemma 5.4). For $\beta\in\{\frac12,\beta_0\}$ and
 $0\le h\le\frac14\le y\le\frac12$, with $x=y-h$:
 $$G^1_\beta[Q_\beta](x,y)\ge h^{\frac1\beta}g_{Q,1,\beta}(h,y).$$ -/
 theorem caseQ_II_neardiag_bound (β : ℝ) (hβ : β = 1 / 2 ∨ β = β₀) (h y : ℝ)
     (hh : h ∈ Icc (0 : ℝ) (1 / 4)) (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
-    G₁ β (Q β) (y - h) y ≥ h ^ (1 / β) * g_Q_1 β h y := by
+    G₁ β (Q β) (y - h) y ≥ h ^ β⁻¹ * g_Q_1 β h y := by
   sorry
 
 /-- [DIR], §6.2.1:
@@ -96,8 +96,8 @@ theorem caseQ_II_second_difference (β h y : ℝ) :
 $$g_{Q,1,\beta}(h,y)=\beta Q_\beta(y)^{1-\frac1\beta}-(\alpha_0-2\alpha_1h+4\alpha_1y)
 h^{2-\frac1\beta}-\tfrac12\beta(1-\beta)Q_\beta(y)^{1-\frac2\beta}h^{\frac1\beta}.$$ -/
 theorem caseQ_II_g_Q_1_eq (β h y : ℝ) (hh : 0 < h) :
-    g_Q_1 β h y = β * Q β y ^ (1 - 1 / β) - (α₀ β - 2 * α₁ β * h + 4 * α₁ β * y) * h ^ (2 - 1 / β)
-      - 1 / 2 * β * (1 - β) * Q β y ^ (1 - 2 / β) * h ^ (1 / β) := by
+    g_Q_1 β h y = β * Q β y ^ (1 - β⁻¹) - (α₀ β - 2 * α₁ β * h + 4 * α₁ β * y) * h ^ (2 - β⁻¹)
+      - 1 / 2 * β * (1 - β) * Q β y ^ (1 - 2 / β) * h ^ β⁻¹ := by
   sorry
 
 /-- The lower bound ([DIR], §6.2.1)
@@ -106,8 +106,8 @@ $$\underline{g_{Q,1,\beta}}(\underline h,\overline h,\underline y,\overline y)
 -(\alpha_0-2\alpha_1\underline h+4\alpha_1\overline y)\overline h^{2-\frac1\beta}
 -\tfrac12\beta(1-\beta)Q_\beta(\underline y)^{1-\frac2\beta}\overline h^{\frac1\beta}.$$ -/
 noncomputable def g_Q_1_lo (β hl hu yl yu : ℝ) : ℝ :=
-  β * Q β yu ^ (1 - 1 / β) - (α₀ β - 2 * α₁ β * hl + 4 * α₁ β * yu) * hu ^ (2 - 1 / β)
-    - 1 / 2 * β * (1 - β) * Q β yl ^ (1 - 2 / β) * hu ^ (1 / β)
+  β * Q β yu ^ (1 - β⁻¹) - (α₀ β - 2 * α₁ β * hl + 4 * α₁ β * yu) * hu ^ (2 - β⁻¹)
+    - 1 / 2 * β * (1 - β) * Q β yl ^ (1 - 2 / β) * hu ^ β⁻¹
 
 /-- **(6.7)** ([DIR], §6.2.1) (🚗). For $(h,y)\in[0,\frac14]\times[\frac14,\frac12]$:
 $$g_{Q,1,\beta_0}(h,y)>0.001.$$ -/
@@ -223,7 +223,7 @@ section Case_Q_III
 $$G_{Q,\beta}(h,y)=\log(h^{\frac1\beta}+Q_\beta(y)^{\frac1\beta})
 -\tfrac1\beta\log(2Q_\beta(y-\tfrac h2)-Q_\beta(y-h)).$$ -/
 noncomputable def G_Q (β h y : ℝ) : ℝ :=
-  log (h ^ (1 / β) + Q β y ^ (1 / β)) - 1 / β * log (2 * Q β (y - h / 2) - Q β (y - h))
+  log (h ^ β⁻¹ + Q β y ^ β⁻¹) - β⁻¹ * log (2 * Q β (y - h / 2) - Q β (y - h))
 
 /-- [DIR], §6.2.2: $G_{Q,\beta}(y,y)=\log(y^{\frac1\beta}+Q_\beta(y)^{\frac1\beta})
 -\frac1\beta\log(2Q_\beta(\frac y2))$, and for $y\in[\frac14,\frac12]$,
@@ -231,8 +231,8 @@ $\beta\in\{\beta_0,\frac12\}$, $G_{Q,\beta}(y,y)\ge0$ is equivalent to
 $y^{\frac1\beta}+Q_\beta(y)^{\frac1\beta}-(2Q_\beta(\frac y2))^{\frac1\beta}\ge0$. -/
 theorem caseQ_III_G_Q_diag (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : ℝ)
     (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
-    G_Q β y y = log (y ^ (1 / β) + Q β y ^ (1 / β)) - 1 / β * log (2 * Q β (y / 2)) ∧
-      (G_Q β y y ≥ 0 ↔ y ^ (1 / β) + Q β y ^ (1 / β) - (2 * Q β (y / 2)) ^ (1 / β) ≥ 0) := by
+    G_Q β y y = log (y ^ β⁻¹ + Q β y ^ β⁻¹) - β⁻¹ * log (2 * Q β (y / 2)) ∧
+      (G_Q β y y ≥ 0 ↔ y ^ β⁻¹ + Q β y ^ β⁻¹ - (2 * Q β (y / 2)) ^ β⁻¹ ≥ 0) := by
   sorry
 
 /-- The function $R_\beta(y)=y^{-1}Q_\beta(y)$ ([DIR], §6.2.2). -/
@@ -246,7 +246,7 @@ theorem R_eq (β y : ℝ) (hy : y ≠ 0) :
 
 /-- The function $f_\beta(y)=1+R_\beta(y)^{\frac1\beta}-R_\beta(\frac y2)^{\frac1\beta}$
 ([DIR], §6.2.2; denoted $f_\beta$ in the paper). -/
-noncomputable def f_QIII (β y : ℝ) : ℝ := 1 + R β y ^ (1 / β) - R β (y / 2) ^ (1 / β)
+noncomputable def f_QIII (β y : ℝ) : ℝ := 1 + R β y ^ β⁻¹ - R β (y / 2) ^ β⁻¹
 
 /-- [DIR], §6.2.2: multiplying by $y^{-\frac1\beta}$, for $y\in[\frac14,\frac12]$ and
 $\beta\in\{\beta_0,\frac12\}$,
@@ -254,7 +254,7 @@ $y^{\frac1\beta}+Q_\beta(y)^{\frac1\beta}-(2Q_\beta(\frac y2))^{\frac1\beta}\ge0
 to $f_\beta(y)\ge0$. -/
 theorem caseQ_III_iff_f_QIII (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : ℝ)
     (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
-    y ^ (1 / β) + Q β y ^ (1 / β) - (2 * Q β (y / 2)) ^ (1 / β) ≥ 0 ↔ f_QIII β y ≥ 0 := by
+    y ^ β⁻¹ + Q β y ^ β⁻¹ - (2 * Q β (y / 2)) ^ β⁻¹ ≥ 0 ↔ f_QIII β y ≥ 0 := by
   sorry
 
 /-- [DIR], §6.2.2: $f_\beta(\frac12)=0$ (for $\beta\in\{\beta_0,\frac12\}$). -/
@@ -266,8 +266,8 @@ $$f_\beta'(y)=\tfrac1\beta R_\beta(y)^{\frac1\beta-1}R_\beta'(y)
 -\tfrac1{2\beta}R_\beta(\tfrac y2)^{\frac1\beta-1}R_\beta'(\tfrac y2).$$ -/
 theorem deriv_f_QIII (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : ℝ)
     (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
-    deriv (f_QIII β) y = 1 / β * R β y ^ (1 / β - 1) * deriv (R β) y
-      - 1 / (2 * β) * R β (y / 2) ^ (1 / β - 1) * deriv (R β) (y / 2) := by
+    deriv (f_QIII β) y = β⁻¹ * R β y ^ (β⁻¹ - 1) * deriv (R β) y
+      - (2 * β)⁻¹ * R β (y / 2) ^ (β⁻¹ - 1) * deriv (R β) (y / 2) := by
   sorry
 
 /-- [DIR], §6.2.2: $f_\beta'(y)\le0$ is equivalent to $\beta yf_\beta'(y)\le0$ (for $y>0$ and
@@ -278,7 +278,7 @@ theorem deriv_f_QIII_nonpos_iff (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y 
 
 /-- The function $f_{\beta,0}(y)=yR_\beta(y)^{\frac1\beta-1}R_\beta'(y)$ ([DIR], §6.2.2; denoted
 $f_{\beta,0}$ in the paper). -/
-noncomputable def f_QIII_0 (β y : ℝ) : ℝ := y * R β y ^ (1 / β - 1) * deriv (R β) y
+noncomputable def f_QIII_0 (β y : ℝ) : ℝ := y * R β y ^ (β⁻¹ - 1) * deriv (R β) y
 
 /-- [DIR], §6.2.2: $\beta yf_\beta'(y)=f_{\beta,0}(y)-f_{\beta,0}(y/2)$ for
 $y\in[\frac14,\frac12]$ and $\beta\in\{\beta_0,\frac12\}$. -/
@@ -310,7 +310,7 @@ theorem caseQ_III_suffices_f_QIII_0 (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2)
 
 /-- The function $f_{\beta,1}(y)=R_\beta(y)^{\frac1\beta-1}$ ([DIR], §6.2.2; denoted
 $f_{\beta,1}$ in the paper). -/
-noncomputable def f_QIII_1 (β y : ℝ) : ℝ := R β y ^ (1 / β - 1)
+noncomputable def f_QIII_1 (β y : ℝ) : ℝ := R β y ^ (β⁻¹ - 1)
 
 /-- The function $f_{\beta,2}(y)=yR_\beta'(y)$ ([DIR], §6.2.2; denoted $f_{\beta,2}$ in the
 paper). -/
@@ -335,20 +335,20 @@ $$f_{\beta,1}'''=(\tfrac1\beta-1)(\tfrac1\beta-2)\big((\tfrac1\beta-3)R_\beta^{\
 (R_\beta')^3+3R_\beta^{\frac1\beta-3}R_\beta'R_\beta''\big).$$ -/
 theorem derivs_f_QIII_1 (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : ℝ)
     (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
-    deriv (f_QIII_1 β) y = (1 / β - 1) * R β y ^ (1 / β - 2) * deriv (R β) y ∧
+    deriv (f_QIII_1 β) y = (β⁻¹ - 1) * R β y ^ (β⁻¹ - 2) * deriv (R β) y ∧
     deriv (deriv (f_QIII_1 β)) y =
-      (1 / β - 1) * (1 / β - 2) * R β y ^ (1 / β - 3) * (deriv (R β) y) ^ 2
-        + (1 / β - 1) * R β y ^ (1 / β - 2) * deriv (deriv (R β)) y ∧
+      (β⁻¹ - 1) * (β⁻¹ - 2) * R β y ^ (β⁻¹ - 3) * (deriv (R β) y) ^ 2
+        + (β⁻¹ - 1) * R β y ^ (β⁻¹ - 2) * deriv (deriv (R β)) y ∧
     iteratedDeriv 3 (f_QIII_1 β) y =
-      (1 / β - 1) * (1 / β - 2) * ((1 / β - 3) * R β y ^ (1 / β - 4) * (deriv (R β) y) ^ 3
-        + 3 * R β y ^ (1 / β - 3) * deriv (R β) y * deriv (deriv (R β)) y) := by
+      (β⁻¹ - 1) * (β⁻¹ - 2) * ((β⁻¹ - 3) * R β y ^ (β⁻¹ - 4) * (deriv (R β) y) ^ 3
+        + 3 * R β y ^ (β⁻¹ - 3) * deriv (R β) y * deriv (deriv (R β)) y) := by
   sorry
 
 /-- [DIR], §6.2.2: for $\beta\in\{\beta_0,\frac12\}$: $R_\beta''\le0$, $R_\beta'''=0$ (on
 $(0,\infty)$), and $\frac1\beta>1$, $\frac1\beta\le2$, $\frac1\beta<3$. -/
 theorem R_derivs_one_div_β (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) :
     (∀ y > 0, deriv (deriv (R β)) y ≤ 0 ∧ iteratedDeriv 3 (R β) y = 0) ∧
-      1 / β > 1 ∧ 1 / β ≤ 2 ∧ 1 / β < 3 := by
+      β⁻¹ > 1 ∧ β⁻¹ ≤ 2 ∧ β⁻¹ < 3 := by
   sorry
 
 /-- [DIR], §6.2.2: $f_{\beta,1}'\le0$, $f_{\beta,1}''\le0$ and $f_{\beta,1}'''\le0$ on
@@ -448,7 +448,7 @@ $$\beta\partial_hG_{Q,\beta}(h,y)=\frac{h^{\frac1\beta-1}}{h^{\frac1\beta}+Q_\be
 theorem lemma_6_4_deriv (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (h y : ℝ)
     (hh : h ∈ Icc (1 / 4 : ℝ) (1 / 2)) (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
     β * deriv (fun h ↦ G_Q β h y) h =
-      h ^ (1 / β - 1) / (h ^ (1 / β) + Q β y ^ (1 / β))
+      h ^ (β⁻¹ - 1) / (h ^ β⁻¹ + Q β y ^ β⁻¹)
         - (deriv (Q β) (y - h) - deriv (Q β) (y - h / 2))
           / (2 * Q β (y - h / 2) - Q β (y - h)) := by
   sorry
@@ -461,10 +461,10 @@ $$h^{\frac1\beta-1}(2Q_\beta(y-\tfrac h2)-Q_\beta(y-h))
 (for $h,y\in[\frac14,\frac12]$, $\beta\in\{\beta_0,\frac12\}$). -/
 theorem eqn_6_11 (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (h y : ℝ)
     (hh : h ∈ Icc (1 / 4 : ℝ) (1 / 2)) (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
-    β * deriv (fun h ↦ G_Q β h y) h * ((h ^ (1 / β) + Q β y ^ (1 / β)) *
+    β * deriv (fun h ↦ G_Q β h y) h * ((h ^ β⁻¹ + Q β y ^ β⁻¹) *
         (2 * Q β (y - h / 2) - Q β (y - h))) =
-      h ^ (1 / β - 1) * (2 * Q β (y - h / 2) - Q β (y - h))
-        - (deriv (Q β) (y - h) - deriv (Q β) (y - h / 2)) * (h ^ (1 / β) + Q β y ^ (1 / β)) := by
+      h ^ (β⁻¹ - 1) * (2 * Q β (y - h / 2) - Q β (y - h))
+        - (deriv (Q β) (y - h) - deriv (Q β) (y - h / 2)) * (h ^ β⁻¹ + Q β y ^ β⁻¹) := by
   sorry
 
 /-- [DIR], proof of Lemma 6.4:
@@ -482,14 +482,14 @@ $$p_{y,\beta}(h)=4\alpha_1h^3-(\alpha_0+4\alpha_1y)h^2+6\alpha_1Q_\beta(y)^{\fra
 h^{3-\frac1\beta}-(2\alpha_0+8\alpha_1y)Q_\beta(y)^{\frac1\beta}h^{2-\frac1\beta}+Q_\beta(y).$$
 -/
 noncomputable def p_Q (β y h : ℝ) : ℝ :=
-  4 * α₁ β * h ^ 3 - (α₀ β + 4 * α₁ β * y) * h ^ 2 + 6 * α₁ β * Q β y ^ (1 / β) * h ^ (3 - 1 / β)
-    - (2 * α₀ β + 8 * α₁ β * y) * Q β y ^ (1 / β) * h ^ (2 - 1 / β) + Q β y
+  4 * α₁ β * h ^ 3 - (α₀ β + 4 * α₁ β * y) * h ^ 2 + 6 * α₁ β * Q β y ^ β⁻¹ * h ^ (3 - β⁻¹)
+    - (2 * α₀ β + 8 * α₁ β * y) * Q β y ^ β⁻¹ * h ^ (2 - β⁻¹) + Q β y
 
 /-- [DIR], proof of Lemma 6.4: (6.11) equals $h^{\frac1\beta-1}p_{y,\beta}(h)$ (for $h>0$). -/
 theorem eqn_6_11_eq_p_Q (β h y : ℝ) (hh : 0 < h) :
-    h ^ (1 / β - 1) * (2 * Q β (y - h / 2) - Q β (y - h))
-        - (deriv (Q β) (y - h) - deriv (Q β) (y - h / 2)) * (h ^ (1 / β) + Q β y ^ (1 / β)) =
-      h ^ (1 / β - 1) * p_Q β y h := by
+    h ^ (β⁻¹ - 1) * (2 * Q β (y - h / 2) - Q β (y - h))
+        - (deriv (Q β) (y - h) - deriv (Q β) (y - h / 2)) * (h ^ β⁻¹ + Q β y ^ β⁻¹) =
+      h ^ (β⁻¹ - 1) * p_Q β y h := by
   sorry
 
 /-- [DIR], proof of Lemma 6.4: it suffices to show that $p_{y,\beta}$ is strictly decreasing (on

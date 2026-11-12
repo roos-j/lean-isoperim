@@ -112,6 +112,8 @@ Rules:
   `sInf` over a set instead of nested `⨅` with `Prop` binders in `ℝ`; `Real.rpow` with `0 ^ 0 = 1`).
 - Notation is introduced ONLY with the `notation`/`notation3` commands (also `local notation`);
   no metaprogramming (`syntax`, `macro`, `elab`, `meta def`, ...) (user requirement, 2026-11-11T23:03+00:00).
+- Exception to visual closeness: reciprocals are written `x⁻¹`, not `1 / x` (Lean idiom; user
+  requirement, 2026-11-12T13:57). Numeric constants such as `1 / 2` stay as they are.
 - Statements should look like the paper. Notation is introduced conservatively, at first use, and
   listed in the module docstring of the file introducing it. Current notation (DIR §1–§3):
   `{0,1}^n` (cube `Fin n → ZMod 2`, `x + e i` = bit flip), `h_{A}`, `𝐄 f`, `𝟏_{A}`, `｜A｜`

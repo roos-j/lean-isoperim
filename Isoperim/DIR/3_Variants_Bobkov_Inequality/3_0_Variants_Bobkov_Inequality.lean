@@ -189,7 +189,7 @@ variable (I : ℝ → ℝ) (a b : ℝ) (hI : ContDiffOn ℝ 2 I (Ioo a b))
 include hI hI0 hII
 /-- [DIR], proof of Lemma 3.2: the first claim follows from $I''=-1/I\le0$. -/
 theorem lemma_3_2_deriv2 (x : ℝ) (hx : x ∈ Ioo a b) :
-    deriv (deriv I) x = -1 / I x ∧ -1 / I x ≤ 0 := by
+    deriv (deriv I) x = -(I x)⁻¹ ∧ -(I x)⁻¹ ≤ 0 := by
   sorry
 
 /-- [DIR], proof of Lemma 3.2: $((I')^2)'=2I'I''=-2I'/I$. -/

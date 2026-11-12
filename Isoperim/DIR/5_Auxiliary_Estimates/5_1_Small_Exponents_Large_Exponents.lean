@@ -29,7 +29,7 @@ $$B(|A|)\le\mathbf{E}h_A^\beta\le(\mathbf{E}h_A^{p\beta})^{\frac1p}|A|^{1-\frac1
 which implies the claim. -/
 theorem lemma_5_1_holder (n : ℕ) (A : Set ({0,1}^n)) (B : ℝ → ℝ) (β : ℝ) (hβ : 0 < β)
     (h : 𝐄 h_{A} ^ β ≥ B ｜A｜) (p : ℝ) (hp : 1 ≤ p) :
-    B ｜A｜ ≤ 𝐄 h_{A} ^ β ∧ 𝐄 h_{A} ^ β ≤ (𝐄 h_{A} ^ (p * β)) ^ (1 / p) * ｜A｜ ^ (1 - 1 / p) := by
+    B ｜A｜ ≤ 𝐄 h_{A} ^ β ∧ 𝐄 h_{A} ^ β ≤ (𝐄 h_{A} ^ (p * β)) ^ p⁻¹ * ｜A｜ ^ (1 - p⁻¹) := by
   sorry
 
 end Proof_Lemma_5_1
@@ -45,9 +45,9 @@ theorem lemma_5_1 :
       𝐄 h_{A} ^ β ≥ B ｜A｜ → B ｜A｜ > 0 →
       ∀ β' : ℝ, β ≤ β' → 𝐄 h_{A} ^ β' ≥ B ｜A｜ ^ (β' / β) * ｜A｜ ^ (-(β' / β) + 1)) ∧
     ((∀ (n : ℕ), 1 ≤ n → ∀ A : Set ({0,1}^n), ｜A｜ ≤ 1 / 2 →
-        𝐄 h_{A} ^ β₀ ≥ ｜A｜ * (log₂ (1 / ｜A｜)) ^ β₀) →
+        𝐄 h_{A} ^ β₀ ≥ ｜A｜ * (log₂ ｜A｜⁻¹) ^ β₀) →
       ∀ β : ℝ, β₀ ≤ β → ∀ (n : ℕ), 1 ≤ n → ∀ A : Set ({0,1}^n), ｜A｜ ≤ 1 / 2 →
-        𝐄 h_{A} ^ β ≥ ｜A｜ * (log₂ (1 / ｜A｜)) ^ β) := by
+        𝐄 h_{A} ^ β ≥ ｜A｜ * (log₂ ｜A｜⁻¹) ^ β) := by
   sorry
 
 end Auto.DIR

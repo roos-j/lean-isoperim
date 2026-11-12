@@ -36,7 +36,7 @@ open scoped ContDiff
 $|A|\ge\frac12$,
 $$\mathbf{E}h_A^\beta\ge\max\big(J(|A|),(1-|A|)(\log_2(1/(1-|A|)))^\beta\big). \tag{1.6}$$ -/
 theorem thm_1_7 (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) (hA : ｜A｜ ≥ 1 / 2) :
-    𝐄 h_{A} ^ β₀ ≥ max (J ｜A｜) ((1 - ｜A｜) * (log₂ (1 / (1 - ｜A｜))) ^ β₀) := by
+    𝐄 h_{A} ^ β₀ ≥ max (J ｜A｜) ((1 - ｜A｜) * (log₂ ((1 - ｜A｜)⁻¹)) ^ β₀) := by
   sorry
 
 end Auto.DIR

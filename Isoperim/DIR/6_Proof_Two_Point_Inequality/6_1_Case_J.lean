@@ -63,7 +63,7 @@ $$E_N=J(x)+J(x+h)-2J(x+\tfrac h2)-\sum_{k=2}^{N-1}\tfrac1{k!}(1-2^{-k+1})J^{(k)}
 its Lagrange form is `Auto.DIR.caseJ_I_taylor`. -/
 noncomputable def E_J (N : ℕ) (x h : ℝ) : ℝ :=
   J x + J (x + h) - 2 * J (x + h / 2) -
-    ∑ k ∈ Finset.Ico 2 N, 1 / (k.factorial : ℝ) * (1 - 2 ^ (-(k : ℝ) + 1)) * iteratedDeriv k J x
+    ∑ k ∈ Finset.Ico 2 N, (k.factorial : ℝ)⁻¹ * (1 - 2 ^ (-(k : ℝ) + 1)) * iteratedDeriv k J x
       * h ^ k
 
 /-- The function $g_{J,1,\beta,c}$ ([DIR], §6.1.1) (depending on $N\ge2$; the paper uses $N=6$):
@@ -71,11 +71,11 @@ $$g_{J,1,\beta,c}(x,h)=\beta c^{1-\frac1\beta}J(x+h)^{1-\frac1\beta}
 -\tfrac12\beta(1-\beta)c^{1-\frac2\beta}J(x+h)^{1-\frac2\beta}h^{\frac1\beta}
 +c\sum_{k=2}^{N-1}\tfrac1{k!}(1-2^{-k+1})J^{(k)}(x)h^{k-\frac1\beta}+cE_Nh^{-\frac1\beta}.$$ -/
 noncomputable def g_J_1 (N : ℕ) (β c x h : ℝ) : ℝ :=
-  β * c ^ (1 - 1 / β) * J (x + h) ^ (1 - 1 / β)
-    - 1 / 2 * β * (1 - β) * c ^ (1 - 2 / β) * J (x + h) ^ (1 - 2 / β) * h ^ (1 / β)
-    + c * ∑ k ∈ Finset.Ico 2 N, 1 / (k.factorial : ℝ) * (1 - 2 ^ (-(k : ℝ) + 1))
-        * iteratedDeriv k J x * h ^ ((k : ℝ) - 1 / β)
-    + c * E_J N x h * h ^ (-1 / β)
+  β * c ^ (1 - β⁻¹) * J (x + h) ^ (1 - β⁻¹)
+    - 1 / 2 * β * (1 - β) * c ^ (1 - 2 / β) * J (x + h) ^ (1 - 2 / β) * h ^ β⁻¹
+    + c * ∑ k ∈ Finset.Ico 2 N, (k.factorial : ℝ)⁻¹ * (1 - 2 ^ (-(k : ℝ) + 1))
+        * iteratedDeriv k J x * h ^ ((k : ℝ) - β⁻¹)
+    + c * E_J N x h * h ^ (-β⁻¹)
 
 /-- [DIR], §6.1.1: from $J\cdot J''=-2$, $J''=-2J^{-1}$ on $(\frac12,1)$. -/
 theorem iteratedDeriv_two_J (x : ℝ) (hx : x ∈ Ioo (1 / 2 : ℝ) 1) :
@@ -106,7 +106,7 @@ $$G^1_\beta[c\cdot J](x,x+h)\ge\beta c^{1-\frac1\beta}J(x+h)^{1-\frac1\beta}h^{\
 theorem caseJ_I_neardiag_bound (β c : ℝ) (hβ : β ∈ Ioo (0 : ℝ) 1) (hc : 0 < c) (x h : ℝ)
     (hx : x ∈ Icc (1 / 2 : ℝ) (5 / 8)) (hh : h ∈ Icc (0 : ℝ) (3 / 16)) :
     G₁ β (c • J) x (x + h) ≥
-      β * c ^ (1 - 1 / β) * J (x + h) ^ (1 - 1 / β) * h ^ (1 / β)
+      β * c ^ (1 - β⁻¹) * J (x + h) ^ (1 - β⁻¹) * h ^ β⁻¹
         + c * (J x + J (x + h) - 2 * J (x + h / 2))
         - 1 / 2 * β * (1 - β) * c ^ (1 - 2 / β) * J (x + h) ^ (1 - 2 / β) * h ^ (2 / β) := by
   sorry
@@ -116,7 +116,7 @@ $0\le h\le\frac3{16}$:
 $$G^1_\beta[c\cdot J](x,x+h)\ge h^{\frac1\beta}g_{J,1,\beta,c}(x,h).$$ -/
 theorem caseJ_I_G₁_ge_g_J_1 (N : ℕ) (hN : 2 ≤ N) (β c : ℝ) (hβ : β ∈ Ioo (0 : ℝ) 1)
     (hc : 0 < c) (x h : ℝ) (hx : x ∈ Ioc (1 / 2 : ℝ) (5 / 8)) (hh : h ∈ Icc (0 : ℝ) (3 / 16)) :
-    G₁ β (c • J) x (x + h) ≥ h ^ (1 / β) * g_J_1 N β c x h := by
+    G₁ β (c • J) x (x + h) ≥ h ^ β⁻¹ * g_J_1 N β c x h := by
   sorry
 
 /-- [DIR], §6.1.1: $J'(x_0)=0$ and $J''<0$ (on $(\frac12,1)$), so $J'$ is strictly decreasing

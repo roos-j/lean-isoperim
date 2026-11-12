@@ -90,7 +90,7 @@ theorem G_PX_eq_I (x : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 64)) :
 
 /-- $g_{P,1}(x)=\frac12\sqrt{\log_2(1/x)}+\frac12\sqrt{\log(w_1/x)}-2$ ([DIRX], §4, Case I).
 Written `g_P₁ x`. -/
-noncomputable def g_P₁X (x : ℝ) : ℝ := 1 / 2 * √(log₂ (1 / x)) + 1 / 2 * √(log (w₁ / x)) - 2
+noncomputable def g_P₁X (x : ℝ) : ℝ := 1 / 2 * √(log₂ x⁻¹) + 1 / 2 * √(log (w₁ / x)) - 2
 
 local notation "g_P₁" => g_P₁X
 
@@ -99,8 +99,8 @@ $\frac12(L(x)+\mathrm{J}(1-x))-2x(1-x)\ge x(\frac12\sqrt{\log_2(1/x)}+\frac12\sq
 =x\cdot g_{P,1}(x)$. -/
 theorem G_PX_I_lower (x : ℝ) (hx : x ∈ Ioc (0 : ℝ) (1 / 64)) :
     1 / 2 * (L x + J (1 - x)) - 2 * x * (1 - x) ≥
-      x * (1 / 2 * √(log₂ (1 / x)) + 1 / 2 * √(log (w₁ / x)) - 2) ∧
-    x * (1 / 2 * √(log₂ (1 / x)) + 1 / 2 * √(log (w₁ / x)) - 2) = x * g_P₁ x := by
+      x * (1 / 2 * √(log₂ x⁻¹) + 1 / 2 * √(log (w₁ / x)) - 2) ∧
+    x * (1 / 2 * √(log₂ x⁻¹) + 1 / 2 * √(log (w₁ / x)) - 2) = x * g_P₁ x := by
   sorry
 
 /-- [DIRX], §4, Case I: $g_{P,1}$ is a decreasing function (on $(0,\frac1{64}]$) and

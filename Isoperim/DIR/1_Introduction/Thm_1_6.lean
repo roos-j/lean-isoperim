@@ -35,7 +35,7 @@ theorem isoProfile_half_le_sqrt (x : ℝ) (hx : x ∈ 𝒬) : 𝓑 (1 / 2) x ≤
 /-- [DIR], §1.2, after Theorem 1.6: the characterization (1.3) of $\mathcal{B}_1$ implies
 $\mathcal{B}_1(x)\sim x\log_2(1/x)$ as $x\to0^+$ (along $x\in\mathcal{Q}$). -/
 theorem isoProfile_one_asymp :
-    Tendsto (fun x ↦ 𝓑 1 x / (x * log₂ (1 / x))) (𝓝[𝒬 ∩ Set.Ioi 0] 0) (𝓝 1) := by
+    Tendsto (fun x ↦ 𝓑 1 x / (x * log₂ x⁻¹)) (𝓝[𝒬 ∩ Set.Ioi 0] 0) (𝓝 1) := by
   sorry
 
 /-- **Theorem 1.6** ([DIR]). For all $A\subset\{0,1\}^n$,
@@ -46,8 +46,8 @@ where $f(x)\sim g(x)$ as $x\to x_*$ means $\lim_{x\to x_*}\frac{f(x)}{g(x)}=1$ (
 along $x\in\mathcal{Q}$, where $\mathcal{B}_{\frac12}$ is defined). -/
 theorem thm_1_6 :
     (∀ (n : ℕ), 1 ≤ n → ∀ A : Set ({0,1}^n),
-      𝐄 (fun x ↦ √(h_{A} x)) ≥ ｜A｜ * √(log₂ (1 / ｜A｜) + 1) - ｜A｜) ∧
-    Tendsto (fun x ↦ 𝓑 (1 / 2) x / (x * √(log₂ (1 / x)))) (𝓝[𝒬 ∩ Set.Ioi 0] 0) (𝓝 1) := by
+      𝐄 (fun x ↦ √(h_{A} x)) ≥ ｜A｜ * √(log₂ ｜A｜⁻¹ + 1) - ｜A｜) ∧
+    Tendsto (fun x ↦ 𝓑 (1 / 2) x / (x * √(log₂ x⁻¹))) (𝓝[𝒬 ∩ Set.Ioi 0] 0) (𝓝 1) := by
   sorry
 
 end Auto.DIR

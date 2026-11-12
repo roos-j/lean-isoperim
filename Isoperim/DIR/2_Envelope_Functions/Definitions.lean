@@ -39,7 +39,7 @@ open Real Set
 /-- **(2.1)** ([DIR], §2). For $B:[0,1]\to[0,\infty)$, $\beta\ge\frac12$, $0\le x\le y\le1$,
 $$G^1_\beta[B](x,y)=((y-x)^{1/\beta}+B(y)^{1/\beta})^\beta+B(x)-2B(\tfrac{x+y}2).$$ -/
 noncomputable def G₁ (β : ℝ) (B : ℝ → ℝ) (x y : ℝ) : ℝ :=
-  ((y - x) ^ (1 / β) + B y ^ (1 / β)) ^ β + B x - 2 * B ((x + y) / 2)
+  ((y - x) ^ β⁻¹ + B y ^ β⁻¹) ^ β + B x - 2 * B ((x + y) / 2)
 
 /-- ([DIR], §2, display after (2.1)).
 $$G^2_\beta[B](x,y)=y-x+(2^\beta-1)B(y)+B(x)-2B(\tfrac{x+y}2).$$ -/
@@ -52,7 +52,7 @@ noncomputable def G (β : ℝ) (B : ℝ → ℝ) (x y : ℝ) : ℝ := max (G₁ 
 
 /-- $L_\beta(x)=x(\log_2(1/x))^\beta$ ([DIR], §2). (At $x=0$ Lean's conventions give
 $L_\beta(0)=0$, the continuous extension.) -/
-noncomputable def L (β x : ℝ) : ℝ := x * (log₂ (1 / x)) ^ β
+noncomputable def L (β x : ℝ) : ℝ := x * (log₂ x⁻¹) ^ β
 
 /-- The cubic $Q_\beta$ ([DIR], §2): the unique cubic interpolation polynomial with
 $Q_\beta(0)=Q_\beta(1)=0$, $Q_\beta(\frac12)=\frac12$ and $Q_\beta(\frac14)=2^{\beta-2}$, i.e.

@@ -132,7 +132,7 @@ noncomputable def edgeMeasure {n : ℕ} (A B : Set ({0,1}^n)) : ℝ :=
 space (e.g. `ℝ` or `ℂ`). Written `‖f‖_[p]`. -/
 noncomputable def pNorm {n : ℕ} {M : Type*} [NormedAddCommGroup M] (p : ℝ) (f : ({0,1}^n) → M) :
     ℝ :=
-  (𝐄 (fun x ↦ ‖f x‖ ^ p)) ^ (1 / p)
+  (𝐄 (fun x ↦ ‖f x‖ ^ p)) ^ p⁻¹
 
 @[inherit_doc] notation "‖" f "‖_[" p "]" => pNorm p f
 

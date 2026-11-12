@@ -85,8 +85,8 @@ paper's $g_{QJ,\beta,c}$ by `Auto.DIR.eqn_3_4`. (This replaces an earlier formul
 conditional hypothesis `EqOn J (Jw w₀) (Icc (1 - w₀) 1)`, which `Auto.DIR.J` does not satisfy in
 general.) -/
 noncomputable def g_QJ (β c x y : ℝ) : ℝ :=
-  (y - x) ^ (1 / β) + c ^ (1 / β) * J y ^ (1 / β) -
-    c ^ (1 / β) * (2 * Jw w₀ ((x + y) / 2) - Q β x) ^ (1 / β)
+  (y - x) ^ β⁻¹ + c ^ β⁻¹ * J y ^ β⁻¹ -
+    c ^ β⁻¹ * (2 * Jw w₀ ((x + y) / 2) - Q β x) ^ β⁻¹
 
 /-- [DIR], §6.6.1: (Observe that $2J(\frac{x+y}2)-Q_\beta(x)>0$) (on triangle I, for
 $\beta\in[\frac12,1]$). -/

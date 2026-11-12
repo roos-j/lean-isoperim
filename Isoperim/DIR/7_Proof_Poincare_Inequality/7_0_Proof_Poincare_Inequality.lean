@@ -97,7 +97,7 @@ theorem prop_7_1_case_I_eq (β : ℝ) (x : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 6
 $g_{P,1}(x)=2^{-2\beta_0}\sqrt{\log_2(1/x)}+2^{-2\beta_0}\sqrt{\log(w_0/x)}-2$
 ([DIR], proof of Proposition 7.1, Case I). -/
 noncomputable def g_P_1 (x : ℝ) : ℝ :=
-  2 ^ (-(2 * β₀)) * √(log₂ (1 / x)) + 2 ^ (-(2 * β₀)) * √(log (w₀ / x)) - 2
+  2 ^ (-(2 * β₀)) * √(log₂ x⁻¹) + 2 ^ (-(2 * β₀)) * √(log (w₀ / x)) - 2
 
 /-- [DIR], proof of Proposition 7.1, Case I: using $\beta\in[\frac12,\beta_0]$ and Corollary 5.12,
 the left-hand side is

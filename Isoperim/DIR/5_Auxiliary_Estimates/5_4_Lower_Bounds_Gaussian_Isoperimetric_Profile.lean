@@ -68,41 +68,41 @@ $x=|t|^{-1}\varphi(t)$), we have $|t|=\sqrt2\sqrt{\log(1/x)-\log((2\pi)^{1/2}|t|
 under the square root is positive because it equals $t^2/2$). -/
 theorem prop_5_11_t_formula (t : ℝ) (ht : t < 0) :
     |t|⁻¹ * φ t * |t| = (2 * π) ^ (-(1 / 2 : ℝ)) * exp (-t ^ 2 / 2) ∧
-    log (1 / (|t|⁻¹ * φ t)) - log ((2 * π) ^ (1 / 2 : ℝ) * |t|) = t ^ 2 / 2 ∧
-    |t| = √2 * √(log (1 / (|t|⁻¹ * φ t)) - log ((2 * π) ^ (1 / 2 : ℝ) * |t|)) := by
+    log ((|t|⁻¹ * φ t)⁻¹) - log ((2 * π) ^ (1 / 2 : ℝ) * |t|) = t ^ 2 / 2 ∧
+    |t| = √2 * √(log ((|t|⁻¹ * φ t)⁻¹) - log ((2 * π) ^ (1 / 2 : ℝ) * |t|)) := by
   sorry
 
 /-- [DIR], proof of Proposition 5.11: the assumption $x\le\frac12$ implies $|t|>0.64$, which also
 means $(2\pi)^{1/2}|t|>1$, and thus $|t|\le\sqrt2\sqrt{\log(1/x)}$. -/
 theorem prop_5_11_t_bounds (t : ℝ) (ht : t < 0) (hx : |t|⁻¹ * φ t ≤ 1 / 2) :
-    |t| > 0.64 ∧ (2 * π) ^ (1 / 2 : ℝ) * |t| > 1 ∧ |t| ≤ √2 * √(log (1 / (|t|⁻¹ * φ t))) := by
+    |t| > 0.64 ∧ (2 * π) ^ (1 / 2 : ℝ) * |t| > 1 ∧ |t| ≤ √2 * √(log ((|t|⁻¹ * φ t)⁻¹)) := by
   sorry
 
 /-- [DIR], proof of Proposition 5.11: this, in turn, implies
 $\log((2\pi)^{1/2}|t|)\le\log(2\pi^{1/2}\sqrt{\log(1/x)})=\log(2\pi^{1/2})+\frac12\log\log(1/x)$. -/
 theorem prop_5_11_log_bound (t : ℝ) (ht : t < 0) (hx : |t|⁻¹ * φ t ≤ 1 / 2) :
     log ((2 * π) ^ (1 / 2 : ℝ) * |t|) ≤
-        log (2 * π ^ (1 / 2 : ℝ) * √(log (1 / (|t|⁻¹ * φ t)))) ∧
-      log (2 * π ^ (1 / 2 : ℝ) * √(log (1 / (|t|⁻¹ * φ t)))) =
-        log (2 * π ^ (1 / 2 : ℝ)) + 1 / 2 * log (log (1 / (|t|⁻¹ * φ t))) := by
+        log (2 * π ^ (1 / 2 : ℝ) * √(log ((|t|⁻¹ * φ t)⁻¹))) ∧
+      log (2 * π ^ (1 / 2 : ℝ) * √(log ((|t|⁻¹ * φ t)⁻¹))) =
+        log (2 * π ^ (1 / 2 : ℝ)) + 1 / 2 * log (log ((|t|⁻¹ * φ t)⁻¹)) := by
   sorry
 
 /-- [DIR], proof of Proposition 5.11: we can write $\sqrt2\sqrt{\log(1/x)}\sqrt{1-\varepsilon}=|t|$,
 where $\varepsilon=(\log(1/x))^{-1}\log((2\pi)^{1/2}|t|)$ satisfies
 $\varepsilon\le\frac{\log(2\pi^{1/2})}{\log(1/x)}+\frac12\frac{\log\log(1/x)}{\log(1/x)}$. -/
 theorem prop_5_11_eps (t : ℝ) (ht : t < 0) (hx : |t|⁻¹ * φ t ≤ 1 / 2) :
-    √2 * √(log (1 / (|t|⁻¹ * φ t))) *
-        √(1 - (log (1 / (|t|⁻¹ * φ t)))⁻¹ * log ((2 * π) ^ (1 / 2 : ℝ) * |t|)) = |t| ∧
-    (log (1 / (|t|⁻¹ * φ t)))⁻¹ * log ((2 * π) ^ (1 / 2 : ℝ) * |t|) ≤
-      log (2 * π ^ (1 / 2 : ℝ)) / log (1 / (|t|⁻¹ * φ t)) +
-        1 / 2 * (log (log (1 / (|t|⁻¹ * φ t))) / log (1 / (|t|⁻¹ * φ t))) := by
+    √2 * √(log ((|t|⁻¹ * φ t)⁻¹)) *
+        √(1 - (log ((|t|⁻¹ * φ t)⁻¹))⁻¹ * log ((2 * π) ^ (1 / 2 : ℝ) * |t|)) = |t| ∧
+    (log ((|t|⁻¹ * φ t)⁻¹))⁻¹ * log ((2 * π) ^ (1 / 2 : ℝ) * |t|) ≤
+      log (2 * π ^ (1 / 2 : ℝ)) / log ((|t|⁻¹ * φ t)⁻¹) +
+        1 / 2 * (log (log ((|t|⁻¹ * φ t)⁻¹)) / log ((|t|⁻¹ * φ t)⁻¹)) := by
   sorry
 
 /-- The bound
 $\varepsilon(x)=\frac{\log(2\pi^{1/2})}{\log(1/x)}+\frac12\frac{\log\log(1/x)}{\log(1/x)}$
 for the relative error in Proposition 5.11 ([DIR], proof of Proposition 5.11). -/
 noncomputable def εI (x : ℝ) : ℝ :=
-  log (2 * π ^ (1 / 2 : ℝ)) / log (1 / x) + 1 / 2 * (log (log (1 / x)) / log (1 / x))
+  log (2 * π ^ (1 / 2 : ℝ)) / log x⁻¹ + 1 / 2 * (log (log x⁻¹) / log x⁻¹)
 
 /-- [DIR], proof of Proposition 5.11: the bound for $\varepsilon$ tends to $0$ as $x\to0^+$; in
 particular $\varepsilon<1$ if $x\le\frac15$. -/
@@ -123,9 +123,9 @@ end Proof_Proposition_5_11
 $$I(x)\ge\sqrt2\cdot x\sqrt{\log(1/x)}\Big(1-\frac12\frac{\log\log(1/x)}{\log(1/x)}
 -\frac{\log(2\pi^{1/2})}{\log(1/x)}\Big).$$ -/
 theorem prop_5_11 (x : ℝ) (hx : x ∈ Ioc (0 : ℝ) (1 / 5)) :
-    I x ≥ √2 * x * √(log (1 / x)) *
-      (1 - 1 / 2 * (log (log (1 / x)) / log (1 / x)) - log (2 *
-          π ^ (1 / 2 : ℝ)) / log (1 / x)) := by
+    I x ≥ √2 * x * √(log x⁻¹) *
+      (1 - 1 / 2 * (log (log x⁻¹) / log x⁻¹) - log (2 *
+          π ^ (1 / 2 : ℝ)) / log x⁻¹) := by
   sorry
 
 /-- [DIR], §5.4, after Corollary 5.12: from (3.4), $J(1-x)=\sqrt2w_0I(xw_0^{-1})$ (for
@@ -187,7 +187,7 @@ $$J(x)-L_\beta(1-x)\ge s\Big(2(1-\varepsilon)\sqrt{\log(w_0/s)}-(\log2)^{-\beta_
 theorem lemma_5_13_case_2 (s : ℝ) (hs : s ∈ Ioo 0 (1 / 2048)) :
     J (1 - s) ≥ 2 * s * (1 - εJ s) * √(log (w₀ / s)) ∧
     J (1 - s) - L β₀ s ≥
-      s * (2 * (1 - εJ s) * √(log (w₀ / s)) - (log 2) ^ (-β₀) * (log (1 / s)) ^ β₀) := by
+      s * (2 * (1 - εJ s) * √(log (w₀ / s)) - (log 2) ^ (-β₀) * (log s⁻¹) ^ β₀) := by
   sorry
 
 /-- [DIR], proof of Lemma 5.13: let $u=\log(w_0/s)$. If $s\in(10^{-10^{380}},\frac1{2048})$, then
@@ -199,7 +199,7 @@ theorem lemma_5_13_u_range (s : ℝ) (hs : s ∈ Ioo ((10 : ℝ) ^ (-(10 : ℝ) 
 /-- [DIR], proof of Lemma 5.13: here we have used $\log(1/s)=u+\log(w_0^{-1})$ and
 $(u+v)^{\beta_0}\le u^{\beta_0}+v^{\beta_0}$ (for $u,v\ge0$). -/
 theorem lemma_5_13_used (s : ℝ) (hs : 0 < s) (u v : ℝ) (hu : 0 ≤ u) (hv : 0 ≤ v) :
-    log (1 / s) = log (w₀ / s) + log w₀⁻¹ ∧ (u + v) ^ β₀ ≤ u ^ β₀ + v ^ β₀ := by
+    log s⁻¹ = log (w₀ / s) + log w₀⁻¹ ∧ (u + v) ^ β₀ ≤ u ^ β₀ + v ^ β₀ := by
   sorry
 
 /-- [DIR], proof of Lemma 5.13: on the interval $u\in[1200,10^{381}]$, evaluating the decreasing

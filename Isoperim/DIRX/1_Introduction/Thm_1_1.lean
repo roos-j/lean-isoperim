@@ -39,7 +39,7 @@ open Real Finset
 /-- **Theorem 1.1** ([DIRX]). For all $A\subset\{0,1\}^n$ with $|A|\le\frac12$,
 $$\mathbf{E}\sqrt{h_A}\ge|A|\sqrt{\log_2(1/|A|)}. \tag{1.1}$$ -/
 theorem thm_1_1 (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) (hA : ｜A｜ ≤ 1 / 2) :
-    𝐄 (fun x ↦ √(h_{A} x)) ≥ ｜A｜ * √(log₂ (1 / ｜A｜)) := by
+    𝐄 (fun x ↦ √(h_{A} x)) ≥ ｜A｜ * √(log₂ ｜A｜⁻¹) := by
   sorry
 
 end Auto.DIRX

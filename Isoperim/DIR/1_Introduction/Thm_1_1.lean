@@ -38,9 +38,9 @@ $$\mathbf{E}h_A^\beta\ge|A|(\log_2(1/|A|))^\beta. \tag{1.1}$$
 This is an equality if $A$ is a subcube. -/
 theorem thm_1_1 (n : ℕ) (hn : 1 ≤ n) (β : ℝ) (hβ : β₀ ≤ β) :
     (∀ A : Set ({0,1}^n), ｜A｜ ≤ 1 / 2 →
-      𝐄 h_{A} ^ β ≥ ｜A｜ * (log₂ (1 / ｜A｜)) ^ β) ∧
+      𝐄 h_{A} ^ β ≥ ｜A｜ * (log₂ ｜A｜⁻¹) ^ β) ∧
     (∀ A : Set ({0,1}^n), ｜A｜ ≤ 1 / 2 → IsSubcube A →
-      𝐄 h_{A} ^ β = ｜A｜ * (log₂ (1 / ｜A｜)) ^ β) := by
+      𝐄 h_{A} ^ β = ｜A｜ * (log₂ ｜A｜⁻¹) ^ β) := by
   sorry
 
 /-- [DIR], §1.4, display after Corollary 1.9: for a partition $(A,B,W)$ of $\{0,1\}^n$ with
