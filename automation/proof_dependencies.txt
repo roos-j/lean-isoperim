@@ -62,7 +62,7 @@ Auto.DIR.b [def, Task 1] : Auto.DIR.J, Auto.DIR.L, Auto.DIR.Q
 Auto.DIR.b_eq_Q_ge_L [thm, Task 5] : Auto.DIR.L, Auto.DIR.Q, Auto.DIR.b, Auto.DIR.lemma_5_9, Auto.DIR.β₀
 Auto.DIR.b_half_two_pow [thm, Task 5] : Auto.DIR.b
 Auto.DIR.b_lt_Ltilde_imp [thm, Task 5] : Auto.DIR.J_half_eq_L_half, Auto.DIR.Ltilde, Auto.DIR.b, Auto.DIR.eqn_2_9, Auto.DIR.lemma_5_8, Auto.DIR.β₀
-Auto.DIR.boolean_eq_indicator [thm, Task 4] : Auto.DIR.Cube, Auto.DIR.ind
+Auto.DIR.boolean_eq_indicator [thm, Task 5] : Auto.DIR.Cube, Auto.DIR.ind
 Auto.DIR.btilde [def, Task 4] : Auto.DIR.J, Auto.DIR.L, Auto.DIR.Q
 Auto.DIR.btilde_eq_max [thm, Task 5] : Auto.DIR.J_half_eq_L_half, Auto.DIR.Ltilde, Auto.DIR.b, Auto.DIR.btilde, Auto.DIR.lemma_5_8, Auto.DIR.β₀
 Auto.DIR.caseJ_G₁_mono_β [thm, Task 2] : Auto.DIR.G₁, Auto.DIR.J, Auto.DIR.β₀
@@ -174,7 +174,7 @@ Auto.DIR.eqn_6_6 [thm, Task 1] : Auto.DIR.G₁, Auto.DIR.Q, Auto.DIR.caseQ_II, A
 Auto.DIR.eqn_6_7 [thm, Task 1] : Auto.DIR.g_Q_1, Auto.DIR.β₀
 Auto.DIR.eqn_6_8 [thm, Task 1] : Auto.DIR.g_Q_1_lo
 Auto.DIR.eqn_6_9 [thm, Task 1] : Auto.DIR.f_QIII_0, Auto.DIR.β₀
-Auto.DIR.eqn_7_1 [thm, Task 4] : Auto.DIR.Cube, Auto.DIR.expect, Auto.DIR.gradNorm, Auto.DIR.h, Auto.DIR.ind, Auto.DIR.pNorm
+Auto.DIR.eqn_7_1 [thm, Task 5] : Auto.DIR.Cube, Auto.DIR.expect, Auto.DIR.gradNorm, Auto.DIR.h, Auto.DIR.ind, Auto.DIR.pNorm
 Auto.DIR.eqn_7_2 [thm, Task 4] : Auto.DIR.g_P_1, Auto.DIR.w₀_mem
 Auto.DIR.eqn_7_3 [thm, Task 4] : Auto.DIR.G_P, Auto.DIR.β₀
 Auto.DIR.eqn_7_4 [thm, Task 4] : Auto.DIR.g_P_3, Auto.DIR.β₀
@@ -254,7 +254,7 @@ Auto.DIR.g_Q_1 [def, Task 1] : Auto.DIR.Q
 Auto.DIR.g_Q_1_lo [def, Task 1] : Auto.DIR.Q, Auto.DIR.α₀, Auto.DIR.α₁
 Auto.DIR.g_Q_2 [def, Task 1] : Auto.DIR.p_Q
 Auto.DIR.gradNorm [def, Task 4] : Auto.DIR.Cube, Auto.DIR.e
-Auto.DIR.grad_norm_ge [thm, Task 4] : Auto.DIR.Cube, Auto.DIR.dens, Auto.DIR.eqn_7_1, Auto.DIR.expect, Auto.DIR.gradNorm, Auto.DIR.h, Auto.DIR.ind, Auto.DIR.pNorm
+Auto.DIR.grad_norm_ge [thm, Task 5] : Auto.DIR.Cube, Auto.DIR.dens, Auto.DIR.eqn_7_1, Auto.DIR.expect, Auto.DIR.gradNorm, Auto.DIR.h, Auto.DIR.ind, Auto.DIR.pNorm
 Auto.DIR.h [def, Task 4] : Auto.DIR.Cube, Auto.DIR.e
 Auto.DIR.h_LJ [def, Task 2] : Auto.DIR.J
 Auto.DIR.h_LJ_antitoneOn [thm, Task 2] : Auto.DIR.h_LJ, Auto.DIR.h_LJ_deriv
@@ -262,7 +262,7 @@ Auto.DIR.h_LJ_deriv [thm, Task 2] : Auto.DIR.J, Auto.DIR.h_LJ, Auto.DIR.iterated
 Auto.DIR.h_LJ_le_h_LJ_t [thm, Task 2] : Auto.DIR.h_LJ, Auto.DIR.h_LJ_antitoneOn, Auto.DIR.t_LJ
 Auto.DIR.h_LJ_nonpos [thm, Task 2] : Auto.DIR.J, Auto.DIR.J_monotoneOn_antitoneOn, Auto.DIR.deriv_J_x₀, Auto.DIR.eqn_3_6, Auto.DIR.h_LJ
 Auto.DIR.ind [def, Task 4] : Auto.DIR.Cube
-Auto.DIR.indicator_norms [thm, Task 4] : Auto.DIR.Cube, Auto.DIR.dens, Auto.DIR.expect, Auto.DIR.ind, Auto.DIR.pNorm
+Auto.DIR.indicator_norms [thm, Task 5] : Auto.DIR.Cube, Auto.DIR.dens, Auto.DIR.expect, Auto.DIR.ind, Auto.DIR.pNorm
 Auto.DIR.isoProfile [def, Task 4] : Auto.DIR.Cube, Auto.DIR.dens, Auto.DIR.expect, Auto.DIR.h
 Auto.DIR.isoProfile_ge_btilde [thm, Task 5] : Auto.DIR.btilde, Auto.DIR.dyadic, Auto.DIR.eqn_2_8, Auto.DIR.isoProfile, Auto.DIR.lemma_5_8, Auto.DIR.prop_2_1, Auto.DIR.β₀
 Auto.DIR.isoProfile_half_le_sqrt [thm, Task 5] : Auto.DIR.dyadic, Auto.DIR.isoProfile
@@ -336,7 +336,7 @@ Auto.DIR.p_QJQ_coeffs_pos [thm, Task 1] : Auto.DIR.β₁
 Auto.DIR.p_QJQ_monotoneOn [thm, Task 1] : Auto.DIR.p_QJQ, Auto.DIR.p_QJQ_coeffs_pos, Auto.DIR.β₁
 Auto.DIR.p_QJQ_quarter [thm, Task 1] : Auto.DIR.p_QJQ, Auto.DIR.β₁
 Auto.DIR.proof_thm_1_6_chain [thm, Task 4] : Auto.DIR.Cube, Auto.DIR.L, Auto.DIR.L_half_eqn_3_1, Auto.DIR.M_indicator, Auto.DIR.dens, Auto.DIR.expect, Auto.DIR.h, Auto.DIR.ind
-Auto.DIR.prop_2_1 [thm, Task 5] : Auto.DIR.G, Auto.DIR.dyadic, Auto.DIR.isoProfile
+Auto.DIR.prop_2_1 [thm, Task 4] : Auto.DIR.G, Auto.DIR.dyadic, Auto.DIR.isoProfile
 Auto.DIR.prop_3_3 [thm, Task 4] : Auto.DIR.prop_3_3_Gc_nonneg, Auto.DIR.prop_3_3_reduction, Auto.DIR.prop_3_3_squared
 Auto.DIR.prop_3_3_Gc_deriv [thm, Task 4] : Auto.DIR.dirGc
 Auto.DIR.prop_3_3_Gc_deriv2 [thm, Task 4] : Auto.DIR.dirGc, Auto.DIR.prop_3_3_Gc_deriv
@@ -450,7 +450,7 @@ Auto.DIRX.JX_mono [thm, Task 3] : Auto.DIRX.JX, Auto.DIRX.JX_contDiff, Auto.DIRX
 Auto.DIRX.JX_mul_deriv2 [thm, Task 3] : Auto.DIR.I_characterization, Auto.DIRX.JX, Auto.DIRX.JX_contDiff, Auto.DIRX.w₁, Auto.DIRX.γX
 Auto.DIRX.JXw [def, Task 1] : Auto.DIR.I
 Auto.DIRX.JXw_half_one [thm, Task 1] : Auto.DIR.I_characterization, Auto.DIRX.JXw
-Auto.DIRX.bool_eq_indicator [thm, Task 4] : Auto.DIR.Cube, Auto.DIR.ind
+Auto.DIRX.bool_eq_indicator [thm, Task 5] : Auto.DIR.Cube, Auto.DIR.ind
 Auto.DIRX.cStar [def, Task 3] : 
 Auto.DIRX.caseJ [thm, Task 3] : Auto.DIR.G, Auto.DIRX.BX, Auto.DIRX.caseJ_G₁_eq, Auto.DIRX.eqn_3_1, Auto.DIRX.w₁
 Auto.DIRX.caseJ_G₁_eq [thm, Task 3] : Auto.DIR.G₁, Auto.DIR.Q_spec, Auto.DIRX.BX, Auto.DIRX.JX, Auto.DIRX.JXw_half_one, Auto.DIRX.w₁
@@ -533,9 +533,9 @@ Auto.DIRX.h_LJ₁ [def, Task 3] : Auto.DIRX.h_LJ
 Auto.DIRX.h_P₂ [def, Task 4] : Auto.DIR.Q, Auto.DIRX.JX
 Auto.DIRX.h_QJQ₁ [def, Task 3] : Auto.DIR.Q, Auto.DIRX.JX
 Auto.DIRX.h_QJ₂ [def, Task 3] : Auto.DIR.Q, Auto.DIRX.JX
-Auto.DIRX.kahn_park [thm, Task 5] : Auto.DIR.Cube, Auto.DIR.G, Auto.DIR.dens, Auto.DIR.expect, Auto.DIR.h, Auto.DIR.prop_2_1
+Auto.DIRX.kahn_park [thm, Task 4] : Auto.DIR.Cube, Auto.DIR.G, Auto.DIR.dens, Auto.DIR.expect, Auto.DIR.h, Auto.DIR.prop_2_1
 Auto.DIRX.lemma_2_3 [thm, Task 3] : Auto.DIR.L, Auto.DIR.lemma_5_6
-Auto.DIRX.norms_indicator [thm, Task 4] : Auto.DIR.Cube, Auto.DIR.dens, Auto.DIR.expect, Auto.DIR.gradNorm, Auto.DIR.h, Auto.DIR.ind, Auto.DIR.pNorm, Auto.DIRX.sqrt_sensitivity_indicator
+Auto.DIRX.norms_indicator [thm, Task 5] : Auto.DIR.Cube, Auto.DIR.dens, Auto.DIR.expect, Auto.DIR.gradNorm, Auto.DIR.h, Auto.DIR.ind, Auto.DIR.pNorm, Auto.DIRX.sqrt_sensitivity_indicator
 Auto.DIRX.s [def, Task 4] : Auto.DIR.Cube, Auto.DIR.e
 Auto.DIRX.sensitivity_indicator [thm, Task 4] : Auto.DIR.Cube, Auto.DIR.h, Auto.DIR.ind, Auto.DIRX.s
 Auto.DIRX.sqrt_sensitivity_indicator [thm, Task 4] : Auto.DIR.Cube, Auto.DIR.h, Auto.DIR.ind, Auto.DIRX.hA_mul_hA_compl, Auto.DIRX.s, Auto.DIRX.sensitivity_indicator
@@ -544,7 +544,7 @@ Auto.DIRX.thm_1_1_of_eqn_2_4 [thm, Task 5] : Auto.DIR.Cube, Auto.DIR.G, Auto.DIR
 Auto.DIRX.thm_1_2 [thm, Task 5] : Auto.DIR.Cube, Auto.DIR.dens, Auto.DIR.edgeMeasure, Auto.DIRX.thm_1_2_chain
 Auto.DIRX.thm_1_2_chain [thm, Task 5] : Auto.DIR.Cube, Auto.DIR.dens, Auto.DIR.edgeMeasure, Auto.DIR.expect, Auto.DIR.h, Auto.DIR.ind, Auto.DIRX.thm_1_1
 Auto.DIRX.thm_1_3 [thm, Task 5] : Auto.DIR.Cube, Auto.DIR.IsHalfCube, Auto.DIR.expect, Auto.DIR.gradNorm, Auto.DIR.ind, Auto.DIR.pNorm, Auto.DIRX.eqn_4_1, Auto.DIRX.norms_indicator, Auto.DIRX.thm_1_3_of_eqn_4_1
-Auto.DIRX.thm_1_3_of_eqn_4_1 [thm, Task 4] : Auto.DIR.Cube, Auto.DIR.expect, Auto.DIR.gradNorm, Auto.DIR.pNorm, Auto.DIRX.G_PX, Auto.DIRX.bool_eq_indicator, Auto.DIRX.eqn_2_5, Auto.DIRX.norms_indicator
+Auto.DIRX.thm_1_3_of_eqn_4_1 [thm, Task 5] : Auto.DIR.Cube, Auto.DIR.expect, Auto.DIR.gradNorm, Auto.DIR.pNorm, Auto.DIRX.G_PX, Auto.DIRX.bool_eq_indicator, Auto.DIRX.eqn_2_5, Auto.DIRX.norms_indicator
 Auto.DIRX.w₁ [def, Task 1] : 
 Auto.DIRX.x₁ [def, Task 3] : Auto.DIRX.w₁
 Auto.DIRX.γX [def, Task 3] : Auto.DIR.I, Auto.DIRX.w₁

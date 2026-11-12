@@ -1,34 +1,34 @@
 # Splitting of the proof work into Tasks 1–5
 
-Proposal (2026-11-12). Computed from the declaration-level dependency graph
+Proposal (2026-11-12, revised). Computed from the declaration-level dependency graph
 (`automation/proof_dependencies.txt`: statement dependencies from Lean plus the paper-proof
 dependencies of every claim), so the following properties are *verified*, not estimated:
 
 - Every one of the 444 theorems belongs to exactly one task.
 - **Task 1** depends on nothing outside Task 1.
 - **Tasks 2, 3, 4** are logically disjoint: no declaration of one of them depends on a
-  declaration of another; each depends only on Task 1 and on itself. They can run in parallel
-  as soon as the Task 1 results they use are proved.
-- **Task 5** depends on Tasks 1–4.
+  declaration of another; each depends only on Task 1 and on itself.
+- No declaration of Tasks 1–4 depends on Task 5; **Task 5** depends on Tasks 1–4.
 
-Order: Task 1 → (Tasks 2, 3, 4 in parallel) → Task 5. Within a task, follow the module order
-of `Isoperim.lean` and the declaration order in each file (strict forward order is guaranteed).
-Remember the proof-stage rules in `AGENTS.md`: a proof may start only when all its
-dependencies are proved; long proofs and new lemmas go into `*_aux.lean` files.
+Order: Task 1 → (Tasks 2, 3, 4 in parallel) → Task 5; the Kahn–Park reduction (Task 4)
+depends only on definitions and can start at once. Within a task, follow the module order of
+`Isoperim.lean` and the declaration order in each file (strict forward order is guaranteed).
+Proof-stage rules: see `AGENTS.md` (a proof may start only when all its dependencies are
+proved; long proofs and new lemmas go into `*_aux.lean` files).
 
 | Task | Theorems | of which computer-verified (🚗) | Main files |
 |---|---|---|---|
 | 1 | 126 | 3 | `6_2_Case_Q`, `5_3_Properties_L_Q`, `3_0_Variants_Bobkov_Inequality`, `5_2_Two_Point_Inequalities` |
 | 2 | 120 | 7 | `6_4_Case_LJ`, `6_3_Case_LJQ`, `6_1_Case_J`, `6_6_Case_QJ` |
 | 3 | 82 | 7 | `3_3_Case_LJQ`, `3_1_Case_J`, `3_4_Case_LJ`, `3_6_Case_QJ` |
-| 4 | 83 | 5 | `5_4_Lower_Bounds_Gaussian_Isoperimetric_Profile`, `3_0_Variants_Bobkov_Inequality`, `4_0_Proof_Poincare_Inequality`, `7_0_Proof_Poincare_Inequality` |
-| 5 | 33 | 0 | `2_2_Proofs_Theorems_1_1_1_5_1_7`, `2_1_Reduction_Two_Point_Inequality`, `Thm_1_1`, `2_0_Envelope_Functions` |
+| 4 | 78 | 5 | `5_4_Lower_Bounds_Gaussian_Isoperimetric_Profile`, `3_0_Variants_Bobkov_Inequality`, `4_0_Proof_Poincare_Inequality`, `7_0_Proof_Poincare_Inequality` |
+| 5 | 38 | 0 | `2_2_Proofs_Theorems_1_1_1_5_1_7`, `7_0_Proof_Poincare_Inequality`, `2_1_Reduction_Two_Point_Inequality`, `Thm_1_1` |
 
 ## Task 1 — Preparation (shared foundations)
 
-Everything that at least two of Tasks 2–4 need, together with all its prerequisites: the elementary calculus of $L_\beta$, $Q_\beta$ ([DIR] §5.2–§5.3), basic facts on $I$, $J_w$, $J$ ([DIR] §3: existence/uniqueness of $J$, (3.4), $w_0$, $x_0$), and [DIR] Case $Q$ (§6.2) in full plus the pieces of §6.3 (Lemma 6.7) and §6.5 ($G_{QJQ}$ at $y=\frac12$) that [DIRX] §3 cites. Case $Q$ is here because [DIRX] Case $Q$ *is* [DIR] Case $Q$ at $\beta=\frac12$. It can be parallelised internally: §5.2/§5.3/§3 first, then §6.2 and the §6.3/§6.5 pieces.
+Everything that at least two of Tasks 2–4 need, together with all its prerequisites: the elementary calculus of $L_\beta$, $Q_\beta$ ([DIR] §5.2–§5.3), basic facts on $I$, $J_w$, $J$ ([DIR] §3: existence/uniqueness of $J$, (3.4), $w_0$, $x_0$, Lemma 3.2), and [DIR] Case $Q$ (§6.2) in full plus the parts of §6.3 (Lemma 6.7) and §6.5 ($G_{QJQ}$ at $y=\frac12$) that [DIRX] §3 cites. Case $Q$ is here because [DIRX] Case $Q$ *is* [DIR] Case $Q$ at $\beta=\frac12$. Can be parallelised internally: §5.2/§5.3/§3 first, then §6.2 and the §6.3/§6.5 parts.
 
-126 theorems (3 computer-verified).
+126 theorems (3 computer-verified):
 
 - `Isoperim/DIR/2_Envelope_Functions/Definitions.lean` (1): `Q_spec`
 - `Isoperim/DIR/3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality.lean` (11): `I_characterization`, `Jw_spec`, `eqn_3_4`, `existsUnique_J`, `existsUnique_w₀`, `lemma_3_2`, `lemma_3_2_deriv2`, `lemma_3_2_sq_deriv`, `lemma_3_2_sq_deriv2`, `rem_3_6`, `w₀_mem`
@@ -42,9 +42,9 @@ Everything that at least two of Tasks 2–4 need, together with all its prerequi
 
 ## Task 2 — [DIR] main two-point inequality, remaining cases
 
-[DIR] §6.1 Case $J$, the rest of §6.3 Case $LJQ$, §6.4 Case $LJ$, the rest of §6.5 Case $QJQ$, §6.6 Case $QJ$, i.e. the case propositions that assemble into Theorem 2.2 (except Case $Q$, done in Task 1).
+[DIR] §6.1 Case $J$, the rest of §6.3 Case $LJQ$, §6.4 Case $LJ$, the rest of §6.5 Case $QJQ$, §6.6 Case $QJ$: the case propositions that assemble into Theorem 2.2 (Case $Q$ is in Task 1).
 
-120 theorems (7 computer-verified).
+120 theorems (7 computer-verified):
 
 - `Isoperim/DIR/3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality.lean` (1): `eqn_3_6`
 - `Isoperim/DIR/6_Proof_Two_Point_Inequality/6_1_Case_J.lean` (19): `J_monotoneOn_antitoneOn`, `caseJ_G₁_mono_β`, `caseJ_I`, `caseJ_II`, `caseJ_II_iff_g_J_2`, `caseJ_II_nonneg`, `caseJ_II_suffices`, `caseJ_I_G₁_ge_g_J_1`, `caseJ_I_neardiag_bound`, `caseJ_I_region_subset`, `deriv_J_x₀`, `eqn_6_1`, `eqn_6_3`, `eqn_6_5`, `iteratedDeriv_three_J`, `iteratedDeriv_two_J`, `nine_div_sixteen_gt_x₀`, `prop_6_1`, `x₀_lt_five_div_eight`
@@ -57,7 +57,7 @@ Everything that at least two of Tasks 2–4 need, together with all its prerequi
 
 [DIRX] §2.2–§2.3 (properties of $\mathrm J=\mathrm J_{w_1}$, $\gamma$, $x_1$, Lemmas 2.3, 2.4) and §3.1–§3.6 (the six cases of (2.4)).
 
-82 theorems (7 computer-verified).
+82 theorems (7 computer-verified):
 
 - `Isoperim/DIRX/2_Preliminaries/2_2_Properties_J.lean` (5): `JX_concave`, `JX_mono`, `JX_mul_deriv2`, `deriv_JX`, `γX_mem`
 - `Isoperim/DIRX/2_Preliminaries/2_3_Properties_L_Q.lean` (1): `lemma_2_3`
@@ -68,45 +68,54 @@ Everything that at least two of Tasks 2–4 need, together with all its prerequi
 - `Isoperim/DIRX/3_Proof_Two_Point_Inequality/3_5_Case_QJQ.lean` (8): `caseQJQ`, `caseQJQ_of_eqn_3_9`, `eqn_3_11`, `eqn_3_12`, `eqn_3_9`, `eqn_3_9_deriv`, `eqn_3_9_half`, `eqn_3_9_low`
 - `Isoperim/DIRX/3_Proof_Two_Point_Inequality/3_6_Case_QJ.lean` (9): `G₁_BX_eq_h_QJ₂`, `G₁_of_g_QJ`, `caseQJ`, `caseQJ_near`, `eqn_3_13`, `eqn_3_14`, `g_QJ_half`, `g_QJ_half_iff`, `g_QJ_nonneg`
 
-## Task 4 — Gaussian profile, asymptotics and Poincaré inequalities
+## Task 4 — Gaussian profile, asymptotics, and the Poincaré propositions
 
-[DIR] §3 (Bobkov-type inequalities, Lemma 3.1, Proposition 3.3, Corollary 3.5, proof of Theorem 1.6), §5.1 (Hölder), §5.4 (lower bounds for $I$, Corollary 5.12, Lemma 5.13), §7 (Proposition 7.1), [DIRX] (2.6) and §4 (Poincaré, (4.1)), and the elementary facts on $\mathcal B_\beta$ and sensitivity in the `Definitions.lean` files.
+[DIR] §3 (Bobkov-type inequalities: Lemma 3.1, Proposition 3.3, Corollary 3.5, the steps of the proof of Theorem 1.6), §5.1 (Hölder), §5.4 (lower bounds for $I$, Corollary 5.12, Lemma 5.13), **Proposition 7.1 and its proof** ([DIR] §7), [DIRX] (2.6) and **(4.1) with its proof** ([DIRX] §4), the **Kahn–Park reduction** ([DIR] Proposition 2.1, `Auto.DIR.prop_2_1`, §2.0, and its [DIRX] form `Auto.DIRX.kahn_park`, §2.1; cited from [KP20] in the papers, so a full proof by induction on $n$ is needed; it depends only on definitions), and the elementary facts on $\mathcal B_\beta$ in `Definitions.lean`. The derivations of Theorems 1.10 / 1.3 from these are in Task 5.
 
-83 theorems (5 computer-verified).
+78 theorems (5 computer-verified):
 
 - `Isoperim/DIR/1_Introduction/Definitions.lean` (2): `dens_mem_dyadic`, `isoProfile_two_pow_le`
+- `Isoperim/DIR/2_Envelope_Functions/2_0_Envelope_Functions.lean` (1): `prop_2_1`
 - `Isoperim/DIR/3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality.lean` (20): `J_eqn_3_2`, `J_half_eq_L_half`, `L_half_eqn_3_1`, `L_half_eqn_3_2`, `M_indicator`, `convex_sub_ge`, `cor_3_5`, `eqn_3_2`, `eqn_3_2_iff_G₁`, `lemma_3_1`, `proof_thm_1_6_chain`, `prop_3_3`, `prop_3_3_Gc_deriv`, `prop_3_3_Gc_deriv2`, `prop_3_3_Gc_deriv2_ge`, `prop_3_3_Gc_nonneg`, `prop_3_3_reduction`, `prop_3_3_sq_deriv_nonneg`, `prop_3_3_sq_diff`, `prop_3_3_squared`
 - `Isoperim/DIR/5_Auxiliary_Estimates/5_1_Small_Exponents_Large_Exponents.lean` (2): `lemma_5_1`, `lemma_5_1_holder`
 - `Isoperim/DIR/5_Auxiliary_Estimates/5_4_Lower_Bounds_Gaussian_Isoperimetric_Profile.lean` (24): `J_one_sub`, `cor_5_12`, `eqn_5_10`, `eqn_5_11`, `eqn_5_12`, `eqn_5_12_small`, `lemma_5_13`, `lemma_5_13_case_1`, `lemma_5_13_case_2`, `lemma_5_13_frac_poly_bound`, `lemma_5_13_roots`, `lemma_5_13_u_range`, `lemma_5_13_used`, `prop_5_11`, `prop_5_11_Phi_le`, `prop_5_11_apply_I`, `prop_5_11_eps`, `prop_5_11_eps_small`, `prop_5_11_final`, `prop_5_11_ibp`, `prop_5_11_log_bound`, `prop_5_11_t_bounds`, `prop_5_11_t_formula`, `two_one_sub_εJ`
-- `Isoperim/DIR/7_Proof_Poincare_Inequality/7_0_Proof_Poincare_Inequality.lean` (13): `G_P_symm`, `boolean_eq_indicator`, `eqn_7_1`, `eqn_7_2`, `eqn_7_3`, `eqn_7_4`, `grad_norm_ge`, `indicator_norms`, `prop_7_1`, `prop_7_1_case_I`, `prop_7_1_case_III_eq`, `prop_7_1_case_I_chain`, `prop_7_1_case_I_eq`
+- `Isoperim/DIR/7_Proof_Poincare_Inequality/7_0_Proof_Poincare_Inequality.lean` (9): `G_P_symm`, `eqn_7_2`, `eqn_7_3`, `eqn_7_4`, `prop_7_1`, `prop_7_1_case_I`, `prop_7_1_case_III_eq`, `prop_7_1_case_I_chain`, `prop_7_1_case_I_eq`
 - `Isoperim/DIRX/1_Introduction/Definitions.lean` (3): `hA_mul_hA_compl`, `sensitivity_indicator`, `sqrt_sensitivity_indicator`
+- `Isoperim/DIRX/2_Preliminaries/2_1_Reduction_Two_Point_Inequality.lean` (1): `kahn_park`
 - `Isoperim/DIRX/2_Preliminaries/2_2_Properties_J.lean` (5): `I_lower`, `eqn_2_6`, `eqn_2_6_eval`, `eqn_2_6_step`, `εX_monotone`
-- `Isoperim/DIRX/4_Proof_Poincare_Inequality/4_0_Proof_Poincare_Inequality.lean` (14): `G_PX_I`, `G_PX_III`, `G_PX_III_anti`, `G_PX_I_lower`, `G_PX_eq_I`, `G_PX_half`, `G_PX_symm`, `bool_eq_indicator`, `eqn_4_1`, `eqn_4_2`, `eqn_4_3`, `g_P₁X_antitone_eval`, `norms_indicator`, `thm_1_3_of_eqn_4_1`
+- `Isoperim/DIRX/4_Proof_Poincare_Inequality/4_0_Proof_Poincare_Inequality.lean` (11): `G_PX_I`, `G_PX_III`, `G_PX_III_anti`, `G_PX_I_lower`, `G_PX_eq_I`, `G_PX_half`, `G_PX_symm`, `eqn_4_1`, `eqn_4_2`, `eqn_4_3`, `g_P₁X_antitone_eval`
 
-## Task 5 — Wrap-up (main theorems)
+## Task 5 — Wrap-up (main theorems and reductions)
 
-Assembling the disjoint pieces: [DIR] Theorem 2.2 and Corollary 2.5 (§2.0), the proofs of Theorems 1.1, 1.5, 1.7 (§2.2), the introduction theorems ([DIR] Thm 1.1, 1.5, 1.6, 1.7, Cor 1.9, Thm 1.10), [DIRX] (2.4), (2.5), the Kahn–Park reduction (§2.1) and Theorems 1.1, 1.2, 1.3.
+Assembling the pieces:
 
-33 theorems (0 computer-verified).
+- [DIR] Theorem 2.2, Corollary 2.5 (§2.0) and the proofs of Theorems 1.1, 1.5, 1.7 (§2.2);
+- the **derivation of Theorem 1.10 from Proposition 7.1**: (7.1), `grad_norm_ge`, `indicator_norms`, `boolean_eq_indicator` ([DIR] §7), and of [DIRX] Theorem 1.3 from (4.1): `thm_1_3_of_eqn_4_1`, `norms_indicator`, `bool_eq_indicator` ([DIRX] §4);
+- [DIRX] (2.4), (2.5) (§2.1);
+- the introduction theorems: [DIR] Thm 1.1, 1.5, 1.6, 1.7, Cor 1.9, Thm 1.10; [DIRX] Thm 1.1, 1.2, 1.3.
+
+38 theorems (0 computer-verified):
 
 - `Isoperim/DIR/1_Introduction/Thm_1_1.lean` (3): `cor_1_9`, `cor_1_9_chain`, `thm_1_1`
 - `Isoperim/DIR/1_Introduction/Thm_1_5.lean` (2): `eqn_1_3`, `thm_1_5`
 - `Isoperim/DIR/1_Introduction/Thm_1_6.lean` (3): `isoProfile_half_le_sqrt`, `isoProfile_one_asymp`, `thm_1_6`
 - `Isoperim/DIR/1_Introduction/Thm_1_7.lean` (1): `thm_1_7`
 - `Isoperim/DIR/1_Introduction/Thm_1_10.lean` (1): `thm_1_10`
-- `Isoperim/DIR/2_Envelope_Functions/2_0_Envelope_Functions.lean` (3): `cor_2_5`, `prop_2_1`, `thm_2_2`
+- `Isoperim/DIR/2_Envelope_Functions/2_0_Envelope_Functions.lean` (2): `cor_2_5`, `thm_2_2`
 - `Isoperim/DIR/2_Envelope_Functions/2_2_Proofs_Theorems_1_1_1_5_1_7.lean` (11): `Ltilde_twopt`, `b_eq_Q_ge_L`, `b_half_two_pow`, `b_lt_Ltilde_imp`, `btilde_eq_max`, `eqn_1_1_β₀`, `eqn_2_8`, `eqn_2_9`, `isoProfile_ge_btilde`, `thm_1_5_lower`, `thm_1_5_upper`
+- `Isoperim/DIR/7_Proof_Poincare_Inequality/7_0_Proof_Poincare_Inequality.lean` (4): `boolean_eq_indicator`, `eqn_7_1`, `grad_norm_ge`, `indicator_norms`
 - `Isoperim/DIRX/1_Introduction/Thm_1_1.lean` (1): `thm_1_1`
 - `Isoperim/DIRX/1_Introduction/Thm_1_2.lean` (2): `thm_1_2`, `thm_1_2_chain`
 - `Isoperim/DIRX/1_Introduction/Thm_1_3.lean` (1): `thm_1_3`
-- `Isoperim/DIRX/2_Preliminaries/2_1_Reduction_Two_Point_Inequality.lean` (5): `BX_ge_LX`, `eqn_2_4`, `eqn_2_5`, `kahn_park`, `thm_1_1_of_eqn_2_4`
+- `Isoperim/DIRX/2_Preliminaries/2_1_Reduction_Two_Point_Inequality.lean` (4): `BX_ge_LX`, `eqn_2_4`, `eqn_2_5`, `thm_1_1_of_eqn_2_4`
+- `Isoperim/DIRX/4_Proof_Poincare_Inequality/4_0_Proof_Poincare_Inequality.lean` (3): `bool_eq_indicator`, `norms_indicator`, `thm_1_3_of_eqn_4_1`
 
 ## Notes
 
-- The size imbalance (Task 1 is the largest) is forced: [DIRX] §3 cites [DIR] Case $Q$, Lemma 6.7
-  and §6.5, and the elementary $L_\beta$/$Q_\beta$ calculus is used by both two-point proofs.
+- Task 1 is the largest because [DIRX] §3 cites [DIR] Case $Q$, Lemma 6.7 and §6.5, and the
+  $L_\beta$/$Q_\beta$ calculus is used by both two-point proofs; this sharing is forced.
 - Facts that the paper proofs use but the scaffold does not state yet (`forward_reasoning.md` §4)
-  must be added (in `*_aux.lean` files) by the task that first needs them; if two tasks need
-  the same missing fact, it belongs to Task 1.
+  are added (in `*_aux.lean` files) by the task that first needs them; if two tasks need the
+  same missing fact, it belongs to Task 1.
 - Computer-verified (🚗) claims are proved with LeanCert; only LeanCert's standard axioms are
   allowed for them (see `AGENTS.md`).
