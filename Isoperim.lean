@@ -15,6 +15,7 @@ public import Isoperim.DIR.«5_Auxiliary_Estimates».«5_2_Two_Point_Inequalitie
 public import Isoperim.DIR.«5_Auxiliary_Estimates».«5_2_Two_Point_Inequalities»
 public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_1_Case_J»
 public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_2_Case_Q»
+public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_3_Case_LJQ_aux»
 public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_3_Case_LJQ»
 public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_4_Case_LJ»
 public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_5_Case_QJQ_aux»

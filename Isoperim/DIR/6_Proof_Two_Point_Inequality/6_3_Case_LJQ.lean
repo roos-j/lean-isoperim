@@ -10,6 +10,7 @@ public import Isoperim.DIR.«2_Envelope_Functions».Definitions
 public import Isoperim.DIR.«3_Variants_Bobkov_Inequality».«3_0_Variants_Bobkov_Inequality»
 public import Isoperim.DIR.«5_Auxiliary_Estimates».«5_3_Properties_L_Q»
 public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_1_Case_J»
+public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_3_Case_LJQ_aux»
 
 /-!
 # [DIR] §6.3 Case LJQ: $0\le x\le\frac14$, $\frac12\le y\le1$, $x+y\le1$
@@ -71,14 +72,32 @@ $\partial_x^2G_{LJQ,\beta}(x,y)=L_\beta''(x)-\frac12Q_\beta''(\frac{x+y}2)$. -/
 theorem lemma_6_7_deriv2 (β x y : ℝ) (hx : x ∈ Ioc (0 : ℝ) 4⁻¹) :
     deriv (deriv (fun x ↦ G_LJQ β x y)) x =
       deriv (deriv (L β)) x - 2⁻¹ * deriv (deriv (Q β)) ((x + y) / 2) := by
-  sorry
+  have hx1 : x ∈ Ioo (0 : ℝ) 1 := ⟨hx.1, hx.2.trans_lt (by norm_num)⟩
+  have hd1 : ∀ z ∈ Ioo (0 : ℝ) 1, HasDerivAt (fun x ↦ G_LJQ β x y)
+      (-1 + L1f β z - Q1f β ((z + y) / 2)) z := by
+    intro z hz
+    have hq := (hasDerivAt_Q β ((z + y) / 2)).comp z
+      (((hasDerivAt_id' z).add_const y).div_const 2)
+    have h := ((((hasDerivAt_id' z).const_sub y).add_const ((2 ^ β - 1) * J y)).add
+      (hasDerivAt_L (β := β) hz)).sub (hq.const_mul 2)
+    exact h.congr_deriv (by ring)
+  have hev : deriv (fun x ↦ G_LJQ β x y) =ᶠ[𝓝 x]
+      fun z ↦ -1 + L1f β z - Q1f β ((z + y) / 2) := by
+    filter_upwards [Ioo_mem_nhds hx1.1 hx1.2] with z hz using (hd1 z hz).deriv
+  rw [hev.deriv_eq]
+  have hq2 := (hasDerivAt_Q1f β ((x + y) / 2)).comp x
+    (((hasDerivAt_id' x).add_const y).div_const 2)
+  have h2 : HasDerivAt (fun z ↦ -1 + L1f β z - Q1f β ((z + y) / 2))
+      (L2f β x - 2⁻¹ * Q2f β ((x + y) / 2)) x :=
+    (((hasDerivAt_L1f (β := β) hx1).const_add (-1)).sub hq2).congr_deriv (by ring)
+  rw [h2.deriv, deriv2_L_eq hx1, deriv2_Q_eq]
 
 /-- **(6.14)** ([DIR], proof of Lemma 6.7). By Lemma 5.8 ((5.7)),
 $L_\beta''(x)-\frac12Q_\beta''(\frac{x+y}2)=L_\beta''(x)+2\alpha_0+4\alpha_1(x+y)$. -/
 theorem eqn_6_14 (β x y : ℝ) :
     deriv (deriv (L β)) x - 2⁻¹ * deriv (deriv (Q β)) ((x + y) / 2) =
       deriv (deriv (L β)) x + 2 * α₀ β + 4 * α₁ β * (x + y) := by
-  sorry
+  rw [eqn_5_7]; ring
 
 /-- [DIR], proof of Lemma 6.7: for $\beta\in[\frac12,\log_2\frac32)$, since
 $x\le\frac14<e^{-\sqrt3/2}$, the quantity (6.14) is increasing in $x\in(0,\frac14]$ and in
@@ -89,13 +108,38 @@ theorem lemma_6_7_mono (β : ℝ) (hβ : β ∈ Ico (2⁻¹ : ℝ) (log₂ (3 / 
         (fun x ↦ deriv (deriv (L β)) x + 2 * α₀ β + 4 * α₁ β * (x + y)) (Ioc 0 4⁻¹)) ∧
       ∀ x ∈ Ioc (0 : ℝ) 4⁻¹, MonotoneOn
         (fun y ↦ deriv (deriv (L β)) x + 2 * α₀ β + 4 * α₁ β * (x + y)) (Icc 0 1) := by
-  sorry
+  have hβ' : β ∈ Icc (2⁻¹ : ℝ) 1 := ⟨hβ.1, hβ.2.le.trans (by
+    rw [logb_le_iff_le_rpow one_lt_two (by norm_num)]; norm_num)⟩
+  have hα := (α₁_pos_iff β).2 hβ.2
+  have hq : (4⁻¹ : ℝ) < exp (-√3 / 2) := by
+    rw [neg_div]; exact rem_5_7.2.trans rem_5_7.1
+  refine ⟨hq, fun y _ ↦ ?_, fun x _ ↦ ?_⟩
+  · have hm : MonotoneOn (fun x ↦ deriv (deriv (L β)) x + 0 * x) (Ioc 0 4⁻¹) := by
+      refine deriv2_L_add_monotoneOn fun z hz ↦ ?_
+      have hz1 : z ∈ Ioo (0 : ℝ) 1 := ⟨hz.1, hz.2.trans (by norm_num)⟩
+      have h := ((lemma_5_6 β hβ').2.2.1 z ⟨hz.1, by rw [← neg_div]; linarith [hz.2]⟩).1
+      rw [eqn_5_4 β z hz1] at h
+      have h' : L3f β z > 0 := h
+      linarith
+    intro a ha b hb hab
+    have := hm ha hb hab
+    simp only [zero_mul, add_zero] at this
+    show deriv (deriv (L β)) a + 2 * α₀ β + 4 * α₁ β * (a + y) ≤
+      deriv (deriv (L β)) b + 2 * α₀ β + 4 * α₁ β * (b + y)
+    nlinarith
+  · intro a _ b _ hab
+    show deriv (deriv (L β)) x + 2 * α₀ β + 4 * α₁ β * (x + a) ≤
+      deriv (deriv (L β)) x + 2 * α₀ β + 4 * α₁ β * (x + b)
+    nlinarith
 
 /-- [DIR], proof of Lemma 6.7: for $x\in[\frac12,1]$, the function $\beta\mapsto Q_\beta''(x)$
 is increasing. -/
 theorem Q_deriv2_monotone_β (x : ℝ) (hx : x ∈ Icc (2⁻¹ : ℝ) 1) :
     Monotone (fun β ↦ deriv (deriv (Q β)) x) := by
-  sorry
+  intro a b hab
+  simp only [deriv2_Q_eq, Q2f_eq_affine]
+  have := rpow_le_rpow_of_exponent_le one_le_two hab
+  nlinarith [hx.1]
 
 /-- [DIR], proof of Lemma 6.7: for $\beta\in[\frac12,1]$,
 $$\partial_x^2G_{LJQ,\beta}(\tfrac14,1)=L_\beta''(\tfrac14)-\tfrac12Q_\beta''(\tfrac58)
@@ -106,7 +150,28 @@ theorem lemma_6_7_eval (β : ℝ) (hβ : β ∈ Icc (2⁻¹ : ℝ) 1) :
       deriv (deriv (L β)) 4⁻¹ - 2⁻¹ * deriv (deriv (Q β)) (5 / 8) ≤
         deriv (deriv (L 2⁻¹)) 4⁻¹ - 2⁻¹ * deriv (deriv (Q 2⁻¹)) (5 / 8) ∧
       deriv (deriv (L 2⁻¹)) 4⁻¹ - 2⁻¹ * deriv (deriv (Q 2⁻¹)) (5 / 8) < -0.6 := by
-  sorry
+  have h58 : ((4⁻¹ : ℝ) + 1) / 2 = 5 / 8 := by norm_num
+  refine ⟨by rw [lemma_6_7_deriv2 β 4⁻¹ 1 ⟨by norm_num, le_rfl⟩, h58], ?_, ?_⟩
+  · have hq : (4⁻¹ : ℝ) ∈ Ioo 0 (exp (-1)) := ⟨by norm_num, rem_5_7.2⟩
+    have hL := (lemma_5_6 2⁻¹ ⟨le_rfl, by norm_num⟩).2.1 4⁻¹ hq ⟨le_rfl, by norm_num⟩ hβ hβ.1
+    have hQ := Q_deriv2_monotone_β (5 / 8) ⟨by norm_num, by norm_num⟩ hβ.1
+    simp only at hL hQ
+    linarith
+  · have hl1 := log_two_gt_d9
+    have hl2 := log_two_lt_d9
+    have hs : (2 : ℝ) ^ (2⁻¹ : ℝ) = √2 := by rw [sqrt_eq_rpow]; norm_num
+    have hs1 : (1.41421 : ℝ) < √2 := by rw [lt_sqrt (by norm_num)]; norm_num
+    have hs2 : √2 < (1.41422 : ℝ) := by rw [sqrt_lt' (by norm_num)]; norm_num
+    rw [deriv2_L_eq (⟨by norm_num, by norm_num⟩ : (4⁻¹ : ℝ) ∈ Ioo 0 1), L2f_quarter,
+      deriv2_Q_eq, Q2f_eq_affine, hs]
+    set s := √2
+    set l := log 2
+    have hl2' : 0 < l ^ 2 := by positivity
+    have e : -(s * 2⁻¹ * (1 - 2⁻¹ + 2 * l)) / l ^ 2 < -(5.6 - 2 * s) := by
+      rw [div_lt_iff₀ hl2']
+      nlinarith [mul_pos (by linarith : (0 : ℝ) < s - 1.41421)
+        (by linarith : (0 : ℝ) < l - 0.6931471803)]
+    nlinarith
 
 end Proof_Lemma_6_7
 
@@ -114,7 +179,45 @@ end Proof_Lemma_6_7
 $x\mapsto G_{LJQ,\beta}(x,y)$ is strictly concave on $[0,\frac14]$. -/
 theorem lemma_6_7 (β : ℝ) (hβ : β ∈ Icc (2⁻¹ : ℝ) 1) (y : ℝ) (hy : y ∈ Icc (0 : ℝ) 1) :
     StrictConcaveOn ℝ (Icc 0 4⁻¹) (fun x ↦ G_LJQ β x y) := by
-  sorry
+  have hβ0 : 0 < β := by linarith [hβ.1]
+  have h58 : ((4⁻¹ : ℝ) + 1) / 2 = 5 / 8 := by norm_num
+  refine strictConcaveOn_of_deriv2_neg (convex_Icc 0 4⁻¹) ?_ (fun x hx ↦ ?_)
+  · have hL : ContinuousOn (L β) (Icc 0 4⁻¹) :=
+      (continuousOn_L hβ0 hβ.2).mono (Icc_subset_Icc le_rfl (by norm_num))
+    have hQ : ContinuousOn (fun x ↦ Q β ((x + y) / 2)) (Icc 0 4⁻¹) :=
+      ((continuous_Q β).comp (by fun_prop : Continuous fun x : ℝ ↦ (x + y) / 2)).continuousOn
+    exact (((continuousOn_const.sub continuousOn_id).add continuousOn_const).add hL).sub
+      (continuousOn_const.mul hQ)
+  rw [interior_Icc] at hx
+  show deriv (deriv (fun x ↦ G_LJQ β x y)) x < 0
+  rw [lemma_6_7_deriv2 β x y ⟨hx.1, hx.2.le⟩, eqn_6_14]
+  by_cases hα : α₁ β > 0
+  · have hβ' : β ∈ Ico 2⁻¹ (log₂ (3 / 2)) := ⟨hβ.1, (α₁_pos_iff β).1 hα⟩
+    obtain ⟨-, hmx, hmy⟩ := lemma_6_7_mono β hβ'
+    have h1 := hmx y hy ⟨hx.1, hx.2.le⟩ ⟨by norm_num, le_rfl⟩ hx.2.le
+    have h2 := hmy 4⁻¹ ⟨by norm_num, le_rfl⟩ hy ⟨zero_le_one, le_rfl⟩ hy.2
+    have h3 := (lemma_6_7_eval β hβ).2.2
+    have h4 := (lemma_6_7_eval β hβ).2.1
+    have h5 := eqn_6_14 β 4⁻¹ 1
+    rw [h58] at h5
+    simp only at h1 h2
+    linarith
+  · rw [gt_iff_lt, not_lt] at hα
+    have hc : ∀ z ∈ Ioo (0 : ℝ) 4⁻¹, 0 ≤ L3f β z + 4 * α₁ β := by
+      intro z hz
+      have hant := deriv3_L_antitoneOn hβ ⟨hz.1, hz.2.le.trans (by norm_num)⟩
+        ⟨by norm_num, by norm_num⟩ hz.2.le
+      rw [deriv3_L_eq ⟨hz.1, hz.2.trans (by norm_num)⟩,
+        deriv3_L_eq (⟨by norm_num, by norm_num⟩ : (4⁻¹ : ℝ) ∈ Ioo 0 1)] at hant
+      have := L3f_quarter_add_pos hβ
+      have e : α₁ β = 3 - 2 ^ (1 + β) := rfl
+      linarith
+    have hm := deriv2_L_add_monotoneOn hc ⟨hx.1, hx.2.le⟩ ⟨by norm_num, le_rfl⟩ hx.2.le
+    simp only at hm
+    have hq : deriv (deriv (L β)) 4⁻¹ + 2 * α₀ β + α₁ β < 0 := by
+      rw [deriv2_L_eq (⟨by norm_num, by norm_num⟩ : (4⁻¹ : ℝ) ∈ Ioo 0 1)]
+      exact L2f_quarter_add_neg hβ
+    nlinarith [mul_nonpos_of_nonpos_of_nonneg hα hy.1]
 
 section Proof_Proposition_6_6
 /-- [DIR], §6.3.2: Lemma 6.7 reduces Proposition 6.6 to checking the claim on the $x$-boundary of
