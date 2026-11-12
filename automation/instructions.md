@@ -19,6 +19,14 @@ The user's current explicit instructions take precedence over both. Raw prompts 
   (6.4) (the counter skips it, an artifact of the `\auto` tag macro); auto-tagged (🚗) equations
   each take one number.
 
+## Proof stage (user requirement, 2026-11-12T19:06, raw entry 10)
+
+The binding proof-stage rules are at the top of `AGENTS.md` (auxiliary `*_aux.lean` files for
+proofs over 100 lines or needing extra lemmas; completion = no transitive `sorry`; only
+`propext`, `Classical.choice`, `Quot.sound` plus LeanCert's standard axioms for 🚗 claims; a proof
+starts only after all its dependencies, listed in `automation/proof_dependencies.txt`, are
+proved). The work split into Tasks 1–5 is proposed in `splitting.md`.
+
 ## Changes of plan (user requirement, 2026-11-12T00:56+00:00, raw entry 4)
 
 - Scope of the formalization: only what is logically needed (by the papers' arguments) for the
@@ -177,8 +185,5 @@ lake build
 
 ## Current status / next step
 
-Restructuring of 2026-11-12 complete: 540 declarations (all `sorry`), `lake build` succeeds,
-linters report only `sorry` warnings, forward order and imports verified
-(`automation/forward_reasoning.md`). Next step: proof phase, in the module order of
-`Isoperim.lean`; first add the facts listed in §4 of `automation/forward_reasoning.md` that the
-paper proofs use but the scaffold does not state.
+Setup complete; proof stage prepared (rules in `AGENTS.md`, split in `splitting.md`, dependency
+list `automation/proof_dependencies.txt`). Next: Task 1 of `splitting.md`.

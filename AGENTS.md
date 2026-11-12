@@ -1,5 +1,30 @@
 # Repository instructions
 
+## PROOF STAGE RULES (read first; binding for every coding agent)
+
+1. **Auxiliary files.** If a proof gets longer than 100 lines, or needs additional lemmas,
+   definitions or details beyond what the scaffold states, put that work in a separate file in
+   the same folder named after the file with the suffix `_aux`, e.g.
+   `Isoperim/DIRX/2_Preliminaries/2_2_Properties_J_aux.lean` for `2_2_Properties_J.lean`.
+   The main file imports its `_aux` file; the `_aux` file must not import the main file (state
+   results of the main file that an auxiliary lemma needs as hypotheses of that lemma). Same
+   header, namespace (`Auto.DIR` / `Auto.DIRX`), notation and docstring conventions as the main
+   files; add the `_aux` module to `Isoperim.lean`. Do not change the statements of the scaffold.
+2. **Completion.** A proof is complete only when it no longer depends on `sorry`, directly or
+   transitively (check with `#print axioms <name>`).
+3. **Axioms.** Allowed: the standard Lean axioms `propext`, `Classical.choice`, `Quot.sound`; and,
+   only for the computer-assisted (🚗) claims and declarations depending on them, the standard
+   axioms used by LeanCert's certified-computation tactics. No other axioms, no `admit`, no
+   `implemented_by`/`extern` tricks.
+4. **Start condition.** Work on a proof may start only when the proofs of all its dependencies
+   are complete. The dependencies of every declaration (statement plus paper-proof
+   dependencies) are listed in `automation/proof_dependencies.txt`; Lean's import order and
+   file order are consistent with them.
+5. **Work split.** The work is split into Tasks 1–5 in `splitting.md` (Task 1 preparation;
+   Tasks 2, 3, 4 disjoint and parallel; Task 5 wrap-up). Work only on declarations of your task.
+6. **Commits.** See `CLAUDE.md` (author = prompting user, one-line `[claude]` message,
+   `Co-authored-by: Claude` trailer).
+
 This Lean library formalizes the papers [DIR] (arXiv:2407.12674) and [DIRX]
 (arXiv:2602.20462); it is pinned to `leanprover/lean4:v4.35.0` in
 `lean-toolchain`. Preserve that pin unless the user requests an upgrade.
