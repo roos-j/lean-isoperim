@@ -39,20 +39,9 @@ namespace Auto.DIR
 
 open Real Set Filter Topology MeasureTheory
 
-/-
-Recall that $I=\varphi\cdot \Phi^{-1}$ denotes the Gaussian isoperimetric profile.
-It is well-known that as $x\to 0^+$,
-\[ I(x) \sim \sqrt{2}\cdot x \sqrt{\log(1/x)} \]
-(Here $f(x)\sim g(x)$ means $\lim_{x\to 0^+} \frac{f(x)}{g(x)}=1$.)
--/
-
 /-- [DIR], §5.4: it is well-known that $I(x)\sim\sqrt2\cdot x\sqrt{\log(1/x)}$ as $x\to0^+$. -/
 theorem I_asymp : Tendsto (fun x ↦ I x / (√2 * x * √(log (1 / x)))) (𝓝[>] 0) (𝓝 1) := by
   sorry
-
-/-
-We shall need a quantitative lower bound.
--/
 
 /-- **Proposition 5.11** ([DIR]). For all $0<x\le\frac15$:
 $$I(x)\ge\sqrt2\cdot x\sqrt{\log(1/x)}\Big(1-\frac12\frac{\log\log(1/x)}{\log(1/x)}
@@ -62,10 +51,6 @@ theorem prop_5_11 (x : ℝ) (hx : x ∈ Ioc (0 : ℝ) (1 / 5)) :
       (1 - 1 / 2 * (log (log (1 / x)) / log (1 / x)) - log (2 *
           π ^ (1 / 2 : ℝ)) / log (1 / x)) := by
   sorry
-
-/-
-This should be well-known, but since we could not find a reference, we provide a proof.
--/
 
 /-- [DIR], §5.4, after Proposition 5.11: the estimate $I(x)\le\sqrt2\cdot x\sqrt{\log(1/x)}$ also
 holds (for $0<x\le\frac12$) and can be proved along the same lines, but it is not needed. -/
@@ -152,19 +137,11 @@ theorem prop_5_11_final (ε : ℝ) (hε₀ : 0 ≤ ε) (hε : ε ≤ 1) : √(1 
 
 end Proof_Proposition_5_11
 
-/-
-We record the following consequence that will be needed in \S \ref{sec:poincare} [§7].
--/
-
 /-- **Corollary 5.12** ([DIR]). For $0<x\le\frac1{64}$,
 $$J(1-x)\ge x\sqrt{\log(w_0/x)},$$
 where we recall that $w_0\in(0,1)$ is the unique value such that $J_{w_0}(\frac12)=\frac12$. -/
 theorem cor_5_12 (x : ℝ) (hx : x ∈ Ioc (0 : ℝ) (1 / 64)) : J (1 - x) ≥ x * √(log (w₀ / x)) := by
   sorry
-
-/-
-This follows from Proposition \ref{prop:Ilowerbd} [5.11]. From \eqref{eqn:JintermsofI} [(3.4)],
--/
 
 /-- [DIR], §5.4, after Corollary 5.12: from (3.4), $J(1-x)=\sqrt2w_0I(xw_0^{-1})$ (for
 $0\le x\le\frac12$), and $w_0\in[0.895,0.896]$. -/
@@ -199,11 +176,6 @@ theorem lemma_5_13 (x : ℝ) (hx : x ∈ Ioo (1 / 2) (1 - (10 : ℝ) ^ (-(10 : �
   sorry
 
 section Proof_Lemma_5_13
-
-/-
-We begin with the case $\frac12<x\le \frac{2047}{2048}$.
-Using \eqref{eqn:DDL} [(5.3)], a lower bound for $-\partial_x^2[J(x)-L_\beta(1-x)]$ is
--/
 
 open Classical in
 /-- The tight lower bound ([DIR], proof of Lemma 5.13)
@@ -244,10 +216,6 @@ theorem lemma_5_13_case_1 :
     StrictConcaveOn ℝ (Icc (1 / 2) (2047 / 2048)) (fun x ↦ J x - L β₀ (1 - x)) ∧
     J (1 / 2) - L β₀ (1 - 1 / 2) = 0 ∧ J (2047 / 2048) - L β₀ (1 - 2047 / 2048) > 1e-4 := by
   sorry
-
-/-
-Next we consider the case $\frac{2047}{2048}<x<1-10^{-10^{380}}$.
--/
 
 /-- [DIR], proof of Lemma 5.13: setting $s=1-x<\frac1{2048}$, (5.10) implies
 $J(x)=J(1-s)\ge2s(1-\varepsilon)\sqrt{\log(w_0/s)}$ with

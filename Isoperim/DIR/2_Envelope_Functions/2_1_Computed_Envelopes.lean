@@ -26,13 +26,6 @@ namespace Auto.DIR
 
 open Real Set
 
-/-
-In order to find a good candidate $B$ it is helpful to observe that if $B_1, B_2$ satisfy
-\eqref{eqn:twoptineq} [(2.2)], then so does $\max(B_1,B_2)$. This is a consequence of monotonicity
-(see Lemma \ref{lem:maxlemma2} [5.2]) and the same holds for the supremum of a families of such
-functions $(B_i)_{i\in I}$.
--/
-
 /-- [DIR], §2.1: if $B_1,B_2\ge0$ satisfy (2.2) for all $0\le x\le y\le1$, then so does
 $\max(B_1,B_2)$. -/
 theorem twopt_max (β : ℝ) (hβ : 1 / 2 ≤ β) (B₁ B₂ : ℝ → ℝ)
@@ -96,22 +89,5 @@ reverse inequality holds; for $\beta=1$ it does: $\mathcal{B}_1=\mathfrak{B}_1$ 
 $\mathcal{Q}$ (cf. Figure 2). -/
 theorem isoProfile_one_eq_envelope (x : ℝ) (hx : x ∈ 𝒬) : 𝓑 1 x = 𝔅 1 x := by
   sorry
-
-/-
-There is a natural way to numerically approximate the envelope functions $\mathfrak{B}_\beta$.
-Figure \ref{fig:envelopespectrum} shows plots of numerically approximated envelopes for different
-values of $\beta$. Details on this and further explorations will appear elsewhere. These
-numerical approximations are not used to prove any of our results, but they were helpful in
-finding the function $b_{\frac12}$ which can be viewed as an approximation of the envelope
-$\mathfrak{B}_{\frac12}$.
-
-\begin{figure}[ht]
-\includegraphics[width=12cm]{Bbeta.png}
-\caption{Numerically approximated envelopes $\mathfrak{B}_\beta$ for $\beta=\frac12$ (bottom,
-blue) to $\beta=1$ (top, cyan) with increments in $\beta$ of $0.01$; matching the isoperimetric
-profile $\mathcal{B}_1$ in \eqref{eqn:hartfractal} [(1.3)] when $\beta=1$.}
-\label{fig:envelopespectrum}
-\end{figure}
--/
 
 end Auto.DIR

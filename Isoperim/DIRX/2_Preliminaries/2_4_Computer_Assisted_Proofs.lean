@@ -26,23 +26,6 @@ dyadic partitioning carry the tag (🚗) in their docstrings.
 
 namespace Auto.DIRX
 
-
 /-! ### §2.4 Computer-assisted proofs -/
-
-/-
-For the proof of the two-point inequality \eqref{eqn:maintwopt} [(2.4)]
-we make use of computer-assisted verification using interval arithmetic, more specifically using
-recursive dyadic partitioning as explained in \cite[\S 4]{DIR24}. The verification code is
-implemented using \emph{FLINT/Arb}, an open source library for arbitrary precision interval
-arithmetic \cite{Arb}, \cite{Flint}.
-It can be accessed on GitHub at
-\[
-\texttt{\href{https://github.com/roos-j/dir24-isoperim}{https://github.com/roos-j/dir24-isoperim}}
-\]
-Claims verified in this manner will be tagged with ({\tiny\faCar}) [rendered (🚗) here]. Single
-point evaluations are not included in this treatment. We stress that it is straightforward to
-verify all these claims independently (see \cite[\S 4]{DIR24} for more details; see also
-\cite{Tuc11}, \cite{Rump}, \cite{GomezSerrano}).
--/
 
 end Auto.DIRX

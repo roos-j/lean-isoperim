@@ -27,15 +27,6 @@ namespace Auto.DIR
 
 open Real Set
 
-/-
-Suppose we are trying to prove an inequality of the form
-\begin{equation}\label{eqn:maxtwofctineq}
-\mathcal{L}(x,y,B(x),B(y))\ge B(\tfrac{x+y}{2})
-\end{equation}
-for some function $B$ on $[a,b]$ with $\mathcal{L}(x,y,u,v)$ monotone increasing in $u,v$ for all
-$a\le x\le y\le b$.
--/
-
 /-- The monotonicity hypothesis of [DIR], §5.2: $\mathcal{L}(x,y,u,v)$ is monotone increasing in
 $u,v$ for all $a\le x\le y\le b$. -/
 def IsMonotoneTwoPoint (𝓛 : ℝ → ℝ → ℝ → ℝ → ℝ) (a b : ℝ) : Prop :=
@@ -52,10 +43,6 @@ theorem eqn_5_1_max (𝓛 : ℝ → ℝ → ℝ → ℝ → ℝ) (a b : ℝ) (h�
       𝓛 x y (max (B₁ x) (B₂ x)) (max (B₁ y) (B₂ y)) ≥
         max (B₁ ((x + y) / 2)) (B₂ ((x + y) / 2)) := by
   sorry
-
-/-
-We will use this observation with minimal hypotheses as follows.
--/
 
 /-- **Lemma 5.2** ([DIR]). Assume for $a\le x\le y\le b$ that
 1. (5.1) holds for $B_1$ when $B_1(\frac{x+y}2)\ge B_2(\frac{x+y}2)$;
@@ -132,11 +119,6 @@ theorem lemma_5_3_strictAnti (β : ℝ) (hβ : β ∈ Ico (1 / 2 : ℝ) 1) :
 
 end Proof_Lemma_5_3
 
-/-
-Recalling the definition of $G_\beta$ in \eqref{eqn:Gdef} [(2.1)], Lemma \ref{lem:GLvsGR} [5.3]
-implies
--/
-
 /-- [DIR], §5.2, after Lemma 5.3:
 $$G_\beta[B](x,y)=\begin{cases}G^1_\beta[B](x,y),&\text{if } y-x\le B(y),\\
 G^2_\beta[B](x,y),&\text{if } y-x\ge B(y)\end{cases}$$
@@ -146,19 +128,10 @@ theorem G_eq_cases (β : ℝ) (hβ : β ∈ Ico (1 / 2 : ℝ) 1) (B : ℝ → �
     (y - x ≤ B y → G β B x y = G₁ β B x y) ∧ (y - x ≥ B y → G β B x y = G₂ β B x y) := by
   sorry
 
-/-
-In particular, $G_\beta[B](x,y)=G^1_\beta[B](x,y)$ for $(x,y)$ near the diagonal $\{x=y\}$.
--/
-
 /-- [DIR], §5.2: on the diagonal we have $G^1_\beta[B](x,x)=0$ (for $B(x)\ge0$, $\beta>0$). -/
 theorem G₁_diag (β : ℝ) (hβ : 0 < β) (B : ℝ → ℝ) (x : ℝ) (hB : 0 ≤ B x) :
     G₁ β B x x = 0 := by
   sorry
-
-/-
-so near the diagonal it is natural to consider the variable $h=y-x$.
-The following lower bound will be sufficient to bound all near diagonal cases.
--/
 
 /-- **Lemma 5.4** (Near diagonal lower bound, [DIR]). Let $B$ be a nonnegative function defined on
 an interval $\mathcal{I}$. Let $\beta\in(0,1)$. For $h\ge0$, and $x,x+h\in\mathcal{I}$,

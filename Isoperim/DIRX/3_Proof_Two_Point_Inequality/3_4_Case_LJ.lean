@@ -51,12 +51,6 @@ theorem caseLJ (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 4)) (hy : y ∈ Icc (1
     (hxy : 1 ≤ x + y) : G (B_{w₁}) x y ≥ 0 := by
   sorry
 
-/-
-Expressed in the variables $u=(y-x)/2$ and $c=(x+y)/2$ it suffices to show
-\[ h_{LJ}(u,c) = 2u + (\sqrt{2}-1){\mathrm{J}}(c+u)+L(c-u)-2{\mathrm{J}}(c)\ge 0 \]
-for all $c\in [\frac12, \frac58]$ and $u\in [c-\frac14,1-c]$.
--/
-
 /-- $h_{LJ}(u,c)=2u+(\sqrt2-1)\mathrm{J}(c+u)+L(c-u)-2\mathrm{J}(c)$ ([DIRX], §3.4). -/
 noncomputable def h_LJ (u c : ℝ) : ℝ := 2 * u + (√2 - 1) * J (c + u) + L (c - u) - 2 * J c
 
@@ -70,13 +64,6 @@ theorem G₂_BX_eq_h_LJ (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 4)) (hy : y �
 theorem h_LJ_nonneg (u c : ℝ) (hc : c ∈ Icc (1 / 2 : ℝ) (5 / 8))
     (hu : u ∈ Icc (c - 1 / 4) (1 - c)) : h_LJ u c ≥ 0 := by
   sorry
-
-/-
-Using ${\mathrm{J}}\cdot {\mathrm{J}}''=-\gamma$ we compute
-\[ \partial_u^2 h_{LJ}(u,c) = -\gamma(\sqrt{2}-1) {\mathrm{J}}(c+u)^{-1} + L''(c-u)\le 0, \]
-since $L$ is concave by Lemma \ref{lem:L} [2.3].
-Therefore it suffices to evaluate $h_{LJ}(u,c)$ at the boundaries $u=c-\frac14$ and $u=1-c$.
--/
 
 /-- [DIRX], §3.4: using $\mathrm{J}\cdot\mathrm{J}''=-\gamma$,
 $\partial_u^2h_{LJ}(u,c)=-\gamma(\sqrt2-1)\mathrm{J}(c+u)^{-1}+L''(c-u)\le0$ (for
@@ -98,21 +85,8 @@ section Case_I
 
 /-! ### Case I: $u=c-\frac14$ -/
 
-/-
-In this case it suffices to show that
-\[ h_{LJ,1}(c) = h_{LJ}(c-\tfrac14,c)>0 \]
-for all $c\in [\frac12,\frac58]$.
--/
-
 /-- $h_{LJ,1}(c)=h_{LJ}(c-\frac14,c)$ ([DIRX], §3.4, Case I). -/
 noncomputable def h_LJ₁ (c : ℝ) : ℝ := h_LJ (c - 1 / 4) c
-
-/-
-A tight lower bound for $h_{LJ,1}$ is given by
-\[ \underline{h_{LJ,1}}(\underline c,\overline c) = 2\underline{c} - \tfrac12 + (\sqrt{2}-1)
-\underline{{\mathrm{J}}}(2\underline{c}-\tfrac14,2\overline{c}-\tfrac14) + L(\tfrac14) - 2
-\overline{{\mathrm{J}}}(\underline c,\overline c).\]
--/
 
 /-- The tight lower bound ([DIRX], §3.4, Case I)
 $$\underline{h_{LJ,1}}(\underline c,\overline c)=2\underline c-\tfrac12
@@ -127,10 +101,6 @@ $[\frac12,\frac58]$. -/
 theorem h_LJ₁_lo_tight : IsTightLowerBound₁ h_LJ₁ h_LJ₁_lo (1 / 2) (5 / 8) := by
   sorry
 
-/-
-Dyadic partitioning yields
--/
-
 /-- **(3.8)** ([DIRX], §3.4, Case I) (🚗). Dyadic partitioning yields
 $$h_{LJ,1}(c)>0.01\quad\text{for all } c\in[\tfrac12,\tfrac58].$$ -/
 theorem eqn_3_8 (c : ℝ) (hc : c ∈ Icc (1 / 2 : ℝ) (5 / 8)) : h_LJ₁ c > 0.01 := by
@@ -141,12 +111,6 @@ end Case_I
 section Case_II
 
 /-! ### Case II: $u=1-c$ -/
-
-/-
-In this case it suffices to show that
-\[ g(c) = 2(1-c) + L(2c-1) - 2{\mathrm{J}}(c) \ge 0 \]
-for all $c\in [\frac12,\frac58]$.
--/
 
 /-- $g(c)=2(1-c)+L(2c-1)-2\mathrm{J}(c)$ ([DIRX], §3.4, Case II); this is $h_{LJ}(1-c,c)$.
 Written `g c`. -/
@@ -162,12 +126,6 @@ theorem h_LJ_eq_gX (c : ℝ) : h_LJ (1 - c) c = g c := by
 theorem gX_nonneg (c : ℝ) (hc : c ∈ Icc (1 / 2 : ℝ) (5 / 8)) : g c ≥ 0 := by
   sorry
 
-/-
-The proof is complete if we show that $g$ is increasing on this interval since $g(\frac12)=0$.
-To this end we compute
-\[ g'(c) = -2 + 2 L'(2c-1) - 2{\mathrm{J}}'(c). \]
--/
-
 /-- [DIRX], §3.4, Case II: $g(\frac12)=0$. -/
 theorem gX_half : g (1 / 2) = 0 := by
   sorry
@@ -177,26 +135,11 @@ theorem gX_deriv (c : ℝ) (hc : c ∈ Ioc (1 / 2 : ℝ) (5 / 8)) :
     deriv g c = -2 + 2 * deriv L (2 * c - 1) - 2 * deriv J c := by
   sorry
 
-/-
-We check that $g'(c)>0$ for $c\in (\frac12,\frac58]$. Note that $L'$ and ${\mathrm{J}}'$ are both
-decreasing.
--/
-
 /-- [DIRX], §3.4, Case II: $L'$ and $\mathrm{J}'$ are both decreasing (on $(0,1)$, resp. on
 $[\frac12,1)$). -/
 theorem deriv_LX_JX_anti :
     AntitoneOn (deriv L) (Ioo 0 1) ∧ AntitoneOn (deriv J) (Ico (1 / 2) 1) := by
   sorry
-
-/-
-Thus for $c\in(\frac12,\frac{9}{16}]$ we have
-\[ g'(c) \ge -2 + 2 L'(\tfrac18) - 2 {\mathrm{J}}'(\tfrac12) \ge 0.26 \]
-and for $c\in [\frac{9}{16}, \frac{19}{32}]$ we have
-\[ g'(c) \ge -2 + 2 L'(\tfrac3{16}) - 2 {\mathrm{J}}'(\tfrac{9}{16}) \ge 0.3 .\]
-Finally, for $c\in [\frac{19}{32},\frac58]$,
-\[ g'(c) \ge -2 + 2 L'(\tfrac14) - 2 {\mathrm{J}}'(\tfrac{19}{32}) \ge 0.17. \]
-Thus $g'(c)\ge 0.17$ for all $c\in(\frac12,\frac58]$.
--/
 
 /-- [DIRX], §3.4, Case II: for $c\in(\frac12,\frac9{16}]$,
 $g'(c)\ge-2+2L'(\frac18)-2\mathrm{J}'(\frac12)\ge0.26$. -/

@@ -31,10 +31,6 @@ namespace Auto.DIR
 
 open Real Set Filter Topology
 
-/-
-Let us record the first few derivatives of $L_\beta(x)=x (\log_2(1/x))^\beta$:
--/
-
 /-- **(5.2)** ([DIR], §5.3). For $x\in(0,1)$,
 $$L'_\beta(x)=(\log2)^{-\beta}(\log\tfrac1x)^{-1+\beta}(-\beta+\log\tfrac1x).$$ -/
 theorem eqn_5_2 (β x : ℝ) (hx : x ∈ Ioo (0 : ℝ) 1) :
@@ -57,11 +53,6 @@ theorem eqn_5_4 (β x : ℝ) (hx : x ∈ Ioo (0 : ℝ) 1) :
         (β * (3 - β) - 2 + (log (1 / x)) ^ 2) := by
   sorry
 
-/-
-Note $\log$ means logarithm with the natural base $e$.
-These will be used to verify the following properties of $L_\beta$.
--/
-
 /-- **Lemma 5.6** ([DIR]). Let $\beta\in[\frac12,1]$. Then
 1. the function $x\mapsto L_\beta(x)$ is strictly concave on $[0,1]$;
 2. if $x\in(0,e^{-1})$, then $L''_\beta(x)$ is decreasing in $\beta$;
@@ -82,10 +73,6 @@ theorem rem_5_7 : exp (-(√3 / 2)) > exp (-1) ∧ exp (-1) > (1 / 4 : ℝ) := b
   sorry
 
 section Proof_Lemma_5_6
-
-/-
-(1) This follows from \eqref{eqn:DDL} [(5.3)].
--/
 
 /-- The coefficient $a_0(x)=1+\log\frac1x$ ([DIR], proof of Lemma 5.6 (2)). -/
 noncomputable def a₀ (x : ℝ) : ℝ := 1 + log (1 / x)
@@ -228,14 +215,6 @@ end Proof_Claim_4
 
 end Proof_Lemma_5_6
 
-/-
-We turn our attention to the cubic polynomials $Q_\beta$ which are defined by
-\[ Q_\beta(x) = \tfrac23 x (1-x)(2^{\beta+2}-3+4(3-2^{\beta+1})  x) \]
-so that $Q_\beta(0)=Q_\beta(1)=0, Q_\beta(\frac12)=\frac12$ and $Q_\beta(\frac14)=2^{\beta-2}$
-(see `Auto.DIR.Q`, `Auto.DIR.Q_spec`).
-For $\beta~\in~[\tfrac{1}{2},1]$ we denote
--/
-
 /-- $\alpha_0=2^{2+\beta}-5$ ([DIR], (5.5)). -/
 noncomputable def α₀ (β : ℝ) : ℝ := 2 ^ (2 + β) - 5
 
@@ -250,10 +229,6 @@ noncomputable def α₁ (β : ℝ) : ℝ := 3 - 2 ^ (1 + β)
 /-- [DIR], §5.3: note that $\alpha_1>0$ if and only if $\beta<\log_2(\frac32)$. -/
 theorem α₁_pos_iff (β : ℝ) : α₁ β > 0 ↔ β < log₂ (3 / 2) := by
   sorry
-
-/-
-We record some derivatives of $Q_\beta$ for future use:
--/
 
 /-- **(5.6)** ([DIR], §5.3). $Q_\beta'(x)=\frac23(2^{2+\beta}-3)-4\alpha_0x-8\alpha_1x^2$. -/
 theorem eqn_5_6 (β x : ℝ) :
@@ -290,10 +265,6 @@ theorem lemma_5_8 (x : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 2)) (β : ℝ)
   sorry
 
 section Proof_Lemma_5_8
-
-/-
-(1) This follows from \eqref{eqn:Qbetaderiv} [(5.9)].
--/
 
 /-- [DIR], proof of Lemma 5.8 (2): from (5.6) one can write
 $$Q'_\beta(x)=\tfrac23(1-2x)(2^{\beta+2}-3+4\alpha_1x)+\tfrac83\alpha_1x(1-x)>0$$
@@ -352,10 +323,6 @@ theorem rem_5_10 (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1) :
   sorry
 
 section Proof_Lemma_5_9
-
-/-
-We make use of Lemma \ref{lem:Lprop} [5.6] and \ref{lem:Qbprop} [5.8].
--/
 
 section Proof_Claim_1
 

@@ -31,12 +31,6 @@ local notation "Q" => QX
 
 /-! ### §2.3 Properties of the functions L and Q -/
 
-/-
-We will use the following straightforward facts about the functions $L$ and $Q$. See
-\cite[Lemma 5.6, Lemma 5.8]{DIR24} for details on the proofs (`Auto.DIR.lemma_5_6`,
-`Auto.DIR.lemma_5_8`, the case $\beta=\frac12$).
--/
-
 /-- **Lemma 2.3** ([L], [DIRX]). The function $x\mapsto L(x)$ is strictly concave on $[0,1]$. If
 $x\in(0,e^{-\sqrt3/2})$, then $L'''(x)>0$. -/
 theorem lemma_2_3 :

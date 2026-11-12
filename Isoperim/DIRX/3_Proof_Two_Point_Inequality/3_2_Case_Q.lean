@@ -41,11 +41,6 @@ theorem caseQ (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y) (hy : y ≤ 1 / 2) :
     G (B_{w₁}) x y ≥ 0 := by
   sorry
 
-/-
-In \cite[Prop. 6.2]{DIR24} it was proved that $G_{1}[\max(L,Q)]\ge 0$ in this region, which
-implies the claim.
--/
-
 /-- [DIRX], §3.2 (cited from [DIR], Proposition 6.2 with $\beta=\frac12$, `Auto.DIR.prop_6_2`):
 $G_1[\max(L,Q)](x,y)\ge0$ for $0\le x\le y\le\frac12$. -/
 theorem caseQ_G₁_max (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y) (hy : y ≤ 1 / 2) :

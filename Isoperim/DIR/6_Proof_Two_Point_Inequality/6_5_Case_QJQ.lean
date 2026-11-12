@@ -36,20 +36,11 @@ namespace Auto.DIR
 
 open Real Set
 
-/-
-\subsection{\texorpdfstring{Case $QJQ$: $\frac14\leq x\leq \frac12\leq y, x+y\leq 1$}{Case QJQ}}
-\label{sec:caseQJQ}
--/
-
 /-- [DIR], §6.5: the region $QJQ$ ($\frac14\le x\le\frac12\le y$, $x+y\le1$) is contained in the
 rectangle $[\frac14,\frac12]\times[\frac12,\frac34]$. -/
 theorem caseQJQ_region (x y : ℝ) (hx : 1 / 4 ≤ x) (hx' : x ≤ 1 / 2) (hy : 1 / 2 ≤ y)
     (hxy : x + y ≤ 1) : x ∈ Icc (1 / 4 : ℝ) (1 / 2) ∧ y ∈ Icc (1 / 2 : ℝ) (3 / 4) := by
   sorry
-
-/-
-See Figure \ref{fig:cases} [Figure 3].
--/
 
 /-- The constant $\beta_1=\frac12+\frac{31}{1024}\approx0.53$ ([DIR], Proposition 6.9). -/
 noncomputable def β₁ : ℝ := 1 / 2 + 31 / 1024
@@ -124,11 +115,6 @@ theorem G_QJQ_ge_G_QJQ_half (β : ℝ) (hβ : β ∈ ({1 / 2, β₁} : Set ℝ))
     G_QJQ β x y ≥ G_QJQ β x (1 / 2) := by
   sorry
 
-/-
-This can be done by $\textsc{Partition}_2$. In order to formulate a tight lower bound we record
-the monotonicity of the various terms appearing in \eqref{eqn:gQJQdef} [(6.24)]:
--/
-
 /-- [DIR], §6.5, item 1: the function $x\mapsto J(x)J'(x)$ is decreasing on
 $x\in[\frac12,\frac34]$ (with the one-sided derivative at $\frac12$). -/
 theorem J_mul_deriv_J_antitoneOn :
@@ -187,10 +173,6 @@ theorem two_Q_sub_Q_pos_mono (β : ℝ) (hβ : β ∈ Icc (1 / 2) β₁) :
   sorry
 
 section Proof_Claim_2
-
-/-
-Recall Lemma \ref{lem:Qbprop} [5.8].
--/
 
 /-- [DIR], §6.5, proof of item 2: first, $2Q_\beta(\frac{x+y}2)-Q_\beta(x)\ge Q_\beta(y)>0$
 follows since $Q_\beta$ is concave. -/

@@ -53,18 +53,9 @@ theorem caseQJ (x y : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2)) (hy : y ∈ Ic
     (hxy : 1 ≤ x + y) : G (B_{w₁}) x y ≥ 0 := by
   sorry
 
-/-
-We split into two subcases.
--/
-
 /-! ### §3.6.1 Near diagonal: $3/8\le x\le1/2$, $1/2\le y\le5/8$, $x+y\ge1$ -/
 
 section Near_Diagonal
-
-/-
-Here we show that for $\frac38\le x\le \frac12\le y\le \frac58$,
-$G_1[B_w](x,y)\ge 0$.
--/
 
 /-- [DIRX], §3.6.1: for $\frac38\le x\le\frac12\le y\le\frac58$ (and $x+y\ge1$, the standing
 assumption of Case $QJ$), $G_1[B_w](x,y)\ge0$ (with $w=w_1$).
@@ -80,11 +71,6 @@ theorem caseQJ_near (x y : ℝ) (hx : x ∈ Icc (3 / 8 : ℝ) (1 / 2))
     (hy : y ∈ Icc (1 / 2 : ℝ) (5 / 8)) (hxy : 1 ≤ x + y) : G₁ (B_{w₁}) x y ≥ 0 := by
   sorry
 
-/-
-This will follow from positivity of an equivalent expression
-\[ g_{QJ}(x,y)=(y-x)^{2} + {\mathrm{J}}(y)^2- (2 {\mathrm{J}}(\tfrac{x+y}{2})-Q(x))^2. \]
--/
-
 /-- $g_{QJ}(x,y)=(y-x)^2+\mathrm{J}(y)^2-(2\mathrm{J}(\frac{x+y}2)-Q(x))^2$ ([DIRX], §3.6.1).
 Written `g_QJ x y`. -/
 noncomputable def g_QJX (x y : ℝ) : ℝ := (y - x) ^ 2 + J y ^ 2 - (2 * J ((x + y) / 2) - Q x) ^ 2
@@ -97,15 +83,6 @@ theorem G₁_of_g_QJ (x y : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2)) (hy : y 
     (hxy : 1 ≤ x + y) (h : g_QJ x y ≥ 0) : G₁ (B_{w₁}) x y ≥ 0 := by
   sorry
 
-/-
-Note
-that
-$g_{QJ}(\tfrac12, y)\ge 0$
-for all $y\in [\tfrac12,\tfrac58]$.
-Indeed, this is equivalent to showing $G_1[{\mathrm{J}}](\frac12,y)\ge 0$ for these values, which
-already follows from Section \ref{sec:caseJ} [§3.1].
--/
-
 /-- [DIRX], §3.6.1: $g_{QJ}(\frac12,y)\ge0$ is equivalent to $G_1[\mathrm{J}](\frac12,y)\ge0$
 (for $y\in[\frac12,\frac58]$). -/
 theorem g_QJ_half_iff (y : ℝ) (hy : y ∈ Icc (1 / 2 : ℝ) (5 / 8)) :
@@ -116,13 +93,6 @@ theorem g_QJ_half_iff (y : ℝ) (hy : y ∈ Icc (1 / 2 : ℝ) (5 / 8)) :
 from §3.1, (3.1)). -/
 theorem g_QJ_half (y : ℝ) (hy : y ∈ Icc (1 / 2 : ℝ) (5 / 8)) : g_QJ (1 / 2) y ≥ 0 := by
   sorry
-
-/-
-Thus, to finish the proof of this case it remains to show that $\partial_x g_{QJ}$ is negative, or
-equivalently, the positivity of
-\[ -\tfrac{1}{2}\partial_x g_{QJ}(x,y) = y-x+(2{\mathrm{J}}(\tfrac{x+y}{2})-Q(x))
-({\mathrm{J}}'(\tfrac{x+y}{2})-Q'(x)).\]
--/
 
 /-- The expression $y-x+(2\mathrm{J}(\frac{x+y}2)-Q(x))(\mathrm{J}'(\frac{x+y}2)-Q'(x))$, which
 equals $-\frac12\partial_xg_{QJ}(x,y)$ ([DIRX], §3.6.1; its tight lower bound is denoted
@@ -142,23 +112,6 @@ $g_{QJ}(x,y)\ge g_{QJ}(\frac12,y)\ge0$ there, which finishes the proof of this c
 theorem g_QJ_nonneg (x y : ℝ) (hx : x ∈ Icc (3 / 8 : ℝ) (1 / 2))
     (hy : y ∈ Icc (1 / 2 : ℝ) (5 / 8)) : g_QJ x y ≥ g_QJ (1 / 2) y ∧ g_QJ x y ≥ 0 := by
   sorry
-
-/-
-Recalling Lemma \ref{lem:Q} [2.4] and the enclosures for ${\mathrm{J}}, |{\mathrm{J}}'|$ (see
-\eqref{eqn:J_intencl} [(2.7)] and the subsequent displays), a tight lower bound of this expression
-can be given by
-\[ \underline{h_{QJ,1}}(\underline{x},\overline{x},\underline{y},\overline{y})
-=\underline{y}-\overline{x}+(2\underline{{\mathrm{J}}}(\tfrac{\underline{x}+\underline{y}}2,
-\tfrac{\overline{x}+\overline{y}}2)-Q(\overline{x})) {\mathrm{J}}'(\tfrac{\overline{x}+
-\overline{y}}2)\mathbf{1}_{(\overline{x}+\overline{y})/2<x_1}
-\]
-\[ - (2\overline{{\mathrm{J}}}(\tfrac{\underline{x}+\underline{y}}2,\tfrac{\overline{x}+
-\overline{y}}2)-Q(\underline{x})) \overline{|{\mathrm{J}}'|}(\tfrac{\underline{x}+
-\underline{y}}2,\tfrac{\overline{x}+\overline{y}}2)\mathbf{1}_{\text{not}\;(\overline{x}+
-\overline{y})/2<x_1}
-- (2\overline{{\mathrm{J}}}(\tfrac{\underline{x}+\underline{y}}2,\tfrac{\overline{x}+
-\overline{y}}2)-Q(\underline{x}))Q'(\underline{x}). \]
--/
 
 open Classical in
 /-- The tight lower bound ([DIRX], §3.6.1), with $\underline c=\frac{\underline x+\underline y}2$,
@@ -191,10 +144,6 @@ theorem h_QJ₁_lo_tight :
     IsTightLowerBound₂ h_QJ₁ h_QJ₁_lo (1 / 4) (1 / 2) (1 / 2) (5 / 8) := by
   sorry
 
-/-
-Dyadic partitioning yields
--/
-
 /-- **(3.13)** ([DIRX], §3.6.1) (🚗). Dyadic partitioning yields
 $$-\tfrac12\partial_xg_{QJ}>10^{-5}\quad\text{on}\quad
 [\tfrac14,\tfrac12]\times[\tfrac12,\tfrac58].$$
@@ -209,10 +158,6 @@ end Near_Diagonal
 /-! ### §3.6.2 Far from diagonal: $\frac14\le x\le\frac12$, $\frac58\le y\le1$, $x+y\ge1$ -/
 
 section Far_From_Diagonal
-
-/-
-It suffices to show that for all $x\in [\frac14, \frac12]$ and $y\in[\frac58,1]$,
--/
 
 /-- $h_{QJ,2}(x,y)=\sqrt{(y-x)^2+\mathrm{J}(y)^2}+Q(x)-2\mathrm{J}(\frac{x+y}2)$ ([DIRX], (3.14)).
 -/
@@ -230,14 +175,6 @@ $$h_{QJ,2}(x,y)=\sqrt{(y-x)^2+\mathrm{J}(y)^2}+Q(x)-2\mathrm{J}(\tfrac{x+y}2)>10
 theorem eqn_3_14 (x y : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2))
     (hy : y ∈ Icc (5 / 8 : ℝ) 1) : h_QJ₂ x y > (10 : ℝ) ^ (-7 : ℤ) := by
   sorry
-
-/-
-This follows by dyadic partitioning using the tight lower bound
-\[ \underline{h_{QJ,2}}(\underline{x},\overline{x},\underline{y},\overline{y}) =
-\sqrt{(\underline{y}-\overline{x})^2 + {\mathrm{J}}(\overline{y})^2} + Q(\underline{x})-
-2\overline{{\mathrm{J}}}(\tfrac{\underline{x}+\underline{y}}{2},\tfrac{\overline{x}+
-\overline{y}}{2}). \]
--/
 
 /-- The tight lower bound ([DIRX], §3.6.2)
 $$\underline{h_{QJ,2}}(\underline x,\overline x,\underline y,\overline y)

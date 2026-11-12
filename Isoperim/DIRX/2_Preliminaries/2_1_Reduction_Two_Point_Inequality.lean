@@ -47,10 +47,6 @@ open Real Set
 
 /-! ### §2.1 Reduction to a two-point inequality -/
 
-/-
-For $0\le x\le y\le 1$ and $B:[0,1]\to [0,\infty)$ let
--/
-
 /-- **(2.1)** ([DIRX], §2.1). For $0\le x\le y\le1$ and $B:[0,1]\to[0,\infty)$,
 $$G_1[B](x,y)=\sqrt{(y-x)^2+B(y)^2}+B(x)-2B(\tfrac{x+y}2).$$
 Written `G₁ B x y`. -/
@@ -71,13 +67,6 @@ noncomputable def GX (B : ℝ → ℝ) (x y : ℝ) : ℝ := max (G₁ B x y) (G�
 
 local notation "G" => GX
 
-/-
-Kahn and Park \cite{KP20} proved that if $B$ satisfies $B(0)=B(1)=0$ and the two-point inequality
-\[G[B](x,y)\ge 0\]
-holds for all $0\le x\le y\le 1$, then $\mathbf{E} \sqrt{h_A}\ge B(|A|)$
-for all $A\subset \{0,1\}^n$ and $n\ge 1$.
--/
-
 /-- [DIRX], §2.1 (cited from Kahn–Park [KP20]; this is the case $\beta=\frac12$ of
 `Auto.DIR.prop_2_1`). If $B:[0,1]\to[0,\infty)$ satisfies $B(0)=B(1)=0$ and the two-point
 inequality $G[B](x,y)\ge0$ holds for all $0\le x\le y\le1$, then
@@ -87,15 +76,6 @@ theorem kahn_park (B : ℝ → ℝ) (hB : ∀ x ∈ Icc (0 : ℝ) 1, 0 ≤ B x) 
     (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) :
     𝐄 (fun x ↦ √(h_{A} x)) ≥ B ｜A｜ := by
   sorry
-
-/-
-This reduces the proof of Theorem \ref{thm:mainisoperim} [1.1] to finding a Bellman function $B$
-and verifying the two-point inequality.
-We use the following refinement of the Bellman function used in \cite{DIR24}.
-For $x\in (0,1]$ define
-\[ L(x) = x \sqrt{\log_2(1/x)} \]
-and $L(0)=0$.
--/
 
 /-- $L(x)=x\sqrt{\log_2(1/x)}$ for $x\in(0,1]$ and $L(0)=0$ ([DIRX], §2.1). The value $L(0)=0$
 holds by definition since $0\cdot a=0$ in Lean. Written `L x`. -/
@@ -120,12 +100,6 @@ theorem QX_spec :
         p.eval (1 / 2) = 1 / 2 → p.eval (1 / 4) = 2 ^ (-3 / 2 : ℝ) → ∀ x, p.eval x = Q x := by
   sorry
 
-/-
-The idea of using the polynomial $Q$ goes back to Beltran--Ivanisvili--Madrid \cite{BIM23}.
-Let $I(x)$ denote the Gaussian isoperimetric profile, i.e. the unique function on $[0,1]$ such that
-$I(0)=I(1)=0, I\cdot I''=-1$.
--/
-
 /-- [DIRX], §2.1: the Gaussian isoperimetric profile $I$ (`Auto.DIR.I` of [DIR], §3) is the unique
 function on $[0,1]$ such that $I(0)=I(1)=0$, $I\cdot I''=-1$ (among non-negative functions that
 are continuous on $[0,1]$ and twice continuously differentiable on $(0,1)$; non-negativity is
@@ -137,11 +111,6 @@ theorem I_characterization :
       (∀ x ∈ Icc (0 : ℝ) 1, 0 ≤ g x) → g 0 = 0 → g 1 = 0 →
       (∀ x ∈ Ioo (0 : ℝ) 1, g x * deriv (deriv g) x = -1) → EqOn g I (Icc 0 1) := by
   sorry
-
-/-
-For a parameter $w\in (\frac12,1]$ let
-\[ {\mathrm{J}}_w(x) = \tfrac12 I(\tfrac1{2w})^{-1} I(\tfrac{1-x}{w}). \]
--/
 
 /-- $\mathrm{J}_w(x)=\frac12I(\frac1{2w})^{-1}I(\frac{1-x}w)$ for a parameter $w\in(\frac12,1]$
 ([DIRX], §2.1). It is meaningful for $x\in[1-w,1]$ (outside this range `I` takes the junk value
@@ -155,11 +124,6 @@ theorem JXw_half_one (w : ℝ) (hw : w ∈ Ioc (1 / 2 : ℝ) 1) :
     J_{w} (1 / 2) = 1 / 2 ∧ J_{w} 1 = 0 := by
   sorry
 
-/-
-Note that ${\mathrm{J}}_w(\frac12)=\frac12$ and ${\mathrm{J}}_w(1)=0$.
-Then define
--/
-
 /-- **(2.2)** ([DIRX], §2.1). The Bellman function
 $$B_w(x)=\begin{cases}L(x)&x\in[0,\frac14],\\ Q(x)&x\in[\frac14,\frac12],\\
 \mathrm{J}_w(x)&x\in[\frac12,1].\end{cases}$$
@@ -169,11 +133,6 @@ noncomputable def BX (w x : ℝ) : ℝ :=
 
 local notation "B_{" w "}" => BX w
 
-/-
-For some motivation on the choice of such functions, see \cite[\S 2]{DIR24}.
-In the following we shall fix
--/
-
 /-- **(2.3)** ([DIRX], §2.1). The parameter $w=w_1=\frac{29}{32}$. -/
 noncomputable def w₁ : ℝ := 29 / 32
 
@@ -181,12 +140,6 @@ noncomputable def w₁ : ℝ := 29 / 32
 noncomputable def JX : ℝ → ℝ := J_{w₁}
 
 local notation "J" => JX
-
-/-
-and write ${\mathrm{J}}={\mathrm{J}}_{w_1}$.
-Note that since $B_w(x)\ge L(x)$ for $x\in [0,\frac12]$ (see \cite[Lemma 5.9 (2)]{DIR24}), in order
-to prove Theorem \ref{thm:mainisoperim} [1.1] it suffices to prove that there exists $w$ such that
--/
 
 /-- [DIRX], §2.1 (cited from [DIR], Lemma 5.9 (2), `Auto.DIR.lemma_5_9`): $B_w(x)\ge L(x)$ for
 $x\in[0,\frac12]$. -/
@@ -208,21 +161,12 @@ theorem eqn_2_4 (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y) (hy : y ≤ 1) :
     G (B_{w₁}) x y ≥ 0 := by
   sorry
 
-/-
-for all $0\le x\le y\le 1$.
-As a consequence of this argument we obtain the isoperimetric inequality
--/
-
 /-- **(2.5)** ([DIRX], §2.1). The isoperimetric inequality
 $$\mathbf{E}\sqrt{h_A}\ge B_{w_1}(|A|),$$
 valid for all $A\subset\{0,1\}^n$. -/
 theorem eqn_2_5 (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) :
     𝐄 (fun x ↦ √(h_{A} x)) ≥ B_{w₁} ｜A｜ := by
   sorry
-
-/-
-valid for all $A\subset \{0,1\}^n$.
--/
 
 /-! ### Remark 2.1 -/
 
@@ -238,23 +182,7 @@ $w_*=\inf\{w\in(\frac12,1] : G[B_w](x,y)\ge0\text{ for all }0\le x\le y\le1\}$. 
 noncomputable def wStar : ℝ :=
   sInf {w : ℝ | w ∈ Ioc (1 / 2 : ℝ) 1 ∧ ∀ x y : ℝ, 0 ≤ x → x ≤ y → y ≤ 1 → G (B_{w}) x y ≥ 0}
 
-/-
-\begin{rem}[Remark 2.1, continued]
-It could be interesting to further investigate the optimal (smallest) value $w_*$ of $w$, but we
-will not pursue this here. Numerical evidence suggests that $w_*\in [0.897, 0.898]$.
-\end{rem}
-(Numerical evidence only; not stated as a theorem.)
--/
-
 /-! ### Remark 2.2 -/
-
-/-
-\begin{rem}[Remark 2.2]
-It is also interesting to ask what the sharp behavior of $\mathbf{E}\sqrt{h_A}$ is as $|A|\to 1-$.
-While our new isoperimetric inequality \eqref{eqn:isoperim2} [(2.5)] improves on the
-corresponding inequality proved in \cite[(2.7)]{DIR24} for all values of $|A|\le \frac12$, this
-changes when $|A|>\frac12$.
--/
 
 /-- **Remark 2.2** ([DIRX]), first claim: (2.5) improves on [DIR, (2.7)]
 ($\mathcal{B}_{\frac12}\ge0.997\cdot b_{\frac12}$, `Auto.DIR.cor_2_5`) for all values
@@ -264,23 +192,11 @@ theorem rem_2_2_improves (x : ℝ) (hx : x ∈ Ioc (0 : ℝ) (1 / 2)) :
     B_{w₁} x > 0.997 * b (1 / 2) x := by
   sorry
 
-/-
-Specifically, for $|A|$ near $1$, the inequality \cite[(2.7)]{DIR24} is slightly stronger than
-\eqref{eqn:isoperim2} [(2.5)].
--/
-
 /-- **Remark 2.2** ([DIRX]): for $|A|$ near $1$, [DIR, (2.7)] is slightly stronger than (2.5):
 there is $\delta>0$ with $0.997\,b_{\frac12}(x)>B_{w_1}(x)$ for $x\in(1-\delta,1)$. -/
 theorem rem_2_2_near_one :
     ∃ δ > 0, ∀ x ∈ Ioo (1 - δ) 1, 0.997 * b (1 / 2) x > B_{w₁} x := by
   sorry
-
-/-
-Similarly, for all values of $|A|>\frac12$, the inequality \cite[(2.6)]{DIR24}, which gives sharp
-lower bounds for $\mathbf{E}h_A^\beta$ when $\beta\ge \beta_0=0.50057$, is stronger than the
-estimate $\mathbf{E} h_A^\beta\ge {\mathrm{J}}(|A|)$ that follows from \eqref{eqn:isoperim2}
-[(2.5)].
--/
 
 /-- **Remark 2.2** ([DIRX]): the estimate $\mathbf{E}h_A^\beta\ge\mathrm{J}(|A|)$ for
 $\beta\ge\frac12$ and $|A|\ge\frac12$ follows from (2.5). -/
@@ -295,17 +211,6 @@ $x\ge\frac12$) is stronger than the estimate $\mathbf{E}h_A^\beta\ge\mathrm{J}(|
 $b_{\beta_0}(x)>\mathrm{J}(x)$ for $x\in(\frac12,1)$. -/
 theorem rem_2_2_stronger (x : ℝ) (hx : x ∈ Ioo (1 / 2 : ℝ) 1) : b β₀ x > J x := by
   sorry
-
-
-/-
-This is consistent with the fact that ``Case $J$'' in \cite[\S 6]{DIR24} is more difficult to
-handle than Case $J$ in the present paper (see \S \ref{sec:caseJ} [§3.1]). For $\beta\ge\beta_0$
-and $|A|>\frac12$, the best known lower bound is that given in \cite[Thm. 1.6]{DIR24}, which
-further improves on \cite[(2.6)]{DIR24} as $|A|\to 1-$.
-\end{rem}
-(\cite[Thm. 1.6]{DIR24} is Theorem 1.7 of the revised version of [DIR], `Auto.DIR.thm_1_7`; see
-the discrepancy paragraph of `Auto.DIRX.rem_2_2_thm_1_7_improves` below.)
--/
 
 /-- **Remark 2.2** ([DIRX]), last claim: for $\beta\ge\beta_0$ and $|A|>\frac12$ the best known
 lower bound is that of [DIR, Theorem 1.7] (cited as "[DIR24, Thm. 1.6]"),

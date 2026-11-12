@@ -32,11 +32,6 @@ open Real
 
 /-! ### Applications -/
 
-/-
-As an immediate consequence of Theorem \ref{thm:mainisoperim} [1.1] we settle a conjecture of Kahn
-and Park \cite[Conjecture 1.3]{KP20} on cube partitions:
--/
-
 /-- **Theorem 1.2** ([DIRX]). Let $(A,B,W)$ be a partition of $\{0,1\}^n$ and assume
 $|A|=\frac12$. Then
 $$|\nabla(A,B)|+\sqrt n\,|W|\ge\tfrac12.$$
@@ -54,16 +49,6 @@ theorem thm_1_2 (n : ℕ) (hn : 1 ≤ n) (A B W : Set ({0,1}^n))
 theorem kahnParkConjecture : KahnParkConjecture := by
   sorry
 
-/-
-Here $|W|=\mathbf{E} \mathbf{1}_W$ and the edge boundary measure $|\nabla(A,B)|$ is defined by
-$2^{-n} \# \{(x,y)\in \mathcal{E}\,:\,x\in A, y\in B\}$, where $\mathcal{E}$ is the set of edges in
-the Hamming cube $\{0,1\}^n$. (These are `Auto.DIR.dens`, `Auto.DIR.edgeMeasure` and
-`Auto.DIR.edges` of
-[DIR].)
-Theorem \ref{cor:kahnpark} [1.2] follows from Theorem \ref{thm:mainisoperim} [1.1] because for
-$|B\cup W|=|A|=\frac12$, we have
--/
-
 /-- [DIRX], §1, proof of Theorem 1.2: for a partition $(A,B,W)$ of $\{0,1\}^n$ with
 $|B\cup W|=|A|=\frac12$,
 $$\tfrac12\le\mathbf{E}\sqrt{h_{B\cup W}}\le\mathbf{E}(h_{B\cup W}\mathbf{1}_B)
@@ -78,9 +63,5 @@ theorem thm_1_2_chain (n : ℕ) (hn : 1 ≤ n) (A B W : Set ({0,1}^n))
     𝐄 (h_{B ∪ W} * 𝟏_{B}) + 𝐄 (fun x ↦ √(h_{B ∪ W} x) * 𝟏_{W} x) ≤
       |∇(A, B)| + √n * ｜W｜ := by
   sorry
-
-/-
-which is no greater than $|\nabla(A,B)| + \sqrt{n} |W|$ as required.
--/
 
 end Auto.DIRX

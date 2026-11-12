@@ -30,14 +30,6 @@ namespace Auto.DIR
 
 open Set
 
-/-
-It can be quite challenging to prove that a given function of several real variables is strictly
-positive.
-In this section we describe a simple but powerful method to automate positivity proofs for
-functions on compact rectangles that we will use routinely throughout the paper. This is likely
-well-known to readers familiar with computer-assisted proofs.
--/
-
 /-! ### §4.1 Dyadic partitioning -/
 
 /-- A *rectangle* ([DIR], §4.1): a product of closed intervals
@@ -72,11 +64,6 @@ rectangles such that $\underline f(c,d)>0$ for all $[c,d]\in\mathcal{P}$. -/
 def IsAdmissiblePartition {n : ℕ} (fl : (Fin n → ℝ) → (Fin n → ℝ) → ℝ) (a b : Fin n → ℝ)
     (P : Finset ((Fin n → ℝ) × (Fin n → ℝ))) : Prop :=
   IsRectPartition a b P ∧ ∀ p ∈ P, fl p.1 p.2 > 0
-
-/-
-The following compactness observation reduces verification of the infinitely many conditions
-$f(x)>0$ to only finitely many evaluations.
--/
 
 /-- **Fact 4.1** ([DIR]). Suppose a function $f$ on $[a,b]$ has a tight lower bound
 $\underline f$. Then $f>0$ on $[a,b]$ if and only if there exists an admissible partition. -/
@@ -129,12 +116,6 @@ tight lower bound implies lower semicontinuity of $f$ (on $[a,b]$). -/
 theorem rem_4_2 {n : ℕ} (f : (Fin n → ℝ) → ℝ) (fl : (Fin n → ℝ) → (Fin n → ℝ) → ℝ)
     (a b : Fin n → ℝ) (hfl : IsTightLowerBound f fl a b) : LowerSemicontinuousOn f (Icc a b) := by
   sorry
-
-/-
-Admissible partitions $\mathcal{P}$ can be practically determined by {\em recursive dyadic
-partitioning}, where a given rectangle is partitioned into $2^n$ congruent subrectangles called
-its {\em children} by cutting along the midpoint in each of the $n$ coordinates:
--/
 
 /-- The $2^n$ *children* of the rectangle $[a,b]$ ([DIR], §4.1): the congruent subrectangles
 obtained by cutting along the midpoint in each of the $n$ coordinates. A child is indexed by
@@ -197,24 +178,12 @@ theorem rem_4_3 (f : ℝ → ℝ → ℝ) (fl : ℝ → ℝ → ℝ → ℝ → 
         ![a₁, a₂] ![b₁, b₂] := by
   sorry
 
-/-
-Running $\textsc{Partition$_n$}(\underline{f},[a,b])$ either fails or returns an admissible
-partition, thus providing a proof that $f>0$ holds on $[a,b]$. Figure \ref{fig:critpartition}
-[Figure 5] visualizes an example of an admissible partition that is particularly critical to this
-paper.
--/
-
 /-- [DIR], §4.1: running $\textsc{Partition}_n(\underline f,[a,b])$ either fails or returns an
 admissible partition. -/
 theorem partition_admissible {n : ℕ} (fl : (Fin n → ℝ) → (Fin n → ℝ) → ℝ) (maxDepth : ℕ)
     (a b : Fin n → ℝ) (hab : IsRectangle a b) (P : List ((Fin n → ℝ) × (Fin n → ℝ)))
     (hP : partition fl maxDepth a b = some P) : IsAdmissiblePartition fl a b P.toFinset := by
   sorry
-
-/-
-A finite value of $maxDepth$ ensures that the procedure terminates. (In the Lean definition
-`Auto.DIR.partitionAux` termination is by structural recursion on `fuel`.)
--/
 
 /-- [DIR], §4.1: Fact 4.1 implies that if it is true that $f>0$ holds on $[a,b]$, then the
 procedure will always succeed in producing a proof of this, provided that $maxDepth$ is chosen
@@ -231,21 +200,5 @@ theorem partition_succeeds {n : ℕ} (f : (Fin n → ℝ) → ℝ)
     (hfl : IsTightLowerBound f fl a b) (hf : ∀ x ∈ Icc a b, f x > 0) :
     ∃ D : ℕ, ∀ maxDepth ≥ D, (partition fl maxDepth a b).isSome := by
   sorry
-
-/-
-(in this paper $maxDepth=12$ will suffice). In practice, limitations are imposed by memory and
-time constraints.
-Further limitations of the method are the requirement of \emph{strict} positivity as well as the
-need for a (good enough) tight lower bound $\underline{f}$ given by an explicit formula.
-
-The proof of positivity is established by providing the pair $(\underline{f}, \mathcal{P})$.
-Verification of admissibility can, in principle, be carried out using any method of rigorous
-computation, including manual computation. However, the most practical approach is to use a
-computer. All necessary computations for this paper can be completed within a few seconds on a
-standard laptop. We use interval arithmetic to account for all numerical and rounding errors
-inherent in numerical function evaluation using floating-point arithmetic so that the bounds
-produced by the computer are provably correct and this can be verified by inspection of the
-source code.
--/
 
 end Auto.DIR

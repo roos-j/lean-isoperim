@@ -37,53 +37,7 @@ namespace Auto.DIR
 
 open Real Set
 
-/-
-\section{Proof of the two-point inequality}\label{sec:maintwopt}
-\begin{figure}[th]
-\centering
-\begin{tikzpicture}[scale=9]
-
-\draw (0,0)--(0,1)--(1,1);
-\draw[opacity=.1] (0,0)--(1,0)--(1,1);
-\draw (0,0) -- (1,1);
-\draw (0,1/2) -- (1/2,1/2);
-\draw (1/4,1/2) -- (1/4,1);
-\draw (0,1) -- (1/2,1/2);
-\draw (1/2,1/2) -- (1/2,1);
-\node at (0,-.05) {\footnotesize $0$};
-\node at (1/4,-.05) {$\tfrac{1}{4}$};
-\node at (1/2,-.05) {$\tfrac{1}{2}$};
-\node at (1,-.05) {\footnotesize $1$};
-\node at (-.03,1/2) {$\tfrac{1}{2}$};
-\node at (-.03,1) {\footnotesize $1$};
-\node at (4/32,6/16) {\footnotesize  \hyperref[sec:caseQ]{$Q$}};
-\node at (1/2+5/32,7/8) {\footnotesize \hyperref[sec:caseJ]{$J$}};
-\node at (4/32,10/16) { \footnotesize \hyperref[sec:caseLJQ]{$LJQ$}};
-\node at (4.9/16,10/16) {\footnotesize \hyperref[sec:caseQJQ]{$QJQ$}};
-\node at (6.25/32,7/8) {\footnotesize  \hyperref[sec:caseLJ]{$LJ$}};
-\node at (6/16,7/8) {\footnotesize \hyperref[sec:caseQJ]{$QJ$}};
-
-\end{tikzpicture}
-\caption{Case distinction in the proof of Theorem \ref{thm:maintwopt} [2.2].}
-\label{fig:cases}
-\end{figure}
-[Figure 3. The regions are: $Q$ (§6.2), $J$ (§6.1), $LJQ$ (§6.3), $QJQ$ (§6.5), $LJ$ (§6.4),
-$QJ$ (§6.6).]
-
-In this section we prove Theorem \ref{thm:maintwopt} [2.2]. The proof is split into various
-subcases according to the piecewise definition of $b_\beta$ in \eqref{eqn:bbdef} [(2.3)] (see
-Figure~\ref{fig:cases} [3]).
--/
-
 /-! ## §6.1 Case $J$: $\frac12\le x\le y\le 1$ -/
-
-/-
-This is the most critical case. In particular, this is where the precise values of $\beta_0$,
-$c_0$ originate.
-Recall from Corollary \ref{cor:JsatisfiesBobkovtwopt} [3.5] that for $x_0\le x\le y\le 1$ the
-function $J$ satisfies the best possible estimate, $G^1_{\beta}[J](x,y)\ge 0$ for
-$\beta=\frac12$. When $x<x_0\approx 0.552$ this estimate fails for $\beta=\frac12$.
--/
 
 /-- [DIR], §6.1 (cf. Remark 3.6): when $x<x_0\approx0.552$ the estimate
 $G^1_{\frac12}[J](x,y)\ge0$ fails: for every $x\in[\frac12,x_0)$ there is $y\in[x,1]$ with
@@ -107,34 +61,6 @@ theorem caseJ_G₁_mono_β (β : ℝ) (hβ : β₀ ≤ β) (x y : ℝ) (hx : 1 /
     (hy : y ≤ 1) : G₁ β₀ J x y ≤ G₁ β J x y := by
   sorry
 
-/-
-The proof is split into two further cases according to the size of $y$ (see Figure
-\ref{fig:jcrit} [4]).
-\begin{figure}[hb]
-\centering
-\begin{tikzpicture}[yscale=14,xscale=32]
-\def\Jpicturefakeone{.8}
-\draw (1/2,1/2)--(1/2,\Jpicturefakeone)--(.552,\Jpicturefakeone);
-\draw (1/2,1/2)--(0.552, 0.552);
-\draw (0.552,0.552)--(0.552,\Jpicturefakeone);
-\draw (1/2,0.615)--(0.552,0.615);
-\node at (1/2,1/2-.03) {\footnotesize $\tfrac{1}{2}$};
-\node at (0.552,1/2-.03) {\footnotesize $x_0<\tfrac{5}8$};
-\node at (1/2-.005,1/2) {\footnotesize $\tfrac{1}{2}$};
-\node at (1/2-.007,0.615) {\footnotesize $\tfrac{11}{16}$};
-\node at (1/2-.005,\Jpicturefakeone) {\tiny $1$};
-\draw[opacity=.1,color=gray] (.5,.5) -- (.552, .5) -- (.552, .552);
-\node at (.525, .57) {\tiny \hyperref[sec:J-I]{I}};
-\node at (.525, .7) {\tiny \hyperref[sec:J-II]{II}};
-
-\end{tikzpicture}
-\caption{Critical region of Case $J$: $\frac12\le x\le x_0$}
-\label{fig:jcrit}
-\end{figure}
-[Figure 4. Region I: $\frac12\le x\le x_0$, $x\le y\le\frac{11}{16}$; region II:
-$\frac12\le x\le x_0$, $\frac{11}{16}\le y\le1$.]
--/
-
 /-- [DIR], §6.1, Figure 4: $x_0<\frac58$. -/
 theorem x₀_lt_five_div_eight : x₀ < 5 / 8 := by
   sorry
@@ -142,16 +68,6 @@ theorem x₀_lt_five_div_eight : x₀ < 5 / 8 := by
 section Case_J_I
 
 /-! ### §6.1.1 Case I: $\frac12\le x\le x_0$, $x\le y\le\frac{11}{16}$ -/
-
-/-
-Let $h=y-x$.
-The proof will use automatic dyadic partitioning as described in \S \ref{sec:auto} [§4].
-Since $x_0\approx 0.552$ is not a floating point number, we must account for cases when $x$ is
-slightly larger than $x_0$. This causes no issues. In fact, the argument is robust enough to
-afford a generous margin away from $x_0$ and with no additional effort we will prove the desired
-inequality in the larger region
-\[ \tfrac12\le x\le \tfrac58, 0\le h\le \tfrac{3}{16}. \]
--/
 
 /-- [DIR], §6.1.1: the region of Case I, $\frac12\le x\le x_0$, $x\le y\le\frac{11}{16}$, is
 contained in the larger region $\frac12\le x\le\frac58$, $0\le h=y-x\le\frac3{16}$. -/
@@ -166,10 +82,6 @@ theorem caseJ_I (x h : ℝ) (hx : x ∈ Icc (1 / 2 : ℝ) (5 / 8)) (hh : h ∈ I
     G₁ β₀ J x (x + h) ≥ 0 ∧ G₁ (1 / 2) (c₀ • J) x (x + h) ≥ 0 := by
   sorry
 
-/-
-By Lemma \ref{lem:neardiaglowerbd} [5.4],
--/
-
 /-- [DIR], §6.1.1 (application of Lemma 5.4). For $\beta\in(0,1)$, $c>0$, $\frac12\le x\le\frac58$
 and $0\le h\le\frac3{16}$:
 $$G^1_\beta[c\cdot J](x,x+h)\ge\beta c^{1-\frac1\beta}J(x+h)^{1-\frac1\beta}h^{\frac1\beta}
@@ -182,15 +94,6 @@ theorem caseJ_I_neardiag_bound (β c : ℝ) (hβ : β ∈ Ioo (0 : ℝ) 1) (hc :
         + c * (J x + J (x + h) - 2 * J (x + h / 2))
         - 1 / 2 * β * (1 - β) * c ^ (1 - 2 / β) * J (x + h) ^ (1 - 2 / β) * h ^ (2 / β) := by
   sorry
-
-/-
-Taylor's theorem shows that for every $N\ge 2$:
-\[ J(x) + J(x+h)-2J(x+\tfrac{h}2) = \sum_{k=2}^{N-1} \tfrac1{k!}(1-2^{-k+1}) J^{(k)}(x)h^k + E_N,
-\]
-where
-\[ E_N = \tfrac1{N!}(J^{(N)}(\xi_1)-2^{-N+1} J^{(N)}(\xi_2)) h^N \]
-and $\xi_1\in [x,x+h]$, $\xi_2\in [x,x+\frac{h}2]$ are intermediate values.
--/
 
 /-- The Taylor remainder $E_N$ ([DIR], §6.1.1), defined here as the exact remainder
 $$E_N=J(x)+J(x+h)-2J(x+\tfrac h2)-\sum_{k=2}^{N-1}\tfrac1{k!}(1-2^{-k+1})J^{(k)}(x)h^k;$$
@@ -211,12 +114,6 @@ theorem caseJ_I_taylor (N : ℕ) (hN : 2 ≤ N) (x h : ℝ) (hx : 1 / 2 < x) (hh
         (iteratedDeriv N J ξ₁ - 2 ^ (-(N : ℝ) + 1) * iteratedDeriv N J ξ₂) * h ^ N := by
   sorry
 
-/-
-Thus,
-\[ G_\beta^1[c\cdot J](x,x+h)\ge h^{\frac1\beta} g_{J,1,\beta,c}(x,h), \]
-where
--/
-
 /-- The function $g_{J,1,\beta,c}$ ([DIR], §6.1.1) (depending on $N\ge2$; the paper uses $N=6$):
 $$g_{J,1,\beta,c}(x,h)=\beta c^{1-\frac1\beta}J(x+h)^{1-\frac1\beta}
 -\tfrac12\beta(1-\beta)c^{1-\frac2\beta}J(x+h)^{1-\frac2\beta}h^{\frac1\beta}
@@ -235,11 +132,6 @@ theorem caseJ_I_G₁_ge_g_J_1 (N : ℕ) (hN : 2 ≤ N) (β c : ℝ) (hβ : β �
     (hc : 0 < c) (x h : ℝ) (hx : x ∈ Ioc (1 / 2 : ℝ) (5 / 8)) (hh : h ∈ Icc (0 : ℝ) (3 / 16)) :
     G₁ β (c • J) x (x + h) ≥ h ^ (1 / β) * g_J_1 N β c x h := by
   sorry
-
-/-
-To get a sufficiently accurate lower bound we will unfortunately need to use $N=6$ which makes
-the following expressions somewhat lengthy. From $J\cdot J''=-2$, we may calculate
--/
 
 /-- [DIR], §6.1.1: from $J\cdot J''=-2$, $J''=-2J^{-1}$ on $(\frac12,1)$. -/
 theorem iteratedDeriv_two_J (x : ℝ) (hx : x ∈ Ioo (1 / 2 : ℝ) 1) :
@@ -269,29 +161,10 @@ theorem iteratedDeriv_six_J (x : ℝ) (hx : x ∈ Ioo (1 / 2 : ℝ) 1) :
       iteratedDeriv 6 J x < 0 := by
   sorry
 
-/-
-Recall that $J$ is increasing on $[\frac12,x_0]$ and decreasing on $[x_0,1]$ (see
-\eqref{eqn:JintermsofI} [(3.4)] and \eqref{eqn:x0def} [(3.6)]).
--/
-
 /-- [DIR], §6.1.1: $J$ is increasing on $[\frac12,x_0]$ and decreasing on $[x_0,1]$. -/
 theorem J_monotoneOn_antitoneOn :
     MonotoneOn J (Icc (1 / 2) x₀) ∧ AntitoneOn J (Icc x₀ 1) := by
   sorry
-
-/-
-Thus an interval enclosure for $J$ is given by
-\begin{equation}\label{eqn:Jenclosure}
-\underline{J}(\underline{x},\overline{x})=\min(J(\underline{x}),J(\overline{x})),
-\end{equation}
-\[ \overline{J}(\underline{x},\overline{x})=\left\{
-\begin{array}{ll}
-J(\overline{x}), & \text{if}\;\overline{x}<x_0,\\
-J(\underline{x}), & \text{if}\;\underline{x}>x_0,\\
-J(x_0), & \text{else}.
-\end{array}
-\right.\]
--/
 
 /-- The lower interval enclosure $\underline J(\underline x,\overline x)=\min(J(\underline x),
 J(\overline x))$ ([DIR], (6.2)). -/
@@ -309,20 +182,6 @@ $\underline J(\underline x,\overline x)\le J(x)\le\overline J(\underline x,\over
 theorem eqn_6_2 (xl xu x : ℝ) (hxl : 1 / 2 ≤ xl) (hx : x ∈ Icc xl xu) (hxu : xu ≤ 1) :
     J_lo xl xu ≤ J x ∧ J x ≤ J_hi xl xu := by
   sorry
-
-/-
-Also observe $J'(x_0)=0$ and $J''<0$, so $J'$ is strictly decreasing and $|J'|$ has the interval
-enclosure
-\[ \underline{|J'|}(\underline{x},\overline{x})= \left\{
-\begin{array}{ll}
-J'(\overline{x}), & \text{if}\;\overline{x}<x_0,\\
--J'(\underline{x}), & \text{if}\;\underline{x}>x_0,\\
-0, & \text{else},
-\end{array}
-\right.\]
-\[ \overline{|J'|}(\underline{x},\overline{x}) = \max(|J'(\underline{x})|, |J'(\overline{x})|).
-\]
--/
 
 /-- [DIR], §6.1.1: $J'(x_0)=0$ and $J''<0$ (on $(\frac12,1)$), so $J'$ is strictly decreasing
 (on $(\frac12,1)$). -/
@@ -349,20 +208,6 @@ $\underline{|J'|}(\underline x,\overline x)\le|J'(x)|\le\overline{|J'|}(\underli
 theorem absDJ_enclosure (xl xu x : ℝ) (hxl : 1 / 2 < xl) (hx : x ∈ Icc xl xu)
     (hxu : xu < 1) : absDJ_lo xl xu ≤ |deriv J x| ∧ |deriv J x| ≤ absDJ_hi xl xu := by
   sorry
-
-/-
-The odd order derivatives $J^{(3)}$ and $J^{(5)}$ change sign at $x_0$ and admit the tight lower
-bounds
-\[ \underline{J^{(3)}}(\underline{x},\overline{x}) = 2 J'(\overline{x}) J(\overline{x})^{-2}
-\mathbf{1}_{\overline{x}<x_0} - 2 \overline{|J'|}(\underline{x},\overline{x})
-\underline{J}(\underline{x},\overline{x})^{-2} \mathbf{1}_{\text{not}\;\overline{x}< x_0} \]
-and
-\[ \underline{J^{(5)}}(\underline{x},\overline{x}) = 4 J'(\overline{x})(7+3
-|J'(\overline{x})|^2)J(\overline{x})^{-4}\mathbf{1}_{\overline{x}<x_0} \]
-\[\hspace{2cm}- 4 \overline{|J'|}(\underline{x},\overline{x})(7+3\overline{|J'|}(\underline{x},
-\overline{x})^2)\underline{J}(\underline{x},\overline{x})^{-4}\mathbf{1}_{\text{not}\;
-\overline{x}< x_0}. \]
--/
 
 /-- [DIR], §6.1.1: $J^{(3)}$ changes sign at $x_0$: $J^{(3)}>0$ on $(\frac12,x_0)$ and
 $J^{(3)}<0$ on $(x_0,1)$; likewise for $J^{(5)}$. -/
@@ -402,32 +247,6 @@ $[a,b]\subset(\frac12,1)$. -/
 theorem J5_lo_tight (a b : ℝ) (ha : 1 / 2 < a) (hb : b < 1) :
     IsTightLowerBound₁ (iteratedDeriv 5 J) J5_lo a b := by
   sorry
-
-/-
-Now we can compose a tight lower bound for $g_{J,1,\beta,c}$ as
-\[ \underline{g_{J,1,\beta,c}}(\underline{x},\overline{x},\underline{h},\overline{h}) = \beta
-c^{1-\frac1\beta} \overline{J}(\underline{x}+\underline{h},\overline{x}+\overline{h})^{1-
-\frac1\beta} - \tfrac12 \beta(1-\beta)c^{1-\frac2\beta}\underline{J}(\underline{x}+
-\underline{h},\overline{x}+\overline{h})^{1-\frac2\beta}\overline{h}^{\frac1\beta} \]
-\[ - \tfrac{c}2  \underline{J}(\underline{x},\overline{x})^{-1} \overline{h}^{2-\frac1\beta}
-+c \Big(\tfrac14 J'(\overline{x}) J(\overline{x})^{-2}\underline{h}^{3-\frac1\beta} +
-\tfrac1{32}J'(\overline{x})(7+3 |J'(\overline{x})|^2)J(\overline{x})^{-4}\underline{h}^{5-
-\frac1\beta}\Big)\mathbf{1}_{\overline{x}<x_0}
-\]
-\[ - c\Big(\tfrac14 \overline{|J'|}(\underline{x},\overline{x}) \underline{J}(\underline{x},
-\overline{x})^{-2} \overline{h}^{3-\frac1\beta} +
-\tfrac1{32} \overline{|J'|}(\underline{x},\overline{x})(7+3\overline{|J'|}(\underline{x},
-\overline{x})^2)\underline{J}(\underline{x},\overline{x})^{-4} \overline{h}^{5-\frac1\beta}
-\Big)\mathbf{1}_{\text{not}\;\overline{x}< x_0} \]
-\[ -\tfrac{7c}{48}(1+\overline{|J'|}(\underline{x},\overline{x})^2)\underline{J}(\underline{x},
-\overline{x})^{-3}\overline{h}^{4-\frac1\beta} \]
-\[ -\tfrac{c}{90}(7+23\overline{|J'|}(\underline{x},\overline{x}+\overline{h})^2 + 6
-\overline{|J'|}(\underline{x},\overline{x}+\overline{h})^4)\underline{J}(\underline{x},
-\overline{x}+\overline{h})^{-5}\overline{h}^{6-\frac1\beta} \]
-\[ + \tfrac{c}{2880}(7+23\underline{|J'|}(\underline{x},\overline{x}+\tfrac12\overline{h})^2+6
-\underline{|J'|}(\underline{x},\overline{x}+\tfrac12\overline{h})^4)\overline{J}(\underline{x},
-\overline{x}+\tfrac12\overline{h})^{-5} \underline{h}^{6-\frac1\beta}. \]
--/
 
 open Classical in
 /-- The lower bound $\underline{g_{J,1,\beta,c}}(\underline x,\overline x,\underline h,
@@ -497,15 +316,6 @@ theorem g_J_1_lo_le (β c : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1) (hc : 0 < c)
     g_J_1 6 β c x h ≥ g_J_1_lo β c xl xu hl hu := by
   sorry
 
-/-
-Running $\textsc{Partition}_2(\underline{g_{J,1,\beta,c}},[\tfrac12,\tfrac58]\times
-[0,\tfrac3{16}])$ for each $(\beta,c)\in \{(\beta_0,1),(\tfrac12,c_0)\}$ shows that
-\begin{equation}\label{eqn:g_J_1_auto}\auto
-g_{J,1,\beta,c}>10^{-7}
-\end{equation}
-on this rectangle.
--/
-
 /-- **(6.3)** ([DIR], §6.1.1) (🚗). For $(\beta,c)\in\{(\beta_0,1),(\frac12,c_0)\}$ and
 $(x,h)\in[\frac12,\frac58]\times[0,\frac3{16}]$ (here $x>\frac12$, see below):
 $$g_{J,1,\beta,c}(x,h)>10^{-7}$$ (with $N=6$).
@@ -523,30 +333,11 @@ theorem eqn_6_3 (β c : ℝ) (hβc : (β, c) = (β₀, 1) ∨ (β, c) = (1 / 2, 
     g_J_1 6 β c x h > 10 ^ (-7 : ℤ) := by
   sorry
 
-/-
-Figure~\ref{fig:critpartition} [5] visualizes the admissible partition.
-\begin{figure}[ht]
-\includegraphics[width=7cm]{criticalRegionPartition.pdf}
-\caption{An admissible partition of $\{~\tfrac12\le x\le \tfrac58, 0\le h\le \tfrac{3}{16}\}$
-into $1303$ subrectangles as generated by $\textsc{Partition}_2$ to verify
-\eqref{eqn:g_J_1_auto} [(6.3)] with $(\beta,c)=(\beta_0,1)$.}
-\label{fig:critpartition}
-\end{figure}
-[Figure 5.]
--/
-
 end Case_J_I
 
 section Case_J_II
 
 /-! ### §6.1.2 Case II: $\frac12\le x\le x_0$, $\frac{11}{16}\le y\le 1$ -/
-
-/-
-By monotonicity it suffices to show the stronger conclusion
-$G^1_{\frac12}[J](x,y)\ge 0$
-or equivalently,
-\[g_{J,2}(x,y)=(y-x)^2 +J(y)^2-(2J(\tfrac{x+y}{2})-J(x))^2\ge 0.\]
--/
 
 /-- [DIR], §6.1.2: by monotonicity (in $\beta$ and in $c$) it suffices to show the stronger
 conclusion $G^1_{\frac12}[J](x,y)\ge0$: for $\frac12\le x\le y\le1$, it implies
@@ -563,14 +354,6 @@ $G^1_{\frac12}[J](x,y)\ge0$ is equivalent to $g_{J,2}(x,y)\ge0$. -/
 theorem caseJ_II_iff_g_J_2 (x y : ℝ) (hx : x ∈ Icc (1 / 2 : ℝ) (9 / 16))
     (hy : y ∈ Icc (11 / 16 : ℝ) 1) : G₁ (1 / 2) J x y ≥ 0 ↔ g_J_2 x y ≥ 0 := by
   sorry
-
-/-
-The quantity $2J(\frac{x+y}{2})-J(x)\ge 0$ is decreasing in $y$ (since
-$\frac{x+y}2\ge \tfrac12(\tfrac12+\tfrac{11}{16})=0.59375>x_0$, so $J'(\frac{x+y}2)<0$) and also
-decreasing in $x$, because the $x$-derivative is
-\[ J'(\tfrac{x+y}2)-J'(x) = J''(\xi)\tfrac{y-x}2 < 0 \]
-by the mean value theorem.
--/
 
 /-- [DIR], §6.1.2: for $\frac12\le x\le\frac9{16}$ and $\frac{11}{16}\le y\le1$,
 $2J(\frac{x+y}2)-J(x)\ge0$. -/
@@ -610,13 +393,6 @@ theorem caseJ_II_antitone_x (y : ℝ) (hy : y ∈ Icc (11 / 16 : ℝ) 1) :
     AntitoneOn (fun x ↦ 2 * J ((x + y) / 2) - J x) (Icc (1 / 2) (9 / 16)) := by
   sorry
 
-/-
-Therefore, a tight lower bound for $g_{J,2}$ is given by
-\[ \underline{g_{J,2}}(\underline{x},\overline{x},\underline{y},\overline{y})=(\underline{y}-
-\overline{x})^2 +J(\overline{y})^2-(2J(\tfrac{\underline{x}+\underline{y}}{2})-
-J(\underline{x}))^2. \]
--/
-
 /-- The lower bound ([DIR], §6.1.2)
 $$\underline{g_{J,2}}(\underline x,\overline x,\underline y,\overline y)
 =(\underline y-\overline x)^2
@@ -629,15 +405,6 @@ $[\frac12,\frac9{16}]\times[\frac{11}{16},1]$. -/
 theorem g_J_2_lo_tight :
     IsTightLowerBound₂ g_J_2 g_J_2_lo (1 / 2) (9 / 16) (11 / 16) 1 := by
   sorry
-
-/-
-Running $\textsc{Partition}_2(\underline{g_{J,2}},[\frac12,\frac9{16}]\times[\frac{11}{16},1])$
-shows that
-\begin{equation}\label{eqn:g_J_2_auto}\auto
-g_{J,2}(x,y)>10^{-8}
-\end{equation}
-for $(x,y)$ in this rectangle (and note that $\frac{9}{16}=0.5625>x_0$).
--/
 
 /-- **(6.5)** ([DIR], §6.1.2) (🚗). For $(x,y)\in[\frac12,\frac9{16}]\times[\frac{11}{16},1]$:
 $$g_{J,2}(x,y)>10^{-8}.$$ (There is no equation (6.4) in [DIR].) -/

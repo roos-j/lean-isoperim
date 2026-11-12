@@ -33,15 +33,6 @@ namespace Auto.DIR
 open Real Set
 open scoped ContDiff
 
-/-
-Let us now discuss the case $|A|>\frac12$, which we have omitted in Theorem
-\ref{thm:mainisoperim} [Theorem 1.1].
-The classical isoperimetric inequality states that
-\[ \mathbf{E}h_A \ge |A|^* \log_2(1/|A|^*),\]
-where $x^*=\min(x,1-x)$, with equality when $A$ is a subcube or complement of a subcube (the
-inequality follows from \eqref{eqn:hartfractal} [(1.3)]).
--/
-
 /-- $x^*=\min(x,1-x)$ ([DIR], §1.3). Written `x ⁎`. -/
 noncomputable def star (x : ℝ) : ℝ := min x (1 - x)
 
@@ -56,29 +47,15 @@ theorem classical_isoperimetric (n : ℕ) (hn : 1 ≤ n) :
       𝐄 h_{A} = ｜A｜⁎ * log₂ (1 / ｜A｜⁎)) := by
   sorry
 
-/-
-The symmetry between $|A|\le \frac12$ and $|A|\ge \frac12$ is natural here because
-$\mathbf{E} h_A=\mathbf{E} h_{A^c}$.
--/
-
 /-- [DIR], §1.3: $\mathbf{E}h_A=\mathbf{E}h_{A^c}$. -/
 theorem expect_hA_compl (n : ℕ) (A : Set ({0,1}^n)) : 𝐄 h_{A} = 𝐄 h_{Aᶜ} := by
   sorry
-
-/-
-However, generally $\mathbf{E} h_A^\beta\not=\mathbf{E} h_{A^c}^\beta$ for $\beta\not=1$
--/
 
 /-- [DIR], §1.3: generally $\mathbf{E}h_A^\beta\ne\mathbf{E}h_{A^c}^\beta$ for $\beta\ne1$ (there
 are sets for which equality fails; stated for $\beta>0$). -/
 theorem expect_hA_rpow_compl_ne (β : ℝ) (hβ₀ : 0 < β) (hβ : β ≠ 1) :
     ∃ (n : ℕ) (A : Set ({0,1}^n)), 𝐄 h_{A} ^ β ≠ 𝐄 h_{Aᶜ} ^ β := by
   sorry
-
-/-
-and complements of subcubes are no longer believed to be extremizers.
-Nevertheless, we are able to prove an analogue of the classical isoperimetric inequality
--/
 
 /-- **(1.5)** ([DIR], §1.3). For any given $\beta\in[\beta_0,1]$ and $A\subset\{0,1\}^n$,
 $$\mathbf{E}h_A^\beta\ge|A|^*(\log_2(1/|A|^*))^\beta.$$
@@ -100,10 +77,6 @@ theorem eqn_1_5_bim (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) :
     𝐄 h_{A} ^ log₂ (3 / 2) ≥ ｜A｜⁎ * (log₂ (1 / ｜A｜⁎)) ^ log₂ (3 / 2) := by
   sorry
 
-/-
-For $|A|>\frac12$ it turns out that this inequality is far from optimal.
--/
-
 /-- The defining properties of the function $J$ of [DIR], §1.3: $f$ is smooth on
 $(\frac12,1)$, continuous at the endpoints (i.e. on $[\frac12,1]$), and satisfies
 $f''f=-2$ on $(\frac12,1)$, $f(\frac12)=\frac12$, $f(1)=0$. -/
@@ -123,11 +96,6 @@ endpoints satisfying $J''J=-2$, $J(\frac12)=\frac12$, $J(1)=0$ (see `Auto.DIR.ex
 Only its values on $[\frac12,1]$ are meaningful. It can be expressed in terms of the Gaussian
 isoperimetric profile $I(x)$, see (3.4). -/
 noncomputable def J : ℝ → ℝ := if h : ∃ f, IsJ f then h.choose else 0
-
-/-
-The function $J$ plays a central role in this paper and can be expressed in terms of the
-Gaussian isoperimetric profile $I(x)$, see \eqref{eqn:JintermsofI} [(3.4)] below.
--/
 
 /-- **Theorem 1.7** ([DIR]). For $\beta=\beta_0=0.50057$ and $A\subset\{0,1\}^n$ with
 $|A|\ge\frac12$,

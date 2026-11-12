@@ -42,11 +42,6 @@ namespace Auto.DIR
 
 open Real Set
 
-/-
-Every Boolean-valued function $f$ can be written as $f=\mathbf{1}_A$ for some
-$A\subset \{0,1\}^n$.
--/
-
 /-- [DIR], §7: every Boolean-valued function $f$ can be written as $f=\mathbf{1}_A$ for some
 $A\subset\{0,1\}^n$. -/
 theorem boolean_eq_indicator (n : ℕ) (f : ({0,1}^n) → ℝ) (hf : ∀ x, f x = 0 ∨ f x = 1) :
@@ -60,19 +55,11 @@ theorem indicator_norms (n : ℕ) (A : Set ({0,1}^n)) (p : ℝ) (hp : 0 < p) :
     ‖𝟏_{A} - fun _ ↦ 𝐄 𝟏_{A}‖_[p] ^ p = ｜A｜ ^ p * (1 - ｜A｜) + ｜A｜ * (1 - ｜A｜) ^ p := by
   sorry
 
-/-
-On the other side of the inequality,
--/
-
 /-- **(7.1)** ([DIR], §7). For $f=\mathbf{1}_A$ (and $p>0$),
 $$\|\nabla f\|_p^p=2^{-p}(\mathbf{E}h_A^{p/2}+\mathbf{E}h_{A^c}^{p/2}).$$ -/
 theorem eqn_7_1 (n : ℕ) (A : Set ({0,1}^n)) (p : ℝ) (hp : 0 < p) :
     ‖∇𝟏_{A}‖_[p] ^ p = 2 ^ (-p) * (𝐄 h_{A} ^ (p / 2) + 𝐄 h_{Aᶜ} ^ (p / 2)) := by
   sorry
-
-/-
-Set $p=2\beta$.
--/
 
 /-- [DIR], §7: set $p=2\beta$. If $\mathbf{E}h_A^\beta\ge B(|A|)$ for some function $B$ (for all
 $A\subset\{0,1\}^n$), then
@@ -81,11 +68,6 @@ theorem grad_norm_ge (n : ℕ) (β : ℝ) (hβ : 0 < β) (B : ℝ → ℝ)
     (hB : ∀ A : Set ({0,1}^n), 𝐄 h_{A} ^ β ≥ B ｜A｜) (A : Set ({0,1}^n)) :
     ‖∇𝟏_{A}‖_[2 * β] ^ (2 * β) ≥ 2 ^ (-(2 * β)) * (B ｜A｜ + B (1 - ｜A｜)) := by
   sorry
-
-/-
-Thus Theorem \ref{thm:poincare} [1.10] follows from \eqref{eqn:actualisoperimbeta0} [(2.6)] and
-\eqref{eqn:actualisoperimhalf} [(2.7)] if we show the following.
--/
 
 /-- The function
 $G_{P,\beta}(x)=2^{-2\beta}(b_\beta(x)+b_\beta(1-x))-x^{2\beta}(1-x)-x(1-x)^{2\beta}$
@@ -123,11 +105,6 @@ theorem prop_7_1_case_I_eq (β : ℝ) (x : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 6
     G_P β x = 2 ^ (-(2 * β)) * (L β x + J (1 - x)) - x ^ (2 * β) * (1 - x) - x * (1 - x) ^ (2 *
         β) := by
   sorry
-
-/-
-It is clear that this inequality holds asymptotically as $x\to 0^+$ and this is not sensitive to
-the value of $\beta$.
--/
 
 /-- The function
 $g_{P,1}(x)=2^{-2\beta_0}\sqrt{\log_2(1/x)}+2^{-2\beta_0}\sqrt{\log(w_0/x)}-2$

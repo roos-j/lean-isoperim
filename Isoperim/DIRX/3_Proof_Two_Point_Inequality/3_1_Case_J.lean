@@ -43,24 +43,12 @@ local notation "γ" => γX
 
 /-! ### §3 Proof of the two-point inequality -/
 
-/-
-In this section we prove \eqref{eqn:maintwopt} [(2.4)] (`Auto.DIRX.eqn_2_4`). The argument is
-split into six cases according to the piecewise definition of $B_w$.
-We follow some of the arguments in \cite[\S 6]{DIR24} with the most important differences in the
-critical case, Case $J$, and in Cases $LJ$, $QJQ$.
--/
-
 /-! ### §3.1 Case J: $\frac12\le x\le y\le1$ -/
 
 /-- [DIRX], §3.1 (Case $J$): $G[B_{w_1}](x,y)\ge0$ for $\frac12\le x\le y\le1$. -/
 theorem caseJ (x y : ℝ) (hx : 1 / 2 ≤ x) (hxy : x ≤ y) (hy : y ≤ 1) :
     G (B_{w₁}) x y ≥ 0 := by
   sorry
-
-/-
-This is the main case, where the failure for $\beta$ near $\frac12$ occurred in \cite{DIR24}.
-It suffices to show
--/
 
 /-- [DIRX], §3.1: for $\frac12\le x\le y\le1$,
 $G_1[B_{w_1}](x,y)=\sqrt{(y-x)^2+\mathrm{J}(y)^2}+\mathrm{J}(x)-2\mathrm{J}(\frac{x+y}2)$ (so that
@@ -75,16 +63,6 @@ theorem eqn_3_1 (x y : ℝ) (hx : 1 / 2 ≤ x) (hxy : x ≤ y) (hy : y ≤ 1) :
     √((y - x) ^ 2 + J y ^ 2) + J x ≥ 2 * J ((x + y) / 2) := by
   sorry
 
-/-
-We give an argument
-inspired by Bobkov's two-point inequality \cite{Bob97} (see also \cite[Prop. 3.3]{DIR24},
-`Auto.DIR.prop_3_3`).
-Set $c=\tfrac{x+y}{2}$ and $u=\tfrac{y-x}{2}$. Then
-it suffices to show
-\[ \sqrt{4u^2 + {\mathrm{J}}(c+u)^2} \ge 2 {\mathrm{J}}( c) - {\mathrm{J}}(c-u)\]
-for all $0\le u\le \min(c-\frac12,1-c)=c_*$ and $c \in [\frac12, 1]$.
--/
-
 /-- $c_*=\min(c-\frac12,1-c)$ ([DIRX], §3.1). -/
 noncomputable def cStar (c : ℝ) : ℝ := min (c - 1 / 2) (1 - c)
 
@@ -94,12 +72,6 @@ $c\in[\frac12,1]$. -/
 theorem caseJ_cu (c u : ℝ) (hc : c ∈ Icc (1 / 2 : ℝ) 1) (hu : u ∈ Icc 0 (cStar c)) :
     √(4 * u ^ 2 + J (c + u) ^ 2) ≥ 2 * J c - J (c - u) := by
   sorry
-
-/-
-By concavity of ${\mathrm{J}}$, the right-hand side is non-negative so we may equivalently show
-\[4u^2 + {\mathrm{J}}(c+u)^2 \ge 4 {\mathrm{J}}(c)^2 + {\mathrm{J}}(c-u)^2 -4 {\mathrm{J}}(c)
-{\mathrm{J}}(c-u).\]
--/
 
 /-- [DIRX], §3.1: by concavity of $\mathrm{J}$, the right-hand side
 $2\mathrm{J}(c)-\mathrm{J}(c-u)$ is non-negative (for $c\in[\frac12,1]$, $0\le u\le c_*$). -/
@@ -114,10 +86,6 @@ theorem caseJ_sq_iff (c u : ℝ) (hc : c ∈ Icc (1 / 2 : ℝ) 1) (hu : u ∈ Ic
       4 * u ^ 2 + J (c + u) ^ 2 ≥ 4 * J c ^ 2 + J (c - u) ^ 2 - 4 * J c * J (c - u) := by
   sorry
 
-/-
-Letting
--/
-
 /-- ([DIRX], §3.1).
 $F_c(u)=\mathrm{J}(c+u)^2-\mathrm{J}(c-u)^2+4u^2-4\mathrm{J}(c)^2+4\mathrm{J}(c)\mathrm{J}(c-u)$.
 Written `F_{c} u`. -/
@@ -125,10 +93,6 @@ noncomputable def FX (c u : ℝ) : ℝ :=
   J (c + u) ^ 2 - J (c - u) ^ 2 + 4 * u ^ 2 - 4 * J c ^ 2 + 4 * J c * J (c - u)
 
 local notation "F_{" c "}" => FX c
-
-/-
-we compute
--/
 
 /-- [DIRX], §3.1: we compute
 $F_c'(u)=2\mathrm{J}(c+u)\mathrm{J}'(c+u)+2\mathrm{J}(c-u)\mathrm{J}'(c-u)+8u
@@ -149,22 +113,12 @@ theorem FX_deriv2 (c u : ℝ) (hc : c ∈ Icc (1 / 2 : ℝ) 1) (hu : u ∈ Icc 0
       2 * (deriv J (c + u) ^ 2 - deriv J (c - u) ^ 2) + 8 - 4 * γ * (J c / J (c - u)) := by
   sorry
 
-/-
-where we used that ${\mathrm{J}}\cdot {\mathrm{J}}'' = -\gamma$.
-It suffices to show that
--/
-
 /-- **(3.2)** ([DIRX], §3.1). $F_c''(u)\ge0$ for $u\in[0,c_*]$ and $c\in[\frac12,1]$ (at points
 with $c+u<1$; at $c+u=1$ the derivative $\mathrm{J}'(1)$ is infinite and $F_c''$ is not
 defined). -/
 theorem eqn_3_2 (c u : ℝ) (hc : c ∈ Icc (1 / 2 : ℝ) 1) (hu : u ∈ Icc 0 (cStar c))
     (hcu : c + u < 1) : deriv (deriv (F_{c})) u ≥ 0 := by
   sorry
-
-/-
-for $u\in [0,c_*]$ and $c\in [\frac12, 1]$.
-Indeed, since $F_c(0)=F'_c(0)=0$ this implies $F_c(u)\ge 0$ for $u\in [0,c_*]$ as required.
--/
 
 /-- [DIRX], §3.1: $F_c(0)=F_c'(0)=0$ (for $c\in[\frac12,1)$). -/
 theorem FX_zero (c : ℝ) (hc : c ∈ Ico (1 / 2 : ℝ) 1) :
@@ -177,18 +131,9 @@ theorem FX_nonneg (c u : ℝ) (hc : c ∈ Icc (1 / 2 : ℝ) 1) (hu : u ∈ Icc 0
     F_{c} u ≥ 0 := by
   sorry
 
-/-
-To show \eqref{eqn:FcDDpos} [(3.2)] we distinguish two cases.
--/
-
 section Case_I
 
 /-! ### Case I: $x=c-u\ge x_1$ -/
-
-/-
-Since ${\mathrm{J}}$ is decreasing on $[x_1, 1]$ and $\gamma\le 2$,
-\[ F''_c(u) \ge 2 ({\mathrm{J}}'(y)^2-{\mathrm{J}}'(x)^2) .\]
--/
 
 /-- [DIRX], §3.1, Case I: $\gamma\le2$. -/
 theorem γX_le_two : γ ≤ 2 := by
@@ -201,23 +146,12 @@ theorem caseJ_I_lower (c u : ℝ) (hc : c ∈ Icc (1 / 2 : ℝ) 1) (hu : u ∈ I
     deriv (deriv (F_{c})) u ≥ 2 * (deriv J (c + u) ^ 2 - deriv J (c - u) ^ 2) := by
   sorry
 
-/-
-Since $({\mathrm{J}}')^2$ is convex (see \cite[Lemma 3.2]{DIR24}, `Auto.DIR.lemma_3_2`),
-\[ {\mathrm{J}}'(y)^2 - {\mathrm{J}}'(x)^2 \ge 2u (({\mathrm{J}}')^2)'(x). \]
--/
-
 /-- [DIRX], §3.1, Case I: since $(\mathrm{J}')^2$ is convex ([DIR], Lemma 3.2), with $x=c-u$,
 $y=c+u$: $\mathrm{J}'(y)^2-\mathrm{J}'(x)^2\ge2u((\mathrm{J}')^2)'(x)$. -/
 theorem caseJ_I_convex (c u : ℝ) (hc : c ∈ Icc (1 / 2 : ℝ) 1) (hu : u ∈ Icc 0 (cStar c))
     (hcu : c + u < 1) :
     deriv J (c + u) ^ 2 - deriv J (c - u) ^ 2 ≥ 2 * u * deriv (fun t ↦ deriv J t ^ 2) (c - u) := by
   sorry
-
-/-
-Observe $(({\mathrm{J}}')^2)' = 2 {\mathrm{J}}' \cdot {\mathrm{J}}'' = - 2 \gamma {\mathrm{J}}' /
-{\mathrm{J}} \ge 0$ on the interval $[x_1,1]$, since ${\mathrm{J}}'\le 0$ there. This shows that
-$F_c''(u)\ge 0$.
--/
 
 /-- [DIRX], §3.1, Case I: $((\mathrm{J}')^2)'=2\mathrm{J}'\cdot\mathrm{J}''
 =-2\gamma\mathrm{J}'/\mathrm{J}\ge0$ on $[x_1,1)$, since $\mathrm{J}'\le0$ there. -/
@@ -237,15 +171,6 @@ end Case_I
 section Case_II
 
 /-! ### Case II: $x=c-u\in[\frac12,x_1]$ -/
-
-/-
-We use monotonicity properties of the functions ${\mathrm{J}},|{\mathrm{J}}'|$ on the intervals
-$[\frac12, x_1]$ and $[x_1,1]$ (see \S \ref{sec:prelimJ} [§2.2]) to estimate
-\[ F''_c(u) = 2{\mathrm{J}}'(y)^2 - 2{\mathrm{J}}'(x)^2 + 8 - 4 \gamma {\mathrm{J}}((x+y)/2)/
-{\mathrm{J}}(x) \]
-\[ \ge -2{\mathrm{J}}'(\tfrac12)^2 + 8 - 4\gamma {\mathrm{J}}(x_1)/{\mathrm{J}}(\tfrac12)\in
-[0.08, 0.09]. \]
--/
 
 /-- [DIRX], §3.1, Case II: for $x=c-u\in[\frac12,x_1]$ (and $y=c+u<1$), using the monotonicity
 of $\mathrm{J}$, $|\mathrm{J}'|$ on $[\frac12,x_1]$ and $[x_1,1]$,

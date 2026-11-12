@@ -36,13 +36,6 @@ theorem thm_1_6 :
     Tendsto (fun x ↦ 𝓑 (1 / 2) x / (x * √(log₂ (1 / x)))) (𝓝[𝒬 ∩ Set.Ioi 0] 0) (𝓝 1) := by
   sorry
 
-/-
-(Here $f(x)\sim g(x)$ as $x\to x_*$ means $\lim_{x\to x_*} \frac{f(x)}{g(x)}=1$. Note the lower
-bound is \eqref{eqn:sharpasymp} [(1.4)], while the upper bound follows from Cauchy-Schwarz and
-the characterization of $\mathcal{B}_1$, which implies $\mathcal{B}_1(x)\sim x \log_2(1/x)$ as
-$x\to 0+$.)
--/
-
 /-- [DIR], §1.2, after Theorem 1.6: the upper bound follows from Cauchy–Schwarz,
 $\mathbf{E}\sqrt{h_A}\le\sqrt{|A|\,\mathbf{E}h_A}$, which gives
 $\mathcal{B}_{\frac12}(x)\le\sqrt{x\,\mathcal{B}_1(x)}$ for $x\in\mathcal{Q}$. -/
@@ -55,11 +48,6 @@ theorem isoProfile_one_asymp :
     Tendsto (fun x ↦ 𝓑 1 x / (x * log₂ (1 / x))) (𝓝[𝒬 ∩ Set.Ioi 0] 0) (𝓝 1) := by
   sorry
 
-/-
-The bound \eqref{eqn:sharpasymp} [(1.4)] is quite bad unless $|A|$ is very close to $0$ (e.g. at
-$|A|=\frac12$ it proves only $\mathcal{B}_{\frac12}(\frac12)\ge 0.207$).
--/
-
 /-- [DIR], §1.2: at $|A|=\frac12$ the bound (1.4) proves only
 $\mathcal{B}_{\frac12}(\frac12)\ge0.207$, i.e.
 $\frac12\sqrt{\log_2 2+1}-\frac12\ge 0.207$ (and $<0.208$). -/
@@ -67,16 +55,5 @@ theorem eqn_1_4_at_half :
     0.207 ≤ 1 / 2 * √(log₂ (1 / (1 / 2)) + 1) - 1 / 2 ∧
       1 / 2 * √(log₂ (1 / (1 / 2)) + 1) - 1 / 2 < (0.208 : ℝ) := by
   sorry
-
-/-
-However, it features the sharp asymptotic behavior as $|A|\to 0^+$, both in the constant of the
-leading term and in the power of the logarithm.
-This can be compared with the estimate (1.1) of Talagrand \cite{Tal93} which gave a sharp
-asymptotic in the power of the logarithm, but not the constant. To our knowledge, this is the
-first sharp estimate proved at the critical exponent $\beta=\frac12$.
-
-We also obtain asymptotics as $|A|\to 1^-$, but we do not know if these are sharp (see Remark
-\ref{rem:asympnearone} [Remark 3.7]).
--/
 
 end Auto.DIR

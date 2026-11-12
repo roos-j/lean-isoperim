@@ -34,21 +34,11 @@ namespace Auto.DIR
 
 open Real Set
 
-/-
-\subsection{\texorpdfstring{Case $LJ$: $0 \leq x \leq \tfrac{1}{4}, \tfrac{1}{2}\leq y\leq 1,
-1\leq x+y$}{Case LJ}}
-\label{sec:caseLJ}
--/
-
 /-- [DIR], §6.4: in the region $LJ$ ($0\le x\le\frac14$, $\frac12\le y\le1$, $1\le x+y$) we have
 $y\in[\frac34,1]$. -/
 theorem caseLJ_region (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 4)) (hy : y ∈ Icc (1 / 2 : ℝ) 1)
     (hxy : 1 ≤ x + y) : y ∈ Icc (3 / 4 : ℝ) 1 := by
   sorry
-
-/-
-See Figure \ref{fig:cases} [Figure 3].
--/
 
 /-- **Proposition 6.8** ([DIR], Case $LJ$). For $(x,y)\in[0,\frac14]\times[\frac34,1]$,
 $1\le x+y$, and $\beta\in[\frac12,1]$,
@@ -101,10 +91,6 @@ theorem L_half_deriv2_monotoneOn_neg :
       ∀ x ∈ Ioc (0 : ℝ) (1 / 4), deriv (deriv (L (1 / 2))) x < 0 := by
   sorry
 
-/-
-Furthermore,
--/
-
 /-- **(6.19)** ([DIR], proof of Proposition 6.8). $L''_{\frac12}(\frac14)\le-2.7$. -/
 theorem eqn_6_19 : deriv (deriv (L (1 / 2))) (1 / 4) ≤ -2.7 := by
   sorry
@@ -131,10 +117,6 @@ theorem g_LJ_deriv2_nonpos_of_deriv3 (x y : ℝ) (hx : x ∈ Ioc (0 : ℝ) (1 / 
     (h2 : deriv (deriv (fun x ↦ g_LJ x y)) (1 / 4) ≤ 0) :
     deriv (deriv (fun x ↦ g_LJ x y)) x ≤ 0 := by
   sorry
-
-/-
-To show the latter we first evaluate
--/
 
 /-- **(6.20)** ([DIR], proof of Proposition 6.8). $\partial_x^2g_{LJ}(\frac14,1)\le-0.7$. -/
 theorem eqn_6_20 : deriv (deriv (fun x ↦ g_LJ x 1)) (1 / 4) ≤ -0.7 := by
@@ -193,11 +175,6 @@ theorem g_LJ_deriv3_nonneg (x y : ℝ) (hx : x ∈ Ioc (0 : ℝ) (1 / 4))
     iteratedDeriv 3 (fun x ↦ g_LJ x y) x ≥ 0 := by
   sorry
 
-/-
-Since in the current region $J'(\tfrac{x+y}{2})\leq 0$ and $L'''_{1/2}\ge 0$ by Lemma
-\ref{lem:Lprop} [5.6], the claim follows.
--/
-
 /-- [DIR], proof of Proposition 6.8: it remains to show non-negativity on the boundary of the
 region $LJ$: if $g_{LJ}\ge0$ on the boundary pieces $y=1$, $x+y=1$ and $x=\frac14$, then
 $g_{LJ}\ge0$ on the region $\{(x,y)\in[0,\frac14]\times[\frac34,1] : 1\le x+y\}$ (by concavity
@@ -236,10 +213,6 @@ theorem g_LJ_diag_eq (y : ℝ) (hy : y ∈ Icc (3 / 4 : ℝ) 1) :
 theorem eqn_6_22 : g_LJ (1 / 4) (3 / 4) ≥ 0.02 := by
   sorry
 
-/-
-$g_{LJ}(0,1)= 0$ (`Auto.DIR.g_LJ_zero_one`), and
--/
-
 /-- [DIR], proof of Proposition 6.8:
 $$\partial_y^2(g_{LJ}(1-y,y))=(\sqrt2-1)J''(y)+L_{\frac12}''(1-y)\le0$$
 (for $y\in[\frac34,1)$). -/
@@ -252,10 +225,6 @@ theorem g_LJ_diag_deriv2 (y : ℝ) (hy : y ∈ Ico (3 / 4 : ℝ) 1) :
 /-- [DIR], proof of Proposition 6.8: $g_{LJ}(1-y,y)\ge0$ for all $y\in[\frac34,1]$. -/
 theorem g_LJ_diag_nonneg (y : ℝ) (hy : y ∈ Icc (3 / 4 : ℝ) 1) : g_LJ (1 - y) y ≥ 0 := by
   sorry
-
-/-
-Finally, we tackle the case $x=\tfrac{1}{4}$, $y\in [\tfrac{3}{4},1]$. We have
--/
 
 /-- The function ([DIR], proof of Proposition 6.8; denoted $f$ there)
 $$f(y)=y-\tfrac14+(\sqrt2-1)J(y)+L_{\frac12}(\tfrac14)-2J(\tfrac y2+\tfrac18).$$ -/
@@ -270,11 +239,6 @@ theorem f_LJ_eq (y : ℝ) : f_LJ y = g_LJ (1 / 4) y := by
 $y=\frac34$, $y=1$. -/
 theorem f_LJ_endpoints_nonneg : f_LJ (3 / 4) ≥ 0 ∧ f_LJ 1 ≥ 0 := by
   sorry
-
-/-
-Since we already know $f\ge 0$ at the endpoints, it suffices to rule out an interior minimum on
-$[\tfrac{3}{4},1]$.
--/
 
 /-- [DIR], proof of Proposition 6.8: using $JJ''=-2$ we calculate
 $$f''(y)=(\sqrt2-1)J''(y)-\tfrac12J''(\tfrac y2+\tfrac18)

@@ -42,12 +42,6 @@ namespace Auto.DIR
 
 open Real Finset
 
-/-
-Let $n\ge 1$ be an integer.  For a subset $A$ of the Hamming cube $\{0,1\}^n$ and a vertex
-$x\in A$ let $h_A(x)$ be the number of edges connecting $x$ with the complement of $A$ and
-let $h_A(x)=0$ if $x\not\in A$.
--/
-
 /-- The Hamming cube $\{0,1\}^n$ ([DIR], §1, first paragraph). We realize it as
 `Fin n → ZMod 2`, so that the bitwise addition $x\oplus y$ of [DIR, §3] is `x + y`. -/
 abbrev Cube (n : ℕ) : Type := Fin n → ZMod 2
@@ -100,10 +94,6 @@ $\{x\in\{0,1\}^n : x_1=\dots=x_k=0\}$ of [DIR], §1.1). -/
 def IsSubcube {n : ℕ} (A : Set ({0,1}^n)) : Prop :=
   ∃ (S : Finset (Fin n)) (a : {0,1}^n), A = {x | ∀ i ∈ S, x i = a i}
 
-/-
-One of our main results is the following isoperimetric inequality.
--/
-
 /-- **Theorem 1.1** ([DIR]). For all $\beta\ge\beta_0=0.50057$ and $A\subset\{0,1\}^n$ with
 $|A|\le\frac12$,
 $$\mathbf{E}h_A^\beta\ge|A|(\log_2(1/|A|))^\beta. \tag{1.1}$$
@@ -115,11 +105,6 @@ theorem thm_1_1 (n : ℕ) (hn : 1 ≤ n) (β : ℝ) (hβ : β₀ ≤ β) :
       𝐄 h_{A} ^ β = ｜A｜ * (log₂ (1 / ｜A｜)) ^ β) := by
   sorry
 
-/-
-Here $\mathbf{E}f=2^{-n} \sum_{x\in \{0,1\}^n} f(x)$ and $|A|=\mathbf{E} \mathbf{1}_A$.
-(These definitions are `Auto.DIR.expect` and `Auto.DIR.dens` above.)
--/
-
 /-- [DIR], §1, after Theorem 1.1: if (1.1) holds for some $\beta$, then it follows for all
 $\beta'\ge\beta$ (by Hölder's inequality, see Lemma 5.1). -/
 theorem eqn_1_1_mono (β : ℝ) (hβ : 0 < β)
@@ -129,13 +114,6 @@ theorem eqn_1_1_mono (β : ℝ) (hβ : 0 < β)
     ∀ (n : ℕ), 1 ≤ n → ∀ A : Set ({0,1}^n), ｜A｜ ≤ 1 / 2 →
       𝐄 h_{A} ^ β' ≥ ｜A｜ * (log₂ (1 / ｜A｜)) ^ β' := by
   sorry
-
-/-
-The threshold $\beta_0=0.50057$ is rooted in the failure of a certain variant of Bobkov's
-two-point inequality for the Gaussian isoperimetric profile
-(see Remark \ref{rem:beta0explanation} [Remark 2.4] and \ref{rem:Jbobkovtwoptfailure}
-[Remark 3.6] below).
--/
 
 /-- **Remark 1.2** ([DIR], added in revised version, August 2026; cited from [DIRX26,
 Theorem 1.1], formalized as `Auto.DIRX.thm_1_1`). This failure can be overcome to prove (1.1) in
@@ -149,11 +127,6 @@ theorem rem_1_2 (n : ℕ) (hn : 1 ≤ n) (β : ℝ) (hβ : 1 / 2 ≤ β) (A : Se
 
 In the paper this subsection follows Remark 1.8 (§1.3). It is placed here since Corollary 1.9
 is a corollary of Theorem 1.1. -/
-
-/-
-As an immediate consequence of Theorem \ref{thm:mainisoperim} [Theorem 1.1] we come closer to a
-conjecture of Kahn and Park \cite[Conjecture 1.3]{KP20}.
--/
 
 /-- The set $\mathcal{E}$ of edges of $\{0,1\}^n$ ([DIR], Corollary 1.9), as ordered pairs
 $(x,y)$ of vertices differing in exactly one bit. -/
@@ -177,12 +150,6 @@ theorem cor_1_9 (n : ℕ) (hn : 1 ≤ n) (A B W : Set ({0,1}^n))
     (hcover : A ∪ B ∪ W = Set.univ) (hA : ｜A｜ = 1 / 2) :
     |∇(A, B)| + (n : ℝ) ^ (0.50057 : ℝ) * ｜W｜ ≥ 1 / 2 := by
   sorry
-
-/-
-Kahn and Park proved this with $\log_3(\frac32)\approx 0.585$ in the exponent of $n$ and in
-\cite[Cor. 1.6]{BIM23} this was improved to $0.53$, while the conjectured optimal exponent is
-$0.5$.
--/
 
 /-- [DIR], §1.4 (cited from Kahn–Park [KP20]): Corollary 1.9 holds with the exponent
 $\log_2(\frac32)\approx0.585$ in place of $0.50057$.
@@ -214,11 +181,6 @@ paper; it is proved in [DIRX26, Theorem 1.2]. -/
 def KahnParkConjecture : Prop :=
   ∀ (n : ℕ), 1 ≤ n → ∀ A B W : Set ({0,1}^n), Disjoint A B → Disjoint A W → Disjoint B W →
     A ∪ B ∪ W = Set.univ → ｜A｜ = 1 / 2 → |∇(A, B)| + (n : ℝ) ^ (0.5 : ℝ) * ｜W｜ ≥ 1 / 2
-
-/-
-Corollary \ref{cor:kahnpark} follows from Theorem \ref{thm:mainisoperim} because for
-$|B\cup W|=|A|=\frac12$, we have
--/
 
 /-- [DIR], §1.4, display after Corollary 1.9: for a partition $(A,B,W)$ of $\{0,1\}^n$ with
 $|B\cup W|=|A|=\frac12$,

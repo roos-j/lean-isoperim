@@ -56,14 +56,6 @@ noncomputable def poincareConst (p : ℝ) : ℝ :=
   sSup {C : ℝ | ∀ (n : ℕ), 1 ≤ n → ∀ f : ({0,1}^n) → ℂ,
     ‖∇f‖_[p] ≥ C * ‖f - fun _ ↦ 𝐄 f‖_[p]}
 
-/-
-Let $1\leq p\le 2$ and let $C_p$ be the largest constant such that the $L^p$ Poincar{\'e}
-inequality
-\[\|\nabla f\|_p \geq C_p \|f-\mathbf{E} f\|_p \]
-holds for all functions $f:\{0,1\}^n\to \mathbb{C}$, where $\|f\|_p=(\mathbf{E}|f|^p)^{1/p}$ and
-\[|\nabla f|^2=\sum_{i=1}^n |\tfrac12(f(x)-f(x\oplus e_i))|^2.\]
--/
-
 /-- [DIR], §1.5: the value of $C_p$ remains unknown except for $p=2$, where $C_2=1$. -/
 theorem poincareConst_two : poincareConst 2 = 1 := by
   sorry
@@ -76,19 +68,6 @@ theorem poincareConst_one_bounds :
 
 /-- [DIR], §1.5: the conjecture $C_1=\sqrt{2/\pi}$ (a statement, not a claim). -/
 def PoincareConstOneConjecture : Prop := poincareConst 1 = √(2 / π)
-
-/-
-and it is conjectured that $C_1=\sqrt{2/\pi}$, matching Pisier's inequality \cite{pis02} for the
-Gaussian case.
-The lower bound $C_{1}>\frac{2}{\pi}$ was obtained only recently \cite{ILvHV} with arguments that
-eventually led to the resolution of Enflo's problem \cite{IVH}. These techniques were later used
-in \cite{haonan1} and \cite{Esken1} to obtain sharpening of Poincar\'e inequalities in the quantum
-setting, and for vector valued functions.
-
-In \cite{BIM23} it was shown that if we restrict the inequality to Boolean-valued functions
-$f:\{0,1\}^n\to \{0,1\}$, then the corresponding best constant $C_{B,p}$ satisfies
-$C_{B,1} >C_1$.
--/
 
 /-- The best constant $C_{B,p}$ in the $L^p$ Poincaré inequality restricted to Boolean-valued
 functions $f:\{0,1\}^n\to\{0,1\}$ ([DIR], §1.5). -/
@@ -106,11 +85,6 @@ theorem poincareConstBool_one_bim :
 /-- [DIR], §1.5: the conjecture that indicator functions of half-cubes extremize the Boolean
 Poincaré inequality, which would mean $C_{B,p}=1$ for all $p\ge1$ (a statement, not a claim). -/
 def PoincareConstBoolConjecture : Prop := ∀ p : ℝ, 1 ≤ p → poincareConstBool p = 1
-
-/-
-It is conjectured that indicator functions of half-cubes extremize this inequality, which would
-mean that $C_{B,p}=1$ for all $p\ge 1$.
--/
 
 /-- [DIR], §1.5, before Theorem 1.10: "We obtain an improvement of the best known lower bound
 for $C_{B,1}$ as well as the sharp bound $C_{B,p}=1$ for $p\geq 2\beta_0$": $C_{B,p}=1$ for
@@ -152,50 +126,8 @@ theorem thm_1_10 (n : ℕ) (hn : 1 ≤ n) :
 theorem two_mul_β₀ : 2 * β₀ = 1.00114 := by
   sorry
 
-/-
-This relies on the familiar observation that $\|\nabla \mathbf{1}_A\|_p$ can be written in terms
-of $\mathbf{E} h_A^{p/2}$ and $\mathbf{E} h_{A^c}^{p/2}$; see \eqref{eqn:twosidedgradient} [(7.1)].
-A subtlety is that \eqref{eqn:poincarealmostL1} [(1.7)] does not follow from Theorems
-\ref{thm:mainisoperim} [1.1] and \ref{thm:isoperimJ} [1.7], but requires the stronger, more
-technical isoperimetric inequalities \eqref{eqn:actualisoperimhalf} [(2.7)] and
-\eqref{eqn:actualisoperimbeta0} [(2.6)] proved below.
--/
-
 /-! ### Structure of the paper -/
 
-/-
-Here is a brief overview of the different sections and where to find the proofs of the main
-theorems:
-\begin{itemize}
-\item[--] In \S \ref{sec:envelope} [§2] we reduce the proofs of Theorems \ref{thm:mainisoperim},
-\ref{thm:onehalf} and \ref{thm:isoperimJ} [1.1, 1.5, 1.7] to proving certain two-point
-inequalities for a Bellman-style function, Theorem \ref{thm:maintwopt} [2.2]. Finding this
-function was facilitated by numerical approximation of the true envelope function.
-\item[--] In \S \ref{sec:bobkov} [§3] we revisit Bobkov's inequality and prove Theorem
-\ref{thm:asymp} [1.6], as well as a variant of Bobkov's two-point inequality used in the proof of
-Theorem \ref{thm:maintwopt} [2.2].
-\item[--] In \S \ref{sec:auto} [§4] we explain how to automate proving that a function is positive
-using interval arithmetic. To our knowledge it is the first time computer-assisted methods are
-used in this context.
-\item[--] In \S \ref{sec:prelim} [§5] we prove various auxiliary estimates used throughout.
-\item[--] In \S \ref{sec:maintwopt} [§6] we prove the main two-point inequalities, Theorem
-\ref{thm:maintwopt} [2.2]. This takes a considerable amount of effort, even with computer-assisted
-proofs. The analysis naturally breaks into several cases; the most critical one is
-``Case $J$.I'' in \S \ref{sec:J-I} [§6.1.1].
-\item[--] In \S \ref{sec:poincare} [§7] we derive Theorem \ref{thm:poincare} [1.10] as a
-consequence of Theorem \ref{thm:maintwopt} [2.2].
-\end{itemize}
--/
-
 /-! ### Acknowledgments -/
-
-/-
-We thank the American Institute of Mathematics (AIM) for funding our SQuaRE workshop from which
-this project developed. We also thank our fellow SQuaRE members Irina Holmes and Alexander
-Volberg. J.R. also thanks Rodrigo Ba\~{n}uelos for helpful comments. The authors were supported
-in part by grants from the National Science Foundation DMS-2154356 (P.D.), CAREER-DMS-2152401
-(P.I.), DMS-2154835 (J.R.).
-We thank an anonymous referee for a thorough reading of the paper and many useful comments.
--/
 
 end Auto.DIR

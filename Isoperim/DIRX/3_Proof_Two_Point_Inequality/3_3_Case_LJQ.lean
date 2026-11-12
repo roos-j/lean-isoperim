@@ -54,23 +54,9 @@ theorem caseLJQ (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 4)) (hy : y ∈ Icc (
     (hxy : x + y ≤ 1) : G (B_{w₁}) x y ≥ 0 := by
   sorry
 
-/-
-We split the region into two pieces and treat each separately.
--/
-
 section Case_I
 
 /-! ### Case I: $\frac1{16}\le x\le\frac14$, $\frac12\le y\le\frac34$ -/
-
-/-
-In this rectangle, we use the tight lower bound for $G[B_w](x,y)$ given by
-\[ \underline{h_{LJQ,1}}(\underline{x},\overline{x},\underline{y},\overline{y})=
-\max\Big(\sqrt{(\underline{y}-\overline{x})^{2}+\underline{{\mathrm{J}}}(\underline{y},
-\overline{y})^{2}}, \underline{y}-\overline{x}+(\sqrt{2}-1) \underline{{\mathrm{J}}}(\underline{y},
-\overline{y})\Big) \]
-\[ + L(\underline{x}) - 2 Q(\tfrac{\overline{x}+\overline{y}}{2}).
-\]
--/
 
 /-- The tight lower bound ([DIRX], §3.3, Case I)
 $$\underline{h_{LJQ,1}}(\underline x,\overline x,\underline y,\overline y)=
@@ -87,10 +73,6 @@ theorem h_LJQ₁_lo_tight :
     IsTightLowerBound₂ (fun x y ↦ G (B_{w₁}) x y) h_LJQ₁_lo (1 / 16) (1 / 4) (1 / 2) (3 / 4) := by
   sorry
 
-/-
-By dyadic partitioning we obtain the lower bound
--/
-
 /-- **(3.3)** ([DIRX], §3.3, Case I) (🚗). By dyadic partitioning,
 $$G[B_w](x,y)>10^{-6}$$ for $(x,y)\in[\frac1{16},\frac14]\times[\frac12,\frac34]$ (with
 $w=w_1$). -/
@@ -99,22 +81,11 @@ theorem eqn_3_3 (x y : ℝ) (hx : x ∈ Icc (1 / 16 : ℝ) (1 / 4))
     G (B_{w₁}) x y > (10 : ℝ) ^ (-6 : ℤ) := by
   sorry
 
-/-
-for $(x,y)\in [\frac1{16},\frac14]\times[\frac12,\frac34]$.
--/
-
 end Case_I
 
 section Case_II
 
 /-! ### Case II -/
-
-/-
-For the remainder of the case $LJQ$ it suffices to show that if
-$x\in [0,\frac14],$ $y\in [\frac12,1]$, and
-if in addition $x\le \frac1{16}$ or $y\ge \frac34$ holds, then
-\[ G_{LJQ}(x,y)=y-x + (\sqrt{2}-1) {\mathrm{J}}(y) +L(x)-2Q(\tfrac{x+y}{2})\geq 0.\]
--/
 
 /-- $G_{LJQ}(x,y)=y-x+(\sqrt2-1)\mathrm{J}(y)+L(x)-2Q(\frac{x+y}2)$ ([DIRX], §3.3, Case II).
 Written `G_LJQ x y`. -/
@@ -143,12 +114,6 @@ theorem caseLJQ_II (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 4)) (hy : y ∈ Ic
     (hxy : x + y ≤ 1) (h : x ≤ 1 / 16 ∨ y ≥ 3 / 4) : G_LJQ x y ≥ 0 := by
   sorry
 
-/-
-For fixed
-$y\in [0, 1]$, the function $x\mapsto G_{LJQ}(x,y)$ is strictly concave on $[0,\frac14]$.
-Indeed, in \cite[Lemma 6.7]{DIR24} (`Auto.DIR.lemma_6_7`) it was shown that
--/
-
 /-- [DIRX], §3.3, Case II: for fixed $y\in[0,1]$, the function $x\mapsto G_{LJQ}(x,y)$ is strictly
 concave on $[0,\frac14]$. -/
 theorem G_LJQ_strictConcave (y : ℝ) (hy : y ∈ Icc (0 : ℝ) 1) :
@@ -164,10 +129,6 @@ theorem eqn_3_4 (x y : ℝ) (hx : x ∈ Ioc (0 : ℝ) (1 / 4)) (hy : y ∈ Icc (
       deriv (deriv L) x - 1 / 2 * deriv (deriv Q) ((x + y) / 2) < 0 := by
   sorry
 
-/-
-Hence it remains to verify the non-negativity of $G_{LJQ}$ on the $x$-boundary of the region.
--/
-
 /-- [DIRX], §3.3, Case II: by concavity in $x$ it remains to verify non-negativity of $G_{LJQ}$
 on the $x$-boundary of the region, i.e. $G_{LJQ}(0,y)\ge0$ for $y\in[\frac12,1]$,
 $G_{LJQ}(\frac1{16},y)\ge0$ for $y\in[\frac12,\frac34]$ and $G_{LJQ}(1-y,y)\ge0$ for
@@ -182,23 +143,10 @@ theorem caseLJQ_II_of_boundary
 
 section Boundary_x_eq_0
 
-/-
-First we verify
-$G_{LJQ}(0,y)\ge 0$ for all $y\in [\frac12,1]$. Let
-\[ f(y)=G_{LJQ}(0,y).
-\]
--/
-
 /-- $f(y)=G_{LJQ}(0,y)$ ([DIRX], §3.3, Case II). Written `f y`. -/
 noncomputable def fX (y : ℝ) : ℝ := G_LJQ 0 y
 
 local notation "f" => fX
-
-/-
-Using ${\mathrm{J}}\cdot{\mathrm{J}}''=-\gamma$, we compute
-\[ f'(y) = 1 + (\sqrt{2}-1){\mathrm{J}}'(y) - Q'(\tfrac{y}2), \]
-\[f''(y) = -\gamma (\sqrt{2}-1) {\mathrm{J}}(y)^{-1} -\tfrac12 Q''(\tfrac{y}2).\]
--/
 
 /-- [DIRX], §3.3, Case II: using $\mathrm{J}\cdot\mathrm{J}''=-\gamma$, we compute, for
 $y\in(\frac12,1)$, $f'(y)=1+(\sqrt2-1)\mathrm{J}'(y)-Q'(\frac y2)$ and
@@ -207,10 +155,6 @@ theorem fX_deriv (y : ℝ) (hy : y ∈ Ioo (1 / 2 : ℝ) 1) :
     deriv f y = 1 + (√2 - 1) * deriv J y - deriv Q (y / 2) ∧
       deriv (deriv f) y = -γ * (√2 - 1) * (J y)⁻¹ - 1 / 2 * deriv (deriv Q) (y / 2) := by
   sorry
-
-/-
-Using
--/
 
 /-- **(3.5)** ([DIRX], §3.3).
 $$\mathrm{J}^{(4)}=-\gamma(\gamma+2(\mathrm{J}')^2)\mathrm{J}^{-3}$$
@@ -223,11 +167,6 @@ theorem eqn_3_5 (x : ℝ) (hx : x ∈ Ioo (1 - w₁) 1) :
 theorem fX_deriv4_neg (y : ℝ) (hy : y ∈ Ioo (1 / 2 : ℝ) 1) : iteratedDeriv 4 f y < 0 := by
   sorry
 
-/-
-we compute $f^{(4)}(y)<0$.
-Hence $f''$ is strictly concave on $(\frac12,1)$. Since
--/
-
 /-- [DIRX], §3.3: hence $f''$ is strictly concave on $(\frac12,1)$. -/
 theorem fX_deriv2_strictConcave : StrictConcaveOn ℝ (Ioo (1 / 2) 1) (deriv (deriv f)) := by
   sorry
@@ -239,11 +178,6 @@ theorem eqn_3_6 :
       deriv (deriv f) (4 / 5) < -0.2 := by
   sorry
 
-/-
-the function $f''$ has exactly one zero $y_0$ on $(\tfrac{1}{2},1)$, where $f'$
-achieves its unique maximum.
--/
-
 /-- [DIRX], §3.3: the function $f''$ has exactly one zero $y_0$ on $(\frac12,1)$, where $f'$
 achieves its unique maximum (on $(\frac12,1)$); $f'$ is increasing on $(\frac12,y_0)$ and
 decreasing on $(y_0,1)$. -/
@@ -254,21 +188,9 @@ theorem fX_deriv2_zero :
       StrictMonoOn (deriv f) (Ioc (1 / 2) y₀) ∧ StrictAntiOn (deriv f) (Ico y₀ 1) := by
   sorry
 
-/-
-Since $f'$ is increasing on $(\tfrac{1}{2},y_0)$ and decreasing on $(y_0,1)$, and
-\[f'(\tfrac{9}{16})>0.05,\quad
-f'(\tfrac{15}{16})<-0.08,\]
--/
-
 /-- [DIRX], §3.3: $f'(\frac9{16})>0.05$ and $f'(\frac{15}{16})<-0.08$. -/
 theorem fX_deriv_eval : deriv f (9 / 16) > 0.05 ∧ deriv f (15 / 16) < -0.08 := by
   sorry
-
-/-
-it follows that $f'$ has exactly one zero $y_1$ on $(\tfrac{1}{2},1)$. Therefore, $f$ is
-increasing on $[\frac12,y_1]$ and decreasing on $[y_1,1]$. Together with
-$f(1)=f(\tfrac{1}{2})=0$, this implies $f(y)\geq 0$ for $y\in [\frac12,1]$.
--/
 
 /-- [DIRX], §3.3 (not stated in the paper; see the discrepancy paragraph of
 `Auto.DIRX.fX_deriv_zero`): $f'(\frac12)>0$. Numerically $f'(\frac12)\approx0.0465$. -/
@@ -303,14 +225,6 @@ end Boundary_x_eq_0
 
 section Boundary_x_eq_1_16
 
-/-
-Next we show $G_{LJQ}(\tfrac1{16},y)\ge 0$ for all $y\in[\tfrac12,\tfrac34]$. A tight lower bound
-is
-\[ \underline{h_{LJQ,2}}(\underline{y},\overline{y}) = \underline{y}-\tfrac{1}{16} + (\sqrt{2}-1)
-\underline{{\mathrm{J}}}(\underline{y},\overline{y}) +L(\tfrac{1}{16})-2Q(\tfrac{1}{32}+
-\tfrac{\overline{y}}{2}).\]
--/
-
 /-- The tight lower bound ([DIRX], §3.3, Case II)
 $$\underline{h_{LJQ,2}}(\underline y,\overline y)=\underline y-\tfrac1{16}
 +(\sqrt2-1)\underline{\mathrm{J}}(\underline y,\overline y)+L(\tfrac1{16})
@@ -324,30 +238,15 @@ theorem h_LJQ₂_lo_tight :
     IsTightLowerBound₁ (fun y ↦ G_LJQ (1 / 16) y) h_LJQ₂_lo (1 / 2) (3 / 4) := by
   sorry
 
-/-
-Dyadic partitioning then yields
--/
-
 /-- **(3.7)** ([DIRX], §3.3) (🚗). Dyadic partitioning yields
 $$G_{LJQ}(\tfrac1{16},y)>10^{-4}$$ for all $y\in[\frac12,\frac34]$. -/
 theorem eqn_3_7 (y : ℝ) (hy : y ∈ Icc (1 / 2 : ℝ) (3 / 4)) :
     G_LJQ (1 / 16) y > (10 : ℝ) ^ (-4 : ℤ) := by
   sorry
 
-/-
-for all $y\in [\frac12,\frac34]$.
--/
-
 end Boundary_x_eq_1_16
 
 section Boundary_x_eq_1_sub_y
-
-/-
-Finally, we show $G_{LJQ}(1-y,y)\ge 0$ for all $y\in [\tfrac34,1]$.
-The function $y\mapsto G_{LJQ}(1-y,y)$ is concave on $[\tfrac34,1]$ since
-\[\tfrac{d^2}{dy^2}G_{LJQ}(1-y,y)= (\sqrt{2}-1) {\mathrm{J}}''(y)+L''(1-y)\le 0.\]
-Here we used ${\mathrm{J}}''\leq 0$ and $L''\le 0$ by Lemma \ref{lem:L} [2.3].
--/
 
 /-- [DIRX], §3.3: for $y\in(\frac34,1)$,
 $\frac{d^2}{dy^2}G_{LJQ}(1-y,y)=(\sqrt2-1)\mathrm{J}''(y)+L''(1-y)\le0$, using
@@ -362,12 +261,6 @@ theorem G_LJQ_diag_deriv2 (y : ℝ) (hy : y ∈ Ioo (3 / 4 : ℝ) 1) :
 /-- [DIRX], §3.3: the function $y\mapsto G_{LJQ}(1-y,y)$ is concave on $[\frac34,1]$. -/
 theorem G_LJQ_diag_concave : ConcaveOn ℝ (Icc (3 / 4) 1) (fun y ↦ G_LJQ (1 - y) y) := by
   sorry
-
-/-
-Thus, it suffices to show non-negativity of the function at $y=1$, and $y=\tfrac{3}{4}$, in which
-cases
-\[G_{LJQ}(0,1)=0,\quad G_{LJQ}(\tfrac{1}{4},\tfrac{3}{4})> 0.01.\]
--/
 
 /-- [DIRX], §3.3: $G_{LJQ}(0,1)=0$ and $G_{LJQ}(\frac14,\frac34)>0.01$. -/
 theorem G_LJQ_diag_eval : G_LJQ 0 1 = 0 ∧ G_LJQ (1 / 4) (3 / 4) > 0.01 := by

@@ -32,12 +32,6 @@ open Real Set
 
 section Proof_Theorem_1_1
 
-/-
-To prove Theorem \ref{thm:mainisoperim} [1.1] it suffices to consider the case $\beta=\beta_0$ (by
-Lemma \ref{lem:holder} [5.1]). For $\beta=\beta_0$, \eqref{eqn:isoperimhalf} [(1.1)] follows from
-\eqref{eqn:actualisoperimbeta0} [(2.6)] because
--/
-
 /-- [DIR], §2.2, proof of Theorem 1.1: $b_\beta(x)=Q_\beta(x)\ge L_\beta(x)$ for
 $x\in[\frac14,\frac12]$ (here $\beta=\beta_0$). -/
 theorem b_eq_Q_ge_L (x : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
@@ -49,19 +43,9 @@ theorem eqn_1_1_β₀ (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) (hA : ｜A｜
     𝐄 h_{A} ^ β₀ ≥ ｜A｜ * (log₂ (1 / ｜A｜)) ^ β₀ := by
   sorry
 
-/-
-This and various other useful facts about $L_\beta$ and $Q_\beta$ are proved in
-\S \ref{sec:LandQprop} [§5.3] (see Lemma \ref{lem:LQmax} [5.9]).
--/
-
 end Proof_Theorem_1_1
 
 section Proof_Theorem_1_5
-
-/-
-The lower bound in Theorem \ref{thm:onehalf} [1.5] follows from \eqref{eqn:actualisoperimhalf}
-[(2.7)] while the upper bound follows from letting $A$ be a subcube of codimension $k$.
--/
 
 /-- [DIR], §2.2, proof of Theorem 1.5 (implicit): $b_{\frac12}(2^{-k})=2^{-k}\sqrt k$ for $k\ge1$,
 so that (2.7) gives the lower bound of Theorem 1.5. -/
@@ -80,10 +64,6 @@ theorem thm_1_5_upper (k : ℕ) (hk : 1 ≤ k) : 2⁻¹ ^ k * √k ≥ 𝓑 (1 /
 end Proof_Theorem_1_5
 
 section Proof_Theorem_1_7
-
-/-
-To prove Theorem \ref{thm:isoperimJ} [1.7] it suffices to show that
--/
 
 /-- The function $\tilde b_\beta$ ([DIR], §2.2, proof of Theorem 1.7):
 $$\tilde b_\beta(x)=\begin{cases}L_\beta(x)&x\in[0,\frac14],\\ Q_\beta(x)&x\in[\frac14,\frac12],
@@ -110,12 +90,6 @@ theorem eqn_2_9 (x : ℝ) (hx : x ∈ Ioo (1 / 2) (1 - (10 : ℝ) ^ (-(10 : ℝ)
     J x > L β₀ (1 - x) := by
   sorry
 
-/-
-The two-point inequality \eqref{eqn:btildetwopt} [(2.8)] now follows from Lemma
-\ref{lem:maxlemma2} [5.2] by writing $\tilde{b}_{\beta_0}(x)$ as the maximum of $b_{\beta_0}(x)$
-and the function
--/
-
 /-- The function $\tilde L(x)=L_{\beta_0}(1-x)\mathbf{1}_{x\ge\frac12}$ ([DIR], §2.2). -/
 noncomputable def Ltilde (x : ℝ) : ℝ := if 1 / 2 ≤ x then L β₀ (1 - x) else 0
 
@@ -131,13 +105,6 @@ theorem Ltilde_twopt (x y : ℝ) (hx : 1 / 2 ≤ x) (hxy : x ≤ y) (hy : y ≤ 
     G β₀ (fun t ↦ L β₀ (1 - t)) x y ≥ 0 := by
   sorry
 
-/-
-The hypotheses of Lemma \ref{lem:maxlemma2} [5.2] are satisfied by \eqref{eqn:maintwoptbeta0}
-[(2.4)] and because it is known that the function $\tilde{L}(x)=x\mapsto L_{\beta_0}(1-x)$
-satisfies $G_{\beta_0}[\tilde{L}](x,y)\ge 0$ for all $\frac12\le x\le y\le 1$ (see
-\cite[Lemma 2.3]{BIM23}).
--/
-
 /-- [DIR], §2.2: the estimate (2.9) means that
 $b_{\beta_0}(\frac{x+y}2)<\tilde L(\frac{x+y}2)$ can only happen when
 $\frac{x+y}2\ge1-10^{-10^{380}}$, which in particular implies
@@ -146,10 +113,6 @@ theorem b_lt_Ltilde_imp (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y) (hy : y ≤ 1
     (h : b β₀ ((x + y) / 2) < L̃ ((x + y) / 2)) :
     (x + y) / 2 ≥ 1 - (10 : ℝ) ^ (-(10 : ℝ) ^ 380) ∧ y ≥ x ∧ x ≥ 1 / 2 := by
   sorry
-
-/-
-Thus \eqref{eqn:btildetwopt} [(2.8)] is proved and Theorem \ref{thm:isoperimJ} [1.7] follows.
--/
 
 /-- [DIR], §2.2, proof of Theorem 1.7 (implicit in "it suffices to show" and "Theorem 1.7
 follows"): by Proposition 2.1 and (2.8), $\mathcal{B}_{\beta_0}\ge\tilde b_{\beta_0}$ on

@@ -45,13 +45,6 @@ local notation "J" => JX
 
 /-! ### §2.2 Properties of the function J -/
 
-/-
-We record a few properties of the function ${\mathrm{J}}$ for later use.
-The function ${\mathrm{J}}={\mathrm{J}}_{w_1}$ satisfies
-\[{\mathrm{J}}\cdot {\mathrm{J}}'' = -\gamma\quad
-\text{with}\;\gamma=(4w_1^2I(\tfrac{1}{2w_1})^2)^{-1}.\]
--/
-
 /-- The constant $\gamma=(4w_1^2I(\frac1{2w_1})^2)^{-1}$ ([DIRX], §2.2). Written `γ`. -/
 noncomputable def γX : ℝ := (4 * w₁ ^ 2 * I (1 / (2 * w₁)) ^ 2)⁻¹
 
@@ -73,19 +66,9 @@ $\mathrm{J}\ge0$ there. -/
 theorem JX_concave : ConcaveOn ℝ (Icc (1 / 2) 1) J ∧ ∀ x ∈ Icc (1 / 2 : ℝ) 1, 0 ≤ J x := by
   sorry
 
-/-
-In particular, ${\mathrm{J}}$ is concave.
-Note that $\gamma\in [1.945, 1.946]$.
--/
-
 /-- [DIRX], §2.2: $\gamma\in[1.945,1.946]$. -/
 theorem γX_mem : γ ∈ Icc (1.945 : ℝ) 1.946 := by
   sorry
-
-/-
-Let
-\[x_1 = 1-\tfrac{w_1}{2}= \tfrac{35}{64} = 0.546875.\]
--/
 
 /-- $x_1=1-\frac{w_1}2$ ([DIRX], §2.2). -/
 noncomputable def x₁ : ℝ := 1 - w₁ / 2
@@ -94,23 +77,12 @@ noncomputable def x₁ : ℝ := 1 - w₁ / 2
 theorem x₁_eq : x₁ = 35 / 64 ∧ (35 / 64 : ℝ) = 0.546875 := by
   sorry
 
-/-
-For $x\in (0,\tfrac{1}{64}]$ we have
--/
-
 /-- **(2.6)** ([DIRX], §2.2). For $x\in(0,\frac1{64}]$,
 $$\mathrm{J}(1-x)>x\sqrt{\log(w_1/x)}.$$ -/
 theorem eqn_2_6 (x : ℝ) (hx : x ∈ Ioc (0 : ℝ) (1 / 64)) : J (1 - x) > x * √(log (w₁ / x)) := by
   sorry
 
 section Proof_Eqn_2_6
-
-/-
-Indeed, the Gaussian isoperimetric profile satisfies the lower bound
-\[I(x)\ge \sqrt{2}\cdot x\sqrt{\log(1/x)} \Big(1-\tfrac{1}{2}\tfrac{\log \log (1/x)}{\log (1/x)} -
-\tfrac{\log (2\sqrt{\pi})}{\log(1/x)} \Big), \]
-valid for $x\in (0,\frac15]$ (see \cite[Proposition 5.11]{DIR24} for the proof).
--/
 
 /-- [DIRX], proof of (2.6) (cited from [DIR], Proposition 5.11, `Auto.DIR.prop_5_11`): for
 $x\in(0,\frac15]$,
@@ -137,17 +109,6 @@ theorem eqn_2_6_step (x : ℝ) (hx : x ∈ Ioc (0 : ℝ) (1 / 64)) :
     J (1 - x) ≥ √2 / (2 * w₁) * (I (1 / (2 * w₁)))⁻¹ * (1 - ε x) * x * √(log (w₁ / x)) := by
   sorry
 
-/-
-Thus,
-\[{\mathrm{J}}(1-x) \ge \tfrac{\sqrt{2}}{2w_1}I(\tfrac{1}{2w_1})^{-1} (1-\varepsilon)
-x\sqrt{\log(w_1/x)},\]
-where
-\[\varepsilon = \tfrac{1}{2}\tfrac{\log \log (w_1/x)}{\log (w_1/x)} +
-\tfrac{\log (2\sqrt{\pi})}{\log(w_{1}/x)}. \]
-Then \eqref{eqn:Jlower} [(2.6)] follows by recognizing that $\varepsilon$ is an increasing
-function of $x$ and evaluating at $x=\frac1{64}$.
--/
-
 /-- [DIRX], proof of (2.6): $\varepsilon$ is an increasing function of $x$ (on
 $(0,\frac1{64}]$). -/
 theorem εX_monotone : MonotoneOn ε (Ioc 0 (1 / 64)) := by
@@ -160,17 +121,9 @@ theorem eqn_2_6_eval : √2 / (2 * w₁) * (I (1 / (2 * w₁)))⁻¹ * (1 - ε (
 
 end Proof_Eqn_2_6
 
-/-
-The function ${\mathrm{J}}$ is increasing on $[\tfrac{1}{2},x_1]$ and decreasing on $[x_1,1]$.
--/
-
 /-- [DIRX], §2.2: $\mathrm{J}$ is increasing on $[\frac12,x_1]$ and decreasing on $[x_1,1]$. -/
 theorem JX_mono : MonotoneOn J (Icc (1 / 2) x₁) ∧ AntitoneOn J (Icc x₁ 1) := by
   sorry
-
-/-
-Therefore, an interval enclosure for ${\mathrm{J}}$ is given by
--/
 
 /-- **(2.7)** ([DIRX], §2.2). The lower interval enclosure
 $\underline{\mathrm{J}}(\underline x,\overline x)=\min(\mathrm{J}(\underline x),
@@ -192,11 +145,6 @@ theorem eqn_2_7 (xl xu : ℝ) (hxl : 1 / 2 ≤ xl) (hxu : xu ≤ 1) :
     (∀ x ∈ Icc xl xu, JX_lo xl xu ≤ J x ∧ J x ≤ JX_hi xl xu) ∧
       (xl = xu → JX_lo xl xu = J xl ∧ JX_hi xl xu = J xl) := by
   sorry
-
-/-
-Also observe ${\mathrm{J}}'(x_1)=0$ and ${\mathrm{J}}''<0$, so ${\mathrm{J}}'$ is strictly
-decreasing and $|{\mathrm{J}}'|$ has the interval enclosure
--/
 
 /-- [DIRX], §2.2: $\mathrm{J}'(x_1)=0$ and $\mathrm{J}''<0$ (on $(1-w_1,1)$), so $\mathrm{J}'$ is
 strictly decreasing (on $(1-w_1,1)\supset[\frac12,1)$). -/

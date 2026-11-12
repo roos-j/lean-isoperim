@@ -43,18 +43,6 @@ open Real Set
 
 /-! ### §5 Connection to the Hellinger conjecture -/
 
-/-
-We briefly explain how the Hellinger conjecture would also imply \eqref{eqn:sensitivity} [(1.4)].
-
-Let $f:\{0,1\}^n\to \{\pm 1\}$ be balanced, i.e.\ $\mathbf{E} f =0$.
-In this case the Hellinger conjecture \cite{ABCJN17,CN24,CGN25} asserts that for every correlation
-parameter $\rho \in [-1,1]$,
-\begin{equation}\label{eqn:hellinger}
-\mathbf{E}\sqrt{1 - (T_\rho f)^2} \ge \sqrt{1-\rho^2},
-\end{equation}
-where $T_\rho f$ is the standard noise operator (see \cite{ODonnell}).
--/
-
 /-- The standard noise operator ([DIRX], §5; see [O'Donnell, Def. 2.46]):
 $T_\rho f(x)=\mathbf{E}_{y\sim N_\rho(x)}f(y)$, where $y$ is obtained from $x$ by keeping each bit
 independently with probability $\frac{1+\rho}2$ and flipping it with probability
@@ -81,12 +69,6 @@ def HellingerConjecture : Prop :=
   ∀ (n : ℕ), 1 ≤ n → ∀ f : ({0,1}^n) → ℝ, (∀ x, f x = 1 ∨ f x = -1) → 𝐄 f = 0 →
     ∀ ρ ∈ Icc (-1 : ℝ) 1, 𝐄 (fun x ↦ √(1 - (T_{ρ} f x) ^ 2)) ≥ √(1 - ρ ^ 2)
 
-/-
-Let $p=\tfrac{1-\rho}{2}\in [0,1]$ and let $Z=(Z_1,\dots,Z_n)$ be a random vector in
-$\{0,1\}^n$ with i.i.d. coordinates satisfying $\mathbf{P}(Z_j=1)=p$, so that
-\[ T_\rho f(x) = \mathbf{E}_{Z}\,f(x\oplus Z).\]
--/
-
 /-- [DIRX], §5: for $\rho\in[-1,1]$, $p=\frac{1-\rho}2\in[0,1]$. -/
 theorem p_mem (ρ : ℝ) (hρ : ρ ∈ Icc (-1 : ℝ) 1) : (1 - ρ) / 2 ∈ Icc (0 : ℝ) 1 := by
   sorry
@@ -99,13 +81,6 @@ noncomputable def expectZ {n : ℕ} (p : ℝ) (F : ({0,1}^n) → ℝ) : ℝ := �
 theorem noiseOp_eq_expectZ (n : ℕ) (ρ p : ℝ) (hp : p = (1 - ρ) / 2) (f : ({0,1}^n) → ℝ)
     (x : {0,1}^n) : T_{ρ} f x = expectZ p (fun z ↦ f (x + z)) := by
   sorry
-
-/-
-We are interested in the low-noise regime as $p\to 0+$.
-Conditioning on the event of at most a single bit flip gives
-\[ T_\rho f(x) = (1-p)^n f(x) + p (1-p)^{n-1} \sum_{j=1}^n f(x\oplus e_j) + R_p(x), \]
-where $R_p(x)=\mathbf{E}_Z [f(x\oplus Z)\mathbf{1}_{|Z|\ge 2}]$ (here $|Z|=\sum_{j=1}^n Z_j$).
--/
 
 open Classical in
 /-- $|Z|=\sum_{j=1}^nZ_j$, the number of ones of $z\in\{0,1\}^n$ ([DIRX], §5). -/
@@ -125,11 +100,6 @@ theorem noiseOp_expansion (n : ℕ) (ρ p : ℝ) (hp : p = (1 - ρ) / 2) (f : ({
     T_{ρ} f x = (1 - p) ^ n * f x + p * (1 - p) ^ (n - 1) * ∑ j, f (x + e j) + R_{p} f x := by
   sorry
 
-/-
-Since $f$ is Boolean valued,
-\[ |R_{p}(x)| \le \mathbf{P}(|Z|\ge 2) \le \binom{n}{2} p^2. \]
--/
-
 /-- [DIRX], §5: since $f$ is Boolean valued ($\pm1$), for $p\in[0,1]$,
 $|R_p(x)|\le\mathbf{P}(|Z|\ge2)\le\binom n2p^2$. -/
 theorem Rp_bound (n : ℕ) (p : ℝ) (hp : p ∈ Icc (0 : ℝ) 1) (f : ({0,1}^n) → ℝ)
@@ -139,26 +109,11 @@ theorem Rp_bound (n : ℕ) (p : ℝ) (hp : p ∈ Icc (0 : ℝ) 1) (f : ({0,1}^n)
         (n.choose 2 : ℝ) * p ^ 2 := by
   sorry
 
-/-
-Also, $\sum_{j=1}^n f(x\oplus e_j) = (n-2s_f(x))f(x)$,
-where $s_f(x)$ is the sensitivity of $f$ at $x$, i.e. the number of indices $j$ so that
-$f(x\oplus e_j)\not=f(x)$.
--/
-
 /-- [DIRX], §5: for $f:\{0,1\}^n\to\{\pm1\}$, $\sum_{j=1}^nf(x\oplus e_j)=(n-2s_f(x))f(x)$,
 where $s_f(x)$ is the number of indices $j$ with $f(x\oplus e_j)\ne f(x)$. -/
 theorem sum_neighbors (n : ℕ) (f : ({0,1}^n) → ℝ) (hf : ∀ x, f x = 1 ∨ f x = -1)
     (x : {0,1}^n) : ∑ j, f (x + e j) = (n - 2 * s_{f} x) * f x := by
   sorry
-
-/-
-Thus,
-\[
-T_\rho f(x)
-= f(x)(1-2p\, s_f(x))+O(n^2 p^2),
-\]
-by expanding the binomial $(1-p)^n$ and using the bound on $|R_{p}(x)|$.
--/
 
 /-- [DIRX], §5: by expanding the binomial $(1-p)^n$ and using the bound on $|R_p(x)|$,
 $T_\rho f(x)=f(x)(1-2p\,s_f(x))+O(n^2p^2)$ (with $\rho=1-2p$): there is an absolute constant $C$
@@ -169,12 +124,6 @@ theorem noiseOp_asymp :
       ∀ p ∈ Icc (0 : ℝ) 1, |f x * (1 - 2 * p * s_{f} x) - T_{1 - 2 * p} f x| ≤
         C * n ^ 2 * p ^ 2 := by
   sorry
-
-/-
-This implies in particular that
-\[ \sqrt{1-(T_\rho f(x))^2} = 2\sqrt{p(1-p)} \sqrt{s_f(x)} + O(n p)\]
-for every $x\in \{0,1\}^n$.
--/
 
 /-- [DIRX], §5: this implies in particular that
 $\sqrt{1-(T_\rho f(x))^2}=2\sqrt{p(1-p)}\sqrt{s_f(x)}+O(np)$ for every $x\in\{0,1\}^n$ (with
@@ -197,13 +146,6 @@ theorem sqrt_noiseOp_asymp :
         abs (√(1 - (T_{1 - 2 * p} f x) ^ 2) - 2 * √(p * (1 - p)) * √(s_{f} x)) ≤
           C * n * p := by
   sorry
-
-/-
-Dividing by $\sqrt{1-\rho^2}=2\sqrt{p(1-p)}$ and taking expectations over $x$ we see that
-\eqref{eqn:hellinger} [(5.1)] would imply
-\[ \mathbf{E} \sqrt{s_f} \ge 1 - O(n \sqrt{p}) \]
-so that for every fixed $n$ we obtain \eqref{eqn:sensitivity} [(1.4)] in the limit $p\to 0+$.
--/
 
 /-- [DIRX], §5: $\sqrt{1-\rho^2}=2\sqrt{p(1-p)}$ for $p=\frac{1-\rho}2$. -/
 theorem sqrt_one_sub_sq (ρ p : ℝ) (hp : p = (1 - ρ) / 2) :

@@ -29,17 +29,6 @@ namespace Auto.DIR
 
 open Real Set MeasureTheory Filter Topology
 
-/-
-In this section we revisit aspects of Bobkov's classical proof \cite{Bob97} of the Gaussian
-isoperimetric inequality to achieve two objectives:
-\begin{enumerate}
-\item prove a sharp asymptotic estimate, Theorem \ref{thm:asymp} [1.6]
-\item prove a crucial two-point inequality satisfied by the function $J$
-\end{enumerate}
-This is also informed by Bobkov and G\"otze's work \cite{BG99}.
-For functions $f:\{0,1\}^n\to \mathbb{R}$ let
--/
-
 /-- $M_if(x)=(f(x)-f(x\oplus e_i))_+$ ([DIR], §3), where $x\oplus e_i$ is $x$ with the $i$-th bit
 flipped. -/
 noncomputable def Mi {n : ℕ} (i : Fin n) (f : ({0,1}^n) → ℝ) (x : {0,1}^n) : ℝ :=
@@ -76,13 +65,6 @@ theorem lemma_3_1 (𝓘 : Set ℝ) (h𝓘 : 𝓘.OrdConnected) (h𝓘0 : 𝓘 �
     (n : ℕ) (hn : 1 ≤ n) (f : ({0,1}^n) → ℝ) (hf : ∀ x, f x ∈ 𝓘) :
     B (𝐄 f) ≤ 𝐄 (fun x ↦ √(B (f x) ^ 2 + (M f x) ^ 2)) := by
   sorry
-
-/-
-This is a version of Lemma 2.1 of Bobkov--G\"otze \cite{BG99} and follows from it by rescaling.
-The proof is by induction on $n$, see \cite[Lemma 1]{Bob97}. For $n=1$,
-\eqref{eqn:generalnormtwopoint} [(3.1)] is referred to as a two-point inequality and may be
-written as
--/
 
 /-- **(3.2)** ([DIR], §3). For $n=1$, (3.1) may be written as
 $$B\Big(\frac{x+y}2\Big)\le\frac12\sqrt{(y-x)^2+B(y)^2}+\frac12B(x),$$
@@ -131,24 +113,7 @@ theorem proof_thm_1_6_chain (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) :
     1 / 2 * 𝐄 (fun x ↦ 𝟏_{A} x * √(1 + h_{A} x)) ≤ 1 / 2 * (｜A｜ + 𝐄 (fun x ↦ √(h_{A} x))) := by
   sorry
 
-/-
-so the claim follows.
--/
-
 end Proof_Theorem_1_6
-
-/-
-The two-point inequality \eqref{eqn:Bobkovtwopt} [(3.2)] is a variant of Bobkov's original
-two-point inequality \cite{Bob97} for the ``two-sided gradient'', i.e.,
-\begin{equation}\label{eqn:originalBobkovtwopt}
-B\Big(\tfrac{x+y}{2}\Big) \le \tfrac12 \sqrt{\Big(\tfrac{y-x}2\Big)^2 + B(y)^2}
-  + \tfrac12 \sqrt{\Big(\tfrac{y-x}2\Big)^2 + B(x)^2},
-\end{equation}
-which is closely related and satisfied by the Gaussian isoperimetric profile \cite{Bob97}
-\[ I(x) = \varphi(\Phi^{-1}(x)), \]
-where $\varphi$ is the standard Gaussian density function and $\Phi$ its cumulative distribution
-function, i.e.
--/
 
 /-- The standard Gaussian density $\varphi(t)=(2\pi)^{-1/2}e^{-t^2/2}$ ([DIR], §3). -/
 noncomputable def φ (t : ℝ) : ℝ := (2 * π) ^ (-(1 / 2 : ℝ)) * exp (-t ^ 2 / 2)
@@ -188,10 +153,6 @@ theorem I_characterization :
       (∀ x ∈ Ioo (0 : ℝ) 1, g x * deriv (deriv g) x = -1) → EqOn g I (Icc 0 1) := by
   sorry
 
-/-
-For a real parameter $w>0$ and $x$ with $w^{-1}(1-x)\in [0,1]$, i.e. $x\in [1-w,1]$, we define
--/
-
 /-- $J_w(x)=\sqrt2\cdot wI(w^{-1}(1-x))$ for $w>0$ and $x\in[1-w,1]$ ([DIR], §3). -/
 noncomputable def Jw (w x : ℝ) : ℝ := √2 * w * I (w⁻¹ * (1 - x))
 
@@ -228,10 +189,6 @@ theorem I_maximal (B : ℝ → ℝ) (hBc : ContinuousOn B (Icc 0 1))
       1 / 2 * √(((y - x) / 2) ^ 2 + B y ^ 2) + 1 / 2 * √(((y - x) / 2) ^ 2 + B x ^ 2)) :
     ∀ x ∈ Icc (0 : ℝ) 1, B x ≤ I x := by
   sorry
-
-/-
-We are interested in the inequality \eqref{eqn:Bobkovtwopt} [(3.2)].
--/
 
 /-- **Lemma 3.2** ([DIR]). If a non-negative function $I$ solves $I\cdot I''=-1$ (on an open
 interval $(a,b)$), then $I$ is concave and $(I')^2$ is convex (there). -/
@@ -291,15 +248,6 @@ theorem rem_3_4 :
   sorry
 
 section Proof_Proposition_3_3
-
-/-
-This is inspired by Bobkov's argument in \cite{Bob97}.
-Let $c=\frac{x+y}{2}$ and $u=\frac{y-x}{2}$. Then $x=c-u, y=c+u$.
-Let us fix $c\in \mathcal{I}$. Write $\mathcal{I}=[a,b]$.
-The variable $u$ ranges in the interval $[0, c_*]$ with $c_* = \mathrm{min}(c-a, b-c)$.
-We need to show for all $u\in [0, c_*]$:
-\[ \sqrt{2u^2 + I(c+u)^2} \ge 2 I(c) - I(c-u)\]
--/
 
 variable (I : ℝ → ℝ) (a b : ℝ) (hIc : ContinuousOn I (Icc a b))
   (hI : ContDiffOn ℝ 2 I (Ioo a b)) (hI0 : ∀ x ∈ Icc a b, 0 ≤ I x)
@@ -387,10 +335,6 @@ theorem prop_3_3_Gc_nonneg (c : ℝ) (hc : c ∈ Ioo a b) :
 
 end Proof_Proposition_3_3
 
-/-
-Applying Proposition \ref{prop:twoptbobkov} [3.3] to $I=J_w/\sqrt{2}$ we obtain:
--/
-
 /-- **Corollary 3.5** ([DIR]). Let $0<w\le1$. Then for all $1-\frac w2\le x\le y\le1$:
 $$\sqrt{(y-x)^2+J_w(y)^2}+J_w(x)\ge2J_w(\tfrac{x+y}2).$$ -/
 theorem cor_3_5 (w : ℝ) (hw : 0 < w) (hw1 : w ≤ 1) (x y : ℝ) (hx : 1 - w / 2 ≤ x)
@@ -410,11 +354,6 @@ theorem rem_3_6 (w : ℝ) (hw : 0 < w) (hw1 : w ≤ 1) :
       √((y - x) ^ 2 + Jw w y ^ 2) + Jw w x < 2 * Jw w ((x + y) / 2) := by
   sorry
 
-/-
-Setting $w=w_0$, we obtain in particular that \eqref{eqn:Bobkovtwopt} [(3.2)] holds for $B=J$ as
-long as $y\ge x\ge x_0,$ where
--/
-
 /-- The constant $x_0=1-\frac{w_0}2$ ([DIR], (3.6)). -/
 noncomputable def x₀ : ℝ := 1 - w₀ / 2
 
@@ -426,11 +365,6 @@ theorem eqn_3_6 : x₀ ∈ Icc (0.552 : ℝ) 0.553 := by
 theorem J_eqn_3_2 (x y : ℝ) (hx : x₀ ≤ x) (hxy : x ≤ y) (hy : y ≤ 1) :
     J ((x + y) / 2) ≤ 1 / 2 * √((y - x) ^ 2 + J y ^ 2) + 1 / 2 * J x := by
   sorry
-
-/-
-We will rely on this in the proof of Theorem \ref{thm:maintwopt} [2.2] in \S \ref{sec:maintwopt}
-[§6].
--/
 
 /-! ### Remark 3.7 -/
 
@@ -460,11 +394,5 @@ theorem rem_3_7_asymp :
     ∀ᶠ x in 𝓝[<] 1, (1 - x₀)⁻¹ * (J ((1 - x₀) * x + x₀) -
         sSup ((fun x ↦ |J x|) '' Icc (1 / 2) 1) * (1 - x)) > 0.997 * b (1 / 2) x := by
   sorry
-
-/-
-which is no good when $|A|$ is away from $1$, but improves on \eqref{eqn:actualisoperimhalf}
-[(2.7)] as $|A|\to 1^-$ since the function on the right hand side is asymptotically equivalent to
-$J(|A|)$.
--/
 
 end Auto.DIR

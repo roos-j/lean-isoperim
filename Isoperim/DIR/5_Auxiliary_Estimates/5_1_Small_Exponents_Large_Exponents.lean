@@ -22,11 +22,6 @@ namespace Auto.DIR
 
 open Real
 
-/-
-In this section we collect various estimates that are used in this paper and may also be useful
-in the future.
--/
-
 /-! ### §5.1 Small exponents versus large exponents -/
 
 /-- **Lemma 5.1** ([DIR]). If $\mathbf{E}h_A^\beta\ge B(|A|)>0$ holds for some $\beta>0$, then for

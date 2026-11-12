@@ -49,26 +49,11 @@ theorem rem_6_3 (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1) (x y : ℝ) (hx : 
     (hy : y ≤ 1 / 2) : G₁ β (fun t ↦ max (L β t) (Q β t)) x y ≥ 0 := by
   sorry
 
-/-
-It is known that
-\[ G^1_\beta[L_\beta](x,y)\ge 0 \]
-holds for all $0\le x\le y\le \tfrac12$ (see \cite[Lemma 2.2]{BIM23}).
--/
-
 /-- [DIR], §6.2 (cited from [BIM23, Lemma 2.2]): $G^1_\beta[L_\beta](x,y)\ge0$ for all
 $0\le x\le y\le\frac12$ (for $\beta\in[\frac12,1]$). -/
 theorem caseQ_G₁_L (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1) (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y)
     (hy : y ≤ 1 / 2) : G₁ β (L β) x y ≥ 0 := by
   sorry
-
-/-
-By Lemma \ref{lem:maxlemma2} [5.2] and Lemma \ref{lem:LQmax} [5.9] we therefore have the claim on
-the triangle I in Figure~\ref{fig:lq} [6] and it now suffices to show
-\begin{equation}\label{eqn:GLQge0}
-G^1_\beta[Q_\beta](x,y)\ge 0
-\end{equation}
-for all $0\le x\le y\le \tfrac12$ with $\frac{x+y}{2}\ge \tfrac14$.
--/
 
 /-- [DIR], §6.2: by Lemma 5.2 and Lemma 5.9, Proposition 6.2 holds on the triangle I,
 $0\le x\le y\le\frac12$, $\frac{x+y}2\le\frac14$. -/
@@ -91,69 +76,21 @@ theorem eqn_6_6 (β : ℝ) (hβ : β = 1 / 2 ∨ β = β₀) (x y : ℝ) (hx : 0
     (hy : y ≤ 1 / 2) (hxy' : (x + y) / 2 ≥ 1 / 4) : G₁ β (Q β) x y ≥ 0 := by
   sorry
 
-/-
-Observe that $G_\beta^1[Q_\beta](x,y)=0$ if $x=y$ and if $(x,y)=(0,\tfrac12)$.
-This leads to distinguishing two further cases (regions II and III in Figure \ref{fig:lq} [6]).
--/
-
 /-- [DIR], §6.2: $G^1_\beta[Q_\beta](x,x)=0$ for $x\in[0,\frac12]$ and
 $G^1_\beta[Q_\beta](0,\frac12)=0$ (for $\beta\in\{\frac12,\beta_0\}$). -/
 theorem caseQ_G₁_Q_eq_zero (β : ℝ) (hβ : β = 1 / 2 ∨ β = β₀) :
     (∀ x ∈ Icc (0 : ℝ) (1 / 2), G₁ β (Q β) x x = 0) ∧ G₁ β (Q β) 0 (1 / 2) = 0 := by
   sorry
 
-/-
-\begin{figure}[ht]
-\centering
-\begin{tikzpicture}[scale=8]
-\draw (0,0)--(1/2,1/2)--(0,1/2)--cycle;
-\draw (0,1/2)--(1/4,1/4);
-\draw (1/8,3/8)--(1/4,1/2);
-\node at (0,0-.05) {\tiny $0$};
-\node at (1/4,-.05) {\footnotesize $\tfrac{1}{4}$};
-\node at (1/2,-0.05) {\footnotesize $\tfrac{1}{2}$};
-\node at (0-.03,0) {\tiny $0$};
-\node at (0-.03,1/2) {\footnotesize $\tfrac{1}{2}$};
-\node at (0-.03,1/4) {\footnotesize $\tfrac{1}{4}$};
-\draw[opacity=.1] (0,0)--(1/2,0)--(1/2,1/2);
-\draw[opacity=.1] (1/4,0)--(1/4,1/2);
-\draw[opacity=.1] (0,1/4)--(1/2,1/4);
-\node  at (1/8,1/4) {\tiny I};
-\node at (1/4,3/8) {\tiny \hyperref[sec:Q-II]{II}};
-\node  at (1/8,3.6/8) {\tiny \hyperref[sec:Q-III]{III}};
-\end{tikzpicture}
-\caption{Case $Q$}
-\label{fig:lq}
-\end{figure}
-[Figure 6. Triangle I: $\frac{x+y}2\le\frac14$; quadrangle II: $y-x\le\frac14$,
-$\frac{x+y}2\ge\frac14$; triangle III: $y-x\ge\frac14$, $\frac{x+y}2\ge\frac14$.]
--/
-
 section Case_Q_II
 
 /-! ### §6.2.1 Near diagonal: $0\le y-x\le\frac14$, $\frac{x+y}2\ge\frac14$ -/
-
-/-
-This is the quadrangle II in Figure \ref{fig:lq} [6]. Note that in this region $y\ge \frac14$.
--/
 
 /-- [DIR], §6.2.1: in the region II ($0\le y-x\le\frac14$, $\frac{x+y}2\ge\frac14$) we have
 $y\ge\frac14$. -/
 theorem caseQ_II_y_ge (x y : ℝ) (hxy : 0 ≤ y - x) (hxy' : y - x ≤ 1 / 4)
     (hm : (x + y) / 2 ≥ 1 / 4) : y ≥ 1 / 4 := by
   sorry
-
-/-
-Let $h=y-x$.
-We will prove the desired bound in the larger region
-\[ 0\le h\le \tfrac14\le y\le \tfrac12. \]
-By Lemma \ref{lem:neardiaglowerbd} [5.4],
-\[ G^1_\beta[Q_\beta](x,y)\ge h^{\frac1\beta} g_{Q,1,\beta}(h,y),\]
-where
-\[ g_{Q,1,\beta}(h,y)= \beta Q_\beta(y)^{1-\frac1\beta} - (2Q_\beta(y-\tfrac{h}2)-Q_\beta(y-h)-
-Q_\beta(y))h^{-\frac1\beta} - \tfrac12 \beta (1-\beta) Q_\beta(y)^{1-\frac2\beta} h^{\frac1\beta}.
-\]
--/
 
 /-- The function ([DIR], §6.2.1)
 $$g_{Q,1,\beta}(h,y)=\beta Q_\beta(y)^{1-\frac1\beta}
@@ -171,13 +108,6 @@ theorem caseQ_II_neardiag_bound (β : ℝ) (hβ : β = 1 / 2 ∨ β = β₀) (h 
     G₁ β (Q β) (y - h) y ≥ h ^ (1 / β) * g_Q_1 β h y := by
   sorry
 
-/-
-Calculate
-\[ 2Q_\beta(y-\tfrac{h}2)-Q_\beta(y-h)-Q_\beta(y) = h^2 (\alpha_0 - 2\alpha_1 h + 4\alpha_1 y)
-\ge 0, \]
-where $\alpha_0,\alpha_1$ are as in \eqref{eqn:alpha01def} [(5.5)].
--/
-
 /-- [DIR], §6.2.1:
 $2Q_\beta(y-\frac h2)-Q_\beta(y-h)-Q_\beta(y)=h^2(\alpha_0-2\alpha_1h+4\alpha_1y)$, and this is
 $\ge0$ for $\beta\in\{\frac12,\beta_0\}$ and $0\le h\le\frac14\le y\le\frac12$. -/
@@ -187,12 +117,6 @@ theorem caseQ_II_second_difference (β h y : ℝ) :
         h ^ 2 * (α₀ β - 2 * α₁ β * h + 4 * α₁ β * y) ≥ 0) := by
   sorry
 
-/-
-Thus
-\[ g_{Q,1,\beta}(h,y) = \beta Q_\beta(y)^{1-\frac1\beta} - (\alpha_0-2\alpha_1 h+4\alpha_1 y)
-h^{2-\frac1\beta} - \tfrac12 \beta (1-\beta) Q_\beta(y)^{1-\frac2\beta} h^{\frac1\beta} \]
--/
-
 /-- [DIR], §6.2.1: for $h>0$,
 $$g_{Q,1,\beta}(h,y)=\beta Q_\beta(y)^{1-\frac1\beta}-(\alpha_0-2\alpha_1h+4\alpha_1y)
 h^{2-\frac1\beta}-\tfrac12\beta(1-\beta)Q_\beta(y)^{1-\frac2\beta}h^{\frac1\beta}.$$ -/
@@ -200,16 +124,6 @@ theorem caseQ_II_g_Q_1_eq (β h y : ℝ) (hh : 0 < h) :
     g_Q_1 β h y = β * Q β y ^ (1 - 1 / β) - (α₀ β - 2 * α₁ β * h + 4 * α₁ β * y) * h ^ (2 - 1 / β)
       - 1 / 2 * β * (1 - β) * Q β y ^ (1 - 2 / β) * h ^ (1 / β) := by
   sorry
-
-/-
-If $\beta>\tfrac12$, then $g_{Q,1,\beta}(h,y)>0$ and this can be proved automatically:
-Since $Q_\beta$ is monotone increasing on $[0,\tfrac12]$ (see Lemma \ref{lem:Qbprop} [5.8]), we
-obtain the tight lower bound
- \[ \underline{g_{Q,1,\beta}}(\underline{h},\overline{h},\underline{y},\overline{y}) = \beta
-Q_\beta(\overline{y})^{1-\frac1\beta} - (\alpha_0 - 2\alpha_1 \underline{h} + 4\alpha_1
-\overline{y})\overline{h}^{2-\frac1\beta} \]
-\[- \tfrac12 \beta (1-\beta)Q_\beta(\underline{y})^{1-\frac2\beta} \overline{h}^{\frac1\beta}. \]
--/
 
 /-- [DIR], §6.2.1: if $\beta>\frac12$ (and $\beta\le1$, the standing range), then
 $g_{Q,1,\beta}(h,y)>0$ for $0\le h\le\frac14\le y\le\frac12$. (The paper only proves the case
@@ -237,16 +151,6 @@ theorem g_Q_1_lo_tight (β : ℝ) (hβ : β ∈ Ioo (1 / 2 : ℝ) (log₂ (3 / 2
     IsTightLowerBound₂ (g_Q_1 β) (g_Q_1_lo β) 0 (1 / 4) (1 / 4) (1 / 2) := by
   sorry
 
-/-
-Running $\textsc{Partition}_2(\underline{g_{Q,1,\beta_0}},[0,\tfrac14]\times[\tfrac14,\tfrac12])$
-gives
-\begin{equation}\label{eqn:g_Q_1_auto}\auto
-g_{Q,1,\beta_0}(h,y)>0.001
-\end{equation}
-and thus finishes the proof of \eqref{eqn:GLQge0} [(6.6)] near the diagonal for
-$\beta=\beta_0$.
--/
-
 /-- **(6.7)** ([DIR], §6.2.1) (🚗). For $(h,y)\in[0,\frac14]\times[\frac14,\frac12]$:
 $$g_{Q,1,\beta_0}(h,y)>0.001.$$ -/
 theorem eqn_6_7 (h y : ℝ) (hh : h ∈ Icc (0 : ℝ) (1 / 4)) (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
@@ -258,12 +162,6 @@ $0\le h\le\frac14\le y\le\frac12$, $G^1_{\beta_0}[Q_{\beta_0}](y-h,y)\ge0$. -/
 theorem caseQ_II_β₀ (h y : ℝ) (hh : h ∈ Icc (0 : ℝ) (1 / 4))
     (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) : G₁ β₀ (Q β₀) (y - h) y ≥ 0 := by
   sorry
-
-/-
-The case $\beta=\frac12$ needs
-a little more work because
-$g_{Q,1,\frac12}(0,\tfrac12)=0$.
--/
 
 /-- [DIR], §6.2.1: $g_{Q,1,\frac12}(0,\frac12)=0$, where $g_{Q,1,\frac12}(0,\cdot)$ is the
 continuous extension: $g_{Q,1,\frac12}(h,\frac12)\to0$ as $h\to0^+$.
@@ -282,12 +180,6 @@ theorem caseQ_II_g_Q_1_half_zero :
     Tendsto (fun h ↦ g_Q_1 (1 / 2) h (1 / 2)) (𝓝[>] 0) (𝓝 0) := by
   sorry
 
-/-
-We have
-\[ g_{Q,1,\frac12}(h,y) = \tfrac12 Q_{\frac12}(y)^{-1} - (\alpha_0+4\alpha_1 y) + 2\alpha_1 h -
-\tfrac18 Q_{\frac12}(y)^{-3} h^2\]
--/
-
 /-- [DIR], §6.2.1: for $h>0$ (and $\alpha_i=\alpha_i(\frac12)$),
 $$g_{Q,1,\frac12}(h,y)=\tfrac12Q_{\frac12}(y)^{-1}-(\alpha_0+4\alpha_1y)+2\alpha_1h
 -\tfrac18Q_{\frac12}(y)^{-3}h^2.$$ -/
@@ -295,12 +187,6 @@ theorem caseQ_II_g_Q_1_half_eq (h y : ℝ) (hh : 0 < h) :
     g_Q_1 (1 / 2) h y = 1 / 2 * Q (1 / 2) y ^ (-1 : ℤ) - (α₀ (1 / 2) + 4 * α₁ (1 / 2) * y)
       + 2 * α₁ (1 / 2) * h - 1 / 8 * Q (1 / 2) y ^ (-3 : ℤ) * h ^ 2 := by
   sorry
-
-/-
-Observe that
-\[\partial_h^2 g_{Q,1,\frac12}(h,y)=-\tfrac14 Q_{\frac12}(y)^{-3}<0,\]
-so the function is concave in $h$ and it suffices to evaluate at $h=0$ and $h=\tfrac14$:
--/
 
 /-- [DIR], §6.2.1: $\partial_h^2g_{Q,1,\frac12}(h,y)=-\frac14Q_{\frac12}(y)^{-3}<0$ for $h>0$ and
 $y\in[\frac14,\frac12]$. -/
@@ -320,11 +206,6 @@ theorem caseQ_II_g_Q_1_half_concave (y : ℝ) (hy : y ∈ Icc (1 / 4 : ℝ) (1 /
         ∀ h ∈ Ioc (0 : ℝ) (1 / 4), g_Q_1 (1 / 2) h y ≥ min g₀ (g_Q_1 (1 / 2) (1 / 4) y) := by
   sorry
 
-/-
-\begin{enumerate}
-\item $g_{Q,1,\frac12}(0,y)\ge 0$ for all $y\in[\tfrac14,\tfrac12]$.
--/
-
 /-- [DIR], §6.2.1, claim (1): $g_{Q,1,\frac12}(0,y)\ge0$ for all $y\in[\frac14,\frac12]$, where
 $g_{Q,1,\frac12}(0,y)$ is the continuous extension $\lim_{h\to0^+}g_{Q,1,\frac12}(h,y)$. -/
 theorem caseQ_II_claim_1 (y : ℝ) (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
@@ -333,12 +214,6 @@ theorem caseQ_II_claim_1 (y : ℝ) (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
 
 section Proof_Claim_1
 
-/-
-\begin{proof}
-We need to show
-\[ g_{Q,1,\frac12}(0,y)=\tfrac12 Q_{\frac12}(y)^{-1} - (\alpha_0+4\alpha_1 y) \ge 0\]
--/
-
 /-- [DIR], §6.2.1, proof of claim (1):
 $g_{Q,1,\frac12}(0,y)=\frac12Q_{\frac12}(y)^{-1}-(\alpha_0+4\alpha_1y)$, i.e.
 $g_{Q,1,\frac12}(h,y)\to\frac12Q_{\frac12}(y)^{-1}-(\alpha_0+4\alpha_1y)$ as $h\to0^+$. -/
@@ -346,11 +221,6 @@ theorem caseQ_II_claim_1_limit (y : ℝ) (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) 
     Tendsto (fun h ↦ g_Q_1 (1 / 2) h y) (𝓝[>] 0)
       (𝓝 (1 / 2 * Q (1 / 2) y ^ (-1 : ℤ) - (α₀ (1 / 2) + 4 * α₁ (1 / 2) * y))) := by
   sorry
-
-/-
-Multiplying by $2Q_{\frac12}(y)>0$ this is
-\[ 1 - 2(\alpha_0+4\alpha_1 y)Q_{\frac12}(y) \ge 0 \]
--/
 
 /-- [DIR], §6.2.1, proof of claim (1): $2Q_{\frac12}(y)>0$, and multiplying by it,
 $\frac12Q_{\frac12}(y)^{-1}-(\alpha_0+4\alpha_1y)\ge0$ is equivalent to
@@ -361,10 +231,6 @@ theorem caseQ_II_claim_1_iff (y : ℝ) (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
         1 - 2 * (α₀ (1 / 2) + 4 * α₁ (1 / 2) * y) * Q (1 / 2) y ≥ 0) := by
   sorry
 
-/-
-The left-hand side is a polynomial of degree $4$ in $y$.
--/
-
 /-- [DIR], §6.2.1, proof of claim (1): $1-2(\alpha_0+4\alpha_1y)Q_{\frac12}(y)$ is a polynomial of
 degree $4$ in $y$. -/
 theorem caseQ_II_claim_1_poly :
@@ -372,25 +238,12 @@ theorem caseQ_II_claim_1_poly :
       ∀ y, p.eval y = 1 - 2 * (α₀ (1 / 2) + 4 * α₁ (1 / 2) * y) * Q (1 / 2) y := by
   sorry
 
-/-
-Changing variables $t=\tfrac12-y$, plugging in the definition of $Q_{\frac12}(\tfrac12-t)$ and
-simplifying this becomes
-\[ 1-\tfrac13 (1-4t^2)(1-4\alpha_1 t)(3-4\alpha_1 t) \ge 0. \]
--/
-
 /-- [DIR], §6.2.1, proof of claim (1): with $t=\frac12-y$,
 $1-2(\alpha_0+4\alpha_1y)Q_{\frac12}(y)=1-\frac13(1-4t^2)(1-4\alpha_1t)(3-4\alpha_1t)$. -/
 theorem caseQ_II_claim_1_subst (t : ℝ) :
     1 - 2 * (α₀ (1 / 2) + 4 * α₁ (1 / 2) * (1 / 2 - t)) * Q (1 / 2) (1 / 2 - t) =
       1 - 1 / 3 * (1 - 4 * t ^ 2) * (1 - 4 * α₁ (1 / 2) * t) * (3 - 4 * α₁ (1 / 2) * t) := by
   sorry
-
-/-
-The left-hand side equals zero at $t=0$ and the three factors do not change sign on the interval
-$t\in [0,\tfrac14]$, so the left-hand side is increasing in $t\in [0,\tfrac14]$, which shows that
-$g_{Q,1,\frac12}(0,y)\ge 0$ for $y\in [\tfrac14, \tfrac12]$.
-\end{proof}
--/
 
 /-- [DIR], §6.2.1, proof of claim (1): $1-\frac13(1-4t^2)(1-4\alpha_1t)(3-4\alpha_1t)$ equals zero
 at $t=0$, the three factors do not change sign (are positive) on $[0,\frac14]$, and so it is
@@ -406,27 +259,12 @@ theorem caseQ_II_claim_1_mono :
 
 end Proof_Claim_1
 
-/-
-\item $g_{Q,1,\frac12}(\tfrac14,y)>0$ for all $y\in [\tfrac14,\tfrac12]$
--/
-
 /-- [DIR], §6.2.1, claim (2): $g_{Q,1,\frac12}(\frac14,y)>0$ for all $y\in[\frac14,\frac12]$. -/
 theorem caseQ_II_claim_2 (y : ℝ) (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
     g_Q_1 (1 / 2) (1 / 4) y > 0 := by
   sorry
 
 section Proof_Claim_2
-
-/-
-\begin{proof}
-Evaluate
-\begin{equation}\label{eqn:g_Q_1_y1_4_auto}\auto
-\underline{g_{Q,1,\frac12}}(\tfrac14,\tfrac14,\tfrac14,\tfrac38) > 0.01\;\;\text{and}\;\;
-\underline{g_{Q,1,\frac12}}(\tfrac14,\tfrac14,\tfrac38,\tfrac12)> 0.001.
-\end{equation}
-\end{proof}
-\end{enumerate}
--/
 
 /-- **(6.8)** ([DIR], §6.2.1, proof of claim (2)) (🚗).
 $$\underline{g_{Q,1,\frac12}}(\tfrac14,\tfrac14,\tfrac14,\tfrac38)>0.01\quad\text{and}\quad
@@ -457,15 +295,6 @@ end Case_Q_II
 section Case_Q_III
 
 /-! ### §6.2.2 Far from diagonal: $\frac14\le y-x\le\frac12$, $\frac{x+y}2\ge\frac14$ -/
-
-/-
-This is the triangle III in Figure \ref{fig:lq} [6].
-Again let $h=y-x$.
-The idea is to reduce to a fractional polynomial in $h$ using logarithmic derivatives.
-The desired inequality \eqref{eqn:GLQge0} [(6.6)] can be written in equivalent form as
-\[ G_{Q,\beta}(h,y)=\log(h^{\frac1\beta} + Q_\beta(y)^{\frac1\beta}) - \tfrac1\beta \log(2
-Q_\beta(y - \tfrac{h}{2}) - Q_\beta(y - h))\ge 0. \]
--/
 
 /-- The function ([DIR], §6.2.2)
 $$G_{Q,\beta}(h,y)=\log(h^{\frac1\beta}+Q_\beta(y)^{\frac1\beta})
@@ -508,12 +337,6 @@ theorem rem_6_5 (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : ℝ)
       deriv (fun h ↦ G_Q β h y) (1 / 4) > 0 := by
   sorry
 
-/-
-The proof of Lemma \ref{lem:LQIII} [6.4] is postponed to the end of this section.
-The lemma implies that
-$h\mapsto G_{Q,\beta}(h,y)$ must achieve its minimum on $[\frac14,y]$ at $h=\frac14$ or at $h=y$.
--/
-
 /-- [DIR], §6.2.2: Lemma 6.4 implies that $h\mapsto G_{Q,\beta}(h,y)$ achieves its minimum on
 $[\frac14,y]$ at $h=\frac14$ or at $h=y$ (for $\beta\in\{\beta_0,\frac12\}$,
 $y\in[\frac14,\frac12]$). -/
@@ -522,26 +345,11 @@ theorem caseQ_III_min (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : ℝ)
     ∀ h ∈ Icc (1 / 4) y, G_Q β h y ≥ min (G_Q β (1 / 4) y) (G_Q β y y) := by
   sorry
 
-/-
-In the near diagonal case we have already proved that $G_{Q,\beta}(\tfrac14,y)\ge 0$ (this is
-the line segment with $y-x=\tfrac14$ in Figure \ref{fig:lq} [6]).
--/
-
 /-- [DIR], §6.2.2: by the near diagonal case, $G_{Q,\beta}(\frac14,y)\ge0$ for
 $\beta\in\{\beta_0,\frac12\}$ and $y\in[\frac14,\frac12]$. -/
 theorem caseQ_III_G_Q_quarter (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : ℝ)
     (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) : G_Q β (1 / 4) y ≥ 0 := by
   sorry
-
-/-
-Thus it remains to show
-\[ G_{Q,\beta}(y,y)\ge 0, \]
-i.e.
-\[ \log(y^{\frac1\beta} + Q_\beta(y)^{\frac1\beta}) - \tfrac1\beta \log(2 Q_\beta(\tfrac{y}{2}))
-\geq 0.\]
-Equivalently, we need to show
-\[y^{\frac1\beta} + Q_\beta(y)^{\frac1\beta} - (2 Q_\beta(\tfrac{y}{2}))^{\tfrac1\beta }\geq 0.\]
--/
 
 /-- [DIR], §6.2.2: $G_{Q,\beta}(y,y)=\log(y^{\frac1\beta}+Q_\beta(y)^{\frac1\beta})
 -\frac1\beta\log(2Q_\beta(\frac y2))$, and for $y\in[\frac14,\frac12]$,
@@ -552,16 +360,6 @@ theorem caseQ_III_G_Q_diag (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : ℝ
     G_Q β y y = log (y ^ (1 / β) + Q β y ^ (1 / β)) - 1 / β * log (2 * Q β (y / 2)) ∧
       (G_Q β y y ≥ 0 ↔ y ^ (1 / β) + Q β y ^ (1 / β) - (2 * Q β (y / 2)) ^ (1 / β) ≥ 0) := by
   sorry
-
-/-
-Multiplying by $y^{-\tfrac{1}{\beta}}$ and defining
-\[f_\beta(y)=1+R_\beta(y)^{\frac{1}{\beta}}-R_\beta(\tfrac{y}{2})^{\frac{1}{\beta}}\]
-where
-$R_\beta(y) = y^{-1}Q_\beta(y) = \tfrac23  (1-y)(2^{\beta+2}-3+4(3-2^{\beta+1})  y),$
-we see that it is now equivalent to show
-$f_\beta(y) \geq 0$
-for  all $y\in [\tfrac{1}{4},\tfrac{1}{2}]$.
--/
 
 /-- The function $R_\beta(y)=y^{-1}Q_\beta(y)$ ([DIR], §6.2.2). -/
 noncomputable def R (β y : ℝ) : ℝ := y⁻¹ * Q β y
@@ -585,12 +383,6 @@ theorem caseQ_III_iff_f_QIII (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : �
     y ^ (1 / β) + Q β y ^ (1 / β) - (2 * Q β (y / 2)) ^ (1 / β) ≥ 0 ↔ f_QIII β y ≥ 0 := by
   sorry
 
-/-
-We evaluate  $f_\beta(\tfrac{1}{2})=0$.  We claim that $f_\beta' \leq 0$ on
-$[\tfrac{1}{4},\tfrac{1}{2}]$, which will in turn imply $f_\beta\geq 0$ on
-$[\tfrac{1}{4},\tfrac{1}{2}]$.
--/
-
 /-- [DIR], §6.2.2: $f_\beta(\frac12)=0$ (for $\beta\in\{\beta_0,\frac12\}$). -/
 theorem f_QIII_half (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) : f_QIII β (1 / 2) = 0 := by
   sorry
@@ -606,13 +398,6 @@ theorem f_QIII_nonneg (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : ℝ)
     (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) : f_QIII β y ≥ 0 := by
   sorry
 
-/-
-To see the claim, we calculate
-\[f_\beta'(y) = \tfrac{1}{\beta}R_\beta(y)^{\frac{1}{\beta}-1}R_\beta'(y) -
-\tfrac{1}{2\beta}R_\beta(\tfrac{y}{2})^{\frac{1}{\beta}-1}R_\beta'(\tfrac{y}{2})\]
- To show $f_\beta'(y)\leq 0$ it is equivalent  to  show that $\beta y f_\beta'(y)\leq 0$.
--/
-
 /-- [DIR], §6.2.2: for $y\in[\frac14,\frac12]$ and $\beta\in\{\beta_0,\frac12\}$,
 $$f_\beta'(y)=\tfrac1\beta R_\beta(y)^{\frac1\beta-1}R_\beta'(y)
 -\tfrac1{2\beta}R_\beta(\tfrac y2)^{\frac1\beta-1}R_\beta'(\tfrac y2).$$ -/
@@ -627,12 +412,6 @@ $\beta\in\{\beta_0,\frac12\}$). -/
 theorem deriv_f_QIII_nonpos_iff (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : ℝ) (hy : 0 < y) :
     deriv (f_QIII β) y ≤ 0 ↔ β * y * deriv (f_QIII β) y ≤ 0 := by
   sorry
-
-/-
-Setting $f_{\beta,0}(y)=yR_\beta(y)^{\frac{1}{\beta}-1}R_\beta'(y)$,   it holds
-\[\beta y f_\beta'(y) = f_{\beta,0}(y)-f_{\beta,0}(y/2).\]
- Thus, it suffices to show that $f_{\beta,0}'\leq 0$.
--/
 
 /-- The function $f_{\beta,0}(y)=yR_\beta(y)^{\frac1\beta-1}R_\beta'(y)$ ([DIR], §6.2.2; denoted
 $f_{\beta,0}$ in the paper). -/
@@ -666,15 +445,6 @@ theorem caseQ_III_suffices_f_QIII_0 (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2)
     ∀ y ∈ Icc (1 / 4 : ℝ) (1 / 2), deriv (f_QIII β) y ≤ 0 := by
   sorry
 
-/-
-Let us further denote
-\[f_{\beta,1}(y)=R_\beta(y)^{\frac{1}{\beta}-1},\]
-\[f_{\beta,2}(y)=yR_\beta'(y),\]
- so that $f_{\beta,0}(y)=f_{\beta,1}(y)f_{\beta,2}(y)$.
-Since  $R_\beta\geq  0$ and $\,R_\beta'\leq  0$ on $[\tfrac{1}{4},\tfrac{1}{2}]$, also
-$f_{\beta,1}\geq  0$ and $f_{\beta,2}\leq  0$ on this interval.
--/
-
 /-- The function $f_{\beta,1}(y)=R_\beta(y)^{\frac1\beta-1}$ ([DIR], §6.2.2; denoted
 $f_{\beta,1}$ in the paper). -/
 noncomputable def f_QIII_1 (β y : ℝ) : ℝ := R β y ^ (1 / β - 1)
@@ -694,16 +464,6 @@ theorem f_QIII_1_nonneg_f_QIII_2_nonpos (β : ℝ) (hβ : β = β₀ ∨ β = 1 
     R β y ≥ 0 ∧ deriv (R β) y ≤ 0 ∧ f_QIII_1 β y ≥ 0 ∧ f_QIII_2 β y ≤ 0 := by
   sorry
 
-/-
-We   calculate
-\[f_{\beta,1}'(y) = (\tfrac{1}{\beta}-1)R_\beta(y)^{\frac{1}{\beta}-2}R_\beta'(y),\]
- \[f_{\beta,1}''(y) = (\tfrac{1}{\beta}-1)(\tfrac{1}{\beta}-2)R_\beta(y)^{\frac{1}{\beta}-3}
-(R_\beta'(y))^2+(\tfrac{1}{\beta}-1)R_\beta(y)^{\frac{1}{\beta}-2}R_\beta''(y)\]
- \[f_{\beta,1}'''(y) = (\tfrac{1}{\beta}-1)(\tfrac{1}{\beta}-2)\big((\tfrac{1}{\beta}-3)
-R_\beta(y)^{\frac{1}{\beta}-4}(R_\beta'(y))^3 + 3 R_\beta(y)^{\frac{1}{\beta}-3}R_\beta'(y)
-R_\beta''(y)\big)\]
--/
-
 /-- [DIR], §6.2.2: for $y\in[\frac14,\frac12]$ and $\beta\in\{\beta_0,\frac12\}$,
 $$f_{\beta,1}'=(\tfrac1\beta-1)R_\beta^{\frac1\beta-2}R_\beta',\quad
 f_{\beta,1}''=(\tfrac1\beta-1)(\tfrac1\beta-2)R_\beta^{\frac1\beta-3}(R_\beta')^2
@@ -721,13 +481,6 @@ theorem derivs_f_QIII_1 (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : ℝ)
         + 3 * R β y ^ (1 / β - 3) * deriv (R β) y * deriv (deriv (R β)) y) := by
   sorry
 
-/-
-Since $\beta\in \{\beta_0,\tfrac{1}{2}\}$, one has $R_\beta''\leq 0$ and
-$\tfrac{1}{\beta}>1,\tfrac{1}{\beta}\leq 2,\tfrac{1}{\beta}<3$, which in turn implies
-$f_{\beta,1}'\leq 0$,   $f_{\beta,1}''\leq 0$,  and $f_{\beta,1}'''\leq  0$. To calculate the
-third derivative we also used that   $R_\beta'''=0$.
--/
-
 /-- [DIR], §6.2.2: for $\beta\in\{\beta_0,\frac12\}$: $R_\beta''\le0$, $R_\beta'''=0$ (on
 $(0,\infty)$), and $\frac1\beta>1$, $\frac1\beta\le2$, $\frac1\beta<3$. -/
 theorem R_derivs_one_div_β (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) :
@@ -742,13 +495,6 @@ theorem derivs_f_QIII_1_nonpos (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y :
     deriv (f_QIII_1 β) y ≤ 0 ∧ deriv (deriv (f_QIII_1 β)) y ≤ 0 ∧
       iteratedDeriv 3 (f_QIII_1 β) y ≤ 0 := by
   sorry
-
-/-
-Next we compute
-\[f_{\beta,2}'(y)=R_\beta'(y)+yR_\beta''(y),\]
-\[f_{\beta,2}''(y) = 2R_\beta''(y) +yR_\beta'''(y) = 2R_\beta''(y) \]
-Thus,   $f_{\beta,2}'\leq  0$ and $f_{\beta,2}''\leq  0$.
--/
 
 /-- [DIR], §6.2.2: for $y\in[\frac14,\frac12]$ and $\beta\in\{\beta_0,\frac12\}$:
 $f_{\beta,2}'(y)=R_\beta'(y)+yR_\beta''(y)$,
@@ -766,13 +512,6 @@ theorem derivs_f_QIII_2_nonpos (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y :
     (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
     deriv (f_QIII_2 β) y ≤ 0 ∧ deriv (deriv (f_QIII_2 β)) y ≤ 0 := by
   sorry
-
-/-
-Using $f_{\beta,2}'''=0$ we calculate
-\[f_{\beta,0}'''(y) = f_{\beta,1}'''(y)f_{\beta,2}(y) + 3f_{\beta,1}''(y)f_{\beta,2}'(y) +
-3f_{\beta,1}'(y)f_{\beta,2}''(y)\]
-The calculations above show that $f_{\beta,0}'''\geq 0$.
--/
 
 /-- [DIR], §6.2.2: for $y\in[\frac14,\frac12]$ and $\beta\in\{\beta_0,\frac12\}$:
 $f_{\beta,2}'''=0$ and
@@ -793,13 +532,6 @@ theorem iteratedDeriv_three_f_QIII_0_nonneg (β : ℝ) (hβ : β = β₀ ∨ β 
     (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) : iteratedDeriv 3 (f_QIII_0 β) y ≥ 0 := by
   sorry
 
-/-
-We evaluate
-\begin{equation}
-f_{\beta,0}''(\tfrac{1}{4}) >  3.2,
-\end{equation}   which implies $f_{\beta,0}''>0$.
--/
-
 /-- **(6.9)** ([DIR], §6.2.2). For $\beta\in\{\beta_0,\frac12\}$: $f_{\beta,0}''(\frac14)>3.2$. -/
 theorem eqn_6_9 (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) :
     deriv (deriv (f_QIII_0 β)) (1 / 4) > 3.2 := by
@@ -810,14 +542,6 @@ $\beta\in\{\beta_0,\frac12\}$). -/
 theorem deriv2_f_QIII_0_pos (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : ℝ)
     (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) : deriv (deriv (f_QIII_0 β)) y > 0 := by
   sorry
-
-/-
-We also evaluate
-\begin{equation}
-f_{\beta,0}'(\tfrac{1}{2})< -0.6,
-\end{equation}
- which then shows $f_{\beta,0}'<0$ on $[\tfrac{1}{4},\tfrac{1}{2}]$,  as desired.
--/
 
 /-- **(6.10)** ([DIR], §6.2.2). For $\beta\in\{\beta_0,\frac12\}$: $f_{\beta,0}'(\frac12)<-0.6$. -/
 theorem eqn_6_10 (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) : deriv (f_QIII_0 β) (1 / 2) < -0.6 := by
@@ -838,14 +562,6 @@ theorem deriv_f_QIII_0_neg_Icc_eighth (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 
 
 section Proof_Lemma_6_4
 
-/-
-\begin{proof}[Proof of Lemma \ref{lem:LQIII} [6.4]]
-Here $h,y\in [\frac14,\frac12]$.
-The function $\beta\partial_h G_{Q,\beta}(h,y)$ is given by
-\[ \frac{h^{\frac1\beta-1}}{h^{\frac1\beta}+Q_\beta(y)^{\frac1\beta}} -
-\frac{Q_\beta'(y-h)-Q_\beta'(y-\frac{h}2)}{2Q_\beta(y-\frac{h}2)-Q_\beta(y-h)} \]
--/
-
 /-- [DIR], proof of Lemma 6.4: for $h,y\in[\frac14,\frac12]$ and $\beta\in\{\beta_0,\frac12\}$,
 $$\beta\partial_hG_{Q,\beta}(h,y)=\frac{h^{\frac1\beta-1}}{h^{\frac1\beta}+Q_\beta(y)^{\frac1\beta}}
 -\frac{Q_\beta'(y-h)-Q_\beta'(y-\frac h2)}{2Q_\beta(y-\frac h2)-Q_\beta(y-h)}.$$ -/
@@ -856,17 +572,6 @@ theorem lemma_6_4_deriv (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (h y : ℝ)
         - (deriv (Q β) (y - h) - deriv (Q β) (y - h / 2))
           / (2 * Q β (y - h / 2) - Q β (y - h)) := by
   sorry
-
-/-
-Observe that $2Q_\beta(y-\frac{h}2)-Q_\beta(y-h)>0$ by strict concavity of $Q_\beta$ (see Lemma
-\ref{lem:Qbprop} [5.8]),
-so we may multiply by the common denominator $(h^{\frac1\beta}+Q_\beta(y)^{\frac1\beta})
-(2Q_\beta(y-\frac{h}2)-Q_\beta(y-h))$
-to arrive at the quantity
-\begin{equation}\label{eqn:penultLQIII} h^{\frac1\beta-1}(2Q_\beta(y-\tfrac{h}2)-Q_\beta(y-h))
-\end{equation}
- \[-(Q_\beta'(y-h)-Q_\beta'(y-\tfrac{h}2))(h^{\frac1\beta}+Q_\beta(y)^{\frac1\beta}). \]
--/
 
 /-- [DIR], proof of Lemma 6.4: $2Q_\beta(y-\frac h2)-Q_\beta(y-h)>0$ (by strict concavity of
 $Q_\beta$) for $h,y\in[\frac14,\frac12]$ and $\beta\in\{\beta_0,\frac12\}$. -/
@@ -889,15 +594,6 @@ theorem eqn_6_11 (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (h y : ℝ)
         - (deriv (Q β) (y - h) - deriv (Q β) (y - h / 2)) * (h ^ (1 / β) + Q β y ^ (1 / β)) := by
   sorry
 
-/-
-This is a fractional polynomial in $h$. To see this, calculate
-\[ 2Q_\beta(y-\tfrac{h}2)-Q_\beta(y-h)
-=-2\alpha_1 h^3+(\alpha_0+4\alpha_1 y)h^2 + Q_\beta(y)
-\]
-\[ Q_\beta'(y-h)-Q_\beta'(y-\tfrac{h}2)=-6\alpha_1 h^2+(2\alpha_0+8\alpha_1 y)h, \]
-where $\alpha_0,\alpha_1$ are as in \eqref{eqn:alpha01def} [(5.5)].
--/
-
 /-- [DIR], proof of Lemma 6.4:
 $2Q_\beta(y-\frac h2)-Q_\beta(y-h)=-2\alpha_1h^3+(\alpha_0+4\alpha_1y)h^2+Q_\beta(y)$ and
 $Q_\beta'(y-h)-Q_\beta'(y-\frac h2)=-6\alpha_1h^2+(2\alpha_0+8\alpha_1y)h$. -/
@@ -907,14 +603,6 @@ theorem lemma_6_4_poly (β h y : ℝ) :
       deriv (Q β) (y - h) - deriv (Q β) (y - h / 2) =
         -6 * α₁ β * h ^ 2 + (2 * α₀ β + 8 * α₁ β * y) * h := by
   sorry
-
-/-
-Thus \eqref{eqn:penultLQIII} [(6.11)] equals
-$h^{\frac1\beta-1} p_{y,\beta}(h)$, where
-\[ p_{y,\beta}(h) = 4\alpha_1 h^{3} - (\alpha_0 + 4\alpha_1 y)h^{2} + 6\alpha_1
-Q_\beta(y)^{\frac1\beta} h^{3-\frac1\beta}\]\[ - (2\alpha_0+8\alpha_1 y)Q_\beta(y)^{\frac1\beta}
-h^{2-\frac1\beta} + Q_\beta(y).\]
--/
 
 /-- The fractional polynomial ([DIR], proof of Lemma 6.4)
 $$p_{y,\beta}(h)=4\alpha_1h^3-(\alpha_0+4\alpha_1y)h^2+6\alpha_1Q_\beta(y)^{\frac1\beta}
@@ -931,11 +619,6 @@ theorem eqn_6_11_eq_p_Q (β h y : ℝ) (hh : 0 < h) :
       h ^ (1 / β - 1) * p_Q β y h := by
   sorry
 
-/-
-It will now suffice to show that $p_{y,\beta}$ is strictly decreasing and thus has at most one
-zero.
--/
-
 /-- [DIR], proof of Lemma 6.4: it suffices to show that $p_{y,\beta}$ is strictly decreasing (on
 $[\frac14,\frac12]$), and thus has at most one zero: then $h\mapsto\partial_hG_{Q,\beta}(h,y)$
 vanishes at most once on $[\frac14,\frac12]$. -/
@@ -944,14 +627,6 @@ theorem lemma_6_4_of_strictAntiOn (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (
     {h ∈ Icc (1 / 4 : ℝ) (1 / 2) | p_Q β y h = 0}.Subsingleton ∧
       {h ∈ Icc (1 / 4 : ℝ) (1 / 2) | deriv (fun h ↦ G_Q β h y) h = 0}.Subsingleton := by
   sorry
-
-/-
-To do this we compute the derivative:
-\[ g_{Q,2,\beta}(h,y) = -\partial_h p_{y,\beta}(h) = -a_2 h^{2} +  a_{1,y} h - a_{0^+,y}
-h^{2-\frac1\beta} + a_{-1^+,y} h^{1-\frac1\beta}
-\]
-where the coefficients can be read off from the definition of $p_{y,\beta}(h)$.
--/
 
 /-- The function $g_{Q,2,\beta}(h,y)=-\partial_hp_{y,\beta}(h)$ ([DIR], proof of Lemma 6.4). -/
 noncomputable def g_Q_2 (β h y : ℝ) : ℝ := -deriv (p_Q β y) h
@@ -966,15 +641,6 @@ theorem g_Q_2_eq (β h y : ℝ) (hh : 0 < h) :
       - 6 * (3 - 1 / β) * α₁ β * Q β y ^ (1 / β) * h ^ (2 - 1 / β)
       + (2 - 1 / β) * (2 * α₀ β + 8 * α₁ β * y) * Q β y ^ (1 / β) * h ^ (1 - 1 / β) := by
   sorry
-
-/-
-A tight lower bound of $g_{Q,2,\beta}$ is given by
-\[ \underline{g_{Q,2,\beta}}(\underline{h},\overline{h},\underline{y},\overline{y}) =
--12\alpha_1 \overline{h}^{2} + (2\alpha_0 + 8\alpha_1 \underline{y})\underline{h} -
-6(3-\tfrac1\beta)\alpha_1 Q_\beta(\overline{y})^{\frac1\beta} \overline{h}^{2-\frac1\beta} \]
-\[ + (2-\tfrac1\beta)(2\alpha_0+8\alpha_1 \underline{y})Q_\beta(\underline{y})^{\frac1\beta}
-\overline{h}^{-\frac1\beta+1}. \]
--/
 
 /-- The lower bound ([DIR], proof of Lemma 6.4)
 $$\underline{g_{Q,2,\beta}}(\underline h,\overline h,\underline y,\overline y)
@@ -992,16 +658,6 @@ $g_{Q,2,\beta}$ on $[\frac14,\frac12]^2$ (for $\beta\in\{\beta_0,\frac12\}$). -/
 theorem g_Q_2_lo_tight (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) :
     IsTightLowerBound₂ (g_Q_2 β) (g_Q_2_lo β) (1 / 4) (1 / 2) (1 / 4) (1 / 2) := by
   sorry
-
-/-
-Finally, running $\textsc{Partition}_2(\underline{g_{Q,2,\beta}}, [\tfrac14,\tfrac12]^2)$ for
-$\beta\in\{\frac12,\beta_0\}$ shows that
-\begin{equation}\label{eqn:g_Q_2_auto}\auto
-g_{Q,2,\beta}(h,y)>0.01
-\end{equation}
-for all $(h,y)\in [\tfrac14,\tfrac12]^2$.
-\end{proof}
--/
 
 /-- **(6.12)** ([DIR], proof of Lemma 6.4) (🚗). For $\beta\in\{\frac12,\beta_0\}$ and
 $(h,y)\in[\frac14,\frac12]^2$: $$g_{Q,2,\beta}(h,y)>0.01.$$ -/

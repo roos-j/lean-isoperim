@@ -34,10 +34,6 @@ namespace Auto.DIR
 
 open Real Set
 
-/-
-Let $B:[0,1]\to [0,\infty)$ be given. For $\beta\ge \tfrac12$, $0\le x\le y\le 1$ set
--/
-
 /-- **(2.1)** ([DIR], §2). For $B:[0,1]\to[0,\infty)$, $\beta\ge\frac12$, $0\le x\le y\le1$,
 $$G^1_\beta[B](x,y)=((y-x)^{1/\beta}+B(y)^{1/\beta})^\beta+B(x)-2B(\tfrac{x+y}2).$$ -/
 noncomputable def G₁ (β : ℝ) (B : ℝ → ℝ) (x y : ℝ) : ℝ :=
@@ -64,19 +60,6 @@ theorem prop_2_1 (β : ℝ) (hβ : 1 / 2 ≤ β) (B : ℝ → ℝ) (hB : ∀ x �
     ∀ x ∈ 𝒬, 𝓑 β x ≥ B x := by
   sorry
 
-/-
-This was proved by Kahn and Park \cite{KP20}. The proof is by induction on $n$ (see \cite{KP20},
-\cite{BIM23}). It improves on prior induction schemes by Talagrand \cite{Tal93}, Bobkov
-\cite{Bob97} and Bobkov--G\"otze \cite{BG99}.
-The refinement lies mainly in the inclusion of the term $G^2$ which is crucial for our
-application.
-This reduces the proof of Theorems \ref{thm:mainisoperim}, \ref{thm:onehalf} and
-\ref{thm:isoperimJ} [1.1, 1.5, 1.7] to finding an appropriate function $B$ and verifying the
-two-point inequality \eqref{eqn:twoptineq} [(2.2)].
-Both steps are difficult obstacles.
-Define
--/
-
 /-- $L_\beta(x)=x(\log_2(1/x))^\beta$ ([DIR], §2). (At $x=0$ Lean's conventions give
 $L_\beta(0)=0$, the continuous extension.) -/
 noncomputable def L (β x : ℝ) : ℝ := x * (log₂ (1 / x)) ^ β
@@ -98,22 +81,12 @@ theorem Q_spec (β : ℝ) :
       p.eval (1 / 2) = 1 / 2 → p.eval (1 / 4) = 2 ^ (β - 2) → ∀ x, p.eval x = Q β x := by
   sorry
 
-/-
-The polynomial $Q_\frac12$ has been used also in \cite{BIM23}.
-Define
--/
-
 /-- **(2.3)** ([DIR], §2).
 $$b_\beta(x)=\begin{cases}L_\beta(x)&x\in[0,\frac14],\\ Q_\beta(x)&x\in[\frac14,\frac12],\\
 J(x)&x\in[\frac12,1].\end{cases}$$
 Only the values on $[0,1]$ are meaningful. -/
 noncomputable def b (β x : ℝ) : ℝ :=
   if x ≤ 1 / 4 then L β x else if x ≤ 1 / 2 then Q β x else J x
-
-/-
-The function $J$ is as in Theorem \ref{thm:isoperimJ} [1.7] and can be expressed in terms of the
-Gaussian isoperimetric profile, see \eqref{eqn:JintermsofI} [(3.4)].
--/
 
 /-- The constant $c_0=0.997$ ([DIR], Theorem 2.2). -/
 noncomputable def c₀ : ℝ := 0.997
@@ -152,16 +125,6 @@ $y\approx0.585$ gives $G^1\approx-3.1\cdot10^{-5}$ and $G^2\approx-0.22$. -/
 theorem rem_2_4_failure : ∃ y ∈ Ioc (1 / 2 : ℝ) 1, G (1 / 2) (b (1 / 2)) (1 / 2) y < 0 := by
   sorry
 
-/-
-In particular, the failure only involves the function $J$ (the somewhat suspicious looking cubic
-$Q_\beta$ surprisingly is not involved in this failure).
-$J$ is a very natural candidate for modeling the envelope $\mathfrak{B}_{\frac12}$ (see
-Definition \ref{defn:envelope} [Definition 2.7]) on $[\frac12,1]$.
-The function $J$ extremizes the two-point inequality locally: letting $y\to x$ in the inequality
-$G_{\frac12}[B](x,y)\ge 0$ and assuming that $B$ is $C^2$ gives the differential inequality
-\[ B'' B \ge -2, \]
--/
-
 /-- [DIR], Remark 2.4: letting $y\to x$ in the inequality $G_{\frac12}[B](x,y)\ge0$ and assuming
 that $B$ is $C^2$ gives the differential inequality $B''B\ge-2$. (Stated for $B\ge0$ of class
 $C^2$ on an open interval $(a,b)$ on which the two-point inequality holds.) -/
@@ -171,31 +134,12 @@ theorem rem_2_4_local (B : ℝ → ℝ) (a c : ℝ) (hB : ContDiffOn ℝ 2 B (Io
     ∀ x ∈ Ioo a c, deriv (deriv B) x * B x ≥ -2 := by
   sorry
 
-/-
-so it is natural to consider functions satisfying $B''B=-2$ and numerical differentiation of the
-approximated envelope $\mathfrak{B}_{\frac12}$ on the interval $[\frac12,1]$ further supports this
-approach.
-The numerical evidence also suggests that $|\mathfrak{B}_{\frac12}(x)-J(x)|\le 3\cdot 10^{-5}$ for
-$x\in [\frac12,1]$ (see Figure \ref{fig:boundcompare}).
-The failure of the inequality for the function $J$ at $\beta=\frac12$ is predicted by an analogue
-of Bobkov's two-point inequality, see Proposition \ref{prop:twoptbobkov} [3.3] and Remark
-\ref{rem:Jbobkovtwoptfailure} [3.6].
-
-The proof of Theorem \ref{thm:maintwopt} [2.2] uses computer assistance and is contained in
-\S \ref{sec:maintwopt} [§6]. Theorem \ref{thm:maintwopt} [2.2] and Proposition \ref{prop:kahnpark}
-[2.1] immediately imply:
--/
-
 /-- **Corollary 2.5** ([DIR]). The following isoperimetric inequalities hold (on $\mathcal{Q}$):
 $$\mathcal{B}_{\beta_0}\ge b_{\beta_0}, \tag{2.6}$$
 $$\mathcal{B}_{\frac12}\ge0.997\cdot b_{\frac12}. \tag{2.7}$$ -/
 theorem cor_2_5 :
     (∀ x ∈ 𝒬, 𝓑 β₀ x ≥ b β₀ x) ∧ (∀ x ∈ 𝒬, 𝓑 (1 / 2) x ≥ 0.997 * b (1 / 2) x) := by
   sorry
-
-/-
-(Recall Definition \ref{defn:isoperimprofile} [1.3] and \eqref{eqn:bbdef} [(2.3)].)
--/
 
 /-- **Remark 2.6** ([DIR], added in revised version, August 2026). Somewhat counterintuitively,
 by slightly relaxing the requirement $B''B=-2$ to $B''B=-\gamma$ for a $\gamma<2$ one may fix this
@@ -204,12 +148,5 @@ $\beta=\frac12$ [DIRX26]. -/
 theorem rem_2_6 (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) (hA : ｜A｜ ≤ 1 / 2) :
     𝐄 h_{A} ^ (1 / 2 : ℝ) ≥ ｜A｜ * (log₂ (1 / ｜A｜)) ^ (1 / 2 : ℝ) := by
   sorry
-
-/-
-However, the present inequalities \eqref{eqn:actualisoperimbeta0} [(2.6)] and
-\eqref{eqn:actualisoperimhalf} [(2.7)] remain somewhat sharper in the regime $|A|>\frac12$
-(compare \cite[Remark 2.2]{DIRX26}; this comparison is formalized with [DIRX26, Remark 2.2] in
-`Isoperim/DIRX/2_Preliminaries/2_1_Reduction_Two_Point_Inequality.lean`).
--/
 
 end Auto.DIR

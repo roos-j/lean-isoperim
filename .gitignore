@@ -60,3 +60,6 @@ automation/raw.md
 
 # Claude Code session lock files.
 .claude/scheduled_tasks.lock
+
+# Scratch analysis files.
+automation/tmp/

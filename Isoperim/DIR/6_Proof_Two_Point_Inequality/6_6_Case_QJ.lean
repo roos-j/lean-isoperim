@@ -43,14 +43,6 @@ namespace Auto.DIR
 
 open Real Set
 
-/-
-\subsection{\texorpdfstring{Case $QJ$: $\frac14\le x\le \frac12\le y\le 1$, $x+y\ge 1$}{Case QJ}}
-\label{sec:caseQJ}
-We distinguish two cases, see Figure \ref{fig:qj} [Figure 8].
-The near-diagonal triangle I is the most critical: here it is again necessary to move away from
-$\beta=\frac12$ (or include a constant $c<1$).
--/
-
 /-- [DIR], §6.6: in this region ($\frac14\le x\le\frac12\le y\le1$, $x+y\ge1$),
 $G^1_\beta[J](x,y)$ is increasing in $\beta$ (for $\beta\in[\frac12,1]$). (The value $J(x)$ enters
 $G^1_\beta[J](x,y)$ only through a $\beta$-independent summand.)
@@ -66,22 +58,9 @@ theorem caseQJ_G₁_monotoneOn_beta (x y : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1
     MonotoneOn (fun β ↦ G₁ β J x y) (Icc (1 / 2) 1) := by
   sorry
 
-/-
-Figure \ref{fig:qj} [Figure 8] (Case $QJ$): the region
-$\{\frac14\le x\le\frac12\le y\le1,\ x+y\ge1\}$, the quadrilateral with vertices
-$(\frac12,\frac12)$, $(\frac12,1)$, $(\frac14,1)$, $(\frac14,\frac34)$, is divided by the segment
-from $(\frac38,\frac58)$ to $(\frac12,\frac58)$ into the triangle I (near the diagonal,
-$\frac38\le x\le\frac12\le y\le\frac58$, §6.6.1) and the region II ($y\ge\frac58$, §6.6.2).
--/
-
 section Near_Diagonal
 
 /-! ### §6.6.1 Near diagonal: $3/8\le x\le1/2$, $1/2\le y\le5/8$, $x+y\ge1$ -/
-
-/-
-This is the triangle I in Figure \ref{fig:qj} [Figure 8].
-\label{sec:QJ-I}
--/
 
 /-- **Proposition 6.11** ([DIR]). For $\frac38\le x\le\frac12\le y\le\frac58$ and
 $\beta\in[\beta_0,1]$,
@@ -277,11 +256,6 @@ section Far_From_Diagonal
 
 /-! ### §6.6.2 Far from diagonal: $1/4\le x\le1/2$, $5/8\le y\le1$, $x+y\ge1$ -/
 
-/-
-\label{sec:QJ-II}
-We will show the following claim that is stronger than required:
--/
-
 /-- The function ([DIR], (6.27))
 $$g_{QJ,2}(x,y)=((y-x)^2+J(y)^2)^{1/2}+Q_{\frac12}(x)-2J(\tfrac{x+y}2),$$
 with $J(\frac{x+y}2)$ read as $J_{w_0}(\frac{x+y}2)$ (see below).
@@ -330,11 +304,6 @@ $\frac{x+y}2$ read as $J_{w_0}$, see `Auto.DIR.g_QJ_2`). -/
 theorem g_QJ_2_tightLowerBound :
     IsTightLowerBound₂ g_QJ_2 g_QJ_2_lo (1 / 4) (1 / 2) (5 / 8) 1 := by
   sorry
-
-/-
-Running $\textsc{Partition}_2(\underline{g_{QJ,2}},[\tfrac14,\tfrac12]\times [\tfrac58,1])$ shows
-the claim.
--/
 
 end Proof_Proposition_6_12
 

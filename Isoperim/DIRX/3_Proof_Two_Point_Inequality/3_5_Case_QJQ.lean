@@ -50,10 +50,6 @@ theorem caseQJQ (x y : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2)) (hy : 1 / 2 �
     (hxy : x + y ≤ 1) : G (B_{w₁}) x y ≥ 0 := by
   sorry
 
-/-
-We will show that for all $(x,y)$ in the larger region $[\frac14,\frac12]\times [\frac12,\frac34]$,
--/
-
 /-- **(3.9)** ([DIRX], §3.5). For all $(x,y)\in[\frac14,\frac12]\times[\frac12,\frac34]$,
 $$(y-x)^2+\mathrm{J}(y)^2-(2Q(\tfrac{x+y}2)-Q(x))^2\ge0.$$ -/
 theorem eqn_3_9 (x y : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2))
@@ -68,10 +64,6 @@ theorem caseQJQ_of_eqn_3_9 (x y : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2)) (h
     G₁ (B_{w₁}) x y ≥ 0 := by
   sorry
 
-/-
-The $y$-derivative of the left-hand side in \eqref{eqn:QJQclaim} [(3.9)] is two times
--/
-
 /-- **(3.10)** ([DIRX], §3.5).
 $$h_{QJQ,1}(x,y)=y-x+\mathrm{J}(y)\mathrm{J}'(y)-(2Q(\tfrac{x+y}2)-Q(x))Q'(\tfrac{x+y}2).$$ -/
 noncomputable def h_QJQ₁ (x y : ℝ) : ℝ :=
@@ -83,17 +75,6 @@ theorem eqn_3_9_deriv (x y : ℝ) (hy : y ∈ Icc (1 / 2 : ℝ) (3 / 4)) :
     deriv (fun t ↦ (t - x) ^ 2 + J t ^ 2 - (2 * Q ((x + t) / 2) - Q x) ^ 2) y =
       2 * h_QJQ₁ x y := by
   sorry
-
-/-
-We begin by showing that this quantity is strictly positive for all
-$(x,y)\in [\frac14,\frac12]\times [\frac{1}{2},\frac{33}{64}]$, thus reducing to the case
-$y=\frac12$ on this region.
-This can be done by dyadic partitioning. In order to formulate a tight lower bound we record the
-monotonicity of the various terms appearing in \eqref{eqn:gQJQdef} [(3.10)].
-
-First, one observes that the quantity $2Q(\frac{x+y}2)-Q(x)$ is positive, increasing in $y$ and
-decreasing in $x$ (for details see \cite[\S 6.5]{DIR24}).
--/
 
 /-- [DIRX], §3.5 (see [DIR], §6.5): the quantity $2Q(\frac{x+y}2)-Q(x)$ is positive, increasing
 in $y$ and decreasing in $x$ (on $[\frac14,\frac12]\times[\frac12,\frac{33}{64}]$). ([DIR], §6.5
@@ -111,11 +92,6 @@ theorem QJQ_monotone :
       AntitoneOn (fun x ↦ 2 * Q ((x + y) / 2) - Q x) (Icc (1 / 4) (1 / 2))) := by
   sorry
 
-/-
-Also, $Q'$ is decreasing and positive by Lemma \ref{lem:Q} [2.4]. Note positivity continues to
-hold on the interval $[0,\tfrac{33}{64}]$ as one verifies by a single point evaluation.
--/
-
 /-- [DIRX], §3.5: $Q'$ is decreasing and positive (on $[0,\frac12]$ by Lemma 2.4, and positivity
 continues to hold on $[0,\frac{33}{64}]$, as one verifies by the single point evaluation
 $Q'(\frac{33}{64})>0$). -/
@@ -123,15 +99,6 @@ theorem deriv_QX_pos :
     AntitoneOn (deriv Q) (Icc 0 (33 / 64)) ∧ deriv Q (33 / 64) > 0 ∧
       ∀ x ∈ Icc (0 : ℝ) (33 / 64), deriv Q x > 0 := by
   sorry
-
-/-
-Finally, the function $x\mapsto {\mathrm{J}}(x){\mathrm{J}}'(x)$ is decreasing on
-$x\in [\frac12, \frac34]$. Indeed,
-\[({\mathrm{J}}\cdot {\mathrm{J}}')' = ({\mathrm{J}}')^2-\gamma.\]
-Since $({\mathrm{J}}')^2$ is convex (see \cite[Lemma 3.2]{DIR24}, `Auto.DIR.lemma_3_2`), it
-suffices to evaluate $({\mathrm{J}}')^2-\gamma$ at the endpoints $x=\frac12$ and $x=\frac34$ which
-shows $({\mathrm{J}}')^2-\gamma<-1<0$.
--/
 
 /-- [DIRX], §3.5: the function $x\mapsto\mathrm{J}(x)\mathrm{J}'(x)$ is decreasing on
 $[\frac12,\frac34]$. -/
@@ -154,14 +121,6 @@ theorem deriv_JX_sq_sub_γX :
       ∀ x ∈ Icc (1 / 2 : ℝ) (3 / 4), deriv J x ^ 2 - γ < -1 := by
   sorry
 
-/-
-Therefore, a tight lower bound of $h_{QJQ,1}$ is given by
-\[ \underline{h_{QJQ,1}}(\underline{x},\overline{x},\underline{y},\overline{y}) = \underline{y}-
-\overline{x} + {\mathrm{J}}(\overline{y}){\mathrm{J}}'(\overline{y}) -
-(2Q(\tfrac{\underline{x}+\overline{y}}2)-Q(\underline{x}))Q'(\tfrac{\underline{x}+
-\underline{y}}2). \]
--/
-
 /-- The tight lower bound ([DIRX], §3.5)
 $$\underline{h_{QJQ,1}}(\underline x,\overline x,\underline y,\overline y)=\underline y-\overline x
 +\mathrm{J}(\overline y)\mathrm{J}'(\overline y)
@@ -176,25 +135,11 @@ theorem h_QJQ₁_lo_tight :
     IsTightLowerBound₂ h_QJQ₁ h_QJQ₁_lo (1 / 4) (1 / 2) (1 / 2) (33 / 64) := by
   sorry
 
-/-
-Dyadic partitioning shows that
--/
-
 /-- **(3.11)** ([DIRX], §3.5) (🚗). Dyadic partitioning shows that $h_{QJQ,1}>10^{-5}$ on
 $[\frac14,\frac12]\times[\frac12,\frac{33}{64}]$. -/
 theorem eqn_3_11 (x y : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2))
     (hy : y ∈ Icc (1 / 2 : ℝ) (33 / 64)) : h_QJQ₁ x y > (10 : ℝ) ^ (-5 : ℤ) := by
   sorry
-
-/-
-on $[\frac14,\frac12]\times [\frac{1}{2},\frac{33}{64}]$.
-
-To finish the proof for $y\le \frac{33}{64}$, it now suffices to show the inequality
-\eqref{eqn:QJQclaim} [(3.9)] for $y=\frac12$, that is,
-\[(\tfrac{1}{2}-x)^2 + \tfrac{1}{4} - (2Q(\tfrac{x}{2} + \tfrac{1}{4})-Q(x))^2 \ge 0 \]
-for $x\in [\frac14,\frac12]$.
-This inequality was shown in \cite[\S 6.5]{DIR24}.
--/
 
 /-- [DIRX], §3.5: (3.9) for $y=\frac12$ reads (using $\mathrm{J}(\frac12)=\frac12$)
 $(\frac12-x)^2+\frac14-(2Q(\frac x2+\frac14)-Q(x))^2\ge0$ for $x\in[\frac14,\frac12]$; this
@@ -209,15 +154,6 @@ theorem eqn_3_9_low (x y : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2))
     (hy : y ∈ Icc (1 / 2 : ℝ) (33 / 64)) :
     (y - x) ^ 2 + J y ^ 2 - (2 * Q ((x + y) / 2) - Q x) ^ 2 ≥ 0 := by
   sorry
-
-/-
-It remains to consider the case $(x,y)\in [\frac{1}{4},\frac{1}{2}]\times
-[\tfrac{33}{64},\tfrac{3}{4}]$. A tight lower bound of the left-hand side in
-\eqref{eqn:QJQclaim} [(3.9)] is
-\[\underline{h_{QJQ,2}}(\underline x,\overline x, \underline y, \overline y)=(\underline{y}-
-\overline{x})^2 + \underline{{\mathrm{J}}}(\underline y, \overline{y})^2 -
-(2Q(\tfrac{\underline{x}+\overline{y}}{2})-Q(\underline{x}))^2.\]
--/
 
 /-- The tight lower bound ([DIRX], §3.5)
 $$\underline{h_{QJQ,2}}(\underline x,\overline x,\underline y,\overline y)
@@ -247,19 +183,11 @@ theorem h_QJQ₂_lo_tight :
       h_QJQ₂_lo (1 / 4) (1 / 2) (33 / 64) (3 / 4) := by
   sorry
 
-/-
-By dyadic partitioning we obtain
--/
-
 /-- **(3.12)** ([DIRX], §3.5) (🚗). By dyadic partitioning, LHS of (3.9) $>10^{-7}$ on
 $[\frac14,\frac12]\times[\frac{33}{64},\frac34]$. -/
 theorem eqn_3_12 (x y : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2))
     (hy : y ∈ Icc (33 / 64 : ℝ) (3 / 4)) :
     (y - x) ^ 2 + J y ^ 2 - (2 * Q ((x + y) / 2) - Q x) ^ 2 > (10 : ℝ) ^ (-7 : ℤ) := by
   sorry
-
-/-
-on $[\frac14,\frac12]\times [\tfrac{33}{64},\tfrac{3}{4}]$.
--/
 
 end Auto.DIRX

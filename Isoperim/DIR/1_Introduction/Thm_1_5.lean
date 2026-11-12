@@ -33,19 +33,6 @@ open Real Finset
 
 /-! ### §1.1 Motivation, history and further results -/
 
-/-
-The quantity \[\mathbf{E} h_A^\beta\] should be interpreted as arising from a natural
-interpolation between vertex boundary measure ($\beta=0$) and edge boundary measure ($\beta=1$)
-which are classical quantities that are well-understood on the Hamming cube (Harper \cite{Har66},
-Bernstein \cite{Ber67}, Hart \cite{Hart76}; a very nice exposition can be found e.g. in
-Bollob\'as \cite[\S 16]{Bol86}).
-
-Talagrand \cite{Tal93} has initiated the study of $\mathbf{E} h_A^\beta$ for other values of
-$\beta$ and proved non-trivial dimension-free lower bounds when $\beta=\frac12$. This is a natural
-and surprising result, since Hamming ball examples show that no such bounds can exist if
-$\beta<\frac12$ (see e.g. \cite[\S 3]{BIM23}).
--/
-
 /-- [DIR], §1.1 (cited from [BIM23, §3]): Hamming ball examples show that no dimension-free
 lower bounds for $\mathbf{E}h_A^\beta$ (in terms of $|A|$) can exist if $\beta<\frac12$.
 Formalized at $|A|=\frac12$: for $0<\beta<\frac12$,
@@ -54,15 +41,6 @@ out, since `𝓑` = `Auto.DIR.isoProfile` is only introduced in Definition 1.3 b
 theorem no_dimension_free_bound (β : ℝ) (hβ₀ : 0 < β) (hβ : β < 1 / 2) :
     sInf {v : ℝ | ∃ n : ℕ, 1 ≤ n ∧ ∃ A : Set ({0,1}^n), ｜A｜ = 1 / 2 ∧ v = 𝐄 h_{A} ^ β} = 0 := by
   sorry
-
-/-
-However, Talagrand's bounds are not sharp and while progress has been made (e.g.
-Bobkov--G\"otze \cite{BG99}, Kahn--Park \cite{KP20}, Beltran--Ivanisvili--Madrid \cite{BIM23}),
-no sharp lower bound is currently known for the exponent $\beta=1/2$.
-
-In this paper we are interested in the minimum possible value of the quantity
-$\mathbf{E} h_A^\beta$ when $|A|$ is fixed and $\beta\in [\frac12, 1]$.
--/
 
 /-- **Definition 1.3** ([DIR]). The *$\beta$-isoperimetric profile* $\mathcal{B}_\beta$ for the
 Hamming cube is
@@ -75,14 +53,6 @@ noncomputable def isoProfile (β x : ℝ) : ℝ :=
   sInf {v : ℝ | ∃ n : ℕ, 1 ≤ n ∧ ∃ A : Set ({0,1}^n), ｜A｜ = x ∧ v = 𝐄 h_{A} ^ β}
 
 @[inherit_doc] notation "𝓑" => isoProfile
-
-/-
-\begin{figure}[hb]
-\includegraphics[width=12cm]{boundcompare.png}
-\caption{Comparison of lower bounds for $\mathcal{B}_{\frac12}$.} \label{fig:boundcompare}
-\end{figure}
-The definition is restricted to \emph{dyadic rationals} $x$, i.e.
--/
 
 /-- The dyadic rationals in $[0,1]$ ([DIR], §1.1):
 $\mathcal{Q}=\{k2^{-n} : n\ge0,\ 0\le k\le 2^n\}\subset[0,1]$. -/
@@ -113,12 +83,6 @@ theorem isoProfile_one_nowhere_differentiable (x : ℝ) (hx : x ∈ 𝒬) (d : �
     ¬ HasDerivWithinAt (𝓑 1) d 𝒬 x := by
   sorry
 
-/-
-There is numerical evidence to believe that this is also the case for $\mathcal{B}_\beta$ with
-$\beta\in (\frac12,1)$ (see \S \ref{sec:computedenvelopes} [§2.1], in particular Figure
-\ref{fig:envelopespectrum}).
--/
-
 /-- The number of edges of the subgraph of $\{0,1\}^n$ induced by $A$ (each edge counted once).
 Used in [DIR], §1.1. -/
 noncomputable def inducedEdges {n : ℕ} (A : Set ({0,1}^n)) : ℕ :=
@@ -140,13 +104,6 @@ theorem edge_equivalence_fails (β : ℝ) (hβ₀ : 0 < β) (hβ : β < 1) :
       𝐄 h_{A'} ^ β < 𝐄 h_{A} ^ β := by
   sorry
 
-/-
-No characterization of extremizers is known for any value $\beta<1$.
-The example of a codimension $k$ subcube
-\[ A = \{x\in \{0,1\}^n\,:\,x_1=\cdots=x_k=0\} \]
-shows that
--/
-
 /-- [DIR], §1.1: the example of a codimension $k$ subcube
 $A=\{x\in\{0,1\}^n : x_1=\dots=x_k=0\}$ shows that
 $\mathcal{B}_\beta(2^{-k})\le 2^{-k}k^\beta$. -/
@@ -159,10 +116,6 @@ $\mathcal{B}_1(2^{-k})=2^{-k}k$. -/
 theorem isoProfile_one_two_pow (k : ℕ) :
     𝓑 1 (2⁻¹ ^ k) = 2⁻¹ ^ k * (k : ℝ) := by
   sorry
-
-/-
-It is believed that they will remain extremizers for other values of $\beta$ as well.
--/
 
 /-- **Conjecture 1.4** ([DIR]). For all $\beta\ge\frac12$ and all $k\ge1$,
 $\mathcal{B}_\beta(2^{-k})=2^{-k}k^\beta$. (A statement, not a claim.) -/
@@ -192,11 +145,6 @@ theorem conj_1_4_bim_one (β : ℝ) (hβ : 0.53 ≤ β) :
   sorry
 
 /-! ### §1.2 Results at the critical exponent -/
-
-/-
-At the critical exponent $\beta=\frac12$ we obtain improved estimates for the value
-$\mathcal{B}_\frac12(\frac12)\le \frac12$.
--/
 
 /-- [DIR], §1.2: $\mathcal{B}_{\frac12}(\frac12)\le\frac12$. -/
 theorem isoProfile_half_half_le : 𝓑 (1 / 2) (1 / 2) ≤ 1 / 2 := by
@@ -241,10 +189,6 @@ theorem best_constant_C_half :
     4 / 3 * √2 * (1 / 2 : ℝ) * (1 - 1 / 2) = 1 / 3 * √2 := by
   sorry
 
-/-
-We break this barrier by a significant margin, coming to within $0.3\%$ of the conjectured value.
--/
-
 /-- **Theorem 1.5** ([DIR]). For all $k\ge1$,
 $$2^{-k}\sqrt k\ge\mathcal{B}_{\frac12}(2^{-k})\ge0.997\cdot2^{-k}\sqrt k.$$
 In particular, $0.5\ge\mathcal{B}_{\frac12}(\frac12)\ge0.4985$. -/
@@ -253,14 +197,5 @@ theorem thm_1_5 :
       2⁻¹ ^ k * √k ≥ 𝓑 (1 / 2) (2⁻¹ ^ k) ∧ 𝓑 (1 / 2) (2⁻¹ ^ k) ≥ 0.997 * 2⁻¹ ^ k * √k) ∧
     (0.5 ≥ 𝓑 (1 / 2) (1 / 2) ∧ 𝓑 (1 / 2) (1 / 2) ≥ 0.4985) := by
   sorry
-
-/-
-This is a consequence of a more technical lower bound, see \eqref{eqn:actualisoperimbeta0}
-[(2.6)] below; see Figure \ref{fig:boundcompare} for comparison with previous lower
-bounds\footnote{Note $\mathfrak{B}_{\beta}$ may be different from $\mathcal{B}_{\beta}$, see
-Definition \ref{defn:envelope} [Definition 2.7].}.
-While we still do not have any sharp estimates at $\beta=\frac12$ for fixed $x=|A|$, we identify
-the sharp asymptotic behavior of $\mathcal{B}_{\frac12}$ as $|A|\to 0^+$.
--/
 
 end Auto.DIR

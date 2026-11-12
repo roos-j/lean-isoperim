@@ -39,10 +39,6 @@ open Auto.DIR
 
 open Real Set
 
-/-
-Our next application is a sharp $L^1$ Poincar\'e inequality for Boolean-valued functions.
--/
-
 /-- **Theorem 1.3** ([DIRX]). For all $f:\{0,1\}^n\to\{0,1\}$,
 $$\|\nabla f\|_1\ge\|f-\mathbf{E}f\|_1. \tag{1.3}$$
 Equality is achieved when $f=\mathbf{1}_A$ for a half-cube $A$. Here
@@ -55,11 +51,6 @@ theorem thm_1_3 (n : ℕ) (hn : 1 ≤ n) :
       ‖∇𝟏_{A}‖_[1] = ‖𝟏_{A} - fun _ ↦ 𝐄 𝟏_{A}‖_[1]) := by
   sorry
 
-/-
-Here $|\nabla f(x)|=\sqrt{\sum_{i=1}^n (\tfrac12(f(x)-f(x\oplus e_i)))^2}$ and
-$\|f\|_1=\mathbf{E} |f|$. (These are `Auto.DIR.gradNorm` and `Auto.DIR.pNorm` of [DIR].)
--/
-
 /-- The best constant $C_1^{\mathbb{R}}$ in the $L^1$ Poincaré inequality for *real-valued*
 functions ([DIRX], §1, after Theorem 1.3): the largest constant $C$ such that
 $\|\nabla f\|_1\ge C\|f-\mathbf{E}f\|_1$ for all $f:\{0,1\}^n\to\mathbb{R}$ and all $n\ge1$.
@@ -67,23 +58,11 @@ $\|\nabla f\|_1\ge C\|f-\mathbf{E}f\|_1$ for all $f:\{0,1\}^n\to\mathbb{R}$ and 
 noncomputable def poincareConstReal : ℝ :=
   sSup {C : ℝ | ∀ (n : ℕ), 1 ≤ n → ∀ f : ({0,1}^n) → ℝ, ‖∇f‖_[1] ≥ C * ‖f - fun _ ↦ 𝐄 f‖_[1]}
 
-/-
-Note that it is still open to determine the sharp constant in this inequality for {\it
-real-valued} $f$, but it is known that this constant lies in the interval
-$(\frac2{\pi},\sqrt{\frac{2}{\pi}}]$; see \cite{BELP08}, \cite{ILvHV}, also \cite{haonan1},
-\cite{Esken1} for quantum and vector-valued inequalities.
--/
-
 /-- [DIRX], §1, after Theorem 1.3 (cited from [BELP08], [ILvHV]): the sharp constant in the
 $L^1$ Poincaré inequality for real-valued $f$ lies in the interval
 $(\frac2\pi,\sqrt{\frac2\pi}]$. -/
 theorem poincareConstReal_mem : poincareConstReal ∈ Ioc (2 / π) √(2 / π) := by
   sorry
-
-/-
-In particular, \eqref{eqn:poincareL1} [(1.3)] shows that the lower bound improves for
-Boolean-valued functions, which was first observed in \cite{BIM23}.
--/
 
 /-- [DIRX], §1, after Theorem 1.3: (1.3) shows that the lower bound improves for Boolean-valued
 functions; precisely, the best constant for Boolean-valued functions is $C_{B,1}=1$ (by (1.3)
@@ -93,17 +72,6 @@ functions (which is $\le\sqrt{2/\pi}<1$). Here `poincareConstBool` is $C_{B,p}$ 
 theorem poincareConstBool_one :
     poincareConstBool 1 = 1 ∧ poincareConstBool 1 > poincareConstReal := by
   sorry
-
-/-
-Theorem \ref{thm:poincare} [1.3] does not follow directly from Theorem \ref{thm:mainisoperim}
-[1.1], but from the more technical isoperimetric inequality \eqref{eqn:isoperim2} [(2.5)] proved
-below.
-
-Finally, isoperimetric inequalities for the Hamming cube are also related to a family of
-conjectures in information theory concerning noisy channels (Chen--Nair \cite{CN24}). One of
-these is the most informative Boolean function conjecture, also known as Courtade--Kumar
-conjecture \cite{KC13}.
--/
 
 /-- The probability $\mathbf{P}(Z=z)=\prod_{j=1}^np^{z_j}(1-p)^{1-z_j}$ for a random vector
 $Z=(Z_1,\dots,Z_n)$ in $\{0,1\}^n$ with i.i.d. coordinates satisfying $\mathbf{P}(Z_j=1)=p$
@@ -148,17 +116,6 @@ def CourtadeKumarConjecture : Prop :=
   ∀ (n : ℕ), 1 ≤ n → ∀ f : ({0,1}^n) → ℝ, (∀ x, f x = 0 ∨ f x = 1) →
     ∀ α ∈ Icc (0 : ℝ) (1 / 2), mutualInfoBSC α f ≤ 1 - binEntropy₂ α
 
-/-
-The latter would be implied by a stronger conjecture, known as Hellinger conjecture
-\cite{ABCJN17, CGN25}. (The Hellinger conjecture is formalized, in the balanced case used in this
-paper, as `Auto.DIRX.HellingerConjecture` in §5, see \eqref{eqn:hellinger} [(5.1)]. The paper
-does not state the general form of the Hellinger conjecture, so the implication to the
-Courtade–Kumar conjecture is recorded only as this comment.) Roughly speaking, these conjectures
-concern optimality questions for Boolean functions under standard noisy-channel models on
-$\{0,1\}^n$, where each bit is independently perturbed.
-In the low-noise limit, the Hellinger conjecture would in particular imply that
--/
-
 open Classical in
 /-- The sensitivity $s_f(x)$ of $f$ at $x$ ([DIRX], §1, after (1.4) and §5): the number of
 single-bit flips of $x$ that change the value of $f(x)$, i.e. the number of indices $j$ with
@@ -178,24 +135,10 @@ theorem eqn_1_4 (n : ℕ) (hn : 1 ≤ n) (f : ({0,1}^n) → ℝ) (hf : ∀ x, f 
     𝐄 (fun x ↦ √(s_{f} x)) ≥ 1 := by
   sorry
 
-/-
-holds for balanced Boolean functions $f:\{0,1\}^n\to \{0,1\}$ (i.e. $\mathbf{E}f=\tfrac12$), where
-$s_f(x)$ is the sensitivity of $f$ at $x$, which is defined as the number of single-bit flips of
-$x$ that change the value of $f(x)$, i.e. $s_f(x)=h_A(x)+h_{A^c}(x)$.
--/
-
 /-- [DIRX], §1, after (1.4): for $f=\mathbf{1}_A$, $s_f(x)=h_A(x)+h_{A^c}(x)$. -/
 theorem sensitivity_indicator (n : ℕ) (A : Set ({0,1}^n)) (x : {0,1}^n) :
     s_{𝟏_{A}} x = h_{A} x + h_{Aᶜ} x := by
   sorry
-
-/-
-This implication is well-known, but for convenience of the reader we provide details in
-\S \ref{sec:it} [§5] (see `Auto.DIRX.hellinger_imp_eqn_1_4`).
-Since $h_A$ and $h_{A^c}$ have disjoint support, $\sqrt{s_f}=\sqrt{h_A}+\sqrt{h_{A^c}}$, so
-Theorem \ref{thm:mainisoperim} [1.1] with $|A|=\frac12$ immediately implies
-\eqref{eqn:sensitivity} [(1.4)].
--/
 
 /-- [DIRX], §1, after (1.4): $h_A$ and $h_{A^c}$ have disjoint support. -/
 theorem hA_mul_hA_compl (n : ℕ) (A : Set ({0,1}^n)) (x : {0,1}^n) :
@@ -217,13 +160,5 @@ theorem eqn_1_4_of_thm_1_1 (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) (hA : �
   sorry
 
 /-! ### Acknowledgments -/
-
-/-
-P.D., P.I. and J.R. thank the American Institute of Mathematics (AIM) for funding our SQuaRE
-project. The authors were also supported in part by grants from the National Science Foundation
-CAREER-DMS-2152401 (P.I.), DMS-2154835 (J.R.) and by the Simons Foundation
-SFI-MPS-TSM-00013943 (P.D.), SFI-MPS-TSM-00014075 (J.R.), Simons Fellowship, and Humboldt
-Research Fellowship (P.I.).
--/
 
 end Auto.DIRX

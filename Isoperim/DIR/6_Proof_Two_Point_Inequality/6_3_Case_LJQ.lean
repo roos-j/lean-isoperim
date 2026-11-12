@@ -32,40 +32,9 @@ namespace Auto.DIR
 
 open Real Set Filter Topology
 
-/-
-We distinguish further subcases.
-\begin{figure}[htb]
-\centering
-\begin{tikzpicture}[scale=8]
-\draw (0,1/2)--(1/4,1/2)--(1/4,3/4)--(0,1)--cycle;
-\draw (1/16,3/4)--(1/4,3/4);
-\draw (1/16,1/2)--(1/16,3/4);
-\node at (0,1/2-.05) {\tiny $0$};
-\node at (1/16,1/2-.05) {\footnotesize $\tfrac{1}{16}$};
-\node at (1/4,1/2-.05) {\footnotesize $\tfrac{1}{4}$};
-\node at (0-.03,1/2) {\footnotesize $\tfrac{1}{2}$};
-\node at (0-.03,3/4) {\footnotesize $\tfrac{3}{4}$};
-\node at (0-.03,1) {\footnotesize $1$};
-\draw[opacity=.1] (1/4,1/2)--(1/4,1)--(0,1);
-\node  at (5/32,2.5/4) {\tiny \hyperref[sec:LJQ-I]{I}};
-\node  at (1/16,13.5/16) {\tiny \hyperref[sec:LJQ-II]{II}};
-\end{tikzpicture}
-\caption{Case $LJQ$}
-\label{fig:ljq}
-\end{figure}
-[Figure 7. Rectangle I: $[\frac1{16},\frac14]\times[\frac12,\frac34]$; region II: the rest of
-$\{0\le x\le\frac14,\ \frac12\le y\le1,\ x+y\le1\}$.]
--/
-
 section Case_LJQ_I
 
 /-! ### §6.3.1 Case I: $\frac1{16}\le x\le\frac14$, $\frac12\le y\le\frac34$ -/
-
-/-
-This is the rectangle I in Figure \ref{fig:ljq} [7]. Here we have
-$G_\beta[b_\beta](x,y)>0$ for all $\beta\in[\frac12,1]$, but we will only prove it for
-$\beta\in\{\frac12,\beta_0\}$.
--/
 
 /-- [DIR], §6.3.1 (asserted; the paper only proves the case $\beta\in\{\frac12,\beta_0\}$, see
 (6.13)): $G_\beta[b_\beta](x,y)>0$ for all $\beta\in[\frac12,1]$ and
@@ -74,16 +43,6 @@ theorem caseLJQ_I_all_β (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1) (x y : �
     (hx : x ∈ Icc (1 / 16 : ℝ) (1 / 4)) (hy : y ∈ Icc (1 / 2 : ℝ) (3 / 4)) :
     G β (b β) x y > 0 := by
   sorry
-
-/-
-A naive tight lower bound for $G_\beta[b_\beta](x,y)$ suffices:
-\[ \underline{g_{LJQ,1,\beta}}(\underline{x},\overline{x},\underline{y},\overline{y})=
-\max(((\underline{y}-\overline{x})^{\frac1\beta}+\underline{J}(\underline{y},\overline{y})^{
-\frac1\beta})^\beta, \underline{y}-\overline{x}+(2^\beta-1) \underline{J}(\underline{y},
-\overline{y})) \]
-\[ + L(\underline{x},\beta) - 2 Q_\beta(\tfrac{\overline{x}+\overline{y}}{2}).
-\]
--/
 
 /-- The lower bound ([DIR], §6.3.1)
 $$\underline{g_{LJQ,1,\beta}}(\underline x,\overline x,\underline y,\overline y)
@@ -101,15 +60,6 @@ $\beta\in\{\frac12,\beta_0\}$). -/
 theorem g_LJQ_1_lo_tight (β : ℝ) (hβ : β = 1 / 2 ∨ β = β₀) :
     IsTightLowerBound₂ (G β (b β)) (g_LJQ_1_lo β) (1 / 16) (1 / 4) (1 / 2) (3 / 4) := by
   sorry
-
-/-
-Running $\textsc{Partition}_2(\underline{g_{LJQ,1,1/2}},[\frac1{16},\frac14]\times[\frac12,
-\frac34])$ shows
-\begin{equation}\label{eqn:g_LJQ_1_auto}\auto
-G_\beta[b_\beta](x,y)>10^{-7}
-\end{equation}
-for $\beta\in\{\beta_0,\frac12\}$ and $(x,y)\in [\frac1{16},\frac14]\times[\frac12,\frac34]$.
--/
 
 /-- **(6.13)** ([DIR], §6.3.1) (🚗). For $\beta\in\{\beta_0,\frac12\}$ and
 $(x,y)\in[\frac1{16},\frac14]\times[\frac12,\frac34]$: $$G_\beta[b_\beta](x,y)>10^{-7}.$$
@@ -133,10 +83,6 @@ section Case_LJQ_II
 
 /-! ### §6.3.2 Case II -/
 
-/-
-This is region II in Figure \ref{fig:ljq} [7] and covers the remainder of Case $LJQ$.
--/
-
 /-- The function ([DIR], Proposition 6.6)
 $$G_{LJQ,\beta}(x,y)=y-x+(2^\beta-1)J(y)+L_\beta(x)-2Q_\beta(\tfrac{x+y}2).$$ -/
 noncomputable def G_LJQ (β x y : ℝ) : ℝ :=
@@ -159,10 +105,6 @@ theorem prop_6_6 (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1) (x y : ℝ)
     (h : x ≤ 1 / 16 ∨ y ≥ 3 / 4) : G_LJQ β x y ≥ 0 := by
   sorry
 
-/-
-The proof rests on the following observation.
--/
-
 /-- **Lemma 6.7** ([DIR]). For every $\beta\in[\frac12,1]$ and $y\in[0,1]$ the function
 $x\mapsto G_{LJQ,\beta}(x,y)$ is strictly concave on $[0,\frac14]$. -/
 theorem lemma_6_7 (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1) (y : ℝ) (hy : y ∈ Icc (0 : ℝ) 1) :
@@ -170,15 +112,6 @@ theorem lemma_6_7 (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1) (y : ℝ) (hy : 
   sorry
 
 section Proof_Lemma_6_7
-
-/-
-\begin{proof}
-Compute
-\[ \partial_x^2 G_{LJQ,\beta}(x,y) = L''_\beta(x) - \tfrac12 Q_\beta''(\tfrac{x+y}2) \]
-By Lemma \ref{lem:Qbprop} [5.8] this equals
-\begin{equation}\label{eqn:LJQlempf1} L''_\beta(x) + 2\alpha_0 + 4\alpha_1 (x+y)
-\end{equation}
--/
 
 /-- [DIR], proof of Lemma 6.7: for $x\in(0,\frac14]$,
 $\partial_x^2G_{LJQ,\beta}(x,y)=L_\beta''(x)-\frac12Q_\beta''(\frac{x+y}2)$. -/
@@ -193,27 +126,6 @@ theorem eqn_6_14 (β x y : ℝ) :
     deriv (deriv (L β)) x - 1 / 2 * deriv (deriv (Q β)) ((x + y) / 2) =
       deriv (deriv (L β)) x + 2 * α₀ β + 4 * α₁ β * (x + y) := by
   sorry
-
-/-
-Recall that $\alpha_1=3-2^{1+\beta}>0$ iff $\beta<\log_2(3/2)$.
-Let us only consider the case $\beta<\log_2(3/2)$ -- the argument for the other (less
-interesting) case is analogous.
--/
-
-/-
-(The recalled fact is `Auto.DIR.α₁_pos_iff` of §5.3.)
--/
-
-/-
-By Lemma \ref{lem:Lprop} [5.6] and since $x\le \frac14< e^{-\sqrt{3}/2}$, the quantity
-\eqref{eqn:LJQlempf1} [(6.14)] is increasing in both $x$ and $y$. Thus it suffices to evaluate
-\[\partial_x^2 G_{LJQ,\beta}(\tfrac14,1)=L''_\beta(\tfrac14) - \tfrac12 Q_\beta''(\tfrac58)\le
-L''_{\frac12}(\tfrac14) -\tfrac12 Q''_{\frac12}(\tfrac58)<-0.6, \]
-where we have used that $\beta\mapsto L''_\beta(\tfrac14)$ is decreasing by Lemma
-\ref{lem:Lprop} [5.6] and that for $x\in[\tfrac12,1]$, the function $\beta\mapsto
-Q_\beta''(x)$ is increasing.
-\end{proof}
--/
 
 /-- [DIR], proof of Lemma 6.7: for $\beta\in[\frac12,\log_2\frac32)$, since
 $x\le\frac14<e^{-\sqrt3/2}$, the quantity (6.14) is increasing in $x\in(0,\frac14]$ and in
@@ -247,17 +159,6 @@ end Proof_Lemma_6_7
 
 section Proof_Proposition_6_6
 
-/-
-Lemma \ref{lem:LJQconcave} [6.7] reduces the proof of Proposition \ref{prop:caseLJQ} [6.6] to
-checking the claim on the $x$-boundary of the region II. Thus it remains to verify the following
-three claims:
-\begin{enumerate}
-\item $G_{LJQ,\beta}(0,y)\ge 0$ for all $y\in [\frac12,1]$
-\item $G_{LJQ,\beta}(\tfrac1{16},y)\ge 0$ for all $y\in[\tfrac12,\tfrac34]$
-\item $G_{LJQ,\beta}(1-y,y)\ge 0$ for all $y\in [\tfrac34,1]$
-\end{enumerate}
--/
-
 /-- [DIR], §6.3.2: Lemma 6.7 reduces Proposition 6.6 to checking the claim on the $x$-boundary of
 the region II, i.e. to claims (1)–(3) (for fixed $\beta\in[\frac12,1]$). -/
 theorem prop_6_6_reduction (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1)
@@ -288,12 +189,6 @@ theorem caseLJQ_claim_3 (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1) (y : ℝ)
 
 section Proof_Claim_1
 
-/-
-\begin{proof}[Proof of (1)]
-Let
-\[ f_\beta(y)=G_{LJQ,\beta}(0,y) = y + (2^\beta-1) J(y) - 2Q_\beta(\tfrac{y}2). \]
--/
-
 /-- The function $f_\beta(y)=G_{LJQ,\beta}(0,y)$ ([DIR], §6.3.2, proof of (1); denoted $f_\beta$
 in the paper). -/
 noncomputable def f_LJQ_1 (β y : ℝ) : ℝ := G_LJQ β 0 y
@@ -302,14 +197,6 @@ noncomputable def f_LJQ_1 (β y : ℝ) : ℝ := G_LJQ β 0 y
 $f_\beta(y)=G_{LJQ,\beta}(0,y)=y+(2^\beta-1)J(y)-2Q_\beta(\frac y2)$. -/
 theorem f_LJQ_1_eq (β y : ℝ) : f_LJQ_1 β y = y + (2 ^ β - 1) * J y - 2 * Q β (y / 2) := by
   sorry
-
-/-
-Differentiating in $\beta$ we see that $\partial_\beta f_\beta(y)$ takes the form $2^\beta
-\widetilde{f}(y)$ for some function $\widetilde{f}(y)$. Thus, for a fixed $y$, the quantity
-$f_\beta(y)$ is either monotone increasing or monotone decreasing in $\beta$. Thus, for all
-$\beta\in[\frac12, 1]$,
-\[ f_\beta(y)\ge \min(f_{\frac12}(y), f_1(y)). \]
--/
 
 /-- [DIR], §6.3.2, proof of (1): $\partial_\beta f_\beta(y)=2^\beta\widetilde f(y)$ for some
 function $\widetilde f$. -/
@@ -329,21 +216,10 @@ theorem f_LJQ_1_ge_min (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1) (y : ℝ) :
     f_LJQ_1 β y ≥ min (f_LJQ_1 (1 / 2) y) (f_LJQ_1 1 y) := by
   sorry
 
-/-
-Thus we may assume $\beta\in\{\tfrac{1}{2},1\}$ without loss of generality. We give details only
-for the case $\beta=\frac12$, the case $\beta=1$ being very similar.
--/
-
 /-- [DIR], §6.3.2, proof of (1), case $\beta=1$ ("very similar", details omitted in the paper):
 $f_1(y)\ge0$ for $y\in[\frac12,1]$. -/
 theorem f_LJQ_1_one_nonneg (y : ℝ) (hy : y ∈ Icc (1 / 2 : ℝ) 1) : f_LJQ_1 1 y ≥ 0 := by
   sorry
-
-/-
-Using $JJ''=-2$ we see
-\[ f_{\frac12}'(y) = 1 + (\sqrt{2}-1)J'(y) - Q_{\frac12}'(\tfrac{y}2), \]
-\[f_{\frac12}''(y) =  -2 (\sqrt{2}-1)  J(y)^{-1} -\tfrac12 Q''_{\frac12}(\tfrac{y}2)\]
--/
 
 /-- [DIR], §6.3.2, proof of (1): using $JJ''=-2$, for $y\in(\frac12,1)$,
 $f_{\frac12}'(y)=1+(\sqrt2-1)J'(y)-Q_{\frac12}'(\frac y2)$ and
@@ -353,12 +229,6 @@ theorem derivs_f_LJQ_1_half (y : ℝ) (hy : y ∈ Ioo (1 / 2 : ℝ) 1) :
       deriv (deriv (f_LJQ_1 (1 / 2))) y =
         -2 * (√2 - 1) * J y ^ (-1 : ℤ) - 1 / 2 * deriv (deriv (Q (1 / 2))) (y / 2) := by
   sorry
-
-/-
-By \eqref{eqn:D4J} [(6.1)], $f_{\frac12}^{(4)}(y)<0$
-so $f_{\frac12}''$ is  strictly concave on $(\frac12,1)$. Since $f_{\frac12}''(\tfrac{1}{2})=0$
-this implies that $f_{\frac12}''$ has at most one  zero on $(\tfrac{1}{2},1)$.
--/
 
 /-- [DIR], §6.3.2, proof of (1): by (6.1), $f_{\frac12}^{(4)}<0$ on $(\frac12,1)$, so
 $f_{\frac12}''$ is strictly concave on $(\frac12,1)$. -/
@@ -385,26 +255,12 @@ theorem f_LJQ_1_half_deriv2_zero_subsingleton :
     {y ∈ Ioo (1 / 2 : ℝ) 1 | deriv (deriv (f_LJQ_1 (1 / 2))) y = 0}.Subsingleton := by
   sorry
 
-/-
-We evaluate
-\begin{equation}
-f_{\frac12}''(\tfrac{9}{16})>0.05,\quad
-f_{\frac12}''(\tfrac{4}{5})<-0.3.
-\end{equation}
--/
-
 /-- **(6.15)** ([DIR], §6.3.2, proof of (1)).
 $f_{\frac12}''(\frac9{16})>0.05$ and $f_{\frac12}''(\frac45)<-0.3$. -/
 theorem eqn_6_15 :
     deriv (deriv (f_LJQ_1 (1 / 2))) (9 / 16) > 0.05 ∧
       deriv (deriv (f_LJQ_1 (1 / 2))) (4 / 5) < -0.3 := by
   sorry
-
-/-
-Thus, $f_{\frac12}''$  has  exactly one zero $y_0$ in  $(\tfrac{1}{2},1)$ where $f_{\frac12}'$
-achieves its unique maximum.  Since $f_{\frac12}'$  is increasing on $(\tfrac{1}{2},y_0)$ and
-decreasing on $(y_0,1)$, and
--/
 
 /-- [DIR], §6.3.2, proof of (1): $f_{\frac12}''$ has exactly one zero $y_0$ in $(\frac12,1)$,
 where $f_{\frac12}'$ achieves its unique maximum (on $(\frac12,1)$); $f_{\frac12}'$ is increasing
@@ -416,18 +272,6 @@ theorem f_LJQ_1_half_y₀ :
       MonotoneOn (deriv (f_LJQ_1 (1 / 2))) (Ioc (1 / 2) y₀) ∧
       AntitoneOn (deriv (f_LJQ_1 (1 / 2))) (Ico y₀ 1) := by
   sorry
-
-/-
-\begin{equation}
-f_{\frac12}'(\tfrac{9}{16})>0.05,\quad
-f_{\frac12}'(\tfrac{15}{16})<-0.1,
-\end{equation}
-it follows  that   $f_{\frac12}'$ has exactly one zero $y_1$ on $(\tfrac{1}{2},1)$. Therefore,
-$f_{\frac12}$ is increasing on $[\frac12,y_1]$ and decreasing on $[y_1,1]$.  Together with
-$f_{\frac12}(1)=f_{\frac12}(\tfrac{1}{2})=0$, this  implies $f_{\frac12}(y)\geq 0$ for
-$y\in [\frac12,1]$.
-\end{proof}
--/
 
 /-- **(6.16)** ([DIR], §6.3.2, proof of (1)).
 $f_{\frac12}'(\frac9{16})>0.05$ and $f_{\frac12}'(\frac{15}{16})<-0.1$. -/
@@ -475,15 +319,6 @@ end Proof_Claim_1
 
 section Proof_Claim_2
 
-/-
-\begin{proof}[Proof of (2)]
-A tight lower bound is given by
-\[  \underline{g_{LJQ,2}}(\underline{y},\overline{y},\underline{\beta},\overline{\beta}) =
-\underline{y}-\tfrac{1}{16} + (2^{\underline{\beta}}-1) \underline{J}(\underline{y},\overline{y})
-+L_{\underline{\beta}}(\tfrac{1}{16})-2Q_{\overline{\beta}}(\tfrac{1}{32}+ \tfrac{\overline{y}}{2})
-\]
--/
-
 /-- The lower bound ([DIR], §6.3.2, proof of (2))
 $$\underline{g_{LJQ,2}}(\underline y,\overline y,\underline\beta,\overline\beta)
 =\underline y-\tfrac1{16}+(2^{\underline\beta}-1)\underline J(\underline y,\overline y)
@@ -508,17 +343,6 @@ theorem g_LJQ_2_lo_tight :
     IsTightLowerBound₂ (fun y β ↦ G_LJQ β (1 / 16) y) g_LJQ_2_lo (1 / 2) (3 / 4) (1 / 2) 1 := by
   sorry
 
-/-
-Running
-$\textsc{Partition}_2(\underline{g_{LJQ,2}},[\tfrac{1}{2},\tfrac{3}{4}]\times [\tfrac12,1])$
-shows that
-\begin{equation}\label{eqn:g_LJQ_2_auto}\auto
-G_{LJQ,\beta}(\tfrac1{16},y)>10^{-5}
-\end{equation}
-for all $y\in [\frac12,\frac34]$ and all $\beta\in [\frac12,1]$.
-\end{proof}
--/
-
 /-- **(6.17)** ([DIR], §6.3.2, proof of (2)) (🚗). For all $y\in[\frac12,\frac34]$ and all
 $\beta\in[\frac12,1]$: $$G_{LJQ,\beta}(\tfrac1{16},y)>10^{-5}.$$ -/
 theorem eqn_6_17 (y : ℝ) (hy : y ∈ Icc (1 / 2 : ℝ) (3 / 4)) (β : ℝ)
@@ -528,12 +352,6 @@ theorem eqn_6_17 (y : ℝ) (hy : y ∈ Icc (1 / 2 : ℝ) (3 / 4)) (β : ℝ)
 end Proof_Claim_2
 
 section Proof_Claim_3
-
-/-
-\begin{proof}[Proof of (3)]
-We need to show that
-\[f_\beta(y)=G_{LJQ,\beta}(1-y,y) = 2y-1+(2^\beta-1) J(y)+L_\beta(1-y)-1\ge 0.\]
--/
 
 /-- The function $f_\beta(y)=G_{LJQ,\beta}(1-y,y)$ ([DIR], §6.3.2, proof of (3); denoted
 $f_\beta$ in the paper). -/
@@ -546,21 +364,11 @@ theorem f_LJQ_3_eq (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1) (y : ℝ) :
     f_LJQ_3 β y = 2 * y - 1 + (2 ^ β - 1) * J y + L β (1 - y) - 1 := by
   sorry
 
-/-
-Observe that this is increasing in $\beta$, so it suffices to consider $\beta=\frac12$.
--/
-
 /-- [DIR], §6.3.2, proof of (3): $f_\beta(y)$ is increasing in $\beta\in[\frac12,1]$ (for
 $y\in[\frac34,1]$), so it suffices to consider $\beta=\frac12$. -/
 theorem f_LJQ_3_monotoneOn_β (y : ℝ) (hy : y ∈ Icc (3 / 4 : ℝ) 1) :
     MonotoneOn (fun β ↦ f_LJQ_3 β y) (Icc (1 / 2) 1) := by
   sorry
-
-/-
-The function $f_{\frac12}$ is concave on $[\tfrac34,1]$, because
-\[f_{\frac12}''(y)= (\sqrt{2}-1) J''(y)+L_{\frac12}''(1-y)\le 0\]
-(recall $J''\leq 0$ and Lemma \ref{lem:Lprop} [5.6]).
--/
 
 /-- [DIR], §6.3.2, proof of (3): for $y\in(\frac34,1)$,
 $f_{\frac12}''(y)=(\sqrt2-1)J''(y)+L_{\frac12}''(1-y)\le0$ (recall $J''\le0$ and Lemma 5.6). -/
@@ -573,14 +381,6 @@ theorem f_LJQ_3_half_deriv2 (y : ℝ) (hy : y ∈ Ioo (3 / 4 : ℝ) 1) :
 /-- [DIR], §6.3.2, proof of (3): $f_{\frac12}$ is concave on $[\frac34,1]$. -/
 theorem f_LJQ_3_half_concaveOn : ConcaveOn ℝ (Icc (3 / 4) 1) (f_LJQ_3 (1 / 2)) := by
   sorry
-
-/-
-Thus it suffices to evaluate at the endpoints:  $f_\frac12(1)=0$ and
-\begin{equation}
-f_\frac12 (\tfrac{3}{4}) > 0.01.
-\end{equation}
-\end{proof}
--/
 
 /-- [DIR], §6.3.2, proof of (3): $f_{\frac12}(1)=0$. -/
 theorem f_LJQ_3_half_one : f_LJQ_3 (1 / 2) 1 = 0 := by
