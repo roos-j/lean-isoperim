@@ -20,7 +20,6 @@ cube near the critical exponent*, arXiv:2407.12674v2.
 This file covers §1.5 *Sharp Poincaré inequalities* (Theorem 1.10), the paragraph *Structure of
 the paper* and the acknowledgments.
 
-
 The definitions and notation used here are in `Definitions.lean` of this folder.
 -/
 
@@ -45,11 +44,11 @@ to $p=2\beta_0$. The Lean statement is kept as in the paper; the case $p>2\beta_
 conjunct is an unresolved gap. -/
 theorem thm_1_10 (n : ℕ) (hn : 1 ≤ n) :
     (∀ p : ℝ, 2 * β₀ ≤ p → ∀ f : ({0,1}^n) → ℝ, (∀ x, f x = 0 ∨ f x = 1) →
-      ‖∇f‖_[p] ≥ ‖f - fun _ ↦ 𝐄 f‖_[p]) ∧
+      pNorm p (∇f) ≥ pNorm p (f - fun _ ↦ 𝐄 f)) ∧
     (∀ p : ℝ, 2 * β₀ ≤ p → ∀ A : Set ({0,1}^n), IsHalfCube A →
-      ‖∇𝟏_{A}‖_[p] = ‖𝟏_{A} - fun _ ↦ 𝐄 𝟏_{A}‖_[p]) ∧
+      pNorm p (∇(ind A)) = pNorm p (ind A - fun _ ↦ 𝐄 ind A)) ∧
     (∀ f : ({0,1}^n) → ℝ, (∀ x, f x = 0 ∨ f x = 1) →
-      ‖∇f‖_[1] ≥ 0.997 * ‖f - fun _ ↦ 𝐄 f‖_[1]) := by
+      pNorm 1 (∇f) ≥ 0.997 * pNorm 1 (f - fun _ ↦ 𝐄 f)) := by
   sorry
 
 /-! ### Structure of the paper -/

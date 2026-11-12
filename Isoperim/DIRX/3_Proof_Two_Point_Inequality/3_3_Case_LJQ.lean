@@ -21,7 +21,7 @@ Hamming cube II: The critical exponent*, arXiv:2602.20462v1.
 
 This file covers §3.3 (Case $LJQ$: $0\le x\le\frac14$, $\frac12\le y\le1$, $x+y\le1$).
 
-Notation from §2 (displayed via `local notation`): `G₂`, `G`, `B_{w}`, `L`, `Q`, `J`, `γ`;
+Notation from §2 (displayed via `local notation`): `G₂`, `G`, `BX w`, `L`, `Q`, `J`, `γ`;
 `JX_lo` is the enclosure $\underline{\mathrm{J}}$ of (2.7). Tight lower bounds are
 `IsTightLowerBound₁`, `IsTightLowerBound₂` of [DIR], §4.1.
 
@@ -29,7 +29,7 @@ Notation from §2 (displayed via `local notation`): `G₂`, `G`, `B_{w}`, `L`, `
 
 * `h_LJQ₁_lo`, `h_LJQ₂_lo` : the tight lower bounds $\underline{h_{LJQ,1}}$,
   $\underline{h_{LJQ,2}}$;
-* `G_LJQ x y` : $G_{LJQ}(x,y)$ (Lean name `G_LJQX`);
+* `G_LJQX x y` : $G_{LJQ}(x,y)$ (Lean name `G_LJQX`);
 * `f y` : $f(y)=G_{LJQ}(0,y)$ (Lean name `fX`).
 -/
 
@@ -44,8 +44,6 @@ open Real Set
 local notation "G₂" => Auto.DIR.G₂ (1 / 2)
 
 local notation "G" => Auto.DIR.G (1 / 2)
-
-local notation "B_{" w "}" => BX w
 
 local notation "L" => Auto.DIR.L (1 / 2)
 
@@ -63,7 +61,7 @@ $$G[B_w](x,y)>10^{-6}$$ for $(x,y)\in[\frac1{16},\frac14]\times[\frac12,\frac34]
 $w=w_1$). -/
 theorem eqn_3_3 (x y : ℝ) (hx : x ∈ Icc (1 / 16 : ℝ) (1 / 4))
     (hy : y ∈ Icc (1 / 2 : ℝ) (3 / 4)) :
-    G (B_{w₁}) x y > (10 : ℝ) ^ (-6 : ℤ) := by
+    G (BX w₁) x y > (10 : ℝ) ^ (-6 : ℤ) := by
   sorry
 
 end Case_I
@@ -72,22 +70,20 @@ section Case_II
 /-! ### Case II -/
 
 /-- $G_{LJQ}(x,y)=y-x+(\sqrt2-1)\mathrm{J}(y)+L(x)-2Q(\frac{x+y}2)$ ([DIRX], §3.3, Case II).
-Written `G_LJQ x y`. -/
+Written `G_LJQX x y`. -/
 noncomputable def G_LJQX (x y : ℝ) : ℝ := y - x + (√2 - 1) * J y + L x - 2 * Q ((x + y) / 2)
-
-local notation "G_LJQ" => G_LJQX
 
 /-- [DIRX], §3.3, Case II: in the region of Case $LJQ$, $G_2[B_{w_1}](x,y)=G_{LJQ}(x,y)$ (so that
 it suffices to show $G_{LJQ}\ge0$). -/
 theorem G₂_BX_eq_G_LJQ (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 4)) (hy : y ∈ Icc (1 / 2 : ℝ) 1)
-    (hxy : x + y ≤ 1) : G₂ (B_{w₁}) x y = G_LJQ x y := by
+    (hxy : x + y ≤ 1) : G₂ (BX w₁) x y = G_LJQX x y := by
   sorry
 
 /-- **(3.4)** ([DIRX], §3.3; shown in [DIR], Lemma 6.7, `Auto.DIR.lemma_6_7`). For
 $x\in(0,\frac14]$ and $y\in[0,1]$,
 $$\partial_x^2G_{LJQ}(x,y)=L''(x)-\tfrac12Q''(\tfrac{x+y}2)<0.$$ -/
 theorem eqn_3_4 (x y : ℝ) (hx : x ∈ Ioc (0 : ℝ) (1 / 4)) (hy : y ∈ Icc (0 : ℝ) 1) :
-    deriv (deriv (fun t ↦ G_LJQ t y)) x =
+    deriv (deriv (fun t ↦ G_LJQX t y)) x =
         deriv (deriv L) x - 1 / 2 * deriv (deriv Q) ((x + y) / 2) ∧
       deriv (deriv L) x - 1 / 2 * deriv (deriv Q) ((x + y) / 2) < 0 := by
   sorry
@@ -95,7 +91,7 @@ theorem eqn_3_4 (x y : ℝ) (hx : x ∈ Ioc (0 : ℝ) (1 / 4)) (hy : y ∈ Icc (
 /-- [DIRX], §3.3, Case II: for fixed $y\in[0,1]$, the function $x\mapsto G_{LJQ}(x,y)$ is strictly
 concave on $[0,\frac14]$. -/
 theorem G_LJQ_strictConcave (y : ℝ) (hy : y ∈ Icc (0 : ℝ) 1) :
-    StrictConcaveOn ℝ (Icc 0 (1 / 4)) (fun x ↦ G_LJQ x y) := by
+    StrictConcaveOn ℝ (Icc 0 (1 / 4)) (fun x ↦ G_LJQX x y) := by
   sorry
 
 /-- [DIRX], §3.3, Case II: by concavity in $x$ it remains to verify non-negativity of $G_{LJQ}$
@@ -103,16 +99,16 @@ on the $x$-boundary of the region, i.e. $G_{LJQ}(0,y)\ge0$ for $y\in[\frac12,1]$
 $G_{LJQ}(\frac1{16},y)\ge0$ for $y\in[\frac12,\frac34]$ and $G_{LJQ}(1-y,y)\ge0$ for
 $y\in[\frac34,1]$. -/
 theorem caseLJQ_II_of_boundary
-    (h0 : ∀ y ∈ Icc (1 / 2 : ℝ) 1, G_LJQ 0 y ≥ 0)
-    (h1 : ∀ y ∈ Icc (1 / 2 : ℝ) (3 / 4), G_LJQ (1 / 16) y ≥ 0)
-    (h2 : ∀ y ∈ Icc (3 / 4 : ℝ) 1, G_LJQ (1 - y) y ≥ 0)
+    (h0 : ∀ y ∈ Icc (1 / 2 : ℝ) 1, G_LJQX 0 y ≥ 0)
+    (h1 : ∀ y ∈ Icc (1 / 2 : ℝ) (3 / 4), G_LJQX (1 / 16) y ≥ 0)
+    (h2 : ∀ y ∈ Icc (3 / 4 : ℝ) 1, G_LJQX (1 - y) y ≥ 0)
     (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 4)) (hy : y ∈ Icc (1 / 2 : ℝ) 1)
-    (hxy : x + y ≤ 1) (h : x ≤ 1 / 16 ∨ y ≥ 3 / 4) : G_LJQ x y ≥ 0 := by
+    (hxy : x + y ≤ 1) (h : x ≤ 1 / 16 ∨ y ≥ 3 / 4) : G_LJQX x y ≥ 0 := by
   sorry
 
 section Boundary_x_eq_0
 /-- $f(y)=G_{LJQ}(0,y)$ ([DIRX], §3.3, Case II). Written `f y`. -/
-noncomputable def fX (y : ℝ) : ℝ := G_LJQ 0 y
+noncomputable def fX (y : ℝ) : ℝ := G_LJQX 0 y
 
 local notation "f" => fX
 
@@ -195,7 +191,7 @@ section Boundary_x_eq_1_16
 /-- **(3.7)** ([DIRX], §3.3) (🚗). Dyadic partitioning yields
 $$G_{LJQ}(\tfrac1{16},y)>10^{-4}$$ for all $y\in[\frac12,\frac34]$. -/
 theorem eqn_3_7 (y : ℝ) (hy : y ∈ Icc (1 / 2 : ℝ) (3 / 4)) :
-    G_LJQ (1 / 16) y > (10 : ℝ) ^ (-4 : ℤ) := by
+    G_LJQX (1 / 16) y > (10 : ℝ) ^ (-4 : ℤ) := by
   sorry
 
 end Boundary_x_eq_1_16
@@ -205,22 +201,22 @@ section Boundary_x_eq_1_sub_y
 $\frac{d^2}{dy^2}G_{LJQ}(1-y,y)=(\sqrt2-1)\mathrm{J}''(y)+L''(1-y)\le0$, using
 $\mathrm{J}''\le0$ and $L''\le0$ (Lemma 2.3). -/
 theorem G_LJQ_diag_deriv2 (y : ℝ) (hy : y ∈ Ioo (3 / 4 : ℝ) 1) :
-    deriv (deriv (fun t ↦ G_LJQ (1 - t) t)) y =
+    deriv (deriv (fun t ↦ G_LJQX (1 - t) t)) y =
         (√2 - 1) * deriv (deriv J) y + deriv (deriv L) (1 - y) ∧
       deriv (deriv J) y ≤ 0 ∧ deriv (deriv L) (1 - y) ≤ 0 ∧
       (√2 - 1) * deriv (deriv J) y + deriv (deriv L) (1 - y) ≤ 0 := by
   sorry
 
 /-- [DIRX], §3.3: the function $y\mapsto G_{LJQ}(1-y,y)$ is concave on $[\frac34,1]$. -/
-theorem G_LJQ_diag_concave : ConcaveOn ℝ (Icc (3 / 4) 1) (fun y ↦ G_LJQ (1 - y) y) := by
+theorem G_LJQ_diag_concave : ConcaveOn ℝ (Icc (3 / 4) 1) (fun y ↦ G_LJQX (1 - y) y) := by
   sorry
 
 /-- [DIRX], §3.3: $G_{LJQ}(0,1)=0$ and $G_{LJQ}(\frac14,\frac34)>0.01$. -/
-theorem G_LJQ_diag_eval : G_LJQ 0 1 = 0 ∧ G_LJQ (1 / 4) (3 / 4) > 0.01 := by
+theorem G_LJQ_diag_eval : G_LJQX 0 1 = 0 ∧ G_LJQX (1 / 4) (3 / 4) > 0.01 := by
   sorry
 
 /-- [DIRX], §3.3: $G_{LJQ}(1-y,y)\ge0$ for all $y\in[\frac34,1]$. -/
-theorem G_LJQ_diag_nonneg (y : ℝ) (hy : y ∈ Icc (3 / 4 : ℝ) 1) : G_LJQ (1 - y) y ≥ 0 := by
+theorem G_LJQ_diag_nonneg (y : ℝ) (hy : y ∈ Icc (3 / 4 : ℝ) 1) : G_LJQX (1 - y) y ≥ 0 := by
   sorry
 
 end Boundary_x_eq_1_sub_y
@@ -237,7 +233,7 @@ $x+y\le1$ is $G_{LJQ}=G_2[B_{w_1}]$ (since then $\frac{x+y}2\le\frac12$ and
 $B_{w_1}(\frac{x+y}2)=Q(\frac{x+y}2)$). The Lean statement adds the hypothesis `hxy : x + y ≤ 1`
 (the standing assumption of Case $LJQ$); this is all that is needed for `caseLJQ`. -/
 theorem caseLJQ_II (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 4)) (hy : y ∈ Icc (1 / 2 : ℝ) 1)
-    (hxy : x + y ≤ 1) (h : x ≤ 1 / 16 ∨ y ≥ 3 / 4) : G_LJQ x y ≥ 0 := by
+    (hxy : x + y ≤ 1) (h : x ≤ 1 / 16 ∨ y ≥ 3 / 4) : G_LJQX x y ≥ 0 := by
   sorry
 
 end Case_II
@@ -247,7 +243,7 @@ end Case_II
 /-- [DIRX], §3.3 (Case $LJQ$): $G[B_{w_1}](x,y)\ge0$ for $0\le x\le\frac14$,
 $\frac12\le y\le1$, $x+y\le1$. -/
 theorem caseLJQ (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 4)) (hy : y ∈ Icc (1 / 2 : ℝ) 1)
-    (hxy : x + y ≤ 1) : G (B_{w₁}) x y ≥ 0 := by
+    (hxy : x + y ≤ 1) : G (BX w₁) x y ≥ 0 := by
   sorry
 
 end Auto.DIRX

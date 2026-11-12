@@ -20,7 +20,7 @@ Hamming cube II: The critical exponent*, arXiv:2602.20462v1.
 
 This file covers §3.4 (Case $LJ$: $0\le x\le\frac14$, $\frac12\le y\le1$, $1\le x+y$).
 
-Notation from §2 (displayed via `local notation`): `G₂`, `G`, `B_{w}`, `L`, `J`, `γ`;
+Notation from §2 (displayed via `local notation`): `G₂`, `G`, `BX w`, `L`, `J`, `γ`;
 `JX_lo`, `JX_hi` are the enclosures $\underline{\mathrm{J}}$, $\overline{\mathrm{J}}$ of (2.7).
 
 ## Notation introduced here
@@ -42,8 +42,6 @@ local notation "G₂" => Auto.DIR.G₂ (1 / 2)
 
 local notation "G" => Auto.DIR.G (1 / 2)
 
-local notation "B_{" w "}" => BX w
-
 local notation "L" => Auto.DIR.L (1 / 2)
 
 local notation "J" => JX
@@ -56,7 +54,7 @@ noncomputable def h_LJ (u c : ℝ) : ℝ := 2 * u + (√2 - 1) * J (c + u) + L (
 /-- [DIRX], §3.4: in the region of Case $LJ$, expressed in the variables $u=(y-x)/2$ and
 $c=(x+y)/2$, $G_2[B_{w_1}](x,y)=h_{LJ}(u,c)$. -/
 theorem G₂_BX_eq_h_LJ (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 4)) (hy : y ∈ Icc (1 / 2 : ℝ) 1)
-    (hxy : 1 ≤ x + y) : G₂ (B_{w₁}) x y = h_LJ ((y - x) / 2) ((x + y) / 2) := by
+    (hxy : 1 ≤ x + y) : G₂ (BX w₁) x y = h_LJ ((y - x) / 2) ((x + y) / 2) := by
   sorry
 
 /-- [DIRX], §3.4: using $\mathrm{J}\cdot\mathrm{J}''=-\gamma$,
@@ -158,7 +156,7 @@ theorem h_LJ_nonneg (u c : ℝ) (hc : c ∈ Icc (1 / 2 : ℝ) (5 / 8))
 /-- [DIRX], §3.4 (Case $LJ$): $G[B_{w_1}](x,y)\ge0$ for $0\le x\le\frac14$, $\frac12\le y\le1$,
 $1\le x+y$. -/
 theorem caseLJ (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 4)) (hy : y ∈ Icc (1 / 2 : ℝ) 1)
-    (hxy : 1 ≤ x + y) : G (B_{w₁}) x y ≥ 0 := by
+    (hxy : 1 ≤ x + y) : G (BX w₁) x y ≥ 0 := by
   sorry
 
 end Auto.DIRX

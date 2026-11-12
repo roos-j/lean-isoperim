@@ -20,7 +20,7 @@ Hamming cube II: The critical exponent*, arXiv:2602.20462v1.
 
 This file covers §3.5 (Case $QJQ$: $\frac14\le x\le\frac12\le y$, $x+y\le1$).
 
-Notation from §2 (displayed via `local notation`): `G₁`, `G`, `B_{w}`, `Q`, `J`, `γ`; `JX_lo` is the
+Notation from §2 (displayed via `local notation`): `G₁`, `G`, `BX w`, `Q`, `J`, `γ`; `JX_lo` is the
 enclosure $\underline{\mathrm{J}}$ of (2.7).
 
 ## Notation introduced here
@@ -41,8 +41,6 @@ local notation "G₁" => Auto.DIR.G₁ (1 / 2)
 
 local notation "G" => Auto.DIR.G (1 / 2)
 
-local notation "B_{" w "}" => BX w
-
 local notation "Q" => Auto.DIR.Q (1 / 2)
 
 local notation "J" => JX
@@ -53,7 +51,7 @@ local notation "γ" => γX
 $G_1[B_{w_1}](x,y)=\sqrt{(y-x)^2+\mathrm{J}(y)^2}+Q(x)-2Q(\frac{x+y}2)$. -/
 theorem caseQJQ_of_eqn_3_9 (x y : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2)) (hy : 1 / 2 ≤ y)
     (hxy : x + y ≤ 1) (h : (y - x) ^ 2 + J y ^ 2 - (2 * Q ((x + y) / 2) - Q x) ^ 2 ≥ 0) :
-    G₁ (B_{w₁}) x y ≥ 0 := by
+    G₁ (BX w₁) x y ≥ 0 := by
   sorry
 
 /-- **(3.10)** ([DIRX], §3.5).
@@ -107,7 +105,7 @@ theorem eqn_3_9 (x y : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2))
 /-- [DIRX], §3.5 (Case $QJQ$): $G[B_{w_1}](x,y)\ge0$ for $\frac14\le x\le\frac12\le y$,
 $x+y\le1$. -/
 theorem caseQJQ (x y : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2)) (hy : 1 / 2 ≤ y)
-    (hxy : x + y ≤ 1) : G (B_{w₁}) x y ≥ 0 := by
+    (hxy : x + y ≤ 1) : G (BX w₁) x y ≥ 0 := by
   sorry
 
 end Auto.DIRX

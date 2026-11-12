@@ -20,7 +20,7 @@ Hamming cube II: The critical exponent*, arXiv:2602.20462v1.
 
 This file covers §3.2 (Case $Q$: $0\le x\le y\le\frac12$).
 
-Notation from §2.1 (displayed via `local notation`): `G₁`, `G`, `B_{w}`, `L`, `Q`.
+Notation from §2.1 (displayed via `local notation`): `G₁`, `G`, `BX w`, `L`, `Q`.
 -/
 
 @[expose] public section
@@ -35,8 +35,6 @@ local notation "G₁" => Auto.DIR.G₁ (1 / 2)
 
 local notation "G" => Auto.DIR.G (1 / 2)
 
-local notation "B_{" w "}" => BX w
-
 local notation "L" => Auto.DIR.L (1 / 2)
 
 local notation "Q" => Auto.DIR.Q (1 / 2)
@@ -49,14 +47,14 @@ theorem caseQ_G₁_max (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y) (hy : y ≤ 1 
 
 /-- [DIRX], §3.2: this implies the claim, since $B_w=\max(L,Q)$ on $[0,\frac12]$ (by [DIR],
 Lemma 5.9, `Auto.DIR.lemma_5_9`). -/
-theorem BX_eq_max (w x : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 2)) : B_{w} x = max (L x) (Q x) := by
+theorem BX_eq_max (w x : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 2)) : BX w x = max (L x) (Q x) := by
   sorry
 
 /-! ### §3.2 Case Q: $0\le x\le y\le\frac12$ -/
 
 /-- [DIRX], §3.2 (Case $Q$): $G[B_{w_1}](x,y)\ge0$ for $0\le x\le y\le\frac12$. -/
 theorem caseQ (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y) (hy : y ≤ 1 / 2) :
-    G (B_{w₁}) x y ≥ 0 := by
+    G (BX w₁) x y ≥ 0 := by
   sorry
 
 end Auto.DIRX

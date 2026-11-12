@@ -23,9 +23,9 @@ From `Thm_1_1.lean`:
 * `{0,1}^n` : the Hamming cube, realized as `Fin n → ZMod 2`, so that bitwise addition `x ⊕ y`
   of the paper is the addition `x + y` of `(ZMod 2)^n`;
 * `e i` : the `i`-th unit vector, so that `x + e i` is `x` with the `i`-th bit flipped;
-* `h_{A}` : the function $h_A$;
+* `h A` : the function $h_A$;
 * `𝐄 f` : the expectation $\mathbf{E} f = 2^{-n}\sum_{x} f(x)$;
-* `𝟏_{A}` : the indicator function $\mathbf{1}_A$ (real valued);
+* `ind A` : the indicator function $\mathbf{1}_A$ (real valued);
 * `｜A｜` : the normalized size $|A| = \mathbf{E}\mathbf{1}_A$ of a set `A ⊆ {0,1}^n`
   (written with the full-width bar `｜`, U+FF5C; `|a|` keeps its usual meaning `abs a`);
 * `log₂` : the binary logarithm `Real.logb 2`;
@@ -43,8 +43,8 @@ From `Thm_1_7.lean`:
   `iteratedDeriv k J`.
 
 From `Thm_1_10.lean`:
-* `‖f‖_[p]` : $\|f\|_p=(\mathbf{E}|f|^p)^{1/p}$;
-* `∇f` : the function $x\mapsto|\nabla f(x)|$, so that `‖∇f‖_[p]` is $\|\nabla f\|_p$.
+* `pNorm p f` : $\|f\|_p=(\mathbf{E}|f|^p)^{1/p}$;
+* `∇f` : the function $x\mapsto|\nabla f(x)|$, so that `pNorm p (∇f)` is $\|\nabla f\|_p$.
 -/
 
 @[expose] public section
@@ -71,11 +71,9 @@ def e {n : ℕ} (i : Fin n) : {0,1}^n := Pi.single i 1
 /-- $h_A(x)$ ([DIR], §1, first paragraph): for $x\in A$ the number of edges connecting $x$ with
 the complement of $A$, i.e. the number of $i$ with $x\oplus e_i\notin A$; and $h_A(x)=0$ if
 $x\notin A$. -/
-noncomputable def hA {n : ℕ} (A : Set ({0,1}^n)) (x : {0,1}^n) : ℝ :=
+noncomputable def h {n : ℕ} (A : Set ({0,1}^n)) (x : {0,1}^n) : ℝ :=
   open Classical in
   if x ∈ A then (#{i : Fin n | x + e i ∉ A} : ℝ) else 0
-
-@[inherit_doc] notation "h_{" A "}" => hA A
 
 /-- The expectation $\mathbf{E}f=2^{-n}\sum_{x\in\{0,1\}^n}f(x)$ ([DIR], §1, after Theorem 1.1),
 for functions with values in any real vector space (e.g. `ℝ` or `ℂ`). -/
@@ -85,12 +83,12 @@ noncomputable def expect {n : ℕ} {M : Type*} [AddCommGroup M] [Module ℝ M]
 
 @[inherit_doc] notation:max "𝐄 " f:75 => expect f
 
-/-- The (real-valued) indicator function $\mathbf{1}_A$. -/
-notation "𝟏_{" A "}" => Set.indicator A (fun _ => (1 : ℝ))
+/-- The (real-valued) indicator function $\mathbf{1}_A$ of $A\subset\{0,1\}^n$. -/
+noncomputable def ind {n : ℕ} (A : Set ({0,1}^n)) : ({0,1}^n) → ℝ := A.indicator 1
 
 /-- The normalized size $|A|=\mathbf{E}\mathbf{1}_A$ of $A\subset\{0,1\}^n$
 ([DIR], §1, after Theorem 1.1). Written `｜A｜` (full-width bars). -/
-noncomputable def dens {n : ℕ} (A : Set ({0,1}^n)) : ℝ := 𝐄 𝟏_{A}
+noncomputable def dens {n : ℕ} (A : Set ({0,1}^n)) : ℝ := 𝐄 ind A
 
 /-- The notation `｜A｜` for `Auto.DIR.dens A`, the paper's $|A|$. It uses the full-width vertical
 bar `｜` (U+FF5C): the ASCII `|` cannot be used by a plain `notation` without clashing with
@@ -129,12 +127,10 @@ noncomputable def edgeMeasure {n : ℕ} (A B : Set ({0,1}^n)) : ℝ :=
 /-! ### §1.5 Sharp Poincaré inequalities -/
 
 /-- $\|f\|_p=(\mathbf{E}|f|^p)^{1/p}$ ([DIR], §1.5), for functions with values in a normed
-space (e.g. `ℝ` or `ℂ`). Written `‖f‖_[p]`. -/
+space (e.g. `ℝ` or `ℂ`). Written `pNorm p f`. -/
 noncomputable def pNorm {n : ℕ} {M : Type*} [NormedAddCommGroup M] (p : ℝ) (f : ({0,1}^n) → M) :
     ℝ :=
   (𝐄 (fun x ↦ ‖f x‖ ^ p)) ^ p⁻¹
-
-@[inherit_doc] notation "‖" f "‖_[" p "]" => pNorm p f
 
 /-- The length of the discrete gradient ([DIR], §1.5),
 $|\nabla f|^2=\sum_{i=1}^n|\tfrac12(f(x)-f(x\oplus e_i))|^2$. Written `∇f` (as a function of
@@ -159,7 +155,7 @@ The double infimum is taken as a single infimum over all admissible pairs $(n, A
 $A$ with $|A|=x$ exists (i.e. $x\notin\mathcal{Q}$, see `Auto.DIR.dyadic`), the value is the junk
 value $0$ (`Real.sInf_empty`); the paper only uses $\mathcal{B}_\beta$ on $\mathcal{Q}$. -/
 noncomputable def isoProfile (β x : ℝ) : ℝ :=
-  sInf {v : ℝ | ∃ n : ℕ, 1 ≤ n ∧ ∃ A : Set ({0,1}^n), ｜A｜ = x ∧ v = 𝐄 h_{A} ^ β}
+  sInf {v : ℝ | ∃ n : ℕ, 1 ≤ n ∧ ∃ A : Set ({0,1}^n), ｜A｜ = x ∧ v = 𝐄 h A ^ β}
 
 @[inherit_doc] notation "𝓑" => isoProfile
 

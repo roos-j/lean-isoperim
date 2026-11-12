@@ -25,7 +25,7 @@ From `Thm_1_1.lean`:
   scoped shadow notation `∂ 𝒜` (`open scoped FinsetFamily`) in every file importing this one.
 
 From `Thm_1_3.lean`:
-* `s_{f} x` : the sensitivity $s_f(x)$ of $f$ at $x$;
+* `s f x` : the sensitivity $s_f(x)$ of $f$ at $x$;
 * `probZ p z` : $\mathbf{P}(Z=z)$ for a random vector $Z$ in $\{0,1\}^n$ with i.i.d.
   Bernoulli($p$) coordinates.
 -/
@@ -41,26 +41,24 @@ open Real Set
 open Classical in
 /-- The sensitivity $s_f(x)$ of $f$ at $x$ ([DIRX], §1, after (1.4) and §5): the number of
 single-bit flips of $x$ that change the value of $f(x)$, i.e. the number of indices $j$ with
-$f(x\oplus e_j)\ne f(x)$. Written `s_{f} x`. -/
-noncomputable def sensitivity {n : ℕ} (f : ({0,1}^n) → ℝ) (x : {0,1}^n) : ℝ :=
+$f(x\oplus e_j)\ne f(x)$. Written `s f x`. -/
+noncomputable def s {n : ℕ} (f : ({0,1}^n) → ℝ) (x : {0,1}^n) : ℝ :=
   (Finset.univ.filter fun j ↦ f (x + e j) ≠ f x).card
-
-@[inherit_doc] notation "s_{" f "}" => sensitivity f
 
 /-- [DIRX], §1, after (1.4): for $f=\mathbf{1}_A$, $s_f(x)=h_A(x)+h_{A^c}(x)$. -/
 theorem sensitivity_indicator (n : ℕ) (A : Set ({0,1}^n)) (x : {0,1}^n) :
-    s_{𝟏_{A}} x = h_{A} x + h_{Aᶜ} x := by
+    s (ind A) x = h A x + h Aᶜ x := by
   sorry
 
 /-- [DIRX], §1, after (1.4): $h_A$ and $h_{A^c}$ have disjoint support. -/
 theorem hA_mul_hA_compl (n : ℕ) (A : Set ({0,1}^n)) (x : {0,1}^n) :
-    h_{A} x * h_{Aᶜ} x = 0 := by
+    h A x * h Aᶜ x = 0 := by
   sorry
 
 /-- [DIRX], §1, after (1.4): since $h_A$ and $h_{A^c}$ have disjoint support,
 $\sqrt{s_f}=\sqrt{h_A}+\sqrt{h_{A^c}}$ for $f=\mathbf{1}_A$. -/
 theorem sqrt_sensitivity_indicator (n : ℕ) (A : Set ({0,1}^n)) (x : {0,1}^n) :
-    √(s_{𝟏_{A}} x) = √(h_{A} x) + √(h_{Aᶜ} x) := by
+    √(s (ind A) x) = √(h A x) + √(h Aᶜ x) := by
   sorry
 
 end Auto.DIRX

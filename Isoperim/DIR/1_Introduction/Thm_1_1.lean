@@ -22,7 +22,6 @@ repository layout (one file per theorem of the introduction, corollaries in the 
 theorem they follow from), it also contains §1.4 *Towards a conjecture of Kahn and Park* with
 Corollary 1.9, which in the paper appears after Remark 1.8.
 
-
 The definitions and notation used here are in `Definitions.lean` of this folder.
 -/
 
@@ -38,9 +37,9 @@ $$\mathbf{E}h_A^\beta\ge|A|(\log_2(1/|A|))^\beta. \tag{1.1}$$
 This is an equality if $A$ is a subcube. -/
 theorem thm_1_1 (n : ℕ) (hn : 1 ≤ n) (β : ℝ) (hβ : β₀ ≤ β) :
     (∀ A : Set ({0,1}^n), ｜A｜ ≤ 1 / 2 →
-      𝐄 h_{A} ^ β ≥ ｜A｜ * (log₂ ｜A｜⁻¹) ^ β) ∧
+      𝐄 h A ^ β ≥ ｜A｜ * (log₂ ｜A｜⁻¹) ^ β) ∧
     (∀ A : Set ({0,1}^n), ｜A｜ ≤ 1 / 2 → IsSubcube A →
-      𝐄 h_{A} ^ β = ｜A｜ * (log₂ ｜A｜⁻¹) ^ β) := by
+      𝐄 h A ^ β = ｜A｜ * (log₂ ｜A｜⁻¹) ^ β) := by
   sorry
 
 /-- [DIR], §1.4, display after Corollary 1.9: for a partition $(A,B,W)$ of $\{0,1\}^n$ with
@@ -50,9 +49,9 @@ $$\tfrac12\le\mathbf{E}h_{B\cup W}^{\beta_0}\le\mathbf{E}(h_{B\cup W}\mathbf{1}_
 theorem cor_1_9_chain (n : ℕ) (hn : 1 ≤ n) (A B W : Set ({0,1}^n))
     (hAB : Disjoint A B) (hAW : Disjoint A W) (hBW : Disjoint B W)
     (hcover : A ∪ B ∪ W = Set.univ) (hBW' : ｜B ∪ W｜ = 1 / 2) (hA : ｜A｜ = 1 / 2) :
-    1 / 2 ≤ 𝐄 h_{B ∪ W} ^ β₀ ∧
-    𝐄 h_{B ∪ W} ^ β₀ ≤ 𝐄 (h_{B ∪ W} * 𝟏_{B}) + 𝐄 (h_{B ∪ W} ^ β₀ * 𝟏_{W}) ∧
-    𝐄 (h_{B ∪ W} * 𝟏_{B}) + 𝐄 (h_{B ∪ W} ^ β₀ * 𝟏_{W}) ≤
+    1 / 2 ≤ 𝐄 h (B ∪ W) ^ β₀ ∧
+    𝐄 h (B ∪ W) ^ β₀ ≤ 𝐄 (h (B ∪ W) * ind B) + 𝐄 (h (B ∪ W) ^ β₀ * ind W) ∧
+    𝐄 (h (B ∪ W) * ind B) + 𝐄 (h (B ∪ W) ^ β₀ * ind W) ≤
       |∇(A, B)| + (n : ℝ) ^ (0.50057 : ℝ) * ｜W｜ := by
   sorry
 

@@ -39,7 +39,7 @@ noncomputable def Mi {n : ℕ} (i : Fin n) (f : ({0,1}^n) → ℝ) (x : {0,1}^n)
 noncomputable def M {n : ℕ} (f : ({0,1}^n) → ℝ) (x : {0,1}^n) : ℝ := √(∑ i, (Mi i f x) ^ 2)
 
 /-- [DIR], §3: observe $M\mathbf{1}_A=\sqrt{h_A}$. -/
-theorem M_indicator (n : ℕ) (A : Set ({0,1}^n)) : M 𝟏_{A} = fun x ↦ √(h_{A} x) := by
+theorem M_indicator (n : ℕ) (A : Set ({0,1}^n)) : M (ind A) = fun x ↦ √(h A x) := by
   sorry
 
 /-- **Lemma 3.1** ([DIR]). Suppose that $\mathcal{I}\subset[0,\infty)$ is an interval and
@@ -108,9 +108,9 @@ $\mathbf{E}f=\frac12|A|$ and the inequality becomes
 $$L(\tfrac12|A|)\le\tfrac12\mathbf{E}(\mathbf{1}_A\sqrt{1+h_A})
 \le\tfrac12(|A|+\mathbf{E}\sqrt{h_A}).$$ -/
 theorem proof_thm_1_6_chain (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) :
-    𝐄 (fun x ↦ 1 / 2 * 𝟏_{A} x) = 1 / 2 * ｜A｜ ∧
-    L (1 / 2) (1 / 2 * ｜A｜) ≤ 1 / 2 * 𝐄 (fun x ↦ 𝟏_{A} x * √(1 + h_{A} x)) ∧
-    1 / 2 * 𝐄 (fun x ↦ 𝟏_{A} x * √(1 + h_{A} x)) ≤ 1 / 2 * (｜A｜ + 𝐄 (fun x ↦ √(h_{A} x))) := by
+    𝐄 (fun x ↦ 1 / 2 * ind A x) = 1 / 2 * ｜A｜ ∧
+    L (1 / 2) (1 / 2 * ｜A｜) ≤ 1 / 2 * 𝐄 (fun x ↦ ind A x * √(1 + h A x)) ∧
+    1 / 2 * 𝐄 (fun x ↦ ind A x * √(1 + h A x)) ≤ 1 / 2 * (｜A｜ + 𝐄 (fun x ↦ √(h A x))) := by
   sorry
 
 end Proof_Theorem_1_6

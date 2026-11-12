@@ -29,8 +29,8 @@ declared in every [DIRX] file using them:
   (the [DIR] functions `Auto.DIR.G₁ (1 / 2)`, `Auto.DIR.G₂ (1 / 2)`, `Auto.DIR.G (1 / 2)`);
 * `L x`, `Q x` : $L(x)=x\sqrt{\log_2(1/x)}$ and the cubic $Q(x)$ (the [DIR] functions `Auto.DIR.L
 (1 / 2)`, `Auto.DIR.Q (1 / 2)`);
-* `J_{w} x` : $\mathrm{J}_w(x)$ (Lean name `JXw`);
-* `B_{w} x` : $B_w(x)$ of (2.2) (Lean name `BX`);
+* `JXw w x` : $\mathrm{J}_w(x)$ (Lean name `JXw`);
+* `BX w x` : $B_w(x)$ of (2.2) (Lean name `BX`);
 * `w₁` : $w_1=\frac{29}{32}$ of (2.3);
 * `J x` : $\mathrm{J}(x)=\mathrm{J}_{w_1}(x)$ (Lean name `JX`);
 * `wStar` : the optimal value $w_*$ of Remark 2.1.
@@ -68,30 +68,26 @@ local notation "Q" => Auto.DIR.Q (1 / 2)
 
 /-- $\mathrm{J}_w(x)=\frac12I(\frac1{2w})^{-1}I(\frac{1-x}w)$ for a parameter $w\in(\frac12,1]$
 ([DIRX], §2.1). It is meaningful for $x\in[1-w,1]$ (outside this range `I` takes the junk value
-$0$). Written `J_{w} x`. -/
+$0$). Written `JXw w x`. -/
 noncomputable def JXw (w x : ℝ) : ℝ := 1 / 2 * (I ((2 * w)⁻¹))⁻¹ * I ((1 - x) / w)
-
-local notation "J_{" w "}" => JXw w
 
 /-- [DIRX], §2.1: $\mathrm{J}_w(\frac12)=\frac12$ and $\mathrm{J}_w(1)=0$ for $w\in(\frac12,1]$. -/
 theorem JXw_half_one (w : ℝ) (hw : w ∈ Ioc (1 / 2 : ℝ) 1) :
-    J_{w} (1 / 2) = 1 / 2 ∧ J_{w} 1 = 0 := by
+    JXw w (1 / 2) = 1 / 2 ∧ JXw w 1 = 0 := by
   sorry
 
 /-- **(2.2)** ([DIRX], §2.1). The Bellman function
 $$B_w(x)=\begin{cases}L(x)&x\in[0,\frac14],\\ Q(x)&x\in[\frac14,\frac12],\\
 \mathrm{J}_w(x)&x\in[\frac12,1].\end{cases}$$
-Only the values on $[0,1]$ are meaningful. Written `B_{w} x`. -/
+Only the values on $[0,1]$ are meaningful. Written `BX w x`. -/
 noncomputable def BX (w x : ℝ) : ℝ :=
-  if x ≤ 1 / 4 then L x else if x ≤ 1 / 2 then Q x else J_{w} x
-
-local notation "B_{" w "}" => BX w
+  if x ≤ 1 / 4 then L x else if x ≤ 1 / 2 then Q x else JXw w x
 
 /-- **(2.3)** ([DIRX], §2.1). The parameter $w=w_1=\frac{29}{32}$. -/
 noncomputable def w₁ : ℝ := 29 / 32
 
 /-- The function $\mathrm{J}=\mathrm{J}_{w_1}$ ([DIRX], §2.1, after (2.3)). Written `J x`. -/
-noncomputable def JX : ℝ → ℝ := J_{w₁}
+noncomputable def JX : ℝ → ℝ := JXw w₁
 
 local notation "J" => JX
 

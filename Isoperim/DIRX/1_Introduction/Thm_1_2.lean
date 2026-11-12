@@ -39,10 +39,10 @@ which is no greater than $|\nabla(A,B)|+\sqrt n|W|$. -/
 theorem thm_1_2_chain (n : ℕ) (hn : 1 ≤ n) (A B W : Set ({0,1}^n))
     (hAB : Disjoint A B) (hAW : Disjoint A W) (hBW : Disjoint B W)
     (hcover : A ∪ B ∪ W = Set.univ) (hBW' : ｜B ∪ W｜ = 1 / 2) (hA : ｜A｜ = 1 / 2) :
-    1 / 2 ≤ 𝐄 (fun x ↦ √(h_{B ∪ W} x)) ∧
-    𝐄 (fun x ↦ √(h_{B ∪ W} x)) ≤
-      𝐄 (h_{B ∪ W} * 𝟏_{B}) + 𝐄 (fun x ↦ √(h_{B ∪ W} x) * 𝟏_{W} x) ∧
-    𝐄 (h_{B ∪ W} * 𝟏_{B}) + 𝐄 (fun x ↦ √(h_{B ∪ W} x) * 𝟏_{W} x) ≤
+    1 / 2 ≤ 𝐄 (fun x ↦ √(h (B ∪ W) x)) ∧
+    𝐄 (fun x ↦ √(h (B ∪ W) x)) ≤
+      𝐄 (h (B ∪ W) * ind B) + 𝐄 (fun x ↦ √(h (B ∪ W) x) * ind W x) ∧
+    𝐄 (h (B ∪ W) * ind B) + 𝐄 (fun x ↦ √(h (B ∪ W) x) * ind W x) ≤
       |∇(A, B)| + √n * ｜W｜ := by
   sorry
 

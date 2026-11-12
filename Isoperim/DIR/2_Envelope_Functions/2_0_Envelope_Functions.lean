@@ -28,7 +28,6 @@ This file covers the part of §2 preceding §2.1: the two-point functionals (2.1
 the functions $L_\beta$, $Q_\beta$, $b_\beta$ (2.3), Theorem 2.2 (main two-point inequality),
 Remarks 2.3, 2.4, Corollary 2.5 and Remark 2.6.
 
-
 The definitions and notation used here are in `Definitions.lean` of this folder.
 -/
 

@@ -21,13 +21,13 @@ Source [DIRX]: P. Durcik, P. Ivanisvili, J. Roos, X. Xie, *Sharp isoperimetric i
 Hamming cube II: The critical exponent*, arXiv:2602.20462v1, §4 (this section has no
 subsections).
 
-Notation from §2 (displayed via `local notation`): `B_{w}`, `L`, `Q`, `J`; `‖f‖_[p]`, `∇f` are
+Notation from §2 (displayed via `local notation`): `BX w`, `L`, `Q`, `J`; `pNorm p f`, `∇f` are
 from [DIR], §1.5.
 
 ## Notation introduced here
 
-* `G_P x` : $G_P(x)$ of (4.1) (Lean name `G_PX`);
-* `g_P₁ x` : $g_{P,1}(x)$ (Lean name `g_P₁X`);
+* `G_PX x` : $G_P(x)$ of (4.1) (Lean name `G_PX`);
+* `g_P₁X x` : $g_{P,1}(x)$ (Lean name `g_P₁X`);
 * `h_P₁_lo` : the tight lower bound $\underline{h_{P,1}}$;
 * `h_P₂ x` : $h_{P,2}(x)$; `h_P₂_lo` : its tight lower bound $\underline{h_{P,2}}$.
 -/
@@ -39,8 +39,6 @@ namespace Auto.DIRX
 open Auto.DIR
 
 open Real Set
-
-local notation "B_{" w "}" => BX w
 
 local notation "L" => Auto.DIR.L (1 / 2)
 
@@ -54,29 +52,27 @@ section Proof_Theorem_1_3
 /-- [DIRX], §4: every Boolean-valued function $f$ can be written as $f=\mathbf{1}_A$ for some
 $A\subset\{0,1\}^n$. -/
 theorem bool_eq_indicator (n : ℕ) (f : ({0,1}^n) → ℝ) (hf : ∀ x, f x = 0 ∨ f x = 1) :
-    ∃ A : Set ({0,1}^n), f = 𝟏_{A} := by
+    ∃ A : Set ({0,1}^n), f = ind A := by
   sorry
 
 /-- [DIRX], §4: for $f=\mathbf{1}_A$, $\|f-\mathbf{E}f\|_1=2|A|(1-|A|)$ and
 $\|\nabla f\|_1=\frac12(\mathbf{E}\sqrt{h_A}+\mathbf{E}\sqrt{h_{A^c}})$. -/
 theorem norms_indicator (n : ℕ) (A : Set ({0,1}^n)) :
-    ‖𝟏_{A} - fun _ ↦ 𝐄 𝟏_{A}‖_[1] = 2 * ｜A｜ * (1 - ｜A｜) ∧
-      ‖∇𝟏_{A}‖_[1] = 1 / 2 * (𝐄 (fun x ↦ √(h_{A} x)) + 𝐄 (fun x ↦ √(h_{Aᶜ} x))) := by
+    pNorm 1 (ind A - fun _ ↦ 𝐄 ind A) = 2 * ｜A｜ * (1 - ｜A｜) ∧
+      pNorm 1 (∇(ind A)) = 1 / 2 * (𝐄 (fun x ↦ √(h A x)) + 𝐄 (fun x ↦ √(h Aᶜ x))) := by
   sorry
 
-/-- $G_P(x)=\frac12(B_{w_1}(x)+B_{w_1}(1-x))-2x(1-x)$ ([DIRX], (4.1)). Written `G_P x`. -/
-noncomputable def G_PX (x : ℝ) : ℝ := 1 / 2 * (B_{w₁} x + B_{w₁} (1 - x)) - 2 * x * (1 - x)
-
-local notation "G_P" => G_PX
+/-- $G_P(x)=\frac12(B_{w_1}(x)+B_{w_1}(1-x))-2x(1-x)$ ([DIRX], (4.1)). Written `G_PX x`. -/
+noncomputable def G_PX (x : ℝ) : ℝ := 1 / 2 * (BX w₁ x + BX w₁ (1 - x)) - 2 * x * (1 - x)
 
 /-- [DIRX], §4: by (2.5), (4.1) suffices to prove Theorem 1.3 (the inequality (1.3)). -/
-theorem thm_1_3_of_eqn_4_1 (h : ∀ x ∈ Icc (0 : ℝ) 1, G_P x ≥ 0) (n : ℕ) (hn : 1 ≤ n)
+theorem thm_1_3_of_eqn_4_1 (h : ∀ x ∈ Icc (0 : ℝ) 1, G_PX x ≥ 0) (n : ℕ) (hn : 1 ≤ n)
     (f : ({0,1}^n) → ℝ) (hf : ∀ x, f x = 0 ∨ f x = 1) :
-    ‖∇f‖_[1] ≥ ‖f - fun _ ↦ 𝐄 f‖_[1] := by
+    pNorm 1 (∇f) ≥ pNorm 1 (f - fun _ ↦ 𝐄 f) := by
   sorry
 
 /-- [DIRX], §4: $G_P(x)=G_P(1-x)$. -/
-theorem G_PX_symm (x : ℝ) : G_P x = G_P (1 - x) := by
+theorem G_PX_symm (x : ℝ) : G_PX x = G_PX (1 - x) := by
   sorry
 
 section Case_I
@@ -85,14 +81,12 @@ section Case_I
 /-- [DIRX], §4, Case I: for $x\in[0,\frac1{64}]$,
 $G_P(x)=\frac12(L(x)+\mathrm{J}(1-x))-2x(1-x)$. -/
 theorem G_PX_eq_I (x : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 64)) :
-    G_P x = 1 / 2 * (L x + J (1 - x)) - 2 * x * (1 - x) := by
+    G_PX x = 1 / 2 * (L x + J (1 - x)) - 2 * x * (1 - x) := by
   sorry
 
 /-- $g_{P,1}(x)=\frac12\sqrt{\log_2(1/x)}+\frac12\sqrt{\log(w_1/x)}-2$ ([DIRX], §4, Case I).
-Written `g_P₁ x`. -/
+Written `g_P₁X x`. -/
 noncomputable def g_P₁X (x : ℝ) : ℝ := 1 / 2 * √(log₂ x⁻¹) + 1 / 2 * √(log (w₁ / x)) - 2
-
-local notation "g_P₁" => g_P₁X
 
 /-- [DIRX], §4, Case I: by (2.6), for $x\in(0,\frac1{64}]$,
 $\frac12(L(x)+\mathrm{J}(1-x))-2x(1-x)\ge x(\frac12\sqrt{\log_2(1/x)}+\frac12\sqrt{\log(w_1/x)}-2)
@@ -100,16 +94,16 @@ $\frac12(L(x)+\mathrm{J}(1-x))-2x(1-x)\ge x(\frac12\sqrt{\log_2(1/x)}+\frac12\sq
 theorem G_PX_I_lower (x : ℝ) (hx : x ∈ Ioc (0 : ℝ) (1 / 64)) :
     1 / 2 * (L x + J (1 - x)) - 2 * x * (1 - x) ≥
       x * (1 / 2 * √(log₂ x⁻¹) + 1 / 2 * √(log (w₁ / x)) - 2) ∧
-    x * (1 / 2 * √(log₂ x⁻¹) + 1 / 2 * √(log (w₁ / x)) - 2) = x * g_P₁ x := by
+    x * (1 / 2 * √(log₂ x⁻¹) + 1 / 2 * √(log (w₁ / x)) - 2) = x * g_P₁X x := by
   sorry
 
 /-- [DIRX], §4, Case I: $g_{P,1}$ is a decreasing function (on $(0,\frac1{64}]$) and
 $g_{P,1}(\frac1{64})>0.2$. -/
-theorem g_P₁X_antitone_eval : AntitoneOn g_P₁ (Ioc 0 (1 / 64)) ∧ g_P₁ (1 / 64) > 0.2 := by
+theorem g_P₁X_antitone_eval : AntitoneOn g_P₁X (Ioc 0 (1 / 64)) ∧ g_P₁X (1 / 64) > 0.2 := by
   sorry
 
 /-- [DIRX], §4, Case I: $G_P(x)\ge0.2\,x$ for all $x\in[0,\frac1{64}]$. -/
-theorem G_PX_I (x : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 64)) : G_P x ≥ 0.2 * x := by
+theorem G_PX_I (x : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 64)) : G_PX x ≥ 0.2 * x := by
   sorry
 
 end Case_I
@@ -119,7 +113,7 @@ section Case_II
 
 /-- **(4.2)** ([DIRX], §4, Case II) (🚗). Dyadic partitioning shows that $G_P(x)>10^{-4}$ for all
 $x\in[\frac1{64},\frac14]$. -/
-theorem eqn_4_2 (x : ℝ) (hx : x ∈ Icc (1 / 64 : ℝ) (1 / 4)) : G_P x > (10 : ℝ) ^ (-4 : ℤ) := by
+theorem eqn_4_2 (x : ℝ) (hx : x ∈ Icc (1 / 64 : ℝ) (1 / 4)) : G_PX x > (10 : ℝ) ^ (-4 : ℤ) := by
   sorry
 
 end Case_II
@@ -152,7 +146,7 @@ theorem eqn_4_3 (x : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2)) : h_P₂ x > (1
 /-- [DIRX], §4, Case III: for $x\in[\frac14,\frac12]$,
 $G_P(x)=\frac12(Q(x)+\mathrm{J}(1-x))-2x(1-x)\ge0$. -/
 theorem G_PX_III (x : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
-    G_P x = 1 / 2 * (Q x + J (1 - x)) - 2 * x * (1 - x) ∧
+    G_PX x = 1 / 2 * (Q x + J (1 - x)) - 2 * x * (1 - x) ∧
       1 / 2 * (Q x + J (1 - x)) - 2 * x * (1 - x) ≥ 0 := by
   sorry
 
@@ -160,7 +154,7 @@ end Case_III
 
 /-- **(4.1)** ([DIRX], §4).
 $$G_P(x)=\tfrac12(B_{w_1}(x)+B_{w_1}(1-x))-2x(1-x)\ge0$$ for all $x\in[0,1]$. -/
-theorem eqn_4_1 (x : ℝ) (hx : x ∈ Icc (0 : ℝ) 1) : G_P x ≥ 0 := by
+theorem eqn_4_1 (x : ℝ) (hx : x ∈ Icc (0 : ℝ) 1) : G_PX x ≥ 0 := by
   sorry
 
 end Proof_Theorem_1_3

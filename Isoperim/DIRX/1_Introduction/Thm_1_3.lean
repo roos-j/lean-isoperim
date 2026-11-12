@@ -21,10 +21,9 @@ Poincaré inequality for Boolean-valued functions), the discussion of noisy chan
 Courtade–Kumar and Hellinger conjectures, the sensitivity inequality (1.4)), and the
 acknowledgments.
 
-The notation `‖f‖_[p]`, `∇f`, `IsHalfCube`, `poincareConst`, `poincareConstBool` is reused from
+The notation `pNorm p f`, `∇f`, `IsHalfCube`, `poincareConst`, `poincareConstBool` is reused from
 [DIR] (`Isoperim/DIR/1_Introduction/Thm_1_10.lean`). Boolean functions
 $f:\{0,1\}^n\to\{0,1\}$ are real functions with values in $\{0,1\}$.
-
 
 The definitions and notation used here are in `Definitions.lean` of this folder.
 -/
@@ -44,9 +43,9 @@ $|\nabla f(x)|=\sqrt{\sum_{i=1}^n(\frac12(f(x)-f(x\oplus e_i)))^2}$ and
 $\|f\|_1=\mathbf{E}|f|$. -/
 theorem thm_1_3 (n : ℕ) (hn : 1 ≤ n) :
     (∀ f : ({0,1}^n) → ℝ, (∀ x, f x = 0 ∨ f x = 1) →
-      ‖∇f‖_[1] ≥ ‖f - fun _ ↦ 𝐄 f‖_[1]) ∧
+      pNorm 1 (∇f) ≥ pNorm 1 (f - fun _ ↦ 𝐄 f)) ∧
     (∀ A : Set ({0,1}^n), IsHalfCube A →
-      ‖∇𝟏_{A}‖_[1] = ‖𝟏_{A} - fun _ ↦ 𝐄 𝟏_{A}‖_[1]) := by
+      pNorm 1 (∇(ind A)) = pNorm 1 (ind A - fun _ ↦ 𝐄 ind A)) := by
   sorry
 
 /-! ### Acknowledgments -/

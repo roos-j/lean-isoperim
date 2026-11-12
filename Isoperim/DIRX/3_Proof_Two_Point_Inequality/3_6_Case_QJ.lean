@@ -21,12 +21,12 @@ Hamming cube II: The critical exponent*, arXiv:2602.20462v1.
 This file covers §3.6 (Case $QJ$: $\frac14\le x\le\frac12\le y\le1$, $x+y\ge1$) with its
 subsections §3.6.1 (near diagonal) and §3.6.2 (far from diagonal).
 
-Notation from §2 (displayed via `local notation`): `G₁`, `G`, `B_{w}`, `Q`, `J`; `JX_lo`,
+Notation from §2 (displayed via `local notation`): `G₁`, `G`, `BX w`, `Q`, `J`; `JX_lo`,
 `JX_hi`, `absDJX_hi` are the enclosures of §2.2.
 
 ## Notation introduced here
 
-* `g_QJ x y` : $g_{QJ}(x,y)$ (Lean name `g_QJX`);
+* `g_QJX x y` : $g_{QJ}(x,y)$ (Lean name `g_QJX`);
 * `h_QJ₁ x y` : the expression $-\frac12\partial_xg_{QJ}(x,y)$; `h_QJ₁_lo` : its tight lower
   bound $\underline{h_{QJ,1}}$;
 * `h_QJ₂ x y` : $h_{QJ,2}(x,y)$ of (3.14); `h_QJ₂_lo` : its tight lower bound
@@ -45,8 +45,6 @@ local notation "G₁" => Auto.DIR.G₁ (1 / 2)
 
 local notation "G" => Auto.DIR.G (1 / 2)
 
-local notation "B_{" w "}" => BX w
-
 local notation "Q" => Auto.DIR.Q (1 / 2)
 
 local notation "J" => JX
@@ -55,26 +53,24 @@ local notation "J" => JX
 
 section Near_Diagonal
 /-- $g_{QJ}(x,y)=(y-x)^2+\mathrm{J}(y)^2-(2\mathrm{J}(\frac{x+y}2)-Q(x))^2$ ([DIRX], §3.6.1).
-Written `g_QJ x y`. -/
+Written `g_QJX x y`. -/
 noncomputable def g_QJX (x y : ℝ) : ℝ := (y - x) ^ 2 + J y ^ 2 - (2 * J ((x + y) / 2) - Q x) ^ 2
-
-local notation "g_QJ" => g_QJX
 
 /-- [DIRX], §3.6.1: positivity of $g_{QJ}(x,y)$ implies $G_1[B_{w_1}](x,y)\ge0$ (for
 $\frac14\le x\le\frac12\le y\le1$, $x+y\ge1$). -/
 theorem G₁_of_g_QJ (x y : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2)) (hy : y ∈ Icc (1 / 2 : ℝ) 1)
-    (hxy : 1 ≤ x + y) (h : g_QJ x y ≥ 0) : G₁ (B_{w₁}) x y ≥ 0 := by
+    (hxy : 1 ≤ x + y) (h : g_QJX x y ≥ 0) : G₁ (BX w₁) x y ≥ 0 := by
   sorry
 
 /-- [DIRX], §3.6.1: $g_{QJ}(\frac12,y)\ge0$ is equivalent to $G_1[\mathrm{J}](\frac12,y)\ge0$
 (for $y\in[\frac12,\frac58]$). -/
 theorem g_QJ_half_iff (y : ℝ) (hy : y ∈ Icc (1 / 2 : ℝ) (5 / 8)) :
-    g_QJ (1 / 2) y ≥ 0 ↔ G₁ J (1 / 2) y ≥ 0 := by
+    g_QJX (1 / 2) y ≥ 0 ↔ G₁ J (1 / 2) y ≥ 0 := by
   sorry
 
 /-- [DIRX], §3.6.1: $g_{QJ}(\frac12,y)\ge0$ for all $y\in[\frac12,\frac58]$ (this already follows
 from §3.1, (3.1)). -/
-theorem g_QJ_half (y : ℝ) (hy : y ∈ Icc (1 / 2 : ℝ) (5 / 8)) : g_QJ (1 / 2) y ≥ 0 := by
+theorem g_QJ_half (y : ℝ) (hy : y ∈ Icc (1 / 2 : ℝ) (5 / 8)) : g_QJX (1 / 2) y ≥ 0 := by
   sorry
 
 /-- **(3.13)** ([DIRX], §3.6.1) (🚗). Dyadic partitioning yields
@@ -83,13 +79,13 @@ $$-\tfrac12\partial_xg_{QJ}>10^{-5}\quad\text{on}\quad
 -/
 theorem eqn_3_13 (x y : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2))
     (hy : y ∈ Icc (1 / 2 : ℝ) (5 / 8)) :
-    -(1 / 2) * deriv (fun t ↦ g_QJ t y) x > (10 : ℝ) ^ (-5 : ℤ) := by
+    -(1 / 2) * deriv (fun t ↦ g_QJX t y) x > (10 : ℝ) ^ (-5 : ℤ) := by
   sorry
 
 /-- [DIRX], §3.6.1: if $\partial_xg_{QJ}<0$ on $[\frac38,\frac12]\times[\frac12,\frac58]$, then
 $g_{QJ}(x,y)\ge g_{QJ}(\frac12,y)\ge0$ there, which finishes the proof of this case. -/
 theorem g_QJ_nonneg (x y : ℝ) (hx : x ∈ Icc (3 / 8 : ℝ) (1 / 2))
-    (hy : y ∈ Icc (1 / 2 : ℝ) (5 / 8)) : g_QJ x y ≥ g_QJ (1 / 2) y ∧ g_QJ x y ≥ 0 := by
+    (hy : y ∈ Icc (1 / 2 : ℝ) (5 / 8)) : g_QJX x y ≥ g_QJX (1 / 2) y ∧ g_QJX x y ≥ 0 := by
   sorry
 
 /-- [DIRX], §3.6.1: for $\frac38\le x\le\frac12\le y\le\frac58$ (and $x+y\ge1$, the standing
@@ -103,7 +99,7 @@ $x+y<1$ one has $B_w(\frac{x+y}2)=Q(\frac{x+y}2)$ and these points belong to Cas
 (§3.5). The Lean statement adds the hypothesis `hxy : 1 ≤ x + y`, matching the heading; this is
 all that is needed for `caseQJ`. -/
 theorem caseQJ_near (x y : ℝ) (hx : x ∈ Icc (3 / 8 : ℝ) (1 / 2))
-    (hy : y ∈ Icc (1 / 2 : ℝ) (5 / 8)) (hxy : 1 ≤ x + y) : G₁ (B_{w₁}) x y ≥ 0 := by
+    (hy : y ∈ Icc (1 / 2 : ℝ) (5 / 8)) (hxy : 1 ≤ x + y) : G₁ (BX w₁) x y ≥ 0 := by
   sorry
 
 end Near_Diagonal
@@ -119,7 +115,7 @@ noncomputable def h_QJ₂ (x y : ℝ) : ℝ := √((y - x) ^ 2 + J y ^ 2) + Q x 
 assumption of Case $QJ$; it is not implied by the other two conditions, e.g.
 $(x,y)=(\frac14,\frac58)$), $G_1[B_{w_1}](x,y)=h_{QJ,2}(x,y)$, so it suffices to show (3.14). -/
 theorem G₁_BX_eq_h_QJ₂ (x y : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2))
-    (hy : y ∈ Icc (5 / 8 : ℝ) 1) (hxy : 1 ≤ x + y) : G₁ (B_{w₁}) x y = h_QJ₂ x y := by
+    (hy : y ∈ Icc (5 / 8 : ℝ) 1) (hxy : 1 ≤ x + y) : G₁ (BX w₁) x y = h_QJ₂ x y := by
   sorry
 
 /-- **(3.14)** ([DIRX], §3.6.2) (🚗). For all $x\in[\frac14,\frac12]$ and $y\in[\frac58,1]$,
@@ -135,7 +131,7 @@ end Far_From_Diagonal
 /-- [DIRX], §3.6 (Case $QJ$): $G[B_{w_1}](x,y)\ge0$ for $\frac14\le x\le\frac12\le y\le1$,
 $x+y\ge1$. -/
 theorem caseQJ (x y : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2)) (hy : y ∈ Icc (1 / 2 : ℝ) 1)
-    (hxy : 1 ≤ x + y) : G (B_{w₁}) x y ≥ 0 := by
+    (hxy : 1 ≤ x + y) : G (BX w₁) x y ≥ 0 := by
   sorry
 
 end Auto.DIRX

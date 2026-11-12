@@ -22,7 +22,6 @@ domain is $[\frac12,1]$; it is smooth on $(1-w_1,1)\supset[\frac12,1)$, while at
 derivative is infinite (so `deriv J 1` is a junk value), and statements about derivatives are
 restricted accordingly.
 
-
 The definitions and notation used here are in `Definitions.lean` of this folder.
 -/
 

@@ -20,7 +20,6 @@ This file covers §1.1 *Motivation, history and further results* (Definition 1.3
 Conjecture 1.4) and §1.2 *Results at the critical exponent* up to and including the discussion
 after Theorem 1.5.
 
-
 The definitions and notation used here are in `Definitions.lean` of this folder.
 -/
 

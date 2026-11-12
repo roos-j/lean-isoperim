@@ -46,28 +46,28 @@ open Real Set
 /-- [DIR], §7: every Boolean-valued function $f$ can be written as $f=\mathbf{1}_A$ for some
 $A\subset\{0,1\}^n$. -/
 theorem boolean_eq_indicator (n : ℕ) (f : ({0,1}^n) → ℝ) (hf : ∀ x, f x = 0 ∨ f x = 1) :
-    ∃ A : Set ({0,1}^n), f = 𝟏_{A} := by
+    ∃ A : Set ({0,1}^n), f = ind A := by
   sorry
 
 /-- [DIR], §7: for $f=\mathbf{1}_A$, $\mathbf{E}f=|A|=2^{-n}\#A$ and
 $\|f-\mathbf{E}f\|_p^p=|A|^p(1-|A|)+|A|(1-|A|)^p$ (for $p>0$). -/
 theorem indicator_norms (n : ℕ) (A : Set ({0,1}^n)) (p : ℝ) (hp : 0 < p) :
-    𝐄 𝟏_{A} = ｜A｜ ∧ ｜A｜ = (2 : ℝ)⁻¹ ^ n * A.ncard ∧
-    ‖𝟏_{A} - fun _ ↦ 𝐄 𝟏_{A}‖_[p] ^ p = ｜A｜ ^ p * (1 - ｜A｜) + ｜A｜ * (1 - ｜A｜) ^ p := by
+    𝐄 ind A = ｜A｜ ∧ ｜A｜ = (2 : ℝ)⁻¹ ^ n * A.ncard ∧
+    pNorm p (ind A - fun _ ↦ 𝐄 ind A) ^ p = ｜A｜ ^ p * (1 - ｜A｜) + ｜A｜ * (1 - ｜A｜) ^ p := by
   sorry
 
 /-- **(7.1)** ([DIR], §7). For $f=\mathbf{1}_A$ (and $p>0$),
 $$\|\nabla f\|_p^p=2^{-p}(\mathbf{E}h_A^{p/2}+\mathbf{E}h_{A^c}^{p/2}).$$ -/
 theorem eqn_7_1 (n : ℕ) (A : Set ({0,1}^n)) (p : ℝ) (hp : 0 < p) :
-    ‖∇𝟏_{A}‖_[p] ^ p = 2 ^ (-p) * (𝐄 h_{A} ^ (p / 2) + 𝐄 h_{Aᶜ} ^ (p / 2)) := by
+    pNorm p (∇(ind A)) ^ p = 2 ^ (-p) * (𝐄 h A ^ (p / 2) + 𝐄 h Aᶜ ^ (p / 2)) := by
   sorry
 
 /-- [DIR], §7: set $p=2\beta$. If $\mathbf{E}h_A^\beta\ge B(|A|)$ for some function $B$ (for all
 $A\subset\{0,1\}^n$), then
 $\|\nabla f\|_p^p\ge2^{-2\beta}(B(|A|)+B(1-|A|))$ for $f=\mathbf{1}_A$. -/
 theorem grad_norm_ge (n : ℕ) (β : ℝ) (hβ : 0 < β) (B : ℝ → ℝ)
-    (hB : ∀ A : Set ({0,1}^n), 𝐄 h_{A} ^ β ≥ B ｜A｜) (A : Set ({0,1}^n)) :
-    ‖∇𝟏_{A}‖_[2 * β] ^ (2 * β) ≥ 2 ^ (-(2 * β)) * (B ｜A｜ + B (1 - ｜A｜)) := by
+    (hB : ∀ A : Set ({0,1}^n), 𝐄 h A ^ β ≥ B ｜A｜) (A : Set ({0,1}^n)) :
+    pNorm (2 * β) (∇(ind A)) ^ (2 * β) ≥ 2 ^ (-(2 * β)) * (B ｜A｜ + B (1 - ｜A｜)) := by
   sorry
 
 /-- The function
@@ -89,8 +89,8 @@ section Case_I
 /-- [DIR], proof of Proposition 7.1, Case I: for $x\in[0,\frac1{64}]$ we need to show
 $2^{-2\beta}(L_\beta(x)+J(1-x))-x^{2\beta}(1-x)-x(1-x)^{2\beta}\ge0$; this is $G_{P,\beta}(x)$. -/
 theorem prop_7_1_case_I_eq (β : ℝ) (x : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 64)) :
-    G_P β x = 2 ^ (-(2 * β)) * (L β x + J (1 - x)) - x ^ (2 * β) * (1 - x) - x * (1 - x) ^ (2 *
-        β) := by
+    G_P β x = 2 ^ (-(2 * β)) * (L β x + J (1 - x)) - x ^ (2 * β) * (1 - x) -
+      x * (1 - x) ^ (2 * β) := by
   sorry
 
 /-- The function
@@ -144,7 +144,8 @@ section Case_III
 $2^{-2\beta}(Q_\beta(x)+J(1-x))-x^{2\beta}(1-x)-x(1-x)^{2\beta}\ge0$; this is $G_{P,\beta}(x)$, and
 the left-hand side equals $0$ at $x=\frac12$. -/
 theorem prop_7_1_case_III_eq (β : ℝ) (x : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
-    G_P β x = 2 ^ (-(2 * β)) * (Q β x + J (1 - x)) - x ^ (2 * β) * (1 - x) - x * (1 - x) ^ (2 * β) ∧
+    G_P β x = 2 ^ (-(2 * β)) * (Q β x + J (1 - x)) - x ^ (2 * β) * (1 - x) -
+      x * (1 - x) ^ (2 * β) ∧
     2 ^ (-(2 * β)) * (Q β (1 / 2) + J (1 - 1 / 2)) - (1 / 2 : ℝ) ^ (2 * β) * (1 - 1 / 2) -
       1 / 2 * (1 - 1 / 2) ^ (2 * β) = 0 := by
   sorry

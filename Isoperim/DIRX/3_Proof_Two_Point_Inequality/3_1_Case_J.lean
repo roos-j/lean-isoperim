@@ -21,13 +21,13 @@ Hamming cube II: The critical exponent*, arXiv:2602.20462v1.
 This file covers the introductory paragraph of §3 and §3.1 (Case $J$:
 $\frac12\le x\le y\le1$).
 
-Notation from §2 (displayed via `local notation`): `G₁`, `G`, `B_{w}`, `J` (= $\mathrm{J}$),
+Notation from §2 (displayed via `local notation`): `G₁`, `G`, `BX w`, `J` (= $\mathrm{J}$),
 `γ`, and the constants `w₁`, `x₁`.
 
 ## Notation introduced here
 
 * `cStar c` : $c_*=\min(c-\frac12,1-c)$;
-* `F_{c} u` : the function $F_c(u)$ (Lean name `FX c u`).
+* `FX c u` : the function $F_c(u)$ (Lean name `FX c u`).
 -/
 
 @[expose] public section
@@ -42,8 +42,6 @@ local notation "G₁" => Auto.DIR.G₁ (1 / 2)
 
 local notation "G" => Auto.DIR.G (1 / 2)
 
-local notation "B_{" w "}" => BX w
-
 local notation "J" => JX
 
 local notation "γ" => γX
@@ -52,7 +50,7 @@ local notation "γ" => γX
 $G_1[B_{w_1}](x,y)=\sqrt{(y-x)^2+\mathrm{J}(y)^2}+\mathrm{J}(x)-2\mathrm{J}(\frac{x+y}2)$ (so that
 it suffices to show (3.1)). -/
 theorem caseJ_G₁_eq (x y : ℝ) (hx : 1 / 2 ≤ x) (hxy : x ≤ y) (hy : y ≤ 1) :
-    G₁ (B_{w₁}) x y = √((y - x) ^ 2 + J y ^ 2) + J x - 2 * J ((x + y) / 2) := by
+    G₁ (BX w₁) x y = √((y - x) ^ 2 + J y ^ 2) + J x - 2 * J ((x + y) / 2) := by
   sorry
 
 /-- $c_*=\min(c-\frac12,1-c)$ ([DIRX], §3.1). -/
@@ -73,11 +71,9 @@ theorem caseJ_sq_iff (c u : ℝ) (hc : c ∈ Icc (1 / 2 : ℝ) 1) (hu : u ∈ Ic
 
 /-- ([DIRX], §3.1).
 $F_c(u)=\mathrm{J}(c+u)^2-\mathrm{J}(c-u)^2+4u^2-4\mathrm{J}(c)^2+4\mathrm{J}(c)\mathrm{J}(c-u)$.
-Written `F_{c} u`. -/
+Written `FX c u`. -/
 noncomputable def FX (c u : ℝ) : ℝ :=
   J (c + u) ^ 2 - J (c - u) ^ 2 + 4 * u ^ 2 - 4 * J c ^ 2 + 4 * J c * J (c - u)
-
-local notation "F_{" c "}" => FX c
 
 /-- [DIRX], §3.1: we compute
 $F_c'(u)=2\mathrm{J}(c+u)\mathrm{J}'(c+u)+2\mathrm{J}(c-u)\mathrm{J}'(c-u)+8u
@@ -85,7 +81,7 @@ $F_c'(u)=2\mathrm{J}(c+u)\mathrm{J}'(c+u)+2\mathrm{J}(c-u)\mathrm{J}'(c-u)+8u
 (for $c\in[\frac12,1]$, $0\le u\le c_*$ with $c+u<1$, where $\mathrm{J}$ is differentiable). -/
 theorem FX_deriv (c u : ℝ) (hc : c ∈ Icc (1 / 2 : ℝ) 1) (hu : u ∈ Icc 0 (cStar c))
     (hcu : c + u < 1) :
-    deriv (F_{c}) u = 2 * J (c + u) * deriv J (c + u) + 2 * J (c - u) * deriv J (c - u) + 8 * u -
+    deriv (FX c) u = 2 * J (c + u) * deriv J (c + u) + 2 * J (c - u) * deriv J (c - u) + 8 * u -
       4 * J c * deriv J (c - u) := by
   sorry
 
@@ -94,13 +90,13 @@ $$F_c''(u)=2(\mathrm{J}'(c+u)^2-\mathrm{J}'(c-u)^2)+8-4\gamma\frac{\mathrm{J}(c)
 (for $c\in[\frac12,1]$, $0\le u\le c_*$ with $c+u<1$). -/
 theorem FX_deriv2 (c u : ℝ) (hc : c ∈ Icc (1 / 2 : ℝ) 1) (hu : u ∈ Icc 0 (cStar c))
     (hcu : c + u < 1) :
-    deriv (deriv (F_{c})) u =
+    deriv (deriv (FX c)) u =
       2 * (deriv J (c + u) ^ 2 - deriv J (c - u) ^ 2) + 8 - 4 * γ * (J c / J (c - u)) := by
   sorry
 
 /-- [DIRX], §3.1: $F_c(0)=F_c'(0)=0$ (for $c\in[\frac12,1)$). -/
 theorem FX_zero (c : ℝ) (hc : c ∈ Ico (1 / 2 : ℝ) 1) :
-    F_{c} 0 = 0 ∧ deriv (F_{c}) 0 = 0 := by
+    FX c 0 = 0 ∧ deriv (FX c) 0 = 0 := by
   sorry
 
 section Case_I
@@ -114,7 +110,7 @@ theorem γX_le_two : γ ≤ 2 := by
 and $\gamma\le2$, $F_c''(u)\ge2(\mathrm{J}'(y)^2-\mathrm{J}'(x)^2)$ with $y=c+u$. -/
 theorem caseJ_I_lower (c u : ℝ) (hc : c ∈ Icc (1 / 2 : ℝ) 1) (hu : u ∈ Icc 0 (cStar c))
     (hcu : c + u < 1) (hx : c - u ≥ x₁) :
-    deriv (deriv (F_{c})) u ≥ 2 * (deriv J (c + u) ^ 2 - deriv J (c - u) ^ 2) := by
+    deriv (deriv (FX c)) u ≥ 2 * (deriv J (c + u) ^ 2 - deriv J (c - u) ^ 2) := by
   sorry
 
 /-- [DIRX], §3.1, Case I: since $(\mathrm{J}')^2$ is convex ([DIR], Lemma 3.2), with $x=c-u$,
@@ -134,7 +130,7 @@ theorem caseJ_I_sq_deriv (t : ℝ) (ht : t ∈ Ico x₁ 1) :
 
 /-- [DIRX], §3.1, Case I: this shows $F_c''(u)\ge0$ when $x=c-u\ge x_1$. -/
 theorem caseJ_I (c u : ℝ) (hc : c ∈ Icc (1 / 2 : ℝ) 1) (hu : u ∈ Icc 0 (cStar c))
-    (hcu : c + u < 1) (hx : c - u ≥ x₁) : deriv (deriv (F_{c})) u ≥ 0 := by
+    (hcu : c + u < 1) (hx : c - u ≥ x₁) : deriv (deriv (FX c)) u ≥ 0 := by
   sorry
 
 end Case_I
@@ -148,7 +144,7 @@ $$F_c''(u)=2\mathrm{J}'(y)^2-2\mathrm{J}'(x)^2+8-4\gamma\mathrm{J}(\tfrac{x+y}2)
 \ge-2\mathrm{J}'(\tfrac12)^2+8-4\gamma\mathrm{J}(x_1)/\mathrm{J}(\tfrac12).$$ -/
 theorem caseJ_II (c u : ℝ) (hc : c ∈ Icc (1 / 2 : ℝ) 1) (hu : u ∈ Icc 0 (cStar c))
     (hcu : c + u < 1) (hx : c - u ∈ Icc (1 / 2) x₁) :
-    deriv (deriv (F_{c})) u = 2 * deriv J (c + u) ^ 2 - 2 * deriv J (c - u) ^ 2 + 8 -
+    deriv (deriv (FX c)) u = 2 * deriv J (c + u) ^ 2 - 2 * deriv J (c - u) ^ 2 + 8 -
         4 * γ * J ((c - u + (c + u)) / 2) / J (c - u) ∧
       2 * deriv J (c + u) ^ 2 - 2 * deriv J (c - u) ^ 2 + 8 -
           4 * γ * J ((c - u + (c + u)) / 2) / J (c - u) ≥
@@ -167,13 +163,13 @@ end Case_II
 with $c+u<1$; at $c+u=1$ the derivative $\mathrm{J}'(1)$ is infinite and $F_c''$ is not
 defined). -/
 theorem eqn_3_2 (c u : ℝ) (hc : c ∈ Icc (1 / 2 : ℝ) 1) (hu : u ∈ Icc 0 (cStar c))
-    (hcu : c + u < 1) : deriv (deriv (F_{c})) u ≥ 0 := by
+    (hcu : c + u < 1) : deriv (deriv (FX c)) u ≥ 0 := by
   sorry
 
 /-- [DIRX], §3.1: (3.2) together with $F_c(0)=F_c'(0)=0$ implies $F_c(u)\ge0$ for
 $u\in[0,c_*]$ (and $c\in[\frac12,1]$). -/
 theorem FX_nonneg (c u : ℝ) (hc : c ∈ Icc (1 / 2 : ℝ) 1) (hu : u ∈ Icc 0 (cStar c)) :
-    F_{c} u ≥ 0 := by
+    FX c u ≥ 0 := by
   sorry
 
 /-- [DIRX], §3.1: with $c=\frac{x+y}2$, $u=\frac{y-x}2$, it suffices to show
@@ -195,7 +191,7 @@ theorem eqn_3_1 (x y : ℝ) (hx : 1 / 2 ≤ x) (hxy : x ≤ y) (hy : y ≤ 1) :
 
 /-- [DIRX], §3.1 (Case $J$): $G[B_{w_1}](x,y)\ge0$ for $\frac12\le x\le y\le1$. -/
 theorem caseJ (x y : ℝ) (hx : 1 / 2 ≤ x) (hxy : x ≤ y) (hy : y ≤ 1) :
-    G (B_{w₁}) x y ≥ 0 := by
+    G (BX w₁) x y ≥ 0 := by
   sorry
 
 end Auto.DIRX

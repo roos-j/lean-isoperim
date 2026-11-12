@@ -114,10 +114,13 @@ Rules:
   no metaprogramming (`syntax`, `macro`, `elab`, `meta def`, ...) (user requirement, 2026-11-11T23:03+00:00).
 - Exception to visual closeness: reciprocals are written `x⁻¹`, not `1 / x` (Lean idiom; user
   requirement, 2026-11-12T13:57). Numeric constants such as `1 / 2` stay as they are.
+- No notations containing `_` (user requirement, 2026-11-12T16:30): use plain Lean functions instead, e.g.
+  `h A` for $h_A$, `ind A` for $\mathbf 1_A$, `pNorm p f` for $\|f\|_p$, `s f` for $s_f$,
+  `JXw w`, `BX w`, `FX c` for $\mathrm J_w$, $B_w$, $F_c$.
 - Statements should look like the paper. Notation is introduced conservatively, at first use, and
   listed in the module docstring of the file introducing it. Current notation (DIR §1–§3):
-  `{0,1}^n` (cube `Fin n → ZMod 2`, `x + e i` = bit flip), `h_{A}`, `𝐄 f`, `𝟏_{A}`, `｜A｜`
-  (density, full-width bar U+FF5C; `|a|` is `abs`), `log₂`, `|∇(A, B)|`, `𝓑 β x`, `𝒬`, `x⁎`, `‖f‖_[p]`,
+  `{0,1}^n` (cube `Fin n → ZMod 2`, `x + e i` = bit flip), `h A`, `𝐄 f`, `ind A`, `｜A｜`
+  (density, full-width bar U+FF5C; `|a|` is `abs`), `log₂`, `|∇(A, B)|`, `𝓑 β x`, `𝒬`, `x⁎`, `pNorm p f`,
   `∇f`, `G₁ β B x y`, `G₂`, `G`, `L β x`, `Q β x`, `b β x`, `c₀ • B`, `b̃`, `L̃`, `𝔅 β x`, `Mi`,
   `M`, `φ`, `Φ`, `I`, `Jw w x`, `w₀`, `x₀`, `β₀`, `c₀`; derivatives as `deriv f`,
   `deriv (deriv f)`, `iteratedDeriv k f` (the prime symbol `′` is unavailable: Mathlib uses `′′`).

@@ -20,7 +20,6 @@ cube near the critical exponent*, arXiv:2407.12674v2.
 This file covers §1.3 *Classical isoperimetric inequality*: (1.5), the function $J$,
 Theorem 1.7 and Remark 1.8.
 
-
 The definitions and notation used here are in `Definitions.lean` of this folder.
 -/
 
@@ -36,7 +35,7 @@ open scoped ContDiff
 $|A|\ge\frac12$,
 $$\mathbf{E}h_A^\beta\ge\max\big(J(|A|),(1-|A|)(\log_2(1/(1-|A|)))^\beta\big). \tag{1.6}$$ -/
 theorem thm_1_7 (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) (hA : ｜A｜ ≥ 1 / 2) :
-    𝐄 h_{A} ^ β₀ ≥ max (J ｜A｜) ((1 - ｜A｜) * (log₂ ((1 - ｜A｜)⁻¹)) ^ β₀) := by
+    𝐄 h A ^ β₀ ≥ max (J ｜A｜) ((1 - ｜A｜) * (log₂ ((1 - ｜A｜)⁻¹)) ^ β₀) := by
   sorry
 
 end Auto.DIR

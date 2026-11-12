@@ -24,7 +24,6 @@ cube near the critical exponent*, arXiv:2407.12674v2, §2.2.
 The claims made in the course of these proofs are stated below in the order of the paper; the
 theorems themselves are `Auto.DIR.thm_1_1`, `Auto.DIR.thm_1_5`, `Auto.DIR.thm_1_7`.
 
-
 The definitions and notation used here are in `Definitions.lean` of this folder.
 -/
 
@@ -43,7 +42,7 @@ theorem b_eq_Q_ge_L (x : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
 
 /-- [DIR], §2.2, proof of Theorem 1.1: for $\beta=\beta_0$, (1.1) follows from (2.6). -/
 theorem eqn_1_1_β₀ (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) (hA : ｜A｜ ≤ 1 / 2) :
-    𝐄 h_{A} ^ β₀ ≥ ｜A｜ * (log₂ ｜A｜⁻¹) ^ β₀ := by
+    𝐄 h A ^ β₀ ≥ ｜A｜ * (log₂ ｜A｜⁻¹) ^ β₀ := by
   sorry
 
 end Proof_Theorem_1_1

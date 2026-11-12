@@ -32,7 +32,6 @@ main two-point inequality (2.4), the isoperimetric inequality (2.5) and Remarks 
 
 The Gaussian isoperimetric profile `I` is reused from [DIR] (`Auto.DIR.I`, §3 of [DIR]).
 
-
 The definitions and notation used here are in `Definitions.lean` of this folder.
 -/
 
@@ -52,10 +51,6 @@ local notation "G₂" => Auto.DIR.G₂ (1 / 2)
 
 local notation "G" => Auto.DIR.G (1 / 2)
 
-local notation "J_{" w "}" => JXw w
-
-local notation "B_{" w "}" => BX w
-
 local notation "J" => JX
 
 /-- [DIRX], §2.1 (cited from Kahn–Park [KP20]; this is the case $\beta=\frac12$ of
@@ -65,7 +60,7 @@ $\mathbf{E}\sqrt{h_A}\ge B(|A|)$ for all $A\subset\{0,1\}^n$ and $n\ge1$. -/
 theorem kahn_park (B : ℝ → ℝ) (hB : ∀ x ∈ Icc (0 : ℝ) 1, 0 ≤ B x) (hB0 : B 0 = 0)
     (hB1 : B 1 = 0) (htwo : ∀ x y : ℝ, 0 ≤ x → x ≤ y → y ≤ 1 → G B x y ≥ 0)
     (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) :
-    𝐄 (fun x ↦ √(h_{A} x)) ≥ B ｜A｜ := by
+    𝐄 (fun x ↦ √(h A x)) ≥ B ｜A｜ := by
   sorry
 
 local notation "L" => Auto.DIR.L (1 / 2)
@@ -74,29 +69,29 @@ local notation "Q" => Auto.DIR.Q (1 / 2)
 
 /-- [DIRX], §2.1 (cited from [DIR], Lemma 5.9 (2), `Auto.DIR.lemma_5_9`): $B_w(x)\ge L(x)$ for
 $x\in[0,\frac12]$. -/
-theorem BX_ge_LX (w x : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 2)) : B_{w} x ≥ L x := by
+theorem BX_ge_LX (w x : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 2)) : BX w x ≥ L x := by
   sorry
 
 /-- [DIRX], §2.1: in order to prove Theorem 1.1 it suffices to prove that there exists $w$ such
 that (2.4) holds for all $0\le x\le y\le1$ (by the Kahn–Park reduction and
 $B_w\ge L$ on $[0,\frac12]$). -/
 theorem thm_1_1_of_eqn_2_4
-    (h : ∃ w ∈ Ioc (1 / 2 : ℝ) 1, ∀ x y : ℝ, 0 ≤ x → x ≤ y → y ≤ 1 → G (B_{w}) x y ≥ 0)
+    (hyp : ∃ w ∈ Ioc (1 / 2 : ℝ) 1, ∀ x y : ℝ, 0 ≤ x → x ≤ y → y ≤ 1 → G (BX w) x y ≥ 0)
     (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) (hA : ｜A｜ ≤ 1 / 2) :
-    𝐄 (fun x ↦ √(h_{A} x)) ≥ ｜A｜ * √(log₂ ｜A｜⁻¹) := by
+    𝐄 (fun x ↦ √(h A x)) ≥ ｜A｜ * √(log₂ ｜A｜⁻¹) := by
   sorry
 
 /-- **(2.4)** ([DIRX], §2.1; proved in §3 for $w=w_1$). For all $0\le x\le y\le1$,
 $$G[B_w](x,y)\ge0$$ with $w=w_1$. -/
 theorem eqn_2_4 (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y) (hy : y ≤ 1) :
-    G (B_{w₁}) x y ≥ 0 := by
+    G (BX w₁) x y ≥ 0 := by
   sorry
 
 /-- **(2.5)** ([DIRX], §2.1). The isoperimetric inequality
 $$\mathbf{E}\sqrt{h_A}\ge B_{w_1}(|A|),$$
 valid for all $A\subset\{0,1\}^n$. -/
 theorem eqn_2_5 (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) :
-    𝐄 (fun x ↦ √(h_{A} x)) ≥ B_{w₁} ｜A｜ := by
+    𝐄 (fun x ↦ √(h A x)) ≥ BX w₁ ｜A｜ := by
   sorry
 
 /-! ### Remark 2.1 -/
