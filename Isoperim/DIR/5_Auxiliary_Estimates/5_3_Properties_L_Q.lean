@@ -6,6 +6,7 @@ Authors: Claude
 module
 
 public import Isoperim.DIR.«2_Envelope_Functions».Definitions
+public import Isoperim.DIR.«5_Auxiliary_Estimates».«5_3_Properties_L_Q_aux»
 
 /-!
 # [DIR] §5.3 Properties of $L_\beta$ and $Q_\beta$
@@ -35,14 +36,14 @@ open Real Set Filter Topology
 $$L'_\beta(x)=(\log2)^{-\beta}(\log\tfrac1x)^{-1+\beta}(-\beta+\log\tfrac1x).$$ -/
 theorem eqn_5_2 (β x : ℝ) (hx : x ∈ Ioo (0 : ℝ) 1) :
     deriv (L β) x = (log 2) ^ (-β) * (log x⁻¹) ^ (-1 + β) * (-β + log x⁻¹) := by
-  sorry
+  exact deriv_L_eq hx
 
 /-- **(5.3)** ([DIR], §5.3). For $x\in(0,1)$,
 $$L''_\beta(x)=-\beta(\log2)^{-\beta}x^{-1}(\log\tfrac1x)^{-2+\beta}(1-\beta+\log(x^{-1})).$$ -/
 theorem eqn_5_3 (β x : ℝ) (hx : x ∈ Ioo (0 : ℝ) 1) :
     deriv (deriv (L β)) x =
       -β * (log 2) ^ (-β) * x⁻¹ * (log x⁻¹) ^ (-2 + β) * (1 - β + log x⁻¹) := by
-  sorry
+  exact deriv2_L_eq hx
 
 /-- **(5.4)** ([DIR], §5.3). For $x\in(0,1)$,
 $$L'''_\beta(x)=\beta(\log2)^{-\beta}x^{-2}(\log\tfrac1x)^{-3+\beta}(\beta(3-\beta)-2
@@ -51,11 +52,15 @@ theorem eqn_5_4 (β x : ℝ) (hx : x ∈ Ioo (0 : ℝ) 1) :
     iteratedDeriv 3 (L β) x =
       β * (log 2) ^ (-β) * x ^ (-2 : ℤ) * (log x⁻¹) ^ (-3 + β) *
         (β * (3 - β) - 2 + (log x⁻¹) ^ 2) := by
-  sorry
+  simp only [iteratedDeriv_succ, iteratedDeriv_zero]
+  exact deriv3_L_eq hx
 
 /-- **Remark 5.7** ([DIR]). Note $e^{-\sqrt3/2}>e^{-1}>\frac14$. -/
 theorem rem_5_7 : exp (-(√3 / 2)) > exp (-1) ∧ exp (-1) > (4⁻¹ : ℝ) := by
-  sorry
+  have h3 : √3 < 2 := by rw [sqrt_lt' two_pos]; norm_num
+  refine ⟨exp_lt_exp.2 (by linarith), ?_⟩
+  rw [exp_neg, gt_iff_lt, inv_lt_inv₀ (by norm_num) (exp_pos 1)]
+  linarith [exp_one_lt_d9]
 
 section Proof_Lemma_5_6
 /-- The coefficient $a_0(x)=1+\log\frac1x$ ([DIR], proof of Lemma 5.6 (2)). -/
@@ -79,7 +84,13 @@ section Proof_Claim_2
 $a_1(x)>a_1(e^{-1})$, $a_2(x)>0$. -/
 theorem lemma_5_6_2_coeffs (x : ℝ) (hx : x ∈ Ioo 0 (exp (-1))) :
     a₀ x > 0 ∧ a₁ x > a₁ (exp (-1)) ∧ a₂ x > 0 := by
-  sorry
+  have hu := one_lt_log_inv_of_mem hx
+  have hc := log_inv_log_two_pos
+  have hlu : 0 < log (log x⁻¹) := log_pos hu
+  have he : log (exp (-1))⁻¹ = 1 := by rw [← exp_neg, neg_neg, log_exp]
+  refine ⟨by simp only [a₀]; linarith, ?_, by simp only [a₂]; linarith⟩
+  simp only [a₁, he, log_one]
+  nlinarith [mul_pos (sub_pos.2 hu) hc, mul_pos (by linarith : (0 : ℝ) < log x⁻¹) hlu]
 
 /-- [DIR], proof of Lemma 5.6 (2): $\partial_\beta^2\ell(x,\beta)=-2a_2(x)<0$, so
 $\beta\mapsto\ell(x,\beta)$ is concave and thus $\ell(x,\beta)\ge\min(\ell(x,\frac12),\ell(x,1))$
@@ -88,7 +99,28 @@ theorem lemma_5_6_2_concave (x : ℝ) (hx : x ∈ Ioo 0 (exp (-1))) (β : ℝ)
     (hβ : β ∈ Icc (2⁻¹ : ℝ) 1) :
     deriv (deriv (fun β' ↦ ℓ x β')) β = -2 * a₂ x ∧ -2 * a₂ x < 0 ∧
       ℓ x β ≥ min (ℓ x 2⁻¹) (ℓ x 1) := by
-  sorry
+  have hco := lemma_5_6_2_coeffs x hx
+  have hd1 : ∀ b, HasDerivAt (fun β' ↦ ℓ x β') (-a₂ x * (2 * b) + a₁ x) b := by
+    intro b
+    have h := (((hasDerivAt_pow 2 b).const_mul (-a₂ x)).add
+      ((hasDerivAt_id' b).const_mul (a₁ x))).add_const (a₀ x)
+    refine h.congr_deriv ?_
+    push_cast; ring
+  have hd2 : HasDerivAt (fun b ↦ -a₂ x * (2 * b) + a₁ x) (-2 * a₂ x) β := by
+    have h := (((hasDerivAt_id' β).const_mul 2).const_mul (-a₂ x)).add_const (a₁ x)
+    refine h.congr_deriv ?_
+    ring
+  have hfun : deriv (fun β' ↦ ℓ x β') = fun b ↦ -a₂ x * (2 * b) + a₁ x :=
+    funext fun b ↦ (hd1 b).deriv
+  refine ⟨by rw [hfun]; exact hd2.deriv, by linarith [hco.2.2], ?_⟩
+  have key : ℓ x β = 2 * (1 - β) * ℓ x 2⁻¹ + (2 * β - 1) * ℓ x 1 +
+      a₂ x * (β - 2⁻¹) * (1 - β) := by
+    simp only [ℓ]; ring
+  have h1 := min_le_left (ℓ x 2⁻¹) (ℓ x 1)
+  have h2 := min_le_right (ℓ x 2⁻¹) (ℓ x 1)
+  have h3 : 0 ≤ a₂ x * (β - 2⁻¹) * (1 - β) :=
+    mul_nonneg (mul_nonneg hco.2.2.le (by linarith [hβ.1])) (by linarith [hβ.2])
+  nlinarith [hβ.1, hβ.2]
 
 /-- [DIR], proof of Lemma 5.6 (2): $x\mapsto\ell(x,\frac12)$ and $x\mapsto\ell(x,1)$ are decreasing
 functions (on $(0,e^{-1})$), so $\ell(x,\beta)\ge\min(\ell(e^{-1},\frac12),\ell(e^{-1},1))$. -/
@@ -97,14 +129,46 @@ theorem lemma_5_6_2_decreasing :
     AntitoneOn (fun x ↦ ℓ x 1) (Ioc 0 (exp (-1))) ∧
     ∀ x ∈ Ioo 0 (exp (-1)), ∀ β ∈ Icc (2⁻¹ : ℝ) 1,
       ℓ x β ≥ min (ℓ (exp (-1)) 2⁻¹) (ℓ (exp (-1)) 1) := by
-  sorry
+  have hc := log_inv_log_two_pos
+  have hmono : ∀ x₁ ∈ Ioc (0 : ℝ) (exp (-1)), ∀ x₂ ∈ Ioc (0 : ℝ) (exp (-1)), x₁ ≤ x₂ →
+      1 ≤ log x₂⁻¹ ∧ log x₂⁻¹ ≤ log x₁⁻¹ ∧ 0 ≤ log (log x₂⁻¹) ∧
+        log (log x₂⁻¹) ≤ log (log x₁⁻¹) := by
+    intro x₁ h₁ x₂ h₂ hle
+    have hu2 : 1 ≤ log x₂⁻¹ := by
+      have := log_le_log h₂.1 h₂.2
+      rw [log_exp] at this; rw [log_inv]; linarith
+    have hu12 : log x₂⁻¹ ≤ log x₁⁻¹ := by
+      rw [log_inv, log_inv]; linarith [log_le_log h₁.1 hle]
+    exact ⟨hu2, hu12, log_nonneg hu2, log_le_log (by linarith) hu12⟩
+  have hA : AntitoneOn (fun x ↦ ℓ x 2⁻¹) (Ioc 0 (exp (-1))) := by
+    intro x₁ h₁ x₂ h₂ hle
+    obtain ⟨hu2, hu12, hl2, hl12⟩ := hmono x₁ h₁ x₂ h₂ hle
+    simp only [ℓ, a₀, a₁, a₂]
+    nlinarith [mul_nonneg (sub_nonneg.2 hu12) hc.le, mul_nonneg (sub_nonneg.2 hu12) hl2,
+      mul_nonneg (by linarith : (0 : ℝ) ≤ log x₁⁻¹) (sub_nonneg.2 hl12)]
+  have hB : AntitoneOn (fun x ↦ ℓ x 1) (Ioc 0 (exp (-1))) := by
+    intro x₁ h₁ x₂ h₂ hle
+    obtain ⟨hu2, hu12, hl2, hl12⟩ := hmono x₁ h₁ x₂ h₂ hle
+    simp only [ℓ, a₀, a₁, a₂]
+    nlinarith [mul_nonneg (sub_nonneg.2 hu12) hc.le, mul_nonneg (sub_nonneg.2 hu12) hl2,
+      mul_nonneg (by linarith : (0 : ℝ) ≤ log x₁⁻¹) (sub_nonneg.2 hl12)]
+  refine ⟨hA, hB, fun x hx β hβ ↦ ?_⟩
+  have h0 := (lemma_5_6_2_concave x hx β hβ).2.2
+  have hxe : x ∈ Ioc (0 : ℝ) (exp (-1)) := ⟨hx.1, hx.2.le⟩
+  have hee : exp (-1) ∈ Ioc (0 : ℝ) (exp (-1)) := ⟨exp_pos _, le_rfl⟩
+  have h1 := hA hxe hee hx.2.le
+  have h2 := hB hxe hee hx.2.le
+  exact le_trans (min_le_min h1 h2) h0
 
 /-- [DIR], proof of Lemma 5.6 (2): $\ell(e^{-1},\frac12)=1+\frac34\log\frac1{\log2}>0$ and
 $\ell(e^{-1},1)=\log\frac1{\log2}>0$. -/
 theorem lemma_5_6_2_values :
     ℓ (exp (-1)) 2⁻¹ = 1 + 3 / 4 * log ((log 2)⁻¹) ∧ 1 + 3 / 4 * log ((log 2)⁻¹) > 0 ∧
     ℓ (exp (-1)) 1 = log ((log 2)⁻¹) ∧ log ((log 2)⁻¹) > 0 := by
-  sorry
+  have he : log (exp (-1))⁻¹ = 1 := by rw [← exp_neg, neg_neg, log_exp]
+  have hc := log_inv_log_two_pos
+  simp only [ℓ, a₀, a₁, a₂, he, log_one]
+  refine ⟨by ring, by linarith, by ring, hc⟩
 
 /-- [DIR], proof of Lemma 5.6 (2): we show $\partial_\beta\log(-L''_\beta(x))>0$, which means that
 $\beta\mapsto\log(-L''_\beta(x))$ is increasing, so $L''_\beta(x)$ is decreasing in $\beta$. The
@@ -114,7 +178,26 @@ theorem lemma_5_6_2_log_deriv (β : ℝ) (hβ : β ∈ Icc (2⁻¹ : ℝ) 1) (x 
     deriv (fun β' ↦ log (-deriv (deriv (L β')) x)) β =
         β⁻¹ * (1 - β + log x⁻¹)⁻¹ * ℓ x β ∧
       β⁻¹ * (1 - β + log x⁻¹)⁻¹ * ℓ x β > 0 := by
-  sorry
+  have he : exp (-1) < 1 := by rw [exp_lt_one_iff]; norm_num
+  have hx1 : x ∈ Ioo (0 : ℝ) 1 := ⟨hx.1, hx.2.trans he⟩
+  have hu := one_lt_log_inv_of_mem hx
+  have hβ0 : 0 < β := by linarith [hβ.1]
+  have hβu : 0 < 1 - β + log x⁻¹ := by linarith [hβ.2]
+  have hfun : (fun β' ↦ log (-deriv (deriv (L β')) x)) = fun β' ↦ log (-L2f β' x) :=
+    funext fun β' ↦ by rw [deriv2_L_eq hx1]
+  have hpos : ℓ x β > 0 := by
+    have h1 := (lemma_5_6_2_decreasing).2.2 x hx β hβ
+    have h2 := lemma_5_6_2_values
+    have : min (ℓ (exp (-1)) 2⁻¹) (ℓ (exp (-1)) 1) > 0 := by
+      rw [h2.1, h2.2.2.1]; exact lt_min h2.2.1 h2.2.2.2
+    linarith
+  refine ⟨?_, by positivity⟩
+  rw [hfun, (hasDerivAt_log_neg_L2f hx1 hβ0 hβu).deriv]
+  simp only [ℓ, a₀, a₁, a₂, log_inv (log 2)]
+  have hne := hβu.ne'
+  generalize log x⁻¹ = u at hne ⊢
+  field_simp
+  ring
 
 end Proof_Claim_2
 
@@ -131,7 +214,27 @@ theorem lemma_5_6_3_steps :
     (∀ β : ℝ, StrictAntiOn (fun x ↦ β * (3 - β) - 2 + (log x⁻¹) ^ 2) (Ioo 0 1)) ∧
     (∀ β ∈ Icc (2⁻¹ : ℝ) 1, deriv (fun β' ↦ β' * (3 - β')) β = 3 - 2 * β ∧ 3 - 2 * β ≥ 1) ∧
     (2⁻¹ * (3 - 2⁻¹) - 2 + (log ((exp (-(√3 / 2)))⁻¹)) ^ 2 = (0 : ℝ)) := by
-  sorry
+  have h3 : √3 ^ 2 = 3 := sq_sqrt (by norm_num)
+  have h3p : 0 ≤ √3 := sqrt_nonneg 3
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · intro β hβ x hx
+    have hlt := log_lt_log hx.1 hx.2
+    rw [log_exp] at hlt
+    have hu : √3 / 2 < log x⁻¹ := by rw [log_inv]; linarith
+    nlinarith [hβ.1, hβ.2]
+  · intro β x₁ h₁ x₂ h₂ hlt
+    have hu2 : 0 < log x₂⁻¹ := log_pos ((one_lt_inv₀ h₂.1).2 h₂.2)
+    have hu12 : log x₂⁻¹ < log x₁⁻¹ := by
+      rw [log_inv, log_inv]; linarith [log_lt_log h₁.1 hlt]
+    show β * (3 - β) - 2 + (log x₂⁻¹) ^ 2 < β * (3 - β) - 2 + (log x₁⁻¹) ^ 2
+    nlinarith
+  · intro β hβ
+    have h : HasDerivAt (fun β' ↦ β' * (3 - β')) _ β :=
+      (hasDerivAt_id' β).mul ((hasDerivAt_id' β).const_sub 3)
+    refine ⟨?_, by linarith [hβ.2]⟩
+    rw [h.deriv]; ring
+  · rw [← exp_neg, neg_neg, log_exp]
+    nlinarith
 
 end Proof_Claim_3
 
@@ -149,7 +252,9 @@ show that $f_\beta(x)$ is negative. -/
 theorem lemma_5_6_4_formula (β x : ℝ) (hx : x ∈ Ioo (0 : ℝ) 1) :
     iteratedDeriv 4 (L β) x =
       x ^ (-3 : ℤ) * β * (log 2) ^ (-β) * (log x⁻¹) ^ (β - 4) * f_L4 β x := by
-  sorry
+  simp only [iteratedDeriv_succ, iteratedDeriv_zero]
+  rw [deriv4_L_eq hx]
+  rfl
 
 /-- [DIR], proof of Lemma 5.6 (4):
 $\partial_\beta f_\beta(\frac12)=3\beta^2+4(\log2-3)\beta+11-(\log2)^2-6\log2$, which has both roots
@@ -161,13 +266,49 @@ theorem lemma_5_6_4_dbeta (β : ℝ) (hβ : β ∈ Icc (2⁻¹ : ℝ) 1) :
     (∀ r : ℝ, 3 * r ^ 2 + 4 * (log 2 - 3) * r + 11 - (log 2) ^ 2 - 6 * log 2 = 0 → r > 1) ∧
     3 * β ^ 2 + 4 * (log 2 - 3) * β + 11 - (log 2) ^ 2 - 6 * log 2 > 0 ∧
     MonotoneOn (fun β' ↦ f_L4 β' 2⁻¹) (Icc 2⁻¹ 1) := by
-  sorry
+  set l := log 2 with hl_def
+  have hl1 := log_two_gt_d9
+  have hl2 := log_two_lt_d9
+  have hf : (fun β' ↦ f_L4 β' 2⁻¹) = fun β' ↦
+      β' ^ 3 + (-6 + 2 * l) * β' ^ 2 + (11 - l ^ 2 - 6 * l) * β' +
+        (-6 + l ^ 2 - 2 * l ^ 3 + 4 * l) := by
+    funext β'; simp only [f_L4, inv_inv]; ring
+  have hd : ∀ b, HasDerivAt (fun β' ↦ f_L4 β' 2⁻¹)
+      (3 * b ^ 2 + 4 * (l - 3) * b + 11 - l ^ 2 - 6 * l) b := by
+    intro b
+    rw [hf]
+    have h := ((((hasDerivAt_pow 3 b).add ((hasDerivAt_pow 2 b).const_mul (-6 + 2 * l))).add
+      ((hasDerivAt_id' b).const_mul (11 - l ^ 2 - 6 * l))).add_const
+      (-6 + l ^ 2 - 2 * l ^ 3 + 4 * l))
+    refine h.congr_deriv ?_
+    push_cast; ring
+  have hroot : ∀ r : ℝ, 3 * r ^ 2 + 4 * (l - 3) * r + 11 - l ^ 2 - 6 * l = 0 → r > 1 := by
+    intro r hr
+    by_contra! h
+    nlinarith [mul_nonneg (sub_nonneg.2 h) (by linarith : (0 : ℝ) ≤ 9 - 3 * r - 4 * l)]
+  have hq : ∀ b ∈ Icc (2⁻¹ : ℝ) 1, 3 * b ^ 2 + 4 * (l - 3) * b + 11 - l ^ 2 - 6 * l > 0 := by
+    intro b hb
+    nlinarith [mul_nonneg (sub_nonneg.2 hb.2) (by linarith [hb.2] : (0 : ℝ) ≤ 9 - 3 * b - 4 * l)]
+  refine ⟨(hd β).deriv, hroot, hq β hβ, ?_⟩
+  refine monotoneOn_of_deriv_nonneg (convex_Icc _ _)
+    (fun b _ ↦ (hd b).continuousAt.continuousWithinAt)
+    (fun b _ ↦ (hd b).differentiableAt.differentiableWithinAt) (fun b hb ↦ ?_)
+  rw [interior_Icc] at hb
+  rw [(hd b).deriv]
+  exact (hq b ⟨hb.1.le, hb.2.le⟩).le
 
 /-- [DIR], proof of Lemma 5.6 (4): evaluating $f_1(\frac12)<-0.6$; this implies
 $f_\beta(\frac12)<0$ for all $\beta\in[\frac12,1]$. -/
 theorem lemma_5_6_4_at_half : f_L4 1 2⁻¹ < -0.6 ∧ ∀ β ∈ Icc (2⁻¹ : ℝ) 1,
     f_L4 β 2⁻¹ < 0 := by
-  sorry
+  have hl1 := log_two_gt_d9
+  have h1 : f_L4 1 2⁻¹ < -0.6 := by
+    simp only [f_L4, inv_inv]
+    nlinarith
+  refine ⟨h1, fun β hβ ↦ ?_⟩
+  have hm := (lemma_5_6_4_dbeta β hβ).2.2.2 hβ ⟨by norm_num, le_rfl⟩ hβ.2
+  simp only at hm
+  linarith
 
 /-- [DIR], proof of Lemma 5.6 (4): the left-hand side is increasing in $\beta$, so it suffices to
 verify the inequality for $\beta=\frac12$; setting $u=\log\frac1x$ it suffices to show
@@ -179,7 +320,20 @@ theorem lemma_5_6_4_quadratic :
         (Icc 2⁻¹ 1)) ∧
     (∀ u : ℝ, log 2 ≤ u → 12 * u ^ 2 - 2 * u - 3 ≥ 0) ∧
     (∀ r : ℝ, 12 * r ^ 2 - 2 * r - 3 = 0 → r ≤ log 2) := by
-  sorry
+  have hl1 := log_two_gt_d9
+  have hl2 := log_two_lt_d9
+  refine ⟨?_, ?_, ?_⟩
+  · intro x hx b₁ hb₁ b₂ hb₂ hle
+    have hu : 0 < log x⁻¹ := log_pos ((one_lt_inv₀ hx.1).2 (by linarith [hx.2]))
+    show 3 * (log x⁻¹) ^ 2 - (1 - b₁) * log x⁻¹ - b₁ ^ 2 + 3 * b₁ - 2 ≤
+      3 * (log x⁻¹) ^ 2 - (1 - b₂) * log x⁻¹ - b₂ ^ 2 + 3 * b₂ - 2
+    nlinarith [mul_nonneg (sub_nonneg.2 hle) (by linarith [hb₁.2, hb₂.2] :
+      (0 : ℝ) ≤ log x⁻¹ + 3 - b₁ - b₂)]
+  · intro u hu
+    nlinarith
+  · intro r hr
+    by_contra! h
+    nlinarith
 
 /-- [DIR], proof of Lemma 5.6 (4): it suffices to show that
 $f_\beta'(x)=2x^{-1}(3(\log\frac1x)^2-(1-\beta)\log\frac1x-\beta^2+3\beta-2)$ is non-negative on
@@ -190,7 +344,21 @@ theorem lemma_5_6_4_deriv (β : ℝ) (hβ : β ∈ Icc (2⁻¹ : ℝ) 1) (x : �
     deriv (f_L4 β) x =
         2 * x⁻¹ * (3 * (log x⁻¹) ^ 2 - (1 - β) * log x⁻¹ - β ^ 2 + 3 * β - 2) ∧
       3 * (log x⁻¹) ^ 2 - (1 - β) * log x⁻¹ - β ^ 2 + 3 * β - 2 ≥ 0 := by
-  sorry
+  have hx0 : x ≠ 0 := hx.1.ne'
+  have hd := hasDerivAt_log_inv' hx0
+  have h := (((hd.const_mul 2).const_sub (1 - β)).mul (hd.pow 2)).const_add
+    (-(3 - β) * (2 - β) * (1 - β)) |>.add (hd.const_mul (2 * (2 - β) * (1 - β)))
+  have hu : log 2 ≤ log x⁻¹ := log_le_log two_pos (by
+    rw [le_inv_comm₀ two_pos hx.1]; exact hx.2.trans (by norm_num))
+  have hl1 := log_two_gt_d9
+  refine ⟨?_, ?_⟩
+  · have h' : HasDerivAt (f_L4 β) _ x := h
+    rw [h'.deriv]
+    simp only [Pi.pow_apply]
+    push_cast
+    ring
+  · nlinarith [mul_nonneg (by linarith [hβ.1] : (0 : ℝ) ≤ β - 2⁻¹)
+      (by linarith [hβ.2] : (0 : ℝ) ≤ log x⁻¹ + 3 - β - 2⁻¹)]
 
 end Proof_Claim_4
 
@@ -209,7 +377,79 @@ theorem lemma_5_6 (β : ℝ) (hβ : β ∈ Icc (2⁻¹ : ℝ) 1) :
     (∀ x ∈ Ioo 0 (exp (-(√3 / 2))), iteratedDeriv 3 (L β) x > 0 ∧
       MonotoneOn (fun β' ↦ iteratedDeriv 3 (L β') x) (Icc 2⁻¹ 1)) ∧
     (∀ x ∈ Ioc 0 2⁻¹, iteratedDeriv 4 (L β) x < 0) := by
-  sorry
+  have hβ0 : 0 < β := by linarith [hβ.1]
+  have hl : 0 < log 2 := log_pos one_lt_two
+  have hl1 := log_two_gt_d9
+  have hl2 := log_two_lt_d9
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · refine strictConcaveOn_of_deriv2_neg (convex_Icc 0 1) (continuousOn_L hβ0 hβ.2)
+      fun x hx ↦ ?_
+    rw [interior_Icc] at hx
+    show deriv (deriv (L β)) x < 0
+    have hu : 0 < log x⁻¹ := log_pos ((one_lt_inv₀ hx.1).2 hx.2)
+    rw [deriv2_L_eq hx]
+    have h := neg_L2f_eq (β := β) hx
+    have : 0 < β * (1 - β + log x⁻¹) * (x⁻¹ * (log x⁻¹) ^ (-2 : ℝ)) *
+        (log x⁻¹ / log 2) ^ β := by
+      have := rpow_pos_of_pos hu (-2 : ℝ)
+      have := rpow_pos_of_pos (div_pos hu hl) β
+      have := inv_pos.2 hx.1
+      have : 0 < 1 - β + log x⁻¹ := by linarith [hβ.2]
+      positivity
+    linarith
+  · intro x hx
+    have he : exp (-1) < 1 := by rw [exp_lt_one_iff]; norm_num
+    have hx1 : x ∈ Ioo (0 : ℝ) 1 := ⟨hx.1, hx.2.trans he⟩
+    have hfun : (fun β' ↦ deriv (deriv (L β')) x) = fun β' ↦ L2f β' x :=
+      funext fun β' ↦ deriv2_L_eq hx1
+    rw [hfun]
+    exact L2f_antitoneOn hx
+  · intro x hx
+    have h3 : √3 ^ 2 = 3 := sq_sqrt (by norm_num)
+    have h3p : (1.7 : ℝ) < √3 := by rw [lt_sqrt (by norm_num)]; norm_num
+    have he : exp (-(√3 / 2)) < 1 := by rw [exp_lt_one_iff]; linarith
+    have hx1 : x ∈ Ioo (0 : ℝ) 1 := ⟨hx.1, hx.2.trans he⟩
+    have hlt := log_lt_log hx.1 hx.2
+    rw [log_exp] at hlt
+    have hlu : log 2 ≤ log x⁻¹ := by rw [log_inv]; linarith
+    have hu : 0 < log x⁻¹ := by linarith
+    have hpos := lemma_5_6_3_steps.1
+    have hfun : (fun β' ↦ iteratedDeriv 3 (L β') x) = fun β' ↦ L3f β' x :=
+      funext fun β' ↦ eqn_5_4 β' x hx1
+    refine ⟨?_, ?_⟩
+    · rw [eqn_5_4 β x hx1]
+      have h := hpos β hβ x hx
+      have := rpow_pos_of_pos hu (-3 + β)
+      have := rpow_pos_of_pos hl (-β)
+      have := zpow_pos hx.1 (-2 : ℤ)
+      show 0 < L3f β x
+      unfold L3f
+      positivity
+    · rw [hfun]
+      exact L3f_monotoneOn hx1 hlu fun b hb ↦ hpos b hb x hx
+  · intro x hx
+    have hx1 : x ∈ Ioo (0 : ℝ) 1 := ⟨hx.1, hx.2.trans_lt (by norm_num)⟩
+    have hlu : log 2 ≤ log x⁻¹ := log_le_log two_pos (by
+      rw [le_inv_comm₀ two_pos hx.1]; exact hx.2.trans (by norm_num))
+    have hu : 0 < log x⁻¹ := by linarith
+    rw [lemma_5_6_4_formula β x hx1]
+    have hhalf := lemma_5_6_4_at_half.2 β hβ
+    have hid : f_L4 β x = f_L4 β 2⁻¹ + (log x⁻¹ - log 2) * ((1 - β) * (log x⁻¹ + log 2) -
+        2 * ((log x⁻¹) ^ 2 + log x⁻¹ * log 2 + (log 2) ^ 2) + 2 * (2 - β) * (1 - β)) := by
+      simp only [f_L4, inv_inv]; ring
+    have hbr : (1 - β) * (log x⁻¹ + log 2) - 2 * ((log x⁻¹) ^ 2 + log x⁻¹ * log 2 +
+        (log 2) ^ 2) + 2 * (2 - β) * (1 - β) < 0 := by
+      nlinarith [hβ.1, hβ.2, mul_nonneg (by linarith [hβ.1] : (0 : ℝ) ≤ β - 2⁻¹)
+        (by linarith : (0 : ℝ) ≤ log x⁻¹ + log 2)]
+    have hf : f_L4 β x < 0 := by
+      rw [hid]; nlinarith [mul_nonneg (sub_nonneg.2 hlu) (by linarith : (0 : ℝ) ≤ -(
+        (1 - β) * (log x⁻¹ + log 2) - 2 * ((log x⁻¹) ^ 2 + log x⁻¹ * log 2 + (log 2) ^ 2) +
+          2 * (2 - β) * (1 - β)))]
+    have := rpow_pos_of_pos hu (β - 4)
+    have := rpow_pos_of_pos hl (-β)
+    have := zpow_pos hx.1 (-3 : ℤ)
+    have hP : 0 < x ^ (-3 : ℤ) * β * (log 2) ^ (-β) * (log x⁻¹) ^ (β - 4) := by positivity
+    exact mul_neg_of_pos_of_neg hP hf
 
 /-- $\alpha_0=2^{2+\beta}-5$ ([DIR], (5.5)). -/
 noncomputable def α₀ (β : ℝ) : ℝ := 2 ^ (2 + β) - 5
@@ -217,32 +457,42 @@ noncomputable def α₀ (β : ℝ) : ℝ := 2 ^ (2 + β) - 5
 /-- **(5.5)** ([DIR], §5.3). For $\beta\in[\frac12,1]$, $\alpha_0=2^{2+\beta}-5\ge2^{2.5}-5>0$. -/
 theorem eqn_5_5 (β : ℝ) (hβ : β ∈ Icc (2⁻¹ : ℝ) 1) :
     α₀ β ≥ 2 ^ (2.5 : ℝ) - 5 ∧ (2 : ℝ) ^ (2.5 : ℝ) - 5 > 0 := by
-  sorry
+  have h1 : (2 : ℝ) ^ (2.5 : ℝ) ≤ 2 ^ (2 + β) :=
+    rpow_le_rpow_of_exponent_le one_le_two (by norm_num; linarith [hβ.1])
+  have h2 : (2 : ℝ) ^ (2.5 : ℝ) = 4 * √2 := by
+    rw [show (2.5 : ℝ) = 2 + 1 / 2 by norm_num, rpow_add two_pos, sqrt_eq_rpow]; norm_num
+  have h3 : (1.25 : ℝ) < √2 := by rw [lt_sqrt (by norm_num)]; norm_num
+  refine ⟨by simp only [α₀]; linarith, by rw [h2]; linarith⟩
 
 /-- $\alpha_1=3-2^{1+\beta}$ ([DIR], §5.3, display after (5.5)). -/
 noncomputable def α₁ (β : ℝ) : ℝ := 3 - 2 ^ (1 + β)
 
 /-- [DIR], §5.3: note that $\alpha_1>0$ if and only if $\beta<\log_2(\frac32)$. -/
 theorem α₁_pos_iff (β : ℝ) : α₁ β > 0 ↔ β < log₂ (3 / 2) := by
-  sorry
+  rw [lt_logb_iff_rpow_lt one_lt_two (by norm_num), α₁, two_rpow_one_add]
+  constructor <;> intro h <;> linarith
 
 /-- **(5.6)** ([DIR], §5.3). $Q_\beta'(x)=\frac23(2^{2+\beta}-3)-4\alpha_0x-8\alpha_1x^2$. -/
 theorem eqn_5_6 (β x : ℝ) :
     deriv (Q β) x = 2 / 3 * (2 ^ (2 + β) - 3) - 4 * α₀ β * x - 8 * α₁ β * x ^ 2 := by
-  sorry
+  rw [deriv_Q_eq]; rfl
 
 /-- **(5.7)** ([DIR], §5.3). $Q''_\beta(x)=-4\alpha_0-16\alpha_1x$. -/
 theorem eqn_5_7 (β x : ℝ) : deriv (deriv (Q β)) x = -4 * α₀ β - 16 * α₁ β * x := by
-  sorry
+  rw [deriv2_Q_eq]; rfl
 
 /-- **(5.8)** ([DIR], §5.3). $Q'''_\beta(x)=-16\alpha_1$. -/
 theorem eqn_5_8 (β x : ℝ) : iteratedDeriv 3 (Q β) x = -16 * α₁ β := by
-  sorry
+  simp only [iteratedDeriv_succ, iteratedDeriv_zero]
+  rw [deriv3_Q_eq]; rfl
 
 /-- **(5.9)** ([DIR], §5.3). $\partial_\beta Q_\beta(x)=\frac13\log(2)2^{3+\beta}x(1-x)(1-2x)$. -/
 theorem eqn_5_9 (β x : ℝ) :
     deriv (fun β' ↦ Q β' x) β = 3⁻¹ * log 2 * 2 ^ (3 + β) * x * (1 - x) * (1 - 2 * x) := by
-  sorry
+  rw [show (fun β' ↦ Q β' x) = fun β' ↦ 2 / 3 * x * (1 - x) * (-3 + 12 * x) +
+      2 / 3 * x * (1 - x) * (4 - 8 * x) * 2 ^ β' from funext fun β' ↦ Q_eq_affine β' x,
+    (hasDerivAt_two_rpow_affine _ _ β).deriv, two_rpow_three_add]
+  ring
 
 section Proof_Lemma_5_8
 /-- [DIR], proof of Lemma 5.8 (2): from (5.6) one can write
@@ -259,7 +509,19 @@ theorem lemma_5_8_2_rewrite (x : ℝ) (hx : x ∈ Icc (0 : ℝ) 2⁻¹) (β : �
     deriv (Q β) x = 2 / 3 * (1 - 2 * x) * (2 ^ (β + 2) - 3 + 4 * α₁ β * x) +
         8 / 3 * α₁ β * x * (1 - x) ∧
       2 / 3 * (1 - 2 * x) * (2 ^ (β + 2) - 3 + 4 * α₁ β * x) + 8 / 3 * α₁ β * x * (1 - x) > 0 := by
-  sorry
+  have hα := (α₁_pos_iff β).2 hβ.2
+  have ht := two_rpow_gt_of_half_le hβ.1
+  refine ⟨?_, ?_⟩
+  · rw [eqn_5_6]; simp only [α₀, α₁, two_rpow_two_add, two_rpow_one_add, two_rpow_add_two]
+    ring
+  · rw [two_rpow_add_two]
+    have hA : 0 < 4 * 2 ^ β - 3 + 4 * α₁ β * x := by nlinarith [hx.1]
+    rcases eq_or_lt_of_le hx.1 with h0 | hpos
+    · rw [← h0]; nlinarith
+    · have h1 : 0 < α₁ β * x * (1 - x) := mul_pos (mul_pos hα hpos) (by linarith [hx.2])
+      have h2 : 0 ≤ (1 - 2 * x) * (4 * 2 ^ β - 3 + 4 * α₁ β * x) :=
+        mul_nonneg (by linarith [hx.2]) hA.le
+      nlinarith
 
 /-- [DIR], proof of Lemma 5.8 (2): $\partial_\beta
 Q'_\beta(x)=\frac13(\log2)2^{3+\beta}(6x^2-6x+1)$,
@@ -274,7 +536,19 @@ theorem lemma_5_8_2_dbeta (x β : ℝ) :
     deriv (fun β' ↦ deriv (Q β') x) β = 3⁻¹ * log 2 * 2 ^ (3 + β) * (6 * x ^ 2 - 6 * x + 1) ∧
     6 * x ^ 2 - 6 * x + 1 = 6 * (x - 2⁻¹ - √3 / 6) * (x - 2⁻¹ + √3 / 6) ∧
     (x ∈ Icc 4⁻¹ 2⁻¹ → 3⁻¹ * log 2 * 2 ^ (3 + β) * (6 * x ^ 2 - 6 * x + 1) < 0) := by
-  sorry
+  have h3 : √3 ^ 2 = 3 := sq_sqrt (by norm_num)
+  have hl : 0 < log 2 := log_pos one_lt_two
+  refine ⟨?_, by linear_combination (1 / 6 : ℝ) * h3, fun hx ↦ ?_⟩
+  · rw [show (fun β' ↦ deriv (Q β') x) = fun β' ↦ (-2 + 20 * x - 24 * x ^ 2) +
+        (8 / 3 - 16 * x + 16 * x ^ 2) * 2 ^ β' from
+        funext fun β' ↦ by rw [deriv_Q_eq, Q1f_eq_affine],
+      (hasDerivAt_two_rpow_affine _ _ β).deriv, two_rpow_three_add]
+    ring
+  · have hq : 6 * x ^ 2 - 6 * x + 1 < 0 := by
+      nlinarith [mul_nonpos_iff.2 (Or.inl ⟨(by linarith [hx.1] : (0 : ℝ) ≤ x - 4⁻¹),
+        (by linarith [hx.2] : x - 2⁻¹ ≤ 0)⟩), hx.1]
+    have : 0 < 3⁻¹ * log 2 * 2 ^ (3 + β) := by have := rpow_pos_of_pos two_pos (3 + β); positivity
+    exact mul_neg_of_pos_of_neg this hq
 
 /-- [DIR], proof of Lemma 5.8 (3): the first part follows from (5.7), (5.8). To see that
 $Q_\beta''(x)$ is decreasing in $\beta$, compute
@@ -282,7 +556,14 @@ $\partial_\beta Q''_\beta(x)=-\log(2)2^{4+\beta}(1-2x)\le0$, since $x\le\frac12$
 theorem lemma_5_8_3_dbeta (x : ℝ) (hx : x ≤ 2⁻¹) (β : ℝ) :
     deriv (fun β' ↦ deriv (deriv (Q β')) x) β = -log 2 * 2 ^ (4 + β) * (1 - 2 * x) ∧
       -log 2 * 2 ^ (4 + β) * (1 - 2 * x) ≤ 0 := by
-  sorry
+  have hl : 0 < log 2 := log_pos one_lt_two
+  refine ⟨?_, ?_⟩
+  · rw [show (fun β' ↦ deriv (deriv (Q β')) x) = fun β' ↦ (20 - 48 * x) +
+        (-16 + 32 * x) * 2 ^ β' from funext fun β' ↦ by rw [deriv2_Q_eq, Q2f_eq_affine],
+      (hasDerivAt_two_rpow_affine _ _ β).deriv, two_rpow_four_add]
+    ring
+  · have : 0 < log 2 * 2 ^ (4 + β) := by have := rpow_pos_of_pos two_pos (4 + β); positivity
+    nlinarith
 
 end Proof_Lemma_5_8
 
@@ -300,7 +581,53 @@ theorem lemma_5_8 (x : ℝ) (hx : x ∈ Icc (0 : ℝ) 2⁻¹) (β : ℝ)
           AntitoneOn (fun β' ↦ deriv (Q β') x) (Ico 2⁻¹ (log₂ (3 / 2))))) ∧
     (deriv (deriv (Q β)) x < 0 ∧ iteratedDeriv 3 (Q β) x < 0 ∧
       AntitoneOn (fun β' ↦ deriv (deriv (Q β')) x) (Ico 2⁻¹ (log₂ (3 / 2)))) := by
-  sorry
+  have hα := (α₁_pos_iff β).2 hβ.2
+  have ht := two_rpow_gt_of_half_le hβ.1
+  have hα₀ := (eqn_5_5 β ⟨hβ.1, hβ.2.le.trans (by
+    rw [logb_le_iff_le_rpow one_lt_two (by norm_num)]; norm_num)⟩)
+  have hmono : ∀ A B : ℝ, 0 ≤ B → MonotoneOn (fun β' : ℝ ↦ A + B * 2 ^ β')
+      (Ico 2⁻¹ (log₂ (3 / 2))) := by
+    intro A B hB b₁ _ b₂ _ hle
+    have := rpow_le_rpow_of_exponent_le one_le_two hle
+    show A + B * 2 ^ b₁ ≤ A + B * 2 ^ b₂
+    nlinarith
+  have hanti : ∀ A B : ℝ, B ≤ 0 → AntitoneOn (fun β' : ℝ ↦ A + B * 2 ^ β')
+      (Ico 2⁻¹ (log₂ (3 / 2))) := by
+    intro A B hB b₁ _ b₂ _ hle
+    have := rpow_le_rpow_of_exponent_le one_le_two hle
+    show A + B * 2 ^ b₂ ≤ A + B * 2 ^ b₁
+    nlinarith
+  have hQ' : deriv (Q β) x > 0 := by
+    rw [(lemma_5_8_2_rewrite x hx β hβ).1]; exact (lemma_5_8_2_rewrite x hx β hβ).2
+  refine ⟨⟨?_, ?_⟩, ⟨hQ', fun hx4 ↦ ?_⟩, ?_, ?_, ?_⟩
+  · rw [Q]
+    have : 0 ≤ 2 ^ (β + 2) - 3 + 4 * (3 - 2 ^ (β + 1)) * x := by
+      rw [two_rpow_add_two, two_rpow_add_one']
+      have : 3 - 2 * 2 ^ β = α₁ β := by rw [α₁, two_rpow_one_add]
+      nlinarith [hx.1]
+    have := hx.1
+    have : 0 ≤ 1 - x := by linarith [hx.2]
+    positivity
+  · rw [show (fun β' ↦ Q β' x) = fun β' ↦ 2 / 3 * x * (1 - x) * (-3 + 12 * x) +
+        2 / 3 * x * (1 - x) * (4 - 8 * x) * 2 ^ β' from funext fun β' ↦ Q_eq_affine β' x]
+    apply hmono
+    have := hx.1
+    have : 0 ≤ 1 - x := by linarith [hx.2]
+    have : 0 ≤ 4 - 8 * x := by linarith [hx.2]
+    positivity
+  · rw [show (fun β' ↦ deriv (Q β') x) = fun β' ↦ (-2 + 20 * x - 24 * x ^ 2) +
+        (8 / 3 - 16 * x + 16 * x ^ 2) * 2 ^ β' from
+        funext fun β' ↦ by rw [deriv_Q_eq, Q1f_eq_affine]]
+    apply hanti
+    nlinarith [mul_nonpos_iff.2 (Or.inl ⟨(by linarith [hx4.1] : (0 : ℝ) ≤ x - 4⁻¹),
+        (by linarith [hx4.2] : x - 2⁻¹ ≤ 0)⟩), hx4.1]
+  · rw [eqn_5_7]
+    nlinarith [hx.1, mul_nonneg hα.le hx.1]
+  · rw [eqn_5_8]; linarith
+  · rw [show (fun β' ↦ deriv (deriv (Q β')) x) = fun β' ↦ (20 - 48 * x) +
+        (-16 + 32 * x) * 2 ^ β' from funext fun β' ↦ by rw [deriv2_Q_eq, Q2f_eq_affine]]
+    apply hanti
+    linarith [hx.2]
 
 section Proof_Lemma_5_9
 section Proof_Claim_1
