@@ -9,9 +9,9 @@ The user's current explicit instructions take precedence over both. Raw prompts 
 
 - **[DIR]** P. Durcik, P. Ivanisvili, J. Roos, *Sharp isoperimetric inequalities on the Hamming cube
   near the critical exponent*, arXiv:2407.12674v2 (revised version, August 2026).
-  TeX: `sources/DIR/main-v2.tex`.
+  TeX source: arXiv e-print (not kept in the repository).
 - **[DIRX]** P. Durcik, P. Ivanisvili, J. Roos, X. Xie, *Sharp isoperimetric inequalities on the
-  Hamming cube II: The critical exponent*, arXiv:2602.20462v1. TeX: `sources/DIRX/main.tex`.
+  Hamming cube II: The critical exponent*, arXiv:2602.20462v1. TeX source: arXiv e-print.
 - Companion code (numerical claims): https://github.com/roos-j/dir24-isoperim.
 - Scope: **full formalization of both papers**. Current phase: **setup** (repository structure and
   statements only; every claim proved `by sorry`). No proofs are to be attempted in this phase.
@@ -25,7 +25,7 @@ The binding proof-stage rules are at the top of `AGENTS.md` (auxiliary `*_aux.le
 proofs over 100 lines or needing extra lemmas; completion = no transitive `sorry`; only
 `propext`, `Classical.choice`, `Quot.sound` plus LeanCert's standard axioms for 🚗 claims; a proof
 starts only after all its dependencies, listed in `automation/proof_dependencies.txt`, are
-proved). The work split into Tasks 1–5 is proposed in `splitting.md`.
+proved). The work split into Tasks 1–5 is in `automation/splitting.md`.
 
 ## Changes of plan (user requirement, 2026-11-12T00:56+00:00, raw entry 4)
 
@@ -185,5 +185,5 @@ lake build
 
 ## Current status / next step
 
-Setup complete; proof stage prepared (rules in `AGENTS.md`, split in `splitting.md`, dependency
-list `automation/proof_dependencies.txt`). Next: Task 1 of `splitting.md`.
+Setup complete; proof stage prepared (rules in `AGENTS.md`, split in `automation/splitting.md`, dependency
+list `automation/proof_dependencies.txt`). Next: Task 1 of `automation/splitting.md`.

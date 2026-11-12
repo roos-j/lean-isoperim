@@ -1,53 +1,466 @@
-# Status
+# Status (proof stage)
 
-Format: status | timestamp | location | step. Setup phase (statements only); proof-phase rows
-(one per claim, in the module order of Isoperim.lean) are added when proofs begin.
+Format: `status | timestamp (ET) | file | declaration`; status is `not started`, `in progress` or
+`complete` (complete = no transitive `sorry`, axioms as in `AGENTS.md`). One section per task of
+`automation/splitting.md`, one row per theorem of that task, in the order in which the work must
+proceed (module order of `Isoperim.lean`, declaration order within a file). Update a row's status
+and timestamp when its state changes; no free-text entries.
 
-## Main theorem statements
+## Task 1 — Preparation (shared foundations)
 
-not started | 2026-11-11 19:56:15 ET | [DIR] Thm 1.1, 1.5, 1.6, 1.7, Cor 1.9, Thm 1.10 | proofs
-not started | 2026-11-11 19:56:15 ET | [DIRX] Thm 1.1, 1.2, 1.3 | proofs
+not started | 2026-11-12 15:19:51 ET | [DIR] 2_Envelope_Functions/Definitions | Q_spec
+not started | 2026-11-12 15:19:51 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | I_characterization
+not started | 2026-11-12 15:19:51 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | Jw_spec
+not started | 2026-11-12 15:19:51 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | existsUnique_w₀
+not started | 2026-11-12 15:19:51 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | w₀_mem
+not started | 2026-11-12 15:19:51 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | existsUnique_J
+not started | 2026-11-12 15:19:51 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | J_half_eq_L_half
+not started | 2026-11-12 15:19:51 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | eqn_3_4
+not started | 2026-11-12 15:19:51 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | lemma_3_2_deriv2
+not started | 2026-11-12 15:19:51 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | lemma_3_2_sq_deriv
+not started | 2026-11-12 15:19:51 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | lemma_3_2_sq_deriv2
+not started | 2026-11-12 15:19:51 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | lemma_3_2
+not started | 2026-11-12 15:19:51 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | convex_sub_ge
+not started | 2026-11-12 15:19:51 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | rem_3_6
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | eqn_5_2
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | eqn_5_3
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | eqn_5_4
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | rem_5_7
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_6_2_coeffs
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_6_2_concave
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_6_2_decreasing
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_6_2_values
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_6_2_log_deriv
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_6_3_steps
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_6_4_formula
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_6_4_dbeta
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_6_4_at_half
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_6_4_quadratic
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_6_4_deriv
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_6
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | eqn_5_5
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | α₁_pos_iff
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | eqn_5_6
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | eqn_5_7
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | eqn_5_8
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | eqn_5_9
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_8_2_rewrite
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_8_2_dbeta
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_8_3_dbeta
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_8
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_2_Two_Point_Inequalities | lemma_5_4_taylor
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_2_Two_Point_Inequalities | lemma_5_4_expansion
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_2_Two_Point_Inequalities | lemma_5_4
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_3_Case_LJQ | lemma_6_7_deriv2
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_3_Case_LJQ | eqn_6_14
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_3_Case_LJQ | lemma_6_7_mono
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_3_Case_LJQ | Q_deriv2_monotone_β
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_3_Case_LJQ | lemma_6_7_eval
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_3_Case_LJQ | lemma_6_7
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_5_Case_QJQ | G_QJQ_y_half_factor
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_5_Case_QJQ | p_QJQ_coeffs_pos
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_5_Case_QJQ | p_QJQ_monotoneOn
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_5_Case_QJQ | p_QJQ_quarter
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_5_Case_QJQ | G_QJQ_y_half_nonneg
+not started | 2026-11-12 15:19:51 ET | [DIRX] 2_Preliminaries/Definitions | JXw_half_one
+not started | 2026-11-12 15:19:51 ET | [DIRX] 2_Preliminaries/2_2_Properties_J | JX_contDiff
 
-## Scaffold files (after the restructuring of 2026-11-12)
+## Task 2 — [DIR] two-point inequality, remaining cases
 
-complete | 2026-11-11 19:56:15 ET | DIR/1_Introduction/Definitions | scaffold: 17 defs, 2 theorems (all sorry)
-complete | 2026-11-11 19:56:15 ET | DIR/1_Introduction/Thm_1_1 | scaffold: 0 defs, 4 theorems (all sorry)
-complete | 2026-11-11 19:56:15 ET | DIR/1_Introduction/Thm_1_5 | scaffold: 0 defs, 2 theorems (all sorry)
-complete | 2026-11-11 19:56:15 ET | DIR/1_Introduction/Thm_1_6 | scaffold: 0 defs, 3 theorems (all sorry)
-complete | 2026-11-11 19:56:15 ET | DIR/1_Introduction/Thm_1_7 | scaffold: 0 defs, 1 theorems (all sorry)
-complete | 2026-11-11 19:56:15 ET | DIR/1_Introduction/Thm_1_10 | scaffold: 0 defs, 1 theorems (all sorry)
-complete | 2026-11-11 19:56:15 ET | DIR/2_Envelope_Functions/2_0_Envelope_Functions | scaffold: 0 defs, 3 theorems (all sorry)
-complete | 2026-11-11 19:56:15 ET | DIR/2_Envelope_Functions/2_2_Proofs_Theorems_1_1_1_5_1_7 | scaffold: 0 defs, 11 theorems (all sorry)
-complete | 2026-11-11 19:56:15 ET | DIR/2_Envelope_Functions/Definitions | scaffold: 9 defs, 1 theorems (all sorry)
-complete | 2026-11-11 19:56:15 ET | DIR/3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | scaffold: 9 defs, 32 theorems (all sorry)
-complete | 2026-11-11 19:56:15 ET | DIR/5_Auxiliary_Estimates/5_1_Small_Exponents_Large_Exponents | scaffold: 0 defs, 2 theorems (all sorry)
-complete | 2026-11-11 19:56:15 ET | DIR/5_Auxiliary_Estimates/5_2_Two_Point_Inequalities | scaffold: 1 defs, 6 theorems (all sorry)
-complete | 2026-11-11 19:56:15 ET | DIR/5_Auxiliary_Estimates/5_3_Properties_L_Q | scaffold: 7 defs, 38 theorems (all sorry)
-complete | 2026-11-11 19:56:15 ET | DIR/5_Auxiliary_Estimates/5_4_Lower_Bounds_Gaussian_Isoperimetric_Profile | scaffold: 2 defs, 24 theorems (all sorry)
-complete | 2026-11-11 19:56:15 ET | DIR/6_Proof_Two_Point_Inequality/6_1_Case_J | scaffold: 3 defs, 19 theorems (all sorry)
-complete | 2026-11-11 19:56:15 ET | DIR/6_Proof_Two_Point_Inequality/6_2_Case_Q | scaffold: 10 defs, 57 theorems (all sorry)
-complete | 2026-11-11 19:56:15 ET | DIR/6_Proof_Two_Point_Inequality/6_3_Case_LJQ | scaffold: 3 defs, 35 theorems (all sorry)
-complete | 2026-11-11 19:56:15 ET | DIR/6_Proof_Two_Point_Inequality/6_4_Case_LJ | scaffold: 5 defs, 47 theorems (all sorry)
-complete | 2026-11-11 19:56:15 ET | DIR/6_Proof_Two_Point_Inequality/6_5_Case_QJQ | scaffold: 4 defs, 16 theorems (all sorry)
-complete | 2026-11-11 19:56:15 ET | DIR/6_Proof_Two_Point_Inequality/6_6_Case_QJ | scaffold: 2 defs, 13 theorems (all sorry)
-complete | 2026-11-11 19:56:15 ET | DIR/7_Proof_Poincare_Inequality/7_0_Proof_Poincare_Inequality | scaffold: 3 defs, 13 theorems (all sorry)
-complete | 2026-11-11 19:56:15 ET | DIRX/1_Introduction/Definitions | scaffold: 1 defs, 3 theorems (all sorry)
-complete | 2026-11-11 19:56:15 ET | DIRX/1_Introduction/Thm_1_1 | scaffold: 0 defs, 1 theorems (all sorry)
-complete | 2026-11-11 19:56:15 ET | DIRX/1_Introduction/Thm_1_2 | scaffold: 0 defs, 2 theorems (all sorry)
-complete | 2026-11-11 19:56:15 ET | DIRX/1_Introduction/Thm_1_3 | scaffold: 0 defs, 1 theorems (all sorry)
-complete | 2026-11-11 19:56:15 ET | DIRX/2_Preliminaries/2_1_Reduction_Two_Point_Inequality | scaffold: 0 defs, 5 theorems (all sorry)
-complete | 2026-11-11 19:56:15 ET | DIRX/2_Preliminaries/2_2_Properties_J | scaffold: 0 defs, 11 theorems (all sorry)
-complete | 2026-11-11 19:56:15 ET | DIRX/2_Preliminaries/2_3_Properties_L_Q | scaffold: 0 defs, 1 theorems (all sorry)
-complete | 2026-11-11 19:56:15 ET | DIRX/2_Preliminaries/Definitions | scaffold: 7 defs, 1 theorems (all sorry)
-complete | 2026-11-11 19:56:15 ET | DIRX/3_Proof_Two_Point_Inequality/3_1_Case_J | scaffold: 2 defs, 18 theorems (all sorry)
-complete | 2026-11-11 19:56:15 ET | DIRX/3_Proof_Two_Point_Inequality/3_2_Case_Q | scaffold: 0 defs, 3 theorems (all sorry)
-complete | 2026-11-11 19:56:15 ET | DIRX/3_Proof_Two_Point_Inequality/3_3_Case_LJQ | scaffold: 2 defs, 23 theorems (all sorry)
-complete | 2026-11-11 19:56:15 ET | DIRX/3_Proof_Two_Point_Inequality/3_4_Case_LJ | scaffold: 3 defs, 15 theorems (all sorry)
-complete | 2026-11-11 19:56:15 ET | DIRX/3_Proof_Two_Point_Inequality/3_5_Case_QJQ | scaffold: 1 defs, 8 theorems (all sorry)
-complete | 2026-11-11 19:56:15 ET | DIRX/3_Proof_Two_Point_Inequality/3_6_Case_QJ | scaffold: 2 defs, 9 theorems (all sorry)
-complete | 2026-11-11 19:56:15 ET | DIRX/4_Proof_Poincare_Inequality/4_0_Proof_Poincare_Inequality | scaffold: 3 defs, 14 theorems (all sorry)
+not started | 2026-11-12 15:19:51 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | eqn_3_6
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_1_Case_J | x₀_lt_five_div_eight
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_1_Case_J | caseJ_I_region_subset
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_1_Case_J | iteratedDeriv_two_J
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_1_Case_J | iteratedDeriv_three_J
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_1_Case_J | J_monotoneOn_antitoneOn
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_1_Case_J | eqn_6_1
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_1_Case_J | caseJ_I_neardiag_bound
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_1_Case_J | caseJ_I_G₁_ge_g_J_1
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_1_Case_J | deriv_J_x₀
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_1_Case_J | eqn_6_3
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_1_Case_J | caseJ_I
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_1_Case_J | caseJ_G₁_mono_β
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_1_Case_J | caseJ_II_suffices
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_1_Case_J | caseJ_II_nonneg
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_1_Case_J | caseJ_II_iff_g_J_2
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_1_Case_J | eqn_6_5
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_1_Case_J | nine_div_sixteen_gt_x₀
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_1_Case_J | caseJ_II
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_1_Case_J | prop_6_1
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_3_Case_LJQ | eqn_6_13
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_3_Case_LJQ | prop_6_6_reduction
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_3_Case_LJQ | f_LJQ_1_eq
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_3_Case_LJQ | f_LJQ_1_deriv_β
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_3_Case_LJQ | f_LJQ_1_monotone_or_antitone
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_3_Case_LJQ | f_LJQ_1_ge_min
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_3_Case_LJQ | f_LJQ_1_one_nonneg
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_3_Case_LJQ | derivs_f_LJQ_1_half
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_3_Case_LJQ | f_LJQ_1_half_deriv4
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_3_Case_LJQ | f_LJQ_1_half_deriv2_half
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_3_Case_LJQ | f_LJQ_1_half_deriv2_zero_subsingleton
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_3_Case_LJQ | eqn_6_15
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_3_Case_LJQ | f_LJQ_1_half_y₀
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_3_Case_LJQ | eqn_6_16
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_3_Case_LJQ | f_LJQ_1_half_deriv_half
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_3_Case_LJQ | f_LJQ_1_half_y₁
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_3_Case_LJQ | f_LJQ_1_half_endpoints
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_3_Case_LJQ | f_LJQ_1_half_nonneg
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_3_Case_LJQ | caseLJQ_claim_1
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_3_Case_LJQ | eqn_6_17
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_3_Case_LJQ | caseLJQ_claim_2
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_3_Case_LJQ | f_LJQ_3_eq
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_3_Case_LJQ | f_LJQ_3_monotoneOn_β
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_3_Case_LJQ | f_LJQ_3_half_deriv2
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_3_Case_LJQ | f_LJQ_3_half_concaveOn
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_3_Case_LJQ | f_LJQ_3_half_one
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_3_Case_LJQ | eqn_6_18
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_3_Case_LJQ | caseLJQ_claim_3
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_3_Case_LJQ | prop_6_6
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_4_Case_LJ | caseLJ_region
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_4_Case_LJ | prop_6_8_monotoneOn_beta
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_4_Case_LJ | g_LJ_eq
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_4_Case_LJ | g_LJ_deriv2_eq
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_4_Case_LJ | L_half_deriv2_monotoneOn_neg
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_4_Case_LJ | eqn_6_19
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_4_Case_LJ | J_inv_le_two
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_4_Case_LJ | g_LJ_deriv2_nonpos_of_le
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_4_Case_LJ | g_LJ_deriv2_nonpos_of_deriv3
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_4_Case_LJ | eqn_6_20
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_4_Case_LJ | J_inv_monotoneOn_Ico_x₀
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_4_Case_LJ | g_LJ_deriv2_quarter_nonpos
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_4_Case_LJ | g_LJ_deriv3_eq
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_4_Case_LJ | deriv_J_nonpos
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_4_Case_LJ | L_half_deriv3_nonneg
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_4_Case_LJ | g_LJ_deriv3_nonneg
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_4_Case_LJ | g_LJ_deriv2_nonpos
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_4_Case_LJ | g_LJ_nonneg_of_boundary
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_4_Case_LJ | g_LJ_one_deriv2_nonpos
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_4_Case_LJ | g_LJ_zero_one
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_4_Case_LJ | eqn_6_21
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_4_Case_LJ | g_LJ_one_nonneg
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_4_Case_LJ | g_LJ_diag_eq
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_4_Case_LJ | eqn_6_22
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_4_Case_LJ | g_LJ_diag_deriv2
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_4_Case_LJ | g_LJ_diag_nonneg
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_4_Case_LJ | f_LJ_eq
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_4_Case_LJ | f_LJ_endpoints_nonneg
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_4_Case_LJ | f_LJ_deriv2
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_4_Case_LJ | r_LJ_deriv
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_4_Case_LJ | h_LJ_deriv
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_4_Case_LJ | h_LJ_antitoneOn
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_4_Case_LJ | h_LJ_le_h_LJ_t
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_4_Case_LJ | h_LJ_nonpos
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_4_Case_LJ | f_LJ_deriv2_nonpos_iff
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_4_Case_LJ | r_LJ_deriv_nonpos_of
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_4_Case_LJ | two_h_LJ_le
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_4_Case_LJ | r_LJ_antitoneOn
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_4_Case_LJ | r_LJ_sub_antitoneOn
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_4_Case_LJ | f_LJ_deriv2_sign_change
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_4_Case_LJ | f_LJ_deriv_monotone_antitone
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_4_Case_LJ | f_LJ_deriv_three_quarters
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_4_Case_LJ | f_LJ_deriv_three_quarters_pos
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_4_Case_LJ | f_LJ_ge_min_endpoints
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_4_Case_LJ | f_LJ_nonneg
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_4_Case_LJ | g_LJ_nonneg
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_4_Case_LJ | prop_6_8
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_5_Case_QJQ | caseQJQ_region
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_5_Case_QJQ | β₁_approx
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_5_Case_QJQ | G_QJQ_deriv_y
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_5_Case_QJQ | two_Q_sub_Q_ge
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_5_Case_QJQ | G_QJQ_monotone_or_antitone
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_5_Case_QJQ | G_QJQ_ge_min
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_5_Case_QJQ | prop_6_9_of_endpoints
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_5_Case_QJQ | eqn_6_25
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_5_Case_QJQ | G_QJQ_ge_G_QJQ_half
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_5_Case_QJQ | G_QJQ_y_half_eq
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_5_Case_QJQ | prop_6_9
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_6_Case_QJ | caseQJ_G₁_monotoneOn_beta
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_6_Case_QJ | prop_6_11_mono_beta
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_6_Case_QJ | two_J_sub_Q_pos
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_6_Case_QJ | G₁_nonneg_iff_g_QJ_nonneg
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_6_Case_QJ | g_QJ_deriv_x_nonpos_of_pos
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_6_Case_QJ | eqn_6_26
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_6_Case_QJ | g_QJ_deriv_x_nonpos
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_6_Case_QJ | g_QJ_nonneg_of_half
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_6_Case_QJ | g_QJ_half_nonneg_iff
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_6_Case_QJ | G₁_J_half_nonneg
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_6_Case_QJ | prop_6_11
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_6_Case_QJ | prop_6_12
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_6_Case_QJ | prop_6_12_stronger
 
-## Audits
+## Task 3 — [DIRX] two-point inequality (with [DIR] Case Q)
 
-complete | 2026-11-11 19:56:15 ET | all files | pruned to the needs of the introduction theorems; §4/§2.4 removed
-complete | 2026-11-11 19:56:15 ET | all files | forward order and imports verified (forward_reasoning.md)
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_9_1_convex
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_9_1_endpoint
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_9_1_quarter_steps
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_9_1_quarter
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_9_1_unique_zero
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_9_1_max
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_9_1_endpoints
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_9_2_concave
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_9_2_half
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_9_2_quarter
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_9_2_convex
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_9
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_2_Two_Point_Inequalities | lemma_5_2_chain
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_2_Two_Point_Inequalities | lemma_5_2
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_2_Two_Point_Inequalities | G₁_diag
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | caseQ_G₁_L
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | caseQ_I
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | caseQ_reduction
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | caseQ_II_y_ge
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | caseQ_II_neardiag_bound
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | caseQ_II_second_difference
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | caseQ_II_g_Q_1_eq
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | eqn_6_7
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | caseQ_II_β₀
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | caseQ_II_g_Q_1_half_eq
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | caseQ_II_g_Q_1_half_deriv2
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | caseQ_II_g_Q_1_half_concave
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | caseQ_II_claim_1_limit
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | caseQ_II_claim_1_iff
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | caseQ_II_claim_1_subst
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | caseQ_II_claim_1_mono
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | caseQ_II_claim_1
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | eqn_6_8
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | caseQ_II_claim_2
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | caseQ_II
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | caseQ_III_G_Q_diag
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | R_eq
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | caseQ_III_iff_f_QIII
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | f_QIII_half
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | deriv_f_QIII
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | deriv_f_QIII_nonpos_iff
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | f_QIII_deriv_eq_sub
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | caseQ_III_suffices_f_QIII_0
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | f_QIII_0_eq_mul
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | f_QIII_1_nonneg_f_QIII_2_nonpos
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | derivs_f_QIII_1
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | R_derivs_one_div_β
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | derivs_f_QIII_1_nonpos
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | derivs_f_QIII_2
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | derivs_f_QIII_2_nonpos
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | iteratedDeriv_three_f_QIII_0
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | iteratedDeriv_three_f_QIII_0_nonneg
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | eqn_6_9
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | deriv2_f_QIII_0_pos
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | eqn_6_10
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | deriv_f_QIII_0_neg
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | deriv_f_QIII_0_neg_Icc_eighth
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | deriv_f_QIII_nonpos
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | f_QIII_nonneg
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | lemma_6_4_denom_pos
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | lemma_6_4_deriv
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | eqn_6_11
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | lemma_6_4_poly
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | eqn_6_11_eq_p_Q
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | lemma_6_4_of_strictAntiOn
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | eqn_6_12
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | caseQ_III_iff_G_Q
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | lemma_6_4
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | caseQ_III_min
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | caseQ_III_G_Q_quarter
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | eqn_6_6
+not started | 2026-11-12 15:19:51 ET | [DIR] 6_Proof_Two_Point_Inequality/6_2_Case_Q | prop_6_2
+not started | 2026-11-12 15:19:51 ET | [DIR] 2_Envelope_Functions/2_2_Proofs_Theorems_1_1_1_5_1_7 | b_eq_Q_ge_L
+not started | 2026-11-12 15:19:51 ET | [DIRX] 2_Preliminaries/2_2_Properties_J | JX_mul_deriv2
+not started | 2026-11-12 15:19:51 ET | [DIRX] 2_Preliminaries/2_2_Properties_J | γX_mem
+not started | 2026-11-12 15:19:51 ET | [DIRX] 2_Preliminaries/2_2_Properties_J | JX_concave
+not started | 2026-11-12 15:19:51 ET | [DIRX] 2_Preliminaries/2_2_Properties_J | deriv_JX
+not started | 2026-11-12 15:19:51 ET | [DIRX] 2_Preliminaries/2_2_Properties_J | JX_mono
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_1_Case_J | caseJ_G₁_eq
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_1_Case_J | caseJ_rhs_nonneg
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_1_Case_J | caseJ_sq_iff
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_1_Case_J | FX_deriv
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_1_Case_J | FX_deriv2
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_1_Case_J | FX_zero
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_1_Case_J | γX_le_two
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_1_Case_J | caseJ_I_lower
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_1_Case_J | caseJ_I_convex
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_1_Case_J | caseJ_I_sq_deriv
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_1_Case_J | caseJ_I
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_1_Case_J | caseJ_II
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_1_Case_J | caseJ_II_eval
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_1_Case_J | eqn_3_2
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_1_Case_J | FX_nonneg
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_1_Case_J | caseJ_cu
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_1_Case_J | eqn_3_1
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_1_Case_J | caseJ
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_2_Case_Q | caseQ_G₁_max
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_2_Case_Q | BX_eq_max
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_2_Case_Q | caseQ
+not started | 2026-11-12 15:19:51 ET | [DIRX] 2_Preliminaries/2_3_Properties_L_Q | lemma_2_3
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_3_Case_LJQ | eqn_3_3
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_3_Case_LJQ | G₂_BX_eq_G_LJQ
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_3_Case_LJQ | eqn_3_4
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_3_Case_LJQ | G_LJQ_strictConcave
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_3_Case_LJQ | caseLJQ_II_of_boundary
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_3_Case_LJQ | fX_deriv
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_3_Case_LJQ | eqn_3_5
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_3_Case_LJQ | fX_deriv4_neg
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_3_Case_LJQ | fX_deriv2_strictConcave
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_3_Case_LJQ | eqn_3_6
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_3_Case_LJQ | fX_deriv2_zero
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_3_Case_LJQ | fX_deriv_eval
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_3_Case_LJQ | fX_deriv_half_pos
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_3_Case_LJQ | fX_deriv_zero
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_3_Case_LJQ | fX_one_half
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_3_Case_LJQ | fX_nonneg
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_3_Case_LJQ | eqn_3_7
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_3_Case_LJQ | G_LJQ_diag_deriv2
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_3_Case_LJQ | G_LJQ_diag_concave
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_3_Case_LJQ | G_LJQ_diag_eval
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_3_Case_LJQ | G_LJQ_diag_nonneg
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_3_Case_LJQ | caseLJQ_II
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_3_Case_LJQ | caseLJQ
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_4_Case_LJ | G₂_BX_eq_h_LJ
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_4_Case_LJ | h_LJ_deriv2
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_4_Case_LJ | h_LJ_concave
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_4_Case_LJ | eqn_3_8
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_4_Case_LJ | h_LJ_eq_gX
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_4_Case_LJ | gX_half
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_4_Case_LJ | gX_deriv
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_4_Case_LJ | deriv_LX_JX_anti
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_4_Case_LJ | gX_deriv_ge_1
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_4_Case_LJ | gX_deriv_ge_2
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_4_Case_LJ | gX_deriv_ge_3
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_4_Case_LJ | gX_deriv_ge
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_4_Case_LJ | gX_nonneg
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_4_Case_LJ | h_LJ_nonneg
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_4_Case_LJ | caseLJ
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_5_Case_QJQ | caseQJQ_of_eqn_3_9
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_5_Case_QJQ | eqn_3_9_deriv
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_5_Case_QJQ | eqn_3_11
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_5_Case_QJQ | eqn_3_9_half
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_5_Case_QJQ | eqn_3_9_low
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_5_Case_QJQ | eqn_3_12
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_5_Case_QJQ | eqn_3_9
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_5_Case_QJQ | caseQJQ
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_6_Case_QJ | G₁_of_g_QJ
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_6_Case_QJ | g_QJ_half_iff
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_6_Case_QJ | g_QJ_half
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_6_Case_QJ | eqn_3_13
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_6_Case_QJ | g_QJ_nonneg
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_6_Case_QJ | caseQJ_near
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_6_Case_QJ | G₁_BX_eq_h_QJ₂
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_6_Case_QJ | eqn_3_14
+not started | 2026-11-12 15:19:51 ET | [DIRX] 3_Proof_Two_Point_Inequality/3_6_Case_QJ | caseQJ
+not started | 2026-11-12 15:19:51 ET | [DIRX] 2_Preliminaries/2_1_Reduction_Two_Point_Inequality | BX_ge_LX
+not started | 2026-11-12 15:19:51 ET | [DIRX] 2_Preliminaries/2_1_Reduction_Two_Point_Inequality | eqn_2_4
+
+## Task 4 — Gaussian profile, asymptotics, Poincaré propositions, Kahn–Park
+
+not started | 2026-11-12 15:19:51 ET | [DIR] 1_Introduction/Definitions | dens_mem_dyadic
+not started | 2026-11-12 15:19:51 ET | [DIR] 1_Introduction/Definitions | isoProfile_two_pow_le
+not started | 2026-11-12 15:19:51 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | M_indicator
+not started | 2026-11-12 15:19:51 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | lemma_3_1
+not started | 2026-11-12 15:19:51 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | eqn_3_2
+not started | 2026-11-12 15:19:51 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | eqn_3_2_iff_G₁
+not started | 2026-11-12 15:19:51 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | L_half_eqn_3_2
+not started | 2026-11-12 15:19:51 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | L_half_eqn_3_1
+not started | 2026-11-12 15:19:51 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | proof_thm_1_6_chain
+not started | 2026-11-12 15:19:51 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | prop_3_3_reduction
+not started | 2026-11-12 15:19:51 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | prop_3_3_squared
+not started | 2026-11-12 15:19:51 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | prop_3_3_Gc_deriv
+not started | 2026-11-12 15:19:51 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | prop_3_3_Gc_deriv2
+not started | 2026-11-12 15:19:51 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | prop_3_3_Gc_deriv2_ge
+not started | 2026-11-12 15:19:51 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | prop_3_3_sq_diff
+not started | 2026-11-12 15:19:51 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | prop_3_3_sq_deriv_nonneg
+not started | 2026-11-12 15:19:51 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | prop_3_3_Gc_nonneg
+not started | 2026-11-12 15:19:51 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | prop_3_3
+not started | 2026-11-12 15:19:51 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | cor_3_5
+not started | 2026-11-12 15:19:51 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | J_eqn_3_2
+not started | 2026-11-12 15:19:51 ET | [DIR] 2_Envelope_Functions/2_0_Envelope_Functions | prop_2_1
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_4_Lower_Bounds_Gaussian_Isoperimetric_Profile | prop_5_11_ibp
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_4_Lower_Bounds_Gaussian_Isoperimetric_Profile | prop_5_11_Phi_le
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_4_Lower_Bounds_Gaussian_Isoperimetric_Profile | prop_5_11_apply_I
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_4_Lower_Bounds_Gaussian_Isoperimetric_Profile | prop_5_11_t_formula
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_4_Lower_Bounds_Gaussian_Isoperimetric_Profile | prop_5_11_t_bounds
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_4_Lower_Bounds_Gaussian_Isoperimetric_Profile | prop_5_11_log_bound
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_4_Lower_Bounds_Gaussian_Isoperimetric_Profile | prop_5_11_eps
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_4_Lower_Bounds_Gaussian_Isoperimetric_Profile | prop_5_11_eps_small
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_4_Lower_Bounds_Gaussian_Isoperimetric_Profile | prop_5_11_final
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_4_Lower_Bounds_Gaussian_Isoperimetric_Profile | prop_5_11
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_4_Lower_Bounds_Gaussian_Isoperimetric_Profile | J_one_sub
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_4_Lower_Bounds_Gaussian_Isoperimetric_Profile | eqn_5_10
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_4_Lower_Bounds_Gaussian_Isoperimetric_Profile | two_one_sub_εJ
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_4_Lower_Bounds_Gaussian_Isoperimetric_Profile | cor_5_12
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_4_Lower_Bounds_Gaussian_Isoperimetric_Profile | eqn_5_11
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_4_Lower_Bounds_Gaussian_Isoperimetric_Profile | lemma_5_13_case_1
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_4_Lower_Bounds_Gaussian_Isoperimetric_Profile | lemma_5_13_case_2
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_4_Lower_Bounds_Gaussian_Isoperimetric_Profile | lemma_5_13_u_range
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_4_Lower_Bounds_Gaussian_Isoperimetric_Profile | lemma_5_13_used
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_4_Lower_Bounds_Gaussian_Isoperimetric_Profile | lemma_5_13_frac_poly_bound
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_4_Lower_Bounds_Gaussian_Isoperimetric_Profile | lemma_5_13_roots
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_4_Lower_Bounds_Gaussian_Isoperimetric_Profile | eqn_5_12_small
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_4_Lower_Bounds_Gaussian_Isoperimetric_Profile | eqn_5_12
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_4_Lower_Bounds_Gaussian_Isoperimetric_Profile | lemma_5_13
+not started | 2026-11-12 15:19:51 ET | [DIR] 2_Envelope_Functions/2_2_Proofs_Theorems_1_1_1_5_1_7 | b_half_two_pow
+not started | 2026-11-12 15:19:51 ET | [DIR] 2_Envelope_Functions/2_2_Proofs_Theorems_1_1_1_5_1_7 | thm_1_5_upper
+not started | 2026-11-12 15:19:51 ET | [DIR] 2_Envelope_Functions/2_2_Proofs_Theorems_1_1_1_5_1_7 | eqn_2_9
+not started | 2026-11-12 15:19:51 ET | [DIR] 2_Envelope_Functions/2_2_Proofs_Theorems_1_1_1_5_1_7 | btilde_eq_max
+not started | 2026-11-12 15:19:51 ET | [DIR] 2_Envelope_Functions/2_2_Proofs_Theorems_1_1_1_5_1_7 | Ltilde_twopt
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_1_Small_Exponents_Large_Exponents | lemma_5_1_holder
+not started | 2026-11-12 15:19:51 ET | [DIR] 5_Auxiliary_Estimates/5_1_Small_Exponents_Large_Exponents | lemma_5_1
+not started | 2026-11-12 15:19:51 ET | [DIR] 1_Introduction/Thm_1_5 | eqn_1_3
+not started | 2026-11-12 15:19:51 ET | [DIR] 1_Introduction/Thm_1_6 | isoProfile_half_le_sqrt
+not started | 2026-11-12 15:19:51 ET | [DIR] 7_Proof_Poincare_Inequality/7_0_Proof_Poincare_Inequality | boolean_eq_indicator
+not started | 2026-11-12 15:19:51 ET | [DIR] 7_Proof_Poincare_Inequality/7_0_Proof_Poincare_Inequality | indicator_norms
+not started | 2026-11-12 15:19:51 ET | [DIR] 7_Proof_Poincare_Inequality/7_0_Proof_Poincare_Inequality | eqn_7_1
+not started | 2026-11-12 15:19:51 ET | [DIR] 7_Proof_Poincare_Inequality/7_0_Proof_Poincare_Inequality | grad_norm_ge
+not started | 2026-11-12 15:19:51 ET | [DIR] 7_Proof_Poincare_Inequality/7_0_Proof_Poincare_Inequality | G_P_symm
+not started | 2026-11-12 15:19:51 ET | [DIR] 7_Proof_Poincare_Inequality/7_0_Proof_Poincare_Inequality | prop_7_1_case_I_eq
+not started | 2026-11-12 15:19:51 ET | [DIR] 7_Proof_Poincare_Inequality/7_0_Proof_Poincare_Inequality | prop_7_1_case_I_chain
+not started | 2026-11-12 15:19:51 ET | [DIR] 7_Proof_Poincare_Inequality/7_0_Proof_Poincare_Inequality | eqn_7_2
+not started | 2026-11-12 15:19:51 ET | [DIR] 7_Proof_Poincare_Inequality/7_0_Proof_Poincare_Inequality | prop_7_1_case_I
+not started | 2026-11-12 15:19:51 ET | [DIR] 7_Proof_Poincare_Inequality/7_0_Proof_Poincare_Inequality | eqn_7_3
+not started | 2026-11-12 15:19:51 ET | [DIR] 7_Proof_Poincare_Inequality/7_0_Proof_Poincare_Inequality | prop_7_1_case_III_eq
+not started | 2026-11-12 15:19:51 ET | [DIR] 7_Proof_Poincare_Inequality/7_0_Proof_Poincare_Inequality | eqn_7_4
+not started | 2026-11-12 15:19:51 ET | [DIR] 7_Proof_Poincare_Inequality/7_0_Proof_Poincare_Inequality | prop_7_1
+not started | 2026-11-12 15:19:51 ET | [DIRX] 1_Introduction/Definitions | sensitivity_indicator
+not started | 2026-11-12 15:19:51 ET | [DIRX] 1_Introduction/Definitions | hA_mul_hA_compl
+not started | 2026-11-12 15:19:51 ET | [DIRX] 1_Introduction/Definitions | sqrt_sensitivity_indicator
+not started | 2026-11-12 15:19:51 ET | [DIRX] 2_Preliminaries/2_2_Properties_J | I_lower
+not started | 2026-11-12 15:19:51 ET | [DIRX] 2_Preliminaries/2_2_Properties_J | eqn_2_6_step
+not started | 2026-11-12 15:19:51 ET | [DIRX] 2_Preliminaries/2_2_Properties_J | εX_monotone
+not started | 2026-11-12 15:19:51 ET | [DIRX] 2_Preliminaries/2_2_Properties_J | eqn_2_6_eval
+not started | 2026-11-12 15:19:51 ET | [DIRX] 2_Preliminaries/2_2_Properties_J | eqn_2_6
+not started | 2026-11-12 15:19:51 ET | [DIRX] 2_Preliminaries/2_1_Reduction_Two_Point_Inequality | kahn_park
+not started | 2026-11-12 15:19:51 ET | [DIRX] 4_Proof_Poincare_Inequality/4_0_Proof_Poincare_Inequality | bool_eq_indicator
+not started | 2026-11-12 15:19:51 ET | [DIRX] 4_Proof_Poincare_Inequality/4_0_Proof_Poincare_Inequality | norms_indicator
+not started | 2026-11-12 15:19:51 ET | [DIRX] 4_Proof_Poincare_Inequality/4_0_Proof_Poincare_Inequality | G_PX_symm
+not started | 2026-11-12 15:19:51 ET | [DIRX] 4_Proof_Poincare_Inequality/4_0_Proof_Poincare_Inequality | G_PX_eq_I
+not started | 2026-11-12 15:19:51 ET | [DIRX] 4_Proof_Poincare_Inequality/4_0_Proof_Poincare_Inequality | G_PX_I_lower
+not started | 2026-11-12 15:19:51 ET | [DIRX] 4_Proof_Poincare_Inequality/4_0_Proof_Poincare_Inequality | g_P₁X_antitone_eval
+not started | 2026-11-12 15:19:51 ET | [DIRX] 4_Proof_Poincare_Inequality/4_0_Proof_Poincare_Inequality | G_PX_I
+not started | 2026-11-12 15:19:51 ET | [DIRX] 4_Proof_Poincare_Inequality/4_0_Proof_Poincare_Inequality | eqn_4_2
+not started | 2026-11-12 15:19:51 ET | [DIRX] 4_Proof_Poincare_Inequality/4_0_Proof_Poincare_Inequality | G_PX_half
+not started | 2026-11-12 15:19:51 ET | [DIRX] 4_Proof_Poincare_Inequality/4_0_Proof_Poincare_Inequality | G_PX_III_anti
+not started | 2026-11-12 15:19:51 ET | [DIRX] 4_Proof_Poincare_Inequality/4_0_Proof_Poincare_Inequality | eqn_4_3
+not started | 2026-11-12 15:19:51 ET | [DIRX] 4_Proof_Poincare_Inequality/4_0_Proof_Poincare_Inequality | G_PX_III
+not started | 2026-11-12 15:19:51 ET | [DIRX] 4_Proof_Poincare_Inequality/4_0_Proof_Poincare_Inequality | eqn_4_1
+
+## Task 5 — Wrap-up (main theorems)
+
+not started | 2026-11-12 15:19:51 ET | [DIR] 2_Envelope_Functions/2_0_Envelope_Functions | thm_2_2
+not started | 2026-11-12 15:19:51 ET | [DIR] 2_Envelope_Functions/2_0_Envelope_Functions | cor_2_5
+not started | 2026-11-12 15:19:51 ET | [DIR] 2_Envelope_Functions/2_2_Proofs_Theorems_1_1_1_5_1_7 | eqn_1_1_β₀
+not started | 2026-11-12 15:19:51 ET | [DIR] 2_Envelope_Functions/2_2_Proofs_Theorems_1_1_1_5_1_7 | thm_1_5_lower
+not started | 2026-11-12 15:19:51 ET | [DIR] 2_Envelope_Functions/2_2_Proofs_Theorems_1_1_1_5_1_7 | b_lt_Ltilde_imp
+not started | 2026-11-12 15:19:51 ET | [DIR] 2_Envelope_Functions/2_2_Proofs_Theorems_1_1_1_5_1_7 | eqn_2_8
+not started | 2026-11-12 15:19:51 ET | [DIR] 2_Envelope_Functions/2_2_Proofs_Theorems_1_1_1_5_1_7 | isoProfile_ge_btilde
+not started | 2026-11-12 15:19:51 ET | [DIR] 1_Introduction/Thm_1_1 | thm_1_1
+not started | 2026-11-12 15:19:51 ET | [DIR] 1_Introduction/Thm_1_1 | cor_1_9_chain
+not started | 2026-11-12 15:19:51 ET | [DIR] 1_Introduction/Thm_1_1 | cor_1_9
+not started | 2026-11-12 15:19:51 ET | [DIR] 1_Introduction/Thm_1_5 | thm_1_5
+not started | 2026-11-12 15:19:51 ET | [DIR] 1_Introduction/Thm_1_6 | isoProfile_one_asymp
+not started | 2026-11-12 15:19:51 ET | [DIR] 1_Introduction/Thm_1_6 | thm_1_6
+not started | 2026-11-12 15:19:51 ET | [DIR] 1_Introduction/Thm_1_7 | thm_1_7
+not started | 2026-11-12 15:19:51 ET | [DIR] 1_Introduction/Thm_1_10 | thm_1_10
+not started | 2026-11-12 15:19:51 ET | [DIRX] 2_Preliminaries/2_1_Reduction_Two_Point_Inequality | thm_1_1_of_eqn_2_4
+not started | 2026-11-12 15:19:51 ET | [DIRX] 2_Preliminaries/2_1_Reduction_Two_Point_Inequality | eqn_2_5
+not started | 2026-11-12 15:19:51 ET | [DIRX] 1_Introduction/Thm_1_1 | thm_1_1
+not started | 2026-11-12 15:19:51 ET | [DIRX] 1_Introduction/Thm_1_2 | thm_1_2_chain
+not started | 2026-11-12 15:19:51 ET | [DIRX] 1_Introduction/Thm_1_2 | thm_1_2
+not started | 2026-11-12 15:19:51 ET | [DIRX] 4_Proof_Poincare_Inequality/4_0_Proof_Poincare_Inequality | thm_1_3_of_eqn_4_1
+not started | 2026-11-12 15:19:51 ET | [DIRX] 1_Introduction/Thm_1_3 | thm_1_3

@@ -21,8 +21,8 @@ proved; long proofs and new lemmas go into `*_aux.lean` files).
 Give the agent of Task *k* the following prompt (replace *k*):
 
 > You are the coding agent for **Task *k*** of the Lean formalization in this repository (papers
-> [DIR] arXiv:2407.12674 and [DIRX] arXiv:2602.20462, TeX in `sources/`). Read `AGENTS.md`
-> (proof-stage rules), `CLAUDE.md` (commit rules) and the section "Task *k*" of `splitting.md`.
+> [DIR] arXiv:2407.12674 and [DIRX] arXiv:2602.20462, TeX sources on arXiv). Read `AGENTS.md`
+> (proof-stage rules), `CLAUDE.md` (commit rules) and the section "Task *k*" of `automation/splitting.md`.
 > Your job: replace the `sorry` of every theorem listed for Task *k* by a complete proof, following
 > the paper's argument (the docstrings give the claim and its location). Rules:
 > 1. Work only on the declarations of Task *k*; never change any statement, definition or
