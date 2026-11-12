@@ -11,7 +11,8 @@
    The main file imports its `_aux` file; the `_aux` file must not import the main file (state
    results of the main file that an auxiliary lemma needs as hypotheses of that lemma). Same
    header, namespace (`Auto.DIR` / `Auto.DIRX`), notation and docstring conventions as the main
-   files; add the `_aux` module to `Isoperim.lean`. Do not change the statements of the scaffold.
+   files; add the `_aux` module to `Isoperim.lean`. Do not change the statements of the scaffold
+   (only exception: rule 7).
 2. **Completion.** A proof is complete only when it no longer depends on `sorry`, directly or
    transitively (check with `#print axioms <name>`).
 3. **Axioms.** Allowed: the standard Lean axioms `propext`, `Classical.choice`, `Quot.sound`; and,
@@ -28,6 +29,12 @@
    of your task.
 6. **Commits.** See `CLAUDE.md` (author = prompting user, one-line `[claude]` message,
    `Co-authored-by: Claude` trailer).
+7. **Unused hypotheses.** If a completed proof does not use a hypothesis of the statement
+   (linter warnings "unused variable" / "automatically included section variable(s) unused"),
+   remove that hypothesis from the statement, adapt all uses of the declaration, and note the
+   removal in the docstring, in a paragraph of the form "**Unused hypothesis.** The paper
+   assumes $\dots$; this is not needed for the claim and is omitted in the Lean statement." This
+   is the only permitted change to a scaffold statement.
 
 This Lean library formalizes the papers [DIR] (arXiv:2407.12674) and [DIRX]
 (arXiv:2602.20462); it is pinned to `leanprover/lean4:v4.35.0` in

@@ -8,62 +8,62 @@ and timestamp when its state changes; no free-text entries.
 
 ## Task 1 — Preparation (shared foundations)
 
-complete | 2026-11-12 15:43:11 ET | [DIR] 2_Envelope_Functions/Definitions | Q_spec
-in progress | 2026-11-12 15:43:11 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | I_characterization
-in progress | 2026-11-12 15:43:11 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | Jw_spec
-in progress | 2026-11-12 15:43:11 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | existsUnique_w₀
-in progress | 2026-11-12 15:43:11 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | w₀_mem
-in progress | 2026-11-12 15:43:11 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | existsUnique_J
-in progress | 2026-11-12 15:43:11 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | J_half_eq_L_half
-in progress | 2026-11-12 15:43:11 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | eqn_3_4
-in progress | 2026-11-12 15:43:11 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | lemma_3_2_deriv2
-in progress | 2026-11-12 15:43:11 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | lemma_3_2_sq_deriv
-in progress | 2026-11-12 15:43:11 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | lemma_3_2_sq_deriv2
-in progress | 2026-11-12 15:43:11 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | lemma_3_2
-in progress | 2026-11-12 15:43:11 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | convex_sub_ge
-in progress | 2026-11-12 15:43:11 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | rem_3_6
-in progress | 2026-11-12 15:43:11 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | eqn_5_2
-in progress | 2026-11-12 15:43:11 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | eqn_5_3
-in progress | 2026-11-12 15:43:11 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | eqn_5_4
-in progress | 2026-11-12 15:43:11 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | rem_5_7
-in progress | 2026-11-12 15:43:11 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_6_2_coeffs
-in progress | 2026-11-12 15:43:11 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_6_2_concave
-in progress | 2026-11-12 15:43:11 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_6_2_decreasing
-in progress | 2026-11-12 15:43:11 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_6_2_values
-in progress | 2026-11-12 15:43:11 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_6_2_log_deriv
-in progress | 2026-11-12 15:43:11 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_6_3_steps
-in progress | 2026-11-12 15:43:11 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_6_4_formula
-in progress | 2026-11-12 15:43:11 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_6_4_dbeta
-in progress | 2026-11-12 15:43:11 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_6_4_at_half
-in progress | 2026-11-12 15:43:11 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_6_4_quadratic
-in progress | 2026-11-12 15:43:11 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_6_4_deriv
-in progress | 2026-11-12 15:43:11 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_6
-in progress | 2026-11-12 15:43:11 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | eqn_5_5
-in progress | 2026-11-12 15:43:11 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | α₁_pos_iff
-in progress | 2026-11-12 15:43:11 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | eqn_5_6
-in progress | 2026-11-12 15:43:11 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | eqn_5_7
-in progress | 2026-11-12 15:43:11 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | eqn_5_8
-in progress | 2026-11-12 15:43:11 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | eqn_5_9
-in progress | 2026-11-12 15:43:11 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_8_2_rewrite
-in progress | 2026-11-12 15:43:11 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_8_2_dbeta
-in progress | 2026-11-12 15:43:11 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_8_3_dbeta
-in progress | 2026-11-12 15:43:11 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_8
-complete | 2026-11-12 15:43:11 ET | [DIR] 5_Auxiliary_Estimates/5_2_Two_Point_Inequalities | lemma_5_4_taylor
-complete | 2026-11-12 15:43:11 ET | [DIR] 5_Auxiliary_Estimates/5_2_Two_Point_Inequalities | lemma_5_4_expansion
-complete | 2026-11-12 15:43:11 ET | [DIR] 5_Auxiliary_Estimates/5_2_Two_Point_Inequalities | lemma_5_4
-in progress | 2026-11-12 15:43:11 ET | [DIR] 6_Proof_Two_Point_Inequality/6_3_Case_LJQ | lemma_6_7_deriv2
-in progress | 2026-11-12 15:43:11 ET | [DIR] 6_Proof_Two_Point_Inequality/6_3_Case_LJQ | eqn_6_14
-in progress | 2026-11-12 15:43:11 ET | [DIR] 6_Proof_Two_Point_Inequality/6_3_Case_LJQ | lemma_6_7_mono
-in progress | 2026-11-12 15:43:11 ET | [DIR] 6_Proof_Two_Point_Inequality/6_3_Case_LJQ | Q_deriv2_monotone_β
-in progress | 2026-11-12 15:43:11 ET | [DIR] 6_Proof_Two_Point_Inequality/6_3_Case_LJQ | lemma_6_7_eval
-in progress | 2026-11-12 15:43:11 ET | [DIR] 6_Proof_Two_Point_Inequality/6_3_Case_LJQ | lemma_6_7
-complete | 2026-11-12 15:43:11 ET | [DIR] 6_Proof_Two_Point_Inequality/6_5_Case_QJQ | G_QJQ_y_half_factor
-complete | 2026-11-12 15:43:11 ET | [DIR] 6_Proof_Two_Point_Inequality/6_5_Case_QJQ | p_QJQ_coeffs_pos
-complete | 2026-11-12 15:43:11 ET | [DIR] 6_Proof_Two_Point_Inequality/6_5_Case_QJQ | p_QJQ_monotoneOn
-complete | 2026-11-12 15:43:11 ET | [DIR] 6_Proof_Two_Point_Inequality/6_5_Case_QJQ | p_QJQ_quarter
-complete | 2026-11-12 15:43:11 ET | [DIR] 6_Proof_Two_Point_Inequality/6_5_Case_QJQ | G_QJQ_y_half_nonneg
-in progress | 2026-11-12 15:43:11 ET | [DIRX] 2_Preliminaries/Definitions | JXw_half_one
-in progress | 2026-11-12 15:43:11 ET | [DIRX] 2_Preliminaries/2_2_Properties_J | JX_contDiff
+complete | 2026-11-12 16:03:50 ET | [DIR] 2_Envelope_Functions/Definitions | Q_spec
+complete | 2026-11-12 16:03:50 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | I_characterization
+complete | 2026-11-12 16:03:50 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | Jw_spec
+complete | 2026-11-12 16:03:50 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | existsUnique_w₀
+complete | 2026-11-12 16:03:50 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | w₀_mem
+complete | 2026-11-12 16:03:50 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | existsUnique_J
+complete | 2026-11-12 16:03:50 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | J_half_eq_L_half
+complete | 2026-11-12 16:03:50 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | eqn_3_4
+complete | 2026-11-12 16:03:50 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | lemma_3_2_deriv2
+complete | 2026-11-12 16:03:50 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | lemma_3_2_sq_deriv
+complete | 2026-11-12 16:03:50 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | lemma_3_2_sq_deriv2
+complete | 2026-11-12 16:03:50 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | lemma_3_2
+complete | 2026-11-12 16:03:50 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | convex_sub_ge
+complete | 2026-11-12 16:03:50 ET | [DIR] 3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality | rem_3_6
+complete | 2026-11-12 16:03:50 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | eqn_5_2
+complete | 2026-11-12 16:03:50 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | eqn_5_3
+complete | 2026-11-12 16:03:50 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | eqn_5_4
+complete | 2026-11-12 16:03:50 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | rem_5_7
+complete | 2026-11-12 16:03:50 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_6_2_coeffs
+complete | 2026-11-12 16:03:50 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_6_2_concave
+complete | 2026-11-12 16:03:50 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_6_2_decreasing
+complete | 2026-11-12 16:03:50 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_6_2_values
+complete | 2026-11-12 16:03:50 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_6_2_log_deriv
+complete | 2026-11-12 16:03:50 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_6_3_steps
+complete | 2026-11-12 16:03:50 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_6_4_formula
+complete | 2026-11-12 16:03:50 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_6_4_dbeta
+complete | 2026-11-12 16:03:50 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_6_4_at_half
+complete | 2026-11-12 16:03:50 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_6_4_quadratic
+complete | 2026-11-12 16:03:50 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_6_4_deriv
+complete | 2026-11-12 16:03:50 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_6
+complete | 2026-11-12 16:03:50 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | eqn_5_5
+complete | 2026-11-12 16:03:50 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | α₁_pos_iff
+complete | 2026-11-12 16:03:50 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | eqn_5_6
+complete | 2026-11-12 16:03:50 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | eqn_5_7
+complete | 2026-11-12 16:03:50 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | eqn_5_8
+complete | 2026-11-12 16:03:50 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | eqn_5_9
+complete | 2026-11-12 16:03:50 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_8_2_rewrite
+complete | 2026-11-12 16:03:50 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_8_2_dbeta
+complete | 2026-11-12 16:03:50 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_8_3_dbeta
+complete | 2026-11-12 16:03:50 ET | [DIR] 5_Auxiliary_Estimates/5_3_Properties_L_Q | lemma_5_8
+complete | 2026-11-12 16:03:50 ET | [DIR] 5_Auxiliary_Estimates/5_2_Two_Point_Inequalities | lemma_5_4_taylor
+complete | 2026-11-12 16:03:50 ET | [DIR] 5_Auxiliary_Estimates/5_2_Two_Point_Inequalities | lemma_5_4_expansion
+complete | 2026-11-12 16:03:50 ET | [DIR] 5_Auxiliary_Estimates/5_2_Two_Point_Inequalities | lemma_5_4
+complete | 2026-11-12 16:03:50 ET | [DIR] 6_Proof_Two_Point_Inequality/6_3_Case_LJQ | lemma_6_7_deriv2
+complete | 2026-11-12 16:03:50 ET | [DIR] 6_Proof_Two_Point_Inequality/6_3_Case_LJQ | eqn_6_14
+complete | 2026-11-12 16:03:50 ET | [DIR] 6_Proof_Two_Point_Inequality/6_3_Case_LJQ | lemma_6_7_mono
+complete | 2026-11-12 16:03:50 ET | [DIR] 6_Proof_Two_Point_Inequality/6_3_Case_LJQ | Q_deriv2_monotone_β
+complete | 2026-11-12 16:03:50 ET | [DIR] 6_Proof_Two_Point_Inequality/6_3_Case_LJQ | lemma_6_7_eval
+complete | 2026-11-12 16:03:50 ET | [DIR] 6_Proof_Two_Point_Inequality/6_3_Case_LJQ | lemma_6_7
+complete | 2026-11-12 16:03:50 ET | [DIR] 6_Proof_Two_Point_Inequality/6_5_Case_QJQ | G_QJQ_y_half_factor
+complete | 2026-11-12 16:03:50 ET | [DIR] 6_Proof_Two_Point_Inequality/6_5_Case_QJQ | p_QJQ_coeffs_pos
+complete | 2026-11-12 16:03:50 ET | [DIR] 6_Proof_Two_Point_Inequality/6_5_Case_QJQ | p_QJQ_monotoneOn
+complete | 2026-11-12 16:03:50 ET | [DIR] 6_Proof_Two_Point_Inequality/6_5_Case_QJQ | p_QJQ_quarter
+complete | 2026-11-12 16:03:50 ET | [DIR] 6_Proof_Two_Point_Inequality/6_5_Case_QJQ | G_QJQ_y_half_nonneg
+complete | 2026-11-12 16:03:50 ET | [DIRX] 2_Preliminaries/Definitions | JXw_half_one
+complete | 2026-11-12 16:03:50 ET | [DIRX] 2_Preliminaries/2_2_Properties_J | JX_contDiff
 
 ## Task 2 — [DIR] two-point inequality, remaining cases
 

@@ -82,8 +82,11 @@ remainder gives $-\frac12\beta(1-\beta)(1+\tilde a)^{\beta-2}a^2$ for some $\til
 The paper's literal form is not what Taylor's theorem says, although it is a true consequence
 (take $\tilde a'=a(1+\tilde a)^{\beta/2-1}\in[0,a]$), and the bound
 $E_1\le\frac12\beta(1-\beta)B(x+h)^{1-2/\beta}h^{2/\beta}$ is unaffected since
-$(1+\tilde a)^{\beta-2}\le1$. The Lean statement uses the Lagrange form. -/
-theorem lemma_5_4_taylor (β : ℝ) (hβ : β ∈ Ioo (0 : ℝ) 1) (a : ℝ) (ha : 0 ≤ a) :
+$(1+\tilde a)^{\beta-2}\le1$. The Lean statement uses the Lagrange form.
+
+**Unused hypothesis.** The paper assumes $\beta\in(0,1)$; the expansion holds for every real
+$\beta$, and this assumption is omitted in the Lean statement. -/
+theorem lemma_5_4_taylor (β : ℝ) (a : ℝ) (ha : 0 ≤ a) :
     ∃ ã ∈ Icc 0 a, (1 + a) ^ β = 1 + β * a - 2⁻¹ * β * (1 - β) * (1 + ã) ^ (β - 2) * a ^ 2 :=
   one_add_rpow_taylor β a ha
 
@@ -109,7 +112,7 @@ theorem lemma_5_4_expansion (β : ℝ) (hβ : β ∈ Ioo (0 : ℝ) 1) (Bxh h : �
   obtain ⟨hβ0, hβ1⟩ := hβ
   set A : ℝ := (h * Bxh⁻¹) ^ β⁻¹ with hA
   have hA0 : 0 ≤ A := rpow_nonneg (mul_nonneg hh (inv_nonneg.2 hB.le)) _
-  obtain ⟨ã, hã, hT⟩ := lemma_5_4_taylor β ⟨hβ0, hβ1⟩ A hA0
+  obtain ⟨ã, hã, hT⟩ := lemma_5_4_taylor β A hA0
   have hBi : 0 < Bxh ^ β⁻¹ := rpow_pos_of_pos hB _
   have hAe : A = h ^ β⁻¹ / Bxh ^ β⁻¹ := by
     rw [hA, mul_rpow hh (inv_nonneg.2 hB.le), inv_rpow hB.le, div_eq_mul_inv]
@@ -144,9 +147,12 @@ $$0\le E_1\le\tfrac12\beta(1-\beta)B(x+h)^{1-\frac2\beta}h^{\frac2\beta}=O(h^{\f
 the negative powers $B(x+h)^{1-\frac1\beta}$, $B(x+h)^{1-\frac2\beta}$ (and the proof divides by
 $B(x+h)$), so $B(x+h)>0$ is implicitly required; for $B(x+h)=0<h$ the identity is meaningless
 (with Lean's convention $0^{r}=0$ for $r\ne0$ the bound forces $E_1=0$ and the identity
-would force $h=0$). The Lean statement adds the hypothesis $B(x+h)>0$. -/
-theorem lemma_5_4 (𝓘 : Set ℝ) (h𝓘 : 𝓘.OrdConnected) (B : ℝ → ℝ) (hB : ∀ t ∈ 𝓘, 0 ≤ B t)
-    (β : ℝ) (hβ : β ∈ Ioo (0 : ℝ) 1) (x h : ℝ) (hh : 0 ≤ h) (hx : x ∈ 𝓘) (hxh : x + h ∈ 𝓘)
+would force $h=0$). The Lean statement adds the hypothesis $B(x+h)>0$.
+
+**Unused hypothesis.** The paper assumes that $B$ is non-negative on an interval $\mathcal{I}$
+containing $x,x+h$; given $B(x+h)>0$ this is not needed for the claim, so $\mathcal{I}$ and
+these assumptions are omitted in the Lean statement. -/
+theorem lemma_5_4 (B : ℝ → ℝ) (β : ℝ) (hβ : β ∈ Ioo (0 : ℝ) 1) (x h : ℝ) (hh : 0 ≤ h)
     (hBpos : 0 < B (x + h)) :
     ∃ E₁ : ℝ, G₁ β B x (x + h) =
         β * B (x + h) ^ (1 - β⁻¹) * h ^ β⁻¹ + (B x + B (x + h) - 2 * B (x + 2⁻¹ * h)) - E₁ ∧

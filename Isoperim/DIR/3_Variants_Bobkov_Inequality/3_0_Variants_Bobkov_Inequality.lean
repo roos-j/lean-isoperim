@@ -216,7 +216,11 @@ variable (I : ℝ → ℝ) (a b : ℝ) (hI : ContDiffOn ℝ 2 I (Ioo a b))
   (hI0 : ∀ x ∈ Ioo a b, 0 ≤ I x) (hII : ∀ x ∈ Ioo a b, I x * deriv (deriv I) x = -1)
 
 include hI hI0 hII
-/-- [DIR], proof of Lemma 3.2: the first claim follows from $I''=-1/I\le0$. -/
+omit hI in
+/-- [DIR], proof of Lemma 3.2: the first claim follows from $I''=-1/I\le0$.
+
+**Unused hypothesis.** The regularity assumption of Lemma 3.2 ($I$ of class $C^2$ on $(a,b)$) is
+not needed for this step and is omitted in the Lean statement. -/
 theorem lemma_3_2_deriv2 (x : ℝ) (hx : x ∈ Ioo a b) :
     deriv (deriv I) x = -(I x)⁻¹ ∧ -(I x)⁻¹ ≤ 0 := by
   have h := hII x hx
@@ -230,7 +234,7 @@ theorem lemma_3_2_sq_deriv (x : ℝ) (hx : x ∈ Ioo a b) :
     deriv (fun t ↦ deriv I t ^ 2) x = 2 * deriv I x * deriv (deriv I) x ∧
       2 * deriv I x * deriv (deriv I) x = -2 * deriv I x / I x := by
   obtain ⟨-, hd2⟩ := contDiffOn_two_differentiableAt isOpen_Ioo hI hx
-  have e := (lemma_3_2_deriv2 I a b hI hI0 hII x hx).1
+  have e := (lemma_3_2_deriv2 I a b hI0 hII x hx).1
   have hne : I x ≠ 0 := fun h0 ↦ by have := hII x hx; rw [h0, zero_mul] at this; norm_num at this
   refine ⟨?_, ?_⟩
   · rw [(hd2.hasDerivAt.fun_pow 2).deriv]; ring
@@ -251,7 +255,7 @@ theorem lemma_3_2_sq_deriv2 (x : ℝ) (hx : x ∈ Ioo a b) :
   obtain ⟨hd1, hd2⟩ := contDiffOn_two_differentiableAt isOpen_Ioo hI hx
   have hne : I x ≠ 0 := fun h0 ↦ by have := hII x hx; rw [h0, zero_mul] at this; norm_num at this
   have hD := (hd2.hasDerivAt.const_mul (-2)).fun_div hd1.hasDerivAt hne
-  have e := (lemma_3_2_deriv2 I a b hI hI0 hII x hx).1
+  have e := (lemma_3_2_deriv2 I a b hI0 hII x hx).1
   rw [hev.deriv_eq, hD.deriv]
   refine ⟨by field_simp; ring, by rw [e]; field_simp, by positivity⟩
 
@@ -276,7 +280,7 @@ theorem lemma_3_2 (I : ℝ → ℝ) (a b : ℝ) (hI : ContDiffOn ℝ 2 I (Ioo a 
   · rw [interior_Ioo]
     intro x hx
     simp only [Function.iterate_succ, Function.iterate_zero, Function.comp_apply, id]
-    exact (lemma_3_2_deriv2 I a b hI hI0 hII x hx).1 ▸ (lemma_3_2_deriv2 I a b hI hI0 hII x hx).2
+    exact (lemma_3_2_deriv2 I a b hI0 hII x hx).1 ▸ (lemma_3_2_deriv2 I a b hI0 hII x hx).2
   · rw [interior_Ioo]; exact fun x hx ↦ (hsq x hx).differentiableWithinAt
   · rw [interior_Ioo]
     intro x hx
@@ -347,8 +351,11 @@ theorem prop_3_3_Gc_deriv2_ge (c u : ℝ) (hu : 0 ≤ u) (hcu : c + u ∈ Ioo a 
 omit hIc hI hI0 hII hI' in
 /-- [DIR], proof of Proposition 3.3: recall that if $f$ is convex, then for all $x\le y$,
 $f(y)-f(x)\ge(y-x)f'(x)$ (for $f$ convex on an open interval containing $x,y$ and differentiable
-at $x$). -/
-theorem convex_sub_ge (f : ℝ → ℝ) (s : Set ℝ) (hs : IsOpen s) (hf : ConvexOn ℝ s f)
+at $x$).
+
+**Unused hypothesis.** The setting of the proof has $s$ an open interval; openness of $s$ is not
+needed for the claim and is omitted in the Lean statement. -/
+theorem convex_sub_ge (f : ℝ → ℝ) (s : Set ℝ) (hf : ConvexOn ℝ s f)
     (x y : ℝ) (hx : x ∈ s) (hy : y ∈ s) (hxy : x ≤ y) (hfx : DifferentiableAt ℝ f x) :
     f y - f x ≥ (y - x) * deriv f x := by
   rcases hxy.lt_or_eq with h | h
@@ -399,8 +406,11 @@ theorem prop_3_3 (I : ℝ → ℝ) (a b : ℝ) (hIc : ContinuousOn I (Icc a b))
 because $J_w'$ changes sign at $1-\frac w2$, so the necessary condition $I'\le0$ in Proposition
 3.3 is not satisfied. (Formalized: $J_w'(1-\frac w2)=0$, $J_w'>0$ on $(1-w,1-\frac w2)$, $J_w'<0$
 on $(1-\frac w2,1)$, and for every $x\in[1-w,1-\frac w2)$ the inequality of Corollary 3.5 fails
-for some $y\in(x,1]$.) -/
-theorem rem_3_6 (w : ℝ) (hw : 0 < w) (hw1 : w ≤ 1) :
+for some $y\in(x,1]$.)
+
+**Unused hypothesis.** The remark refers to $0<w\le1$ (as in Corollary 3.5); the bound $w\le1$
+is not needed for the claim and is omitted in the Lean statement. -/
+theorem rem_3_6 (w : ℝ) (hw : 0 < w) :
     deriv (Jw w) (1 - w / 2) = 0 ∧ (∀ x ∈ Ioo (1 - w) (1 - w / 2), deriv (Jw w) x > 0) ∧
     (∀ x ∈ Ioo (1 - w / 2) 1, deriv (Jw w) x < 0) ∧
     ∀ x ∈ Ico (1 - w) (1 - w / 2), ∃ y ∈ Ioc x 1,

@@ -27,7 +27,8 @@ Give the agent of Task *k* the following prompt (replace *k*):
 > the paper's argument (the docstrings give the claim and its location). Rules:
 > 1. Work only on the declarations of Task *k*; never change any statement, definition or
 >    another task's declaration. If a statement looks wrong or unprovable, stop working on it and
->    report it (with a precise reason) instead of changing it.
+>    report it (with a precise reason) instead of changing it. Only exception: remove hypotheses
+>    your proof does not use and note this in the docstring (`AGENTS.md`, rule 7).
 > 2. Start a proof only when all its dependencies in `automation/proof_dependencies.txt` are
 >    completely proved (no transitive `sorry`); otherwise work on another ready declaration.
 >    Work in the module order of `Isoperim.lean` and the declaration order within each file.
