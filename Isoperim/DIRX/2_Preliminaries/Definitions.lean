@@ -26,9 +26,9 @@ The Lean names of the [DIRX] objects carry an `X` suffix to avoid clashes with t
 declared in every [DIRX] file using them:
 
 * `G₁ B x y`, `G₂ B x y`, `G B x y` : $G_1[B](x,y)$, $G_2[B](x,y)$, $G[B](x,y)$ of (2.1)
-  (the [DIR] functions `Auto.DIR.G₁ (1 / 2)`, `Auto.DIR.G₂ (1 / 2)`, `Auto.DIR.G (1 / 2)`);
+  (the [DIR] functions `Auto.DIR.G₁ 2⁻¹`, `Auto.DIR.G₂ 2⁻¹`, `Auto.DIR.G 2⁻¹`);
 * `L x`, `Q x` : $L(x)=x\sqrt{\log_2(1/x)}$ and the cubic $Q(x)$ (the [DIR] functions `Auto.DIR.L
-(1 / 2)`, `Auto.DIR.Q (1 / 2)`);
+2⁻¹`, `Auto.DIR.Q 2⁻¹`);
 * `JXw w x` : $\mathrm{J}_w(x)$ (Lean name `JXw`);
 * `BX w x` : $B_w(x)$ of (2.2) (Lean name `BX`);
 * `w₁` : $w_1=\frac{29}{32}$ of (2.3);
@@ -56,24 +56,24 @@ open Real Set
 
 open scoped ContDiff
 
-local notation "G₁" => Auto.DIR.G₁ (1 / 2)
+local notation "G₁" => Auto.DIR.G₁ 2⁻¹
 
-local notation "G₂" => Auto.DIR.G₂ (1 / 2)
+local notation "G₂" => Auto.DIR.G₂ 2⁻¹
 
-local notation "G" => Auto.DIR.G (1 / 2)
+local notation "G" => Auto.DIR.G 2⁻¹
 
-local notation "L" => Auto.DIR.L (1 / 2)
+local notation "L" => Auto.DIR.L 2⁻¹
 
-local notation "Q" => Auto.DIR.Q (1 / 2)
+local notation "Q" => Auto.DIR.Q 2⁻¹
 
 /-- $\mathrm{J}_w(x)=\frac12I(\frac1{2w})^{-1}I(\frac{1-x}w)$ for a parameter $w\in(\frac12,1]$
 ([DIRX], §2.1). It is meaningful for $x\in[1-w,1]$ (outside this range `I` takes the junk value
 $0$). Written `JXw w x`. -/
-noncomputable def JXw (w x : ℝ) : ℝ := 1 / 2 * (I ((2 * w)⁻¹))⁻¹ * I ((1 - x) / w)
+noncomputable def JXw (w x : ℝ) : ℝ := 2⁻¹ * (I ((2 * w)⁻¹))⁻¹ * I ((1 - x) / w)
 
 /-- [DIRX], §2.1: $\mathrm{J}_w(\frac12)=\frac12$ and $\mathrm{J}_w(1)=0$ for $w\in(\frac12,1]$. -/
-theorem JXw_half_one (w : ℝ) (hw : w ∈ Ioc (1 / 2 : ℝ) 1) :
-    JXw w (1 / 2) = 1 / 2 ∧ JXw w 1 = 0 := by
+theorem JXw_half_one (w : ℝ) (hw : w ∈ Ioc (2⁻¹ : ℝ) 1) :
+    JXw w 2⁻¹ = 2⁻¹ ∧ JXw w 1 = 0 := by
   sorry
 
 /-- **(2.2)** ([DIRX], §2.1). The Bellman function
@@ -81,7 +81,7 @@ $$B_w(x)=\begin{cases}L(x)&x\in[0,\frac14],\\ Q(x)&x\in[\frac14,\frac12],\\
 \mathrm{J}_w(x)&x\in[\frac12,1].\end{cases}$$
 Only the values on $[0,1]$ are meaningful. Written `BX w x`. -/
 noncomputable def BX (w x : ℝ) : ℝ :=
-  if x ≤ 1 / 4 then L x else if x ≤ 1 / 2 then Q x else JXw w x
+  if x ≤ 4⁻¹ then L x else if x ≤ 2⁻¹ then Q x else JXw w x
 
 /-- **(2.3)** ([DIRX], §2.1). The parameter $w=w_1=\frac{29}{32}$. -/
 noncomputable def w₁ : ℝ := 29 / 32
@@ -105,7 +105,7 @@ noncomputable def x₁ : ℝ := 1 - w₁ / 2
 $\varepsilon=\frac12\frac{\log\log(w_1/x)}{\log(w_1/x)}+\frac{\log(2\sqrt\pi)}{\log(w_1/x)}$
 ([DIRX], proof of (2.6)). Written `ε x`. -/
 noncomputable def εX (x : ℝ) : ℝ :=
-  1 / 2 * log (log (w₁ / x)) / log (w₁ / x) + log (2 * √π) / log (w₁ / x)
+  2⁻¹ * log (log (w₁ / x)) / log (w₁ / x) + log (2 * √π) / log (w₁ / x)
 
 local notation "ε" => εX
 

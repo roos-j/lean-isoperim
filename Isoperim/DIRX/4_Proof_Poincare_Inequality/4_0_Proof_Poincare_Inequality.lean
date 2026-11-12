@@ -40,9 +40,9 @@ open Auto.DIR
 
 open Real Set
 
-local notation "L" => Auto.DIR.L (1 / 2)
+local notation "L" => Auto.DIR.L 2⁻¹
 
-local notation "Q" => Auto.DIR.Q (1 / 2)
+local notation "Q" => Auto.DIR.Q 2⁻¹
 
 local notation "J" => JX
 
@@ -52,18 +52,18 @@ section Proof_Theorem_1_3
 /-- [DIRX], §4: every Boolean-valued function $f$ can be written as $f=\mathbf{1}_A$ for some
 $A\subset\{0,1\}^n$. -/
 theorem bool_eq_indicator (n : ℕ) (f : ({0,1}^n) → ℝ) (hf : ∀ x, f x = 0 ∨ f x = 1) :
-    ∃ A : Set ({0,1}^n), f = ind A := by
+    ∃ A : Set ({0,1}^n), f = 𝟏 A := by
   sorry
 
 /-- [DIRX], §4: for $f=\mathbf{1}_A$, $\|f-\mathbf{E}f\|_1=2|A|(1-|A|)$ and
 $\|\nabla f\|_1=\frac12(\mathbf{E}\sqrt{h_A}+\mathbf{E}\sqrt{h_{A^c}})$. -/
 theorem norms_indicator (n : ℕ) (A : Set ({0,1}^n)) :
-    pNorm 1 (ind A - fun _ ↦ 𝐄 ind A) = 2 * ｜A｜ * (1 - ｜A｜) ∧
-      pNorm 1 (∇(ind A)) = 1 / 2 * (𝐄 (fun x ↦ √(h A x)) + 𝐄 (fun x ↦ √(h Aᶜ x))) := by
+    pNorm 1 (𝟏 A - fun _ ↦ 𝐄 𝟏 A) = 2 * ｜A｜ * (1 - ｜A｜) ∧
+      pNorm 1 (∇(𝟏 A)) = 2⁻¹ * (𝐄 (fun x ↦ √(h A x)) + 𝐄 (fun x ↦ √(h Aᶜ x))) := by
   sorry
 
 /-- $G_P(x)=\frac12(B_{w_1}(x)+B_{w_1}(1-x))-2x(1-x)$ ([DIRX], (4.1)). Written `G_PX x`. -/
-noncomputable def G_PX (x : ℝ) : ℝ := 1 / 2 * (BX w₁ x + BX w₁ (1 - x)) - 2 * x * (1 - x)
+noncomputable def G_PX (x : ℝ) : ℝ := 2⁻¹ * (BX w₁ x + BX w₁ (1 - x)) - 2 * x * (1 - x)
 
 /-- [DIRX], §4: by (2.5), (4.1) suffices to prove Theorem 1.3 (the inequality (1.3)). -/
 theorem thm_1_3_of_eqn_4_1 (h : ∀ x ∈ Icc (0 : ℝ) 1, G_PX x ≥ 0) (n : ℕ) (hn : 1 ≤ n)
@@ -80,30 +80,30 @@ section Case_I
 
 /-- [DIRX], §4, Case I: for $x\in[0,\frac1{64}]$,
 $G_P(x)=\frac12(L(x)+\mathrm{J}(1-x))-2x(1-x)$. -/
-theorem G_PX_eq_I (x : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 64)) :
-    G_PX x = 1 / 2 * (L x + J (1 - x)) - 2 * x * (1 - x) := by
+theorem G_PX_eq_I (x : ℝ) (hx : x ∈ Icc (0 : ℝ) 64⁻¹) :
+    G_PX x = 2⁻¹ * (L x + J (1 - x)) - 2 * x * (1 - x) := by
   sorry
 
 /-- $g_{P,1}(x)=\frac12\sqrt{\log_2(1/x)}+\frac12\sqrt{\log(w_1/x)}-2$ ([DIRX], §4, Case I).
 Written `g_P₁X x`. -/
-noncomputable def g_P₁X (x : ℝ) : ℝ := 1 / 2 * √(log₂ x⁻¹) + 1 / 2 * √(log (w₁ / x)) - 2
+noncomputable def g_P₁X (x : ℝ) : ℝ := 2⁻¹ * √(log₂ x⁻¹) + 2⁻¹ * √(log (w₁ / x)) - 2
 
 /-- [DIRX], §4, Case I: by (2.6), for $x\in(0,\frac1{64}]$,
 $\frac12(L(x)+\mathrm{J}(1-x))-2x(1-x)\ge x(\frac12\sqrt{\log_2(1/x)}+\frac12\sqrt{\log(w_1/x)}-2)
 =x\cdot g_{P,1}(x)$. -/
-theorem G_PX_I_lower (x : ℝ) (hx : x ∈ Ioc (0 : ℝ) (1 / 64)) :
-    1 / 2 * (L x + J (1 - x)) - 2 * x * (1 - x) ≥
-      x * (1 / 2 * √(log₂ x⁻¹) + 1 / 2 * √(log (w₁ / x)) - 2) ∧
-    x * (1 / 2 * √(log₂ x⁻¹) + 1 / 2 * √(log (w₁ / x)) - 2) = x * g_P₁X x := by
+theorem G_PX_I_lower (x : ℝ) (hx : x ∈ Ioc (0 : ℝ) 64⁻¹) :
+    2⁻¹ * (L x + J (1 - x)) - 2 * x * (1 - x) ≥
+      x * (2⁻¹ * √(log₂ x⁻¹) + 2⁻¹ * √(log (w₁ / x)) - 2) ∧
+    x * (2⁻¹ * √(log₂ x⁻¹) + 2⁻¹ * √(log (w₁ / x)) - 2) = x * g_P₁X x := by
   sorry
 
 /-- [DIRX], §4, Case I: $g_{P,1}$ is a decreasing function (on $(0,\frac1{64}]$) and
 $g_{P,1}(\frac1{64})>0.2$. -/
-theorem g_P₁X_antitone_eval : AntitoneOn g_P₁X (Ioc 0 (1 / 64)) ∧ g_P₁X (1 / 64) > 0.2 := by
+theorem g_P₁X_antitone_eval : AntitoneOn g_P₁X (Ioc 0 64⁻¹) ∧ g_P₁X 64⁻¹ > 0.2 := by
   sorry
 
 /-- [DIRX], §4, Case I: $G_P(x)\ge0.2\,x$ for all $x\in[0,\frac1{64}]$. -/
-theorem G_PX_I (x : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 64)) : G_PX x ≥ 0.2 * x := by
+theorem G_PX_I (x : ℝ) (hx : x ∈ Icc (0 : ℝ) 64⁻¹) : G_PX x ≥ 0.2 * x := by
   sorry
 
 end Case_I
@@ -113,14 +113,14 @@ section Case_II
 
 /-- **(4.2)** ([DIRX], §4, Case II) (🚗). Dyadic partitioning shows that $G_P(x)>10^{-4}$ for all
 $x\in[\frac1{64},\frac14]$. -/
-theorem eqn_4_2 (x : ℝ) (hx : x ∈ Icc (1 / 64 : ℝ) (1 / 4)) : G_PX x > (10 : ℝ) ^ (-4 : ℤ) := by
+theorem eqn_4_2 (x : ℝ) (hx : x ∈ Icc (64⁻¹ : ℝ) 4⁻¹) : G_PX x > (10 : ℝ) ^ (-4 : ℤ) := by
   sorry
 
 end Case_II
 
 section Case_III
 /-- [DIRX], §4, Case III: the left-hand side vanishes at $x=\frac12$. -/
-theorem G_PX_half : 1 / 2 * (Q (1 / 2) + J (1 - 1 / 2)) - 2 * (1 / 2) * (1 - 1 / 2) = 0 := by
+theorem G_PX_half : 2⁻¹ * (Q 2⁻¹ + J (1 - 2⁻¹)) - 2 * 2⁻¹ * (1 - 2⁻¹) = 0 := by
   sorry
 
 /-- $h_{P,2}(x)=-\partial_xG_P(x)$ ([DIRX], §4, Case III), where $G_P$ is given on
@@ -128,26 +128,26 @@ $[\frac14,\frac12]$ by the formula $\frac12(Q(x)+\mathrm{J}(1-x))-2x(1-x)$ (we d
 formula, since $G_P$ itself need not be differentiable at the endpoints $\frac14$, $\frac12$,
 where the pieces of $B_{w_1}$ are glued). -/
 noncomputable def h_P₂ (x : ℝ) : ℝ :=
-  -deriv (fun t ↦ 1 / 2 * (Q t + J (1 - t)) - 2 * t * (1 - t)) x
+  -deriv (fun t ↦ 2⁻¹ * (Q t + J (1 - t)) - 2 * t * (1 - t)) x
 
 /-- [DIRX], §4, Case III: it suffices to show $h_{P,2}(x)>0$ for all $x\in[\frac14,\frac12]$:
 then $x\mapsto\frac12(Q(x)+\mathrm{J}(1-x))-2x(1-x)$ is decreasing on $[\frac14,\frac12]$. -/
-theorem G_PX_III_anti (h : ∀ x ∈ Icc (1 / 4 : ℝ) (1 / 2), h_P₂ x > 0) :
-    AntitoneOn (fun x ↦ 1 / 2 * (Q x + J (1 - x)) - 2 * x * (1 - x)) (Icc (1 / 4) (1 / 2)) := by
+theorem G_PX_III_anti (h : ∀ x ∈ Icc (4⁻¹ : ℝ) 2⁻¹, h_P₂ x > 0) :
+    AntitoneOn (fun x ↦ 2⁻¹ * (Q x + J (1 - x)) - 2 * x * (1 - x)) (Icc 4⁻¹ 2⁻¹) := by
   sorry
 
 /-- **(4.3)** ([DIRX], §4, Case III) (🚗). By dyadic partitioning, $h_{P,2}(x)>10^{-4}$ for all
 $x\in[\frac14,\frac12]$, which finishes the proof of (4.1). -/
-theorem eqn_4_3 (x : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2)) : h_P₂ x > (10 : ℝ) ^ (-4 : ℤ) := by
+theorem eqn_4_3 (x : ℝ) (hx : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹) : h_P₂ x > (10 : ℝ) ^ (-4 : ℤ) := by
   sorry
 
 /-! ### Case III: $x\in[\frac14,\frac12]$ -/
 
 /-- [DIRX], §4, Case III: for $x\in[\frac14,\frac12]$,
 $G_P(x)=\frac12(Q(x)+\mathrm{J}(1-x))-2x(1-x)\ge0$. -/
-theorem G_PX_III (x : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
-    G_PX x = 1 / 2 * (Q x + J (1 - x)) - 2 * x * (1 - x) ∧
-      1 / 2 * (Q x + J (1 - x)) - 2 * x * (1 - x) ≥ 0 := by
+theorem G_PX_III (x : ℝ) (hx : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
+    G_PX x = 2⁻¹ * (Q x + J (1 - x)) - 2 * x * (1 - x) ∧
+      2⁻¹ * (Q x + J (1 - x)) - 2 * x * (1 - x) ≥ 0 := by
   sorry
 
 end Case_III

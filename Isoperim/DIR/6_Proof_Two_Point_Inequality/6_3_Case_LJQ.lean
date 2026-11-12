@@ -50,8 +50,8 @@ bound `Auto.DIR.g_LJQ_1_lo_tight` is valid for both). The Lean statement claims 
 values as the paper does; numerically
 $\min G_\beta[b_\beta]\approx2.0\cdot10^{-3}$ ($\beta=\beta_0$) and $\approx1.9\cdot10^{-3}$
 ($\beta=\frac12$) on a $31\times31$ grid of the rectangle. -/
-theorem eqn_6_13 (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (x y : ℝ)
-    (hx : x ∈ Icc (1 / 16 : ℝ) (1 / 4)) (hy : y ∈ Icc (1 / 2 : ℝ) (3 / 4)) :
+theorem eqn_6_13 (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) (x y : ℝ)
+    (hx : x ∈ Icc (16⁻¹ : ℝ) 4⁻¹) (hy : y ∈ Icc (2⁻¹ : ℝ) (3 / 4)) :
     G β (b β) x y > 10 ^ (-7 : ℤ) := by
   sorry
 
@@ -68,63 +68,63 @@ noncomputable def G_LJQ (β x y : ℝ) : ℝ :=
 section Proof_Lemma_6_7
 /-- [DIR], proof of Lemma 6.7: for $x\in(0,\frac14]$,
 $\partial_x^2G_{LJQ,\beta}(x,y)=L_\beta''(x)-\frac12Q_\beta''(\frac{x+y}2)$. -/
-theorem lemma_6_7_deriv2 (β x y : ℝ) (hx : x ∈ Ioc (0 : ℝ) (1 / 4)) :
+theorem lemma_6_7_deriv2 (β x y : ℝ) (hx : x ∈ Ioc (0 : ℝ) 4⁻¹) :
     deriv (deriv (fun x ↦ G_LJQ β x y)) x =
-      deriv (deriv (L β)) x - 1 / 2 * deriv (deriv (Q β)) ((x + y) / 2) := by
+      deriv (deriv (L β)) x - 2⁻¹ * deriv (deriv (Q β)) ((x + y) / 2) := by
   sorry
 
 /-- **(6.14)** ([DIR], proof of Lemma 6.7). By Lemma 5.8 ((5.7)),
 $L_\beta''(x)-\frac12Q_\beta''(\frac{x+y}2)=L_\beta''(x)+2\alpha_0+4\alpha_1(x+y)$. -/
 theorem eqn_6_14 (β x y : ℝ) :
-    deriv (deriv (L β)) x - 1 / 2 * deriv (deriv (Q β)) ((x + y) / 2) =
+    deriv (deriv (L β)) x - 2⁻¹ * deriv (deriv (Q β)) ((x + y) / 2) =
       deriv (deriv (L β)) x + 2 * α₀ β + 4 * α₁ β * (x + y) := by
   sorry
 
 /-- [DIR], proof of Lemma 6.7: for $\beta\in[\frac12,\log_2\frac32)$, since
 $x\le\frac14<e^{-\sqrt3/2}$, the quantity (6.14) is increasing in $x\in(0,\frac14]$ and in
 $y\in[0,1]$ (by Lemma 5.6). -/
-theorem lemma_6_7_mono (β : ℝ) (hβ : β ∈ Ico (1 / 2 : ℝ) (log₂ (3 / 2))) :
-    (1 / 4 : ℝ) < exp (-√3 / 2) ∧
+theorem lemma_6_7_mono (β : ℝ) (hβ : β ∈ Ico (2⁻¹ : ℝ) (log₂ (3 / 2))) :
+    (4⁻¹ : ℝ) < exp (-√3 / 2) ∧
       (∀ y ∈ Icc (0 : ℝ) 1, MonotoneOn
-        (fun x ↦ deriv (deriv (L β)) x + 2 * α₀ β + 4 * α₁ β * (x + y)) (Ioc 0 (1 / 4))) ∧
-      ∀ x ∈ Ioc (0 : ℝ) (1 / 4), MonotoneOn
+        (fun x ↦ deriv (deriv (L β)) x + 2 * α₀ β + 4 * α₁ β * (x + y)) (Ioc 0 4⁻¹)) ∧
+      ∀ x ∈ Ioc (0 : ℝ) 4⁻¹, MonotoneOn
         (fun y ↦ deriv (deriv (L β)) x + 2 * α₀ β + 4 * α₁ β * (x + y)) (Icc 0 1) := by
   sorry
 
 /-- [DIR], proof of Lemma 6.7: for $x\in[\frac12,1]$, the function $\beta\mapsto Q_\beta''(x)$
 is increasing. -/
-theorem Q_deriv2_monotone_β (x : ℝ) (hx : x ∈ Icc (1 / 2 : ℝ) 1) :
+theorem Q_deriv2_monotone_β (x : ℝ) (hx : x ∈ Icc (2⁻¹ : ℝ) 1) :
     Monotone (fun β ↦ deriv (deriv (Q β)) x) := by
   sorry
 
 /-- [DIR], proof of Lemma 6.7: for $\beta\in[\frac12,1]$,
 $$\partial_x^2G_{LJQ,\beta}(\tfrac14,1)=L_\beta''(\tfrac14)-\tfrac12Q_\beta''(\tfrac58)
 \le L_{\frac12}''(\tfrac14)-\tfrac12Q_{\frac12}''(\tfrac58)<-0.6.$$ -/
-theorem lemma_6_7_eval (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1) :
-    deriv (deriv (fun x ↦ G_LJQ β x 1)) (1 / 4) =
-        deriv (deriv (L β)) (1 / 4) - 1 / 2 * deriv (deriv (Q β)) (5 / 8) ∧
-      deriv (deriv (L β)) (1 / 4) - 1 / 2 * deriv (deriv (Q β)) (5 / 8) ≤
-        deriv (deriv (L (1 / 2))) (1 / 4) - 1 / 2 * deriv (deriv (Q (1 / 2))) (5 / 8) ∧
-      deriv (deriv (L (1 / 2))) (1 / 4) - 1 / 2 * deriv (deriv (Q (1 / 2))) (5 / 8) < -0.6 := by
+theorem lemma_6_7_eval (β : ℝ) (hβ : β ∈ Icc (2⁻¹ : ℝ) 1) :
+    deriv (deriv (fun x ↦ G_LJQ β x 1)) 4⁻¹ =
+        deriv (deriv (L β)) 4⁻¹ - 2⁻¹ * deriv (deriv (Q β)) (5 / 8) ∧
+      deriv (deriv (L β)) 4⁻¹ - 2⁻¹ * deriv (deriv (Q β)) (5 / 8) ≤
+        deriv (deriv (L 2⁻¹)) 4⁻¹ - 2⁻¹ * deriv (deriv (Q 2⁻¹)) (5 / 8) ∧
+      deriv (deriv (L 2⁻¹)) 4⁻¹ - 2⁻¹ * deriv (deriv (Q 2⁻¹)) (5 / 8) < -0.6 := by
   sorry
 
 end Proof_Lemma_6_7
 
 /-- **Lemma 6.7** ([DIR]). For every $\beta\in[\frac12,1]$ and $y\in[0,1]$ the function
 $x\mapsto G_{LJQ,\beta}(x,y)$ is strictly concave on $[0,\frac14]$. -/
-theorem lemma_6_7 (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1) (y : ℝ) (hy : y ∈ Icc (0 : ℝ) 1) :
-    StrictConcaveOn ℝ (Icc 0 (1 / 4)) (fun x ↦ G_LJQ β x y) := by
+theorem lemma_6_7 (β : ℝ) (hβ : β ∈ Icc (2⁻¹ : ℝ) 1) (y : ℝ) (hy : y ∈ Icc (0 : ℝ) 1) :
+    StrictConcaveOn ℝ (Icc 0 4⁻¹) (fun x ↦ G_LJQ β x y) := by
   sorry
 
 section Proof_Proposition_6_6
 /-- [DIR], §6.3.2: Lemma 6.7 reduces Proposition 6.6 to checking the claim on the $x$-boundary of
 the region II, i.e. to claims (1)–(3) (for fixed $\beta\in[\frac12,1]$). -/
-theorem prop_6_6_reduction (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1)
-    (h₁ : ∀ y ∈ Icc (1 / 2 : ℝ) 1, G_LJQ β 0 y ≥ 0)
-    (h₂ : ∀ y ∈ Icc (1 / 2 : ℝ) (3 / 4), G_LJQ β (1 / 16) y ≥ 0)
+theorem prop_6_6_reduction (β : ℝ) (hβ : β ∈ Icc (2⁻¹ : ℝ) 1)
+    (h₁ : ∀ y ∈ Icc (2⁻¹ : ℝ) 1, G_LJQ β 0 y ≥ 0)
+    (h₂ : ∀ y ∈ Icc (2⁻¹ : ℝ) (3 / 4), G_LJQ β 16⁻¹ y ≥ 0)
     (h₃ : ∀ y ∈ Icc (3 / 4 : ℝ) 1, G_LJQ β (1 - y) y ≥ 0) (x y : ℝ)
-    (hx : x ∈ Icc (0 : ℝ) (1 / 4)) (hy : y ∈ Icc (1 / 2 : ℝ) 1) (hxy : x + y ≤ 1)
-    (h : x ≤ 1 / 16 ∨ y ≥ 3 / 4) : G_LJQ β x y ≥ 0 := by
+    (hx : x ∈ Icc (0 : ℝ) 4⁻¹) (hy : y ∈ Icc (2⁻¹ : ℝ) 1) (hxy : x + y ≤ 1)
+    (h : x ≤ 16⁻¹ ∨ y ≥ 3 / 4) : G_LJQ β x y ≥ 0 := by
   sorry
 
 section Proof_Claim_1
@@ -151,29 +151,29 @@ theorem f_LJQ_1_monotone_or_antitone (y : ℝ) :
 
 /-- [DIR], §6.3.2, proof of (1): for all $\beta\in[\frac12,1]$,
 $f_\beta(y)\ge\min(f_{\frac12}(y),f_1(y))$. -/
-theorem f_LJQ_1_ge_min (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1) (y : ℝ) :
-    f_LJQ_1 β y ≥ min (f_LJQ_1 (1 / 2) y) (f_LJQ_1 1 y) := by
+theorem f_LJQ_1_ge_min (β : ℝ) (hβ : β ∈ Icc (2⁻¹ : ℝ) 1) (y : ℝ) :
+    f_LJQ_1 β y ≥ min (f_LJQ_1 2⁻¹ y) (f_LJQ_1 1 y) := by
   sorry
 
 /-- [DIR], §6.3.2, proof of (1), case $\beta=1$ ("very similar", details omitted in the paper):
 $f_1(y)\ge0$ for $y\in[\frac12,1]$. -/
-theorem f_LJQ_1_one_nonneg (y : ℝ) (hy : y ∈ Icc (1 / 2 : ℝ) 1) : f_LJQ_1 1 y ≥ 0 := by
+theorem f_LJQ_1_one_nonneg (y : ℝ) (hy : y ∈ Icc (2⁻¹ : ℝ) 1) : f_LJQ_1 1 y ≥ 0 := by
   sorry
 
 /-- [DIR], §6.3.2, proof of (1): using $JJ''=-2$, for $y\in(\frac12,1)$,
 $f_{\frac12}'(y)=1+(\sqrt2-1)J'(y)-Q_{\frac12}'(\frac y2)$ and
 $f_{\frac12}''(y)=-2(\sqrt2-1)J(y)^{-1}-\frac12Q_{\frac12}''(\frac y2)$. -/
-theorem derivs_f_LJQ_1_half (y : ℝ) (hy : y ∈ Ioo (1 / 2 : ℝ) 1) :
-    deriv (f_LJQ_1 (1 / 2)) y = 1 + (√2 - 1) * deriv J y - deriv (Q (1 / 2)) (y / 2) ∧
-      deriv (deriv (f_LJQ_1 (1 / 2))) y =
-        -2 * (√2 - 1) * J y ^ (-1 : ℤ) - 1 / 2 * deriv (deriv (Q (1 / 2))) (y / 2) := by
+theorem derivs_f_LJQ_1_half (y : ℝ) (hy : y ∈ Ioo (2⁻¹ : ℝ) 1) :
+    deriv (f_LJQ_1 2⁻¹) y = 1 + (√2 - 1) * deriv J y - deriv (Q 2⁻¹) (y / 2) ∧
+      deriv (deriv (f_LJQ_1 2⁻¹)) y =
+        -2 * (√2 - 1) * J y ^ (-1 : ℤ) - 2⁻¹ * deriv (deriv (Q 2⁻¹)) (y / 2) := by
   sorry
 
 /-- [DIR], §6.3.2, proof of (1): by (6.1), $f_{\frac12}^{(4)}<0$ on $(\frac12,1)$, so
 $f_{\frac12}''$ is strictly concave on $(\frac12,1)$. -/
 theorem f_LJQ_1_half_deriv4 :
-    (∀ y ∈ Ioo (1 / 2 : ℝ) 1, iteratedDeriv 4 (f_LJQ_1 (1 / 2)) y < 0) ∧
-      StrictConcaveOn ℝ (Ioo (1 / 2) 1) (deriv (deriv (f_LJQ_1 (1 / 2)))) := by
+    (∀ y ∈ Ioo (2⁻¹ : ℝ) 1, iteratedDeriv 4 (f_LJQ_1 2⁻¹) y < 0) ∧
+      StrictConcaveOn ℝ (Ioo 2⁻¹ 1) (deriv (deriv (f_LJQ_1 2⁻¹))) := by
   sorry
 
 /-- [DIR], §6.3.2, proof of (1): $f_{\frac12}''(\frac12)=0$ (as a one-sided limit,
@@ -182,40 +182,40 @@ $f_{\frac12}''(y)\to0$ as $y\to\frac12^+$).
 **Discrepancy with the paper.** The paper evaluates $f_{\frac12}''$ at the endpoint $y=\frac12$
 of $[\frac12,1]$, where $J''(\frac12)$ (equivalently $J(\frac12)^{-1}$ in the formula for
 $f_{\frac12}''$) is meant one-sidedly. For `Auto.DIR.J`, which is arbitrary left of $\frac12$,
-`deriv (deriv (f_LJQ_1 (1 / 2))) (1 / 2)` is a junk value, so the claim is stated as the limit
+`deriv (deriv (f_LJQ_1 2⁻¹)) 2⁻¹` is a junk value, so the claim is stated as the limit
 $y\to\frac12^+$ (by the formula, the limit is $-4(\sqrt2-1)-\frac12Q_{\frac12}''(\frac14)
 =-4(\sqrt2-1)+4(\sqrt2-1)=0$). -/
 theorem f_LJQ_1_half_deriv2_half :
-    Tendsto (deriv (deriv (f_LJQ_1 (1 / 2)))) (𝓝[>] (1 / 2)) (𝓝 0) := by
+    Tendsto (deriv (deriv (f_LJQ_1 2⁻¹))) (𝓝[>] 2⁻¹) (𝓝 0) := by
   sorry
 
 /-- [DIR], §6.3.2, proof of (1): $f_{\frac12}''$ has at most one zero on $(\frac12,1)$. -/
 theorem f_LJQ_1_half_deriv2_zero_subsingleton :
-    {y ∈ Ioo (1 / 2 : ℝ) 1 | deriv (deriv (f_LJQ_1 (1 / 2))) y = 0}.Subsingleton := by
+    {y ∈ Ioo (2⁻¹ : ℝ) 1 | deriv (deriv (f_LJQ_1 2⁻¹)) y = 0}.Subsingleton := by
   sorry
 
 /-- **(6.15)** ([DIR], §6.3.2, proof of (1)).
 $f_{\frac12}''(\frac9{16})>0.05$ and $f_{\frac12}''(\frac45)<-0.3$. -/
 theorem eqn_6_15 :
-    deriv (deriv (f_LJQ_1 (1 / 2))) (9 / 16) > 0.05 ∧
-      deriv (deriv (f_LJQ_1 (1 / 2))) (4 / 5) < -0.3 := by
+    deriv (deriv (f_LJQ_1 2⁻¹)) (9 / 16) > 0.05 ∧
+      deriv (deriv (f_LJQ_1 2⁻¹)) (4 / 5) < -0.3 := by
   sorry
 
 /-- [DIR], §6.3.2, proof of (1): $f_{\frac12}''$ has exactly one zero $y_0$ in $(\frac12,1)$,
 where $f_{\frac12}'$ achieves its unique maximum (on $(\frac12,1)$); $f_{\frac12}'$ is increasing
 on $(\frac12,y_0)$ and decreasing on $(y_0,1)$. -/
 theorem f_LJQ_1_half_y₀ :
-    ∃ y₀ ∈ Ioo (1 / 2 : ℝ) 1, deriv (deriv (f_LJQ_1 (1 / 2))) y₀ = 0 ∧
-      (∀ y ∈ Ioo (1 / 2 : ℝ) 1, deriv (deriv (f_LJQ_1 (1 / 2))) y = 0 → y = y₀) ∧
-      (∀ y ∈ Ioo (1 / 2 : ℝ) 1, y ≠ y₀ → deriv (f_LJQ_1 (1 / 2)) y < deriv (f_LJQ_1 (1 / 2)) y₀) ∧
-      MonotoneOn (deriv (f_LJQ_1 (1 / 2))) (Ioc (1 / 2) y₀) ∧
-      AntitoneOn (deriv (f_LJQ_1 (1 / 2))) (Ico y₀ 1) := by
+    ∃ y₀ ∈ Ioo (2⁻¹ : ℝ) 1, deriv (deriv (f_LJQ_1 2⁻¹)) y₀ = 0 ∧
+      (∀ y ∈ Ioo (2⁻¹ : ℝ) 1, deriv (deriv (f_LJQ_1 2⁻¹)) y = 0 → y = y₀) ∧
+      (∀ y ∈ Ioo (2⁻¹ : ℝ) 1, y ≠ y₀ → deriv (f_LJQ_1 2⁻¹) y < deriv (f_LJQ_1 2⁻¹) y₀) ∧
+      MonotoneOn (deriv (f_LJQ_1 2⁻¹)) (Ioc 2⁻¹ y₀) ∧
+      AntitoneOn (deriv (f_LJQ_1 2⁻¹)) (Ico y₀ 1) := by
   sorry
 
 /-- **(6.16)** ([DIR], §6.3.2, proof of (1)).
 $f_{\frac12}'(\frac9{16})>0.05$ and $f_{\frac12}'(\frac{15}{16})<-0.1$. -/
 theorem eqn_6_16 :
-    deriv (f_LJQ_1 (1 / 2)) (9 / 16) > 0.05 ∧ deriv (f_LJQ_1 (1 / 2)) (15 / 16) < -0.1 := by
+    deriv (f_LJQ_1 2⁻¹) (9 / 16) > 0.05 ∧ deriv (f_LJQ_1 2⁻¹) (15 / 16) < -0.1 := by
   sorry
 
 /-- [DIR], §6.3.2, proof of (1) (not stated in the paper, but needed by the next step, see
@@ -223,7 +223,7 @@ theorem eqn_6_16 :
 =\lim_{y\to\frac12^+}f_{\frac12}'(y)=1+(\sqrt2-1)J'(\frac12^+)-Q_{\frac12}'(\frac14)$ exists and is
 $>0.05$ (numerically $\approx0.0571$). -/
 theorem f_LJQ_1_half_deriv_half :
-    ∃ d > (0.05 : ℝ), Tendsto (deriv (f_LJQ_1 (1 / 2))) (𝓝[>] (1 / 2)) (𝓝 d) := by
+    ∃ d > (0.05 : ℝ), Tendsto (deriv (f_LJQ_1 2⁻¹)) (𝓝[>] 2⁻¹) (𝓝 d) := by
   sorry
 
 /-- [DIR], §6.3.2, proof of (1): $f_{\frac12}'$ has exactly one zero $y_1$ on $(\frac12,1)$;
@@ -238,43 +238,43 @@ claim $f_{\frac12}\ge0$ would even fail). This value is not evaluated in the pap
 $f_{\frac12}'(\frac12^+)\approx0.0571>0$, recorded as `Auto.DIR.f_LJQ_1_half_deriv_half`. The
 statement itself is kept as in the paper. -/
 theorem f_LJQ_1_half_y₁ :
-    ∃ y₁ ∈ Ioo (1 / 2 : ℝ) 1, deriv (f_LJQ_1 (1 / 2)) y₁ = 0 ∧
-      (∀ y ∈ Ioo (1 / 2 : ℝ) 1, deriv (f_LJQ_1 (1 / 2)) y = 0 → y = y₁) ∧
-      MonotoneOn (f_LJQ_1 (1 / 2)) (Icc (1 / 2) y₁) ∧
-      AntitoneOn (f_LJQ_1 (1 / 2)) (Icc y₁ 1) := by
+    ∃ y₁ ∈ Ioo (2⁻¹ : ℝ) 1, deriv (f_LJQ_1 2⁻¹) y₁ = 0 ∧
+      (∀ y ∈ Ioo (2⁻¹ : ℝ) 1, deriv (f_LJQ_1 2⁻¹) y = 0 → y = y₁) ∧
+      MonotoneOn (f_LJQ_1 2⁻¹) (Icc 2⁻¹ y₁) ∧
+      AntitoneOn (f_LJQ_1 2⁻¹) (Icc y₁ 1) := by
   sorry
 
 /-- [DIR], §6.3.2, proof of (1): $f_{\frac12}(1)=f_{\frac12}(\frac12)=0$. -/
 theorem f_LJQ_1_half_endpoints :
-    f_LJQ_1 (1 / 2) 1 = 0 ∧ f_LJQ_1 (1 / 2) (1 / 2) = 0 := by
+    f_LJQ_1 2⁻¹ 1 = 0 ∧ f_LJQ_1 2⁻¹ 2⁻¹ = 0 := by
   sorry
 
 /-- [DIR], §6.3.2, proof of (1): $f_{\frac12}(y)\ge0$ for $y\in[\frac12,1]$. -/
-theorem f_LJQ_1_half_nonneg (y : ℝ) (hy : y ∈ Icc (1 / 2 : ℝ) 1) :
-    f_LJQ_1 (1 / 2) y ≥ 0 := by
+theorem f_LJQ_1_half_nonneg (y : ℝ) (hy : y ∈ Icc (2⁻¹ : ℝ) 1) :
+    f_LJQ_1 2⁻¹ y ≥ 0 := by
   sorry
 
 end Proof_Claim_1
 
 /-- [DIR], §6.3.2, claim (1): $G_{LJQ,\beta}(0,y)\ge0$ for all $y\in[\frac12,1]$ (and
 $\beta\in[\frac12,1]$). -/
-theorem caseLJQ_claim_1 (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1) (y : ℝ)
-    (hy : y ∈ Icc (1 / 2 : ℝ) 1) : G_LJQ β 0 y ≥ 0 := by
+theorem caseLJQ_claim_1 (β : ℝ) (hβ : β ∈ Icc (2⁻¹ : ℝ) 1) (y : ℝ)
+    (hy : y ∈ Icc (2⁻¹ : ℝ) 1) : G_LJQ β 0 y ≥ 0 := by
   sorry
 
 section Proof_Claim_2
 /-- **(6.17)** ([DIR], §6.3.2, proof of (2)) (🚗). For all $y\in[\frac12,\frac34]$ and all
 $\beta\in[\frac12,1]$: $$G_{LJQ,\beta}(\tfrac1{16},y)>10^{-5}.$$ -/
-theorem eqn_6_17 (y : ℝ) (hy : y ∈ Icc (1 / 2 : ℝ) (3 / 4)) (β : ℝ)
-    (hβ : β ∈ Icc (1 / 2 : ℝ) 1) : G_LJQ β (1 / 16) y > 10 ^ (-5 : ℤ) := by
+theorem eqn_6_17 (y : ℝ) (hy : y ∈ Icc (2⁻¹ : ℝ) (3 / 4)) (β : ℝ)
+    (hβ : β ∈ Icc (2⁻¹ : ℝ) 1) : G_LJQ β 16⁻¹ y > 10 ^ (-5 : ℤ) := by
   sorry
 
 end Proof_Claim_2
 
 /-- [DIR], §6.3.2, claim (2): $G_{LJQ,\beta}(\frac1{16},y)\ge0$ for all $y\in[\frac12,\frac34]$
 (and $\beta\in[\frac12,1]$). -/
-theorem caseLJQ_claim_2 (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1) (y : ℝ)
-    (hy : y ∈ Icc (1 / 2 : ℝ) (3 / 4)) : G_LJQ β (1 / 16) y ≥ 0 := by
+theorem caseLJQ_claim_2 (β : ℝ) (hβ : β ∈ Icc (2⁻¹ : ℝ) 1) (y : ℝ)
+    (hy : y ∈ Icc (2⁻¹ : ℝ) (3 / 4)) : G_LJQ β 16⁻¹ y ≥ 0 := by
   sorry
 
 section Proof_Claim_3
@@ -285,41 +285,41 @@ noncomputable def f_LJQ_3 (β y : ℝ) : ℝ := G_LJQ β (1 - y) y
 /-- [DIR], §6.3.2, proof of (3):
 $f_\beta(y)=G_{LJQ,\beta}(1-y,y)=2y-1+(2^\beta-1)J(y)+L_\beta(1-y)-1$ (for
 $\beta\in[\frac12,1]$). -/
-theorem f_LJQ_3_eq (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1) (y : ℝ) :
+theorem f_LJQ_3_eq (β : ℝ) (hβ : β ∈ Icc (2⁻¹ : ℝ) 1) (y : ℝ) :
     f_LJQ_3 β y = 2 * y - 1 + (2 ^ β - 1) * J y + L β (1 - y) - 1 := by
   sorry
 
 /-- [DIR], §6.3.2, proof of (3): $f_\beta(y)$ is increasing in $\beta\in[\frac12,1]$ (for
 $y\in[\frac34,1]$), so it suffices to consider $\beta=\frac12$. -/
 theorem f_LJQ_3_monotoneOn_β (y : ℝ) (hy : y ∈ Icc (3 / 4 : ℝ) 1) :
-    MonotoneOn (fun β ↦ f_LJQ_3 β y) (Icc (1 / 2) 1) := by
+    MonotoneOn (fun β ↦ f_LJQ_3 β y) (Icc 2⁻¹ 1) := by
   sorry
 
 /-- [DIR], §6.3.2, proof of (3): for $y\in(\frac34,1)$,
 $f_{\frac12}''(y)=(\sqrt2-1)J''(y)+L_{\frac12}''(1-y)\le0$ (recall $J''\le0$ and Lemma 5.6). -/
 theorem f_LJQ_3_half_deriv2 (y : ℝ) (hy : y ∈ Ioo (3 / 4 : ℝ) 1) :
-    deriv (deriv (f_LJQ_3 (1 / 2))) y =
-        (√2 - 1) * deriv (deriv J) y + deriv (deriv (L (1 / 2))) (1 - y) ∧
-      (√2 - 1) * deriv (deriv J) y + deriv (deriv (L (1 / 2))) (1 - y) ≤ 0 := by
+    deriv (deriv (f_LJQ_3 2⁻¹)) y =
+        (√2 - 1) * deriv (deriv J) y + deriv (deriv (L 2⁻¹)) (1 - y) ∧
+      (√2 - 1) * deriv (deriv J) y + deriv (deriv (L 2⁻¹)) (1 - y) ≤ 0 := by
   sorry
 
 /-- [DIR], §6.3.2, proof of (3): $f_{\frac12}$ is concave on $[\frac34,1]$. -/
-theorem f_LJQ_3_half_concaveOn : ConcaveOn ℝ (Icc (3 / 4) 1) (f_LJQ_3 (1 / 2)) := by
+theorem f_LJQ_3_half_concaveOn : ConcaveOn ℝ (Icc (3 / 4) 1) (f_LJQ_3 2⁻¹) := by
   sorry
 
 /-- [DIR], §6.3.2, proof of (3): $f_{\frac12}(1)=0$. -/
-theorem f_LJQ_3_half_one : f_LJQ_3 (1 / 2) 1 = 0 := by
+theorem f_LJQ_3_half_one : f_LJQ_3 2⁻¹ 1 = 0 := by
   sorry
 
 /-- **(6.18)** ([DIR], §6.3.2, proof of (3)). $f_{\frac12}(\frac34)>0.01$. -/
-theorem eqn_6_18 : f_LJQ_3 (1 / 2) (3 / 4) > 0.01 := by
+theorem eqn_6_18 : f_LJQ_3 2⁻¹ (3 / 4) > 0.01 := by
   sorry
 
 end Proof_Claim_3
 
 /-- [DIR], §6.3.2, claim (3): $G_{LJQ,\beta}(1-y,y)\ge0$ for all $y\in[\frac34,1]$ (and
 $\beta\in[\frac12,1]$). -/
-theorem caseLJQ_claim_3 (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1) (y : ℝ)
+theorem caseLJQ_claim_3 (β : ℝ) (hβ : β ∈ Icc (2⁻¹ : ℝ) 1) (y : ℝ)
     (hy : y ∈ Icc (3 / 4 : ℝ) 1) : G_LJQ β (1 - y) y ≥ 0 := by
   sorry
 
@@ -337,9 +337,9 @@ under $x+y\le1$ (for $y\ge\frac34$ and $x+y>1$ the piece $x=\frac14$ would be ne
 statement adds the hypothesis $x+y\le1$. (Numerically the printed statement without it also
 appears to hold: on a grid, $\min G_{LJQ,\beta}$ over the part with $x+y>1$ is
 $\approx0.0055$, $0.013$, $0.025$ for $\beta=\frac12,\frac34,1$.) -/
-theorem prop_6_6 (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1) (x y : ℝ)
-    (hx : x ∈ Icc (0 : ℝ) (1 / 4)) (hy : y ∈ Icc (1 / 2 : ℝ) 1) (hxy : x + y ≤ 1)
-    (h : x ≤ 1 / 16 ∨ y ≥ 3 / 4) : G_LJQ β x y ≥ 0 := by
+theorem prop_6_6 (β : ℝ) (hβ : β ∈ Icc (2⁻¹ : ℝ) 1) (x y : ℝ)
+    (hx : x ∈ Icc (0 : ℝ) 4⁻¹) (hy : y ∈ Icc (2⁻¹ : ℝ) 1) (hxy : x + y ≤ 1)
+    (h : x ≤ 16⁻¹ ∨ y ≥ 3 / 4) : G_LJQ β x y ≥ 0 := by
   sorry
 
 end Case_LJQ_II

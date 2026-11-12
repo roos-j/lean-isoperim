@@ -83,7 +83,7 @@ The paper's literal form is not what Taylor's theorem says, although it is a tru
 $E_1\le\frac12\beta(1-\beta)B(x+h)^{1-2/\beta}h^{2/\beta}$ is unaffected since
 $(1+\tilde a)^{\beta-2}\le1$. The Lean statement uses the Lagrange form. -/
 theorem lemma_5_4_taylor (β : ℝ) (hβ : β ∈ Ioo (0 : ℝ) 1) (a : ℝ) (ha : 0 ≤ a) :
-    ∃ ã ∈ Icc 0 a, (1 + a) ^ β = 1 + β * a - 1 / 2 * β * (1 - β) * (1 + ã) ^ (β - 2) * a ^ 2 := by
+    ∃ ã ∈ Icc 0 a, (1 + a) ^ β = 1 + β * a - 2⁻¹ * β * (1 - β) * (1 + ã) ^ (β - 2) * a ^ 2 := by
   sorry
 
 /-- [DIR], proof of Lemma 5.4: letting $a=(hB(x+h)^{-1})^{\frac1\beta}$,
@@ -101,8 +101,8 @@ theorem lemma_5_4_expansion (β : ℝ) (hβ : β ∈ Ioo (0 : ℝ) 1) (Bxh h : �
     ∃ ã ∈ Icc 0 ((h * Bxh⁻¹) ^ β⁻¹),
       (h ^ β⁻¹ + Bxh ^ β⁻¹) ^ β = Bxh * (1 + (h * Bxh⁻¹) ^ β⁻¹) ^ β ∧
       Bxh * (1 + (h * Bxh⁻¹) ^ β⁻¹) ^ β = Bxh + β * Bxh ^ (1 - β⁻¹) * h ^ β⁻¹ -
-        1 / 2 * Bxh * β * (1 - β) * ((1 + ã) ^ (β - 2) * ((h * Bxh⁻¹) ^ β⁻¹) ^ 2) ∧
-      1 / 2 * Bxh * β * (1 - β) * ((1 + ã) ^ (β - 2) * ((h * Bxh⁻¹) ^ β⁻¹) ^ 2) ≥ 0 ∧
+        2⁻¹ * Bxh * β * (1 - β) * ((1 + ã) ^ (β - 2) * ((h * Bxh⁻¹) ^ β⁻¹) ^ 2) ∧
+      2⁻¹ * Bxh * β * (1 - β) * ((1 + ã) ^ (β - 2) * ((h * Bxh⁻¹) ^ β⁻¹) ^ 2) ≥ 0 ∧
       (1 + ã) ^ (β - 2) * ((h * Bxh⁻¹) ^ β⁻¹) ^ 2 ≤ ((h * Bxh⁻¹) ^ β⁻¹) ^ 2 ∧
       ((h * Bxh⁻¹) ^ β⁻¹) ^ 2 = h ^ (2 / β) * Bxh ^ (-(2 / β)) := by
   sorry
@@ -125,8 +125,8 @@ theorem lemma_5_4 (𝓘 : Set ℝ) (h𝓘 : 𝓘.OrdConnected) (B : ℝ → ℝ)
     (β : ℝ) (hβ : β ∈ Ioo (0 : ℝ) 1) (x h : ℝ) (hh : 0 ≤ h) (hx : x ∈ 𝓘) (hxh : x + h ∈ 𝓘)
     (hBpos : 0 < B (x + h)) :
     ∃ E₁ : ℝ, G₁ β B x (x + h) =
-        β * B (x + h) ^ (1 - β⁻¹) * h ^ β⁻¹ + (B x + B (x + h) - 2 * B (x + 1 / 2 * h)) - E₁ ∧
-      0 ≤ E₁ ∧ E₁ ≤ 1 / 2 * β * (1 - β) * B (x + h) ^ (1 - 2 / β) * h ^ (2 / β) := by
+        β * B (x + h) ^ (1 - β⁻¹) * h ^ β⁻¹ + (B x + B (x + h) - 2 * B (x + 2⁻¹ * h)) - E₁ ∧
+      0 ≤ E₁ ∧ E₁ ≤ 2⁻¹ * β * (1 - β) * B (x + h) ^ (1 - 2 / β) * h ^ (2 / β) := by
   sorry
 
 end Auto.DIR

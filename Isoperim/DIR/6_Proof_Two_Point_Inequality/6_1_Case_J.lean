@@ -41,7 +41,7 @@ open Real Set
 /-- [DIR], §6.1, after Proposition 6.1: by monotonicity in $\beta$, we only need to show
 $G^1_{\beta_0}[J]\ge0$ to show the first part: for $\beta\ge\beta_0$ and
 $\frac12\le x\le y\le1$, $G^1_{\beta_0}[J](x,y)\le G^1_\beta[J](x,y)$. -/
-theorem caseJ_G₁_mono_β (β : ℝ) (hβ : β₀ ≤ β) (x y : ℝ) (hx : 1 / 2 ≤ x) (hxy : x ≤ y)
+theorem caseJ_G₁_mono_β (β : ℝ) (hβ : β₀ ≤ β) (x y : ℝ) (hx : 2⁻¹ ≤ x) (hxy : x ≤ y)
     (hy : y ≤ 1) : G₁ β₀ J x y ≤ G₁ β J x y := by
   sorry
 
@@ -54,8 +54,8 @@ section Case_J_I
 
 /-- [DIR], §6.1.1: the region of Case I, $\frac12\le x\le x_0$, $x\le y\le\frac{11}{16}$, is
 contained in the larger region $\frac12\le x\le\frac58$, $0\le h=y-x\le\frac3{16}$. -/
-theorem caseJ_I_region_subset (x y : ℝ) (hx : 1 / 2 ≤ x) (hx₀ : x ≤ x₀) (hxy : x ≤ y)
-    (hy : y ≤ 11 / 16) : x ∈ Icc (1 / 2 : ℝ) (5 / 8) ∧ y - x ∈ Icc (0 : ℝ) (3 / 16) := by
+theorem caseJ_I_region_subset (x y : ℝ) (hx : 2⁻¹ ≤ x) (hx₀ : x ≤ x₀) (hxy : x ≤ y)
+    (hy : y ≤ 11 / 16) : x ∈ Icc (2⁻¹ : ℝ) (5 / 8) ∧ y - x ∈ Icc (0 : ℝ) (3 / 16) := by
   sorry
 
 /-- The Taylor remainder $E_N$ ([DIR], §6.1.1), defined here as the exact remainder
@@ -72,30 +72,30 @@ $$g_{J,1,\beta,c}(x,h)=\beta c^{1-\frac1\beta}J(x+h)^{1-\frac1\beta}
 +c\sum_{k=2}^{N-1}\tfrac1{k!}(1-2^{-k+1})J^{(k)}(x)h^{k-\frac1\beta}+cE_Nh^{-\frac1\beta}.$$ -/
 noncomputable def g_J_1 (N : ℕ) (β c x h : ℝ) : ℝ :=
   β * c ^ (1 - β⁻¹) * J (x + h) ^ (1 - β⁻¹)
-    - 1 / 2 * β * (1 - β) * c ^ (1 - 2 / β) * J (x + h) ^ (1 - 2 / β) * h ^ β⁻¹
+    - 2⁻¹ * β * (1 - β) * c ^ (1 - 2 / β) * J (x + h) ^ (1 - 2 / β) * h ^ β⁻¹
     + c * ∑ k ∈ Finset.Ico 2 N, (k.factorial : ℝ)⁻¹ * (1 - 2 ^ (-(k : ℝ) + 1))
         * iteratedDeriv k J x * h ^ ((k : ℝ) - β⁻¹)
     + c * E_J N x h * h ^ (-β⁻¹)
 
 /-- [DIR], §6.1.1: from $J\cdot J''=-2$, $J''=-2J^{-1}$ on $(\frac12,1)$. -/
-theorem iteratedDeriv_two_J (x : ℝ) (hx : x ∈ Ioo (1 / 2 : ℝ) 1) :
+theorem iteratedDeriv_two_J (x : ℝ) (hx : x ∈ Ioo (2⁻¹ : ℝ) 1) :
     iteratedDeriv 2 J x = -2 * J x ^ (-1 : ℤ) := by
   sorry
 
 /-- [DIR], §6.1.1: $J^{(3)}=2J'J^{-2}$ on $(\frac12,1)$. -/
-theorem iteratedDeriv_three_J (x : ℝ) (hx : x ∈ Ioo (1 / 2 : ℝ) 1) :
+theorem iteratedDeriv_three_J (x : ℝ) (hx : x ∈ Ioo (2⁻¹ : ℝ) 1) :
     iteratedDeriv 3 J x = 2 * deriv J x * J x ^ (-2 : ℤ) := by
   sorry
 
 /-- **(6.1)** ([DIR], §6.1.1): $J^{(4)}=-4(1+|J'|^2)J^{-3}<0$ on $(\frac12,1)$. -/
-theorem eqn_6_1 (x : ℝ) (hx : x ∈ Ioo (1 / 2 : ℝ) 1) :
+theorem eqn_6_1 (x : ℝ) (hx : x ∈ Ioo (2⁻¹ : ℝ) 1) :
     iteratedDeriv 4 J x = -4 * (1 + |deriv J x| ^ 2) * J x ^ (-3 : ℤ) ∧
       iteratedDeriv 4 J x < 0 := by
   sorry
 
 /-- [DIR], §6.1.1: $J$ is increasing on $[\frac12,x_0]$ and decreasing on $[x_0,1]$. -/
 theorem J_monotoneOn_antitoneOn :
-    MonotoneOn J (Icc (1 / 2) x₀) ∧ AntitoneOn J (Icc x₀ 1) := by
+    MonotoneOn J (Icc 2⁻¹ x₀) ∧ AntitoneOn J (Icc x₀ 1) := by
   sorry
 
 /-- [DIR], §6.1.1 (application of Lemma 5.4). For $\beta\in(0,1)$, $c>0$, $\frac12\le x\le\frac58$
@@ -104,26 +104,26 @@ $$G^1_\beta[c\cdot J](x,x+h)\ge\beta c^{1-\frac1\beta}J(x+h)^{1-\frac1\beta}h^{\
 +c(J(x)+J(x+h)-2J(x+\tfrac h2))
 -\tfrac12\beta(1-\beta)c^{1-\frac2\beta}J(x+h)^{1-\frac2\beta}h^{\frac2\beta}.$$ -/
 theorem caseJ_I_neardiag_bound (β c : ℝ) (hβ : β ∈ Ioo (0 : ℝ) 1) (hc : 0 < c) (x h : ℝ)
-    (hx : x ∈ Icc (1 / 2 : ℝ) (5 / 8)) (hh : h ∈ Icc (0 : ℝ) (3 / 16)) :
+    (hx : x ∈ Icc (2⁻¹ : ℝ) (5 / 8)) (hh : h ∈ Icc (0 : ℝ) (3 / 16)) :
     G₁ β (c • J) x (x + h) ≥
       β * c ^ (1 - β⁻¹) * J (x + h) ^ (1 - β⁻¹) * h ^ β⁻¹
         + c * (J x + J (x + h) - 2 * J (x + h / 2))
-        - 1 / 2 * β * (1 - β) * c ^ (1 - 2 / β) * J (x + h) ^ (1 - 2 / β) * h ^ (2 / β) := by
+        - 2⁻¹ * β * (1 - β) * c ^ (1 - 2 / β) * J (x + h) ^ (1 - 2 / β) * h ^ (2 / β) := by
   sorry
 
 /-- [DIR], §6.1.1. For $N\ge2$, $\beta\in(0,1)$, $c>0$, $\frac12<x\le\frac58$,
 $0\le h\le\frac3{16}$:
 $$G^1_\beta[c\cdot J](x,x+h)\ge h^{\frac1\beta}g_{J,1,\beta,c}(x,h).$$ -/
 theorem caseJ_I_G₁_ge_g_J_1 (N : ℕ) (hN : 2 ≤ N) (β c : ℝ) (hβ : β ∈ Ioo (0 : ℝ) 1)
-    (hc : 0 < c) (x h : ℝ) (hx : x ∈ Ioc (1 / 2 : ℝ) (5 / 8)) (hh : h ∈ Icc (0 : ℝ) (3 / 16)) :
+    (hc : 0 < c) (x h : ℝ) (hx : x ∈ Ioc (2⁻¹ : ℝ) (5 / 8)) (hh : h ∈ Icc (0 : ℝ) (3 / 16)) :
     G₁ β (c • J) x (x + h) ≥ h ^ β⁻¹ * g_J_1 N β c x h := by
   sorry
 
 /-- [DIR], §6.1.1: $J'(x_0)=0$ and $J''<0$ (on $(\frac12,1)$), so $J'$ is strictly decreasing
 (on $(\frac12,1)$). -/
 theorem deriv_J_x₀ :
-    deriv J x₀ = 0 ∧ (∀ x ∈ Ioo (1 / 2 : ℝ) 1, deriv (deriv J) x < 0) ∧
-      StrictAntiOn (deriv J) (Ioo (1 / 2) 1) := by
+    deriv J x₀ = 0 ∧ (∀ x ∈ Ioo (2⁻¹ : ℝ) 1, deriv (deriv J) x < 0) ∧
+      StrictAntiOn (deriv J) (Ioo 2⁻¹ 1) := by
   sorry
 
 /-- **(6.3)** ([DIR], §6.1.1) (🚗). For $(\beta,c)\in\{(\beta_0,1),(\frac12,c_0)\}$ and
@@ -133,21 +133,21 @@ $$g_{J,1,\beta,c}(x,h)>10^{-7}$$ (with $N=6$).
 **Discrepancy with the paper.** The paper states (6.3) on the closed rectangle
 $[\frac12,\frac58]\times[0,\frac3{16}]$. At $x=\frac12$ the function $g_{J,1,\beta,c}$ involves
 $J^{(k)}(\frac12)$, $k=2,\dots,5$, which the paper understands as one-sided derivatives
-(equivalently, derivatives of $J_{w_0}$, (3.4)); `iteratedDeriv k J (1 / 2)` is a junk value
+(equivalently, derivatives of $J_{w_0}$, (3.4)); `iteratedDeriv k J 2⁻¹` is a junk value
 for `Auto.DIR.J`. The Lean statement therefore assumes $x\in(\frac12,\frac58]$; the case
 $x=\frac12$ of Case I (`Auto.DIR.caseJ_I`) follows by continuity of $G^1_\beta[c\cdot J]$. The
 inequality was spot-checked numerically (minimum $\approx8.5\cdot10^{-5}$ for $(\beta_0,1)$ and
 $\approx1.7\cdot10^{-4}$ for $(\frac12,c_0)$ on a $41\times41$ grid). -/
-theorem eqn_6_3 (β c : ℝ) (hβc : (β, c) = (β₀, 1) ∨ (β, c) = (1 / 2, c₀)) (x h : ℝ)
-    (hx : x ∈ Ioc (1 / 2 : ℝ) (5 / 8)) (hh : h ∈ Icc (0 : ℝ) (3 / 16)) :
+theorem eqn_6_3 (β c : ℝ) (hβc : (β, c) = (β₀, 1) ∨ (β, c) = (2⁻¹, c₀)) (x h : ℝ)
+    (hx : x ∈ Ioc (2⁻¹ : ℝ) (5 / 8)) (hh : h ∈ Icc (0 : ℝ) (3 / 16)) :
     g_J_1 6 β c x h > 10 ^ (-7 : ℤ) := by
   sorry
 
 /-- [DIR], §6.1.1: the desired inequality holds in the larger region
 $\frac12\le x\le\frac58$, $0\le h\le\frac3{16}$:
 $G^1_{\beta_0}[J](x,x+h)\ge0$ and $G^1_{\frac12}[c_0J](x,x+h)\ge0$. -/
-theorem caseJ_I (x h : ℝ) (hx : x ∈ Icc (1 / 2 : ℝ) (5 / 8)) (hh : h ∈ Icc (0 : ℝ) (3 / 16)) :
-    G₁ β₀ J x (x + h) ≥ 0 ∧ G₁ (1 / 2) (c₀ • J) x (x + h) ≥ 0 := by
+theorem caseJ_I (x h : ℝ) (hx : x ∈ Icc (2⁻¹ : ℝ) (5 / 8)) (hh : h ∈ Icc (0 : ℝ) (3 / 16)) :
+    G₁ β₀ J x (x + h) ≥ 0 ∧ G₁ 2⁻¹ (c₀ • J) x (x + h) ≥ 0 := by
   sorry
 
 end Case_J_I
@@ -158,8 +158,8 @@ section Case_J_II
 /-- [DIR], §6.1.2: by monotonicity (in $\beta$ and in $c$) it suffices to show the stronger
 conclusion $G^1_{\frac12}[J](x,y)\ge0$: for $\frac12\le x\le y\le1$, it implies
 $G^1_{\beta_0}[J](x,y)\ge0$ and $G^1_{\frac12}[c_0J](x,y)\ge0$. -/
-theorem caseJ_II_suffices (x y : ℝ) (hx : 1 / 2 ≤ x) (hxy : x ≤ y) (hy : y ≤ 1)
-    (h : G₁ (1 / 2) J x y ≥ 0) : G₁ β₀ J x y ≥ 0 ∧ G₁ (1 / 2) (c₀ • J) x y ≥ 0 := by
+theorem caseJ_II_suffices (x y : ℝ) (hx : 2⁻¹ ≤ x) (hxy : x ≤ y) (hy : y ≤ 1)
+    (h : G₁ 2⁻¹ J x y ≥ 0) : G₁ β₀ J x y ≥ 0 ∧ G₁ 2⁻¹ (c₀ • J) x y ≥ 0 := by
   sorry
 
 /-- The function $g_{J,2}(x,y)=(y-x)^2+J(y)^2-(2J(\frac{x+y}2)-J(x))^2$ ([DIR], §6.1.2). -/
@@ -167,19 +167,19 @@ noncomputable def g_J_2 (x y : ℝ) : ℝ := (y - x) ^ 2 + J y ^ 2 - (2 * J ((x 
 
 /-- [DIR], §6.1.2: for $\frac12\le x\le\frac9{16}$ and $\frac{11}{16}\le y\le1$,
 $2J(\frac{x+y}2)-J(x)\ge0$. -/
-theorem caseJ_II_nonneg (x y : ℝ) (hx : x ∈ Icc (1 / 2 : ℝ) (9 / 16))
+theorem caseJ_II_nonneg (x y : ℝ) (hx : x ∈ Icc (2⁻¹ : ℝ) (9 / 16))
     (hy : y ∈ Icc (11 / 16 : ℝ) 1) : 2 * J ((x + y) / 2) - J x ≥ 0 := by
   sorry
 
 /-- [DIR], §6.1.2: for $\frac12\le x\le\frac9{16}$ and $\frac{11}{16}\le y\le1$,
 $G^1_{\frac12}[J](x,y)\ge0$ is equivalent to $g_{J,2}(x,y)\ge0$. -/
-theorem caseJ_II_iff_g_J_2 (x y : ℝ) (hx : x ∈ Icc (1 / 2 : ℝ) (9 / 16))
-    (hy : y ∈ Icc (11 / 16 : ℝ) 1) : G₁ (1 / 2) J x y ≥ 0 ↔ g_J_2 x y ≥ 0 := by
+theorem caseJ_II_iff_g_J_2 (x y : ℝ) (hx : x ∈ Icc (2⁻¹ : ℝ) (9 / 16))
+    (hy : y ∈ Icc (11 / 16 : ℝ) 1) : G₁ 2⁻¹ J x y ≥ 0 ↔ g_J_2 x y ≥ 0 := by
   sorry
 
 /-- **(6.5)** ([DIR], §6.1.2) (🚗). For $(x,y)\in[\frac12,\frac9{16}]\times[\frac{11}{16},1]$:
 $$g_{J,2}(x,y)>10^{-8}.$$ (There is no equation (6.4) in [DIR].) -/
-theorem eqn_6_5 (x y : ℝ) (hx : x ∈ Icc (1 / 2 : ℝ) (9 / 16))
+theorem eqn_6_5 (x y : ℝ) (hx : x ∈ Icc (2⁻¹ : ℝ) (9 / 16))
     (hy : y ∈ Icc (11 / 16 : ℝ) 1) : g_J_2 x y > 10 ^ (-8 : ℤ) := by
   sorry
 
@@ -189,8 +189,8 @@ theorem nine_div_sixteen_gt_x₀ : (9 / 16 : ℝ) = 0.5625 ∧ (0.5625 : ℝ) > 
 
 /-- [DIR], §6.1.2 (conclusion of Case II): for $\frac12\le x\le x_0$ and
 $\frac{11}{16}\le y\le1$, $G^1_{\frac12}[J](x,y)\ge0$. -/
-theorem caseJ_II (x y : ℝ) (hx : x ∈ Icc (1 / 2) x₀) (hy : y ∈ Icc (11 / 16 : ℝ) 1) :
-    G₁ (1 / 2) J x y ≥ 0 := by
+theorem caseJ_II (x y : ℝ) (hx : x ∈ Icc 2⁻¹ x₀) (hy : y ∈ Icc (11 / 16 : ℝ) 1) :
+    G₁ 2⁻¹ J x y ≥ 0 := by
   sorry
 
 end Case_J_II
@@ -200,9 +200,9 @@ end Case_J_II
 /-- **Proposition 6.1** ([DIR]). Let $\beta\ge\beta_0=0.50057$ and $c_0=0.997$. Then for
 $\frac12\le x\le x_0$ and $x\le y\le1$,
 $$G^1_\beta[J](x,y)\ge0\quad\text{and}\quad G^1_{\frac12}[c_0J](x,y)\ge0.$$ -/
-theorem prop_6_1 (β : ℝ) (hβ : β₀ ≤ β) (x y : ℝ) (hx : 1 / 2 ≤ x) (hx₀ : x ≤ x₀)
+theorem prop_6_1 (β : ℝ) (hβ : β₀ ≤ β) (x y : ℝ) (hx : 2⁻¹ ≤ x) (hx₀ : x ≤ x₀)
     (hxy : x ≤ y) (hy : y ≤ 1) :
-    G₁ β J x y ≥ 0 ∧ G₁ (1 / 2) (c₀ • J) x y ≥ 0 := by
+    G₁ β J x y ≥ 0 ∧ G₁ 2⁻¹ (c₀ • J) x y ≥ 0 := by
   sorry
 
 end Auto.DIR

@@ -38,11 +38,11 @@ open Auto.DIR
 
 open Real Set
 
-local notation "G₂" => Auto.DIR.G₂ (1 / 2)
+local notation "G₂" => Auto.DIR.G₂ 2⁻¹
 
-local notation "G" => Auto.DIR.G (1 / 2)
+local notation "G" => Auto.DIR.G 2⁻¹
 
-local notation "L" => Auto.DIR.L (1 / 2)
+local notation "L" => Auto.DIR.L 2⁻¹
 
 local notation "J" => JX
 
@@ -53,7 +53,7 @@ noncomputable def h_LJ (u c : ℝ) : ℝ := 2 * u + (√2 - 1) * J (c + u) + L (
 
 /-- [DIRX], §3.4: in the region of Case $LJ$, expressed in the variables $u=(y-x)/2$ and
 $c=(x+y)/2$, $G_2[B_{w_1}](x,y)=h_{LJ}(u,c)$. -/
-theorem G₂_BX_eq_h_LJ (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 4)) (hy : y ∈ Icc (1 / 2 : ℝ) 1)
+theorem G₂_BX_eq_h_LJ (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) 4⁻¹) (hy : y ∈ Icc (2⁻¹ : ℝ) 1)
     (hxy : 1 ≤ x + y) : G₂ (BX w₁) x y = h_LJ ((y - x) / 2) ((x + y) / 2) := by
   sorry
 
@@ -61,27 +61,27 @@ theorem G₂_BX_eq_h_LJ (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 4)) (hy : y �
 $\partial_u^2h_{LJ}(u,c)=-\gamma(\sqrt2-1)\mathrm{J}(c+u)^{-1}+L''(c-u)\le0$ (for
 $c\in[\frac12,\frac58]$, $u\in[c-\frac14,1-c)$, where all terms are differentiable), since
 $L$ is concave by Lemma 2.3. -/
-theorem h_LJ_deriv2 (u c : ℝ) (hc : c ∈ Icc (1 / 2 : ℝ) (5 / 8))
-    (hu : u ∈ Ico (c - 1 / 4) (1 - c)) :
+theorem h_LJ_deriv2 (u c : ℝ) (hc : c ∈ Icc (2⁻¹ : ℝ) (5 / 8))
+    (hu : u ∈ Ico (c - 4⁻¹) (1 - c)) :
     deriv (deriv (fun v ↦ h_LJ v c)) u = -γ * (√2 - 1) * (J (c + u))⁻¹ + deriv (deriv L) (c - u) ∧
       -γ * (√2 - 1) * (J (c + u))⁻¹ + deriv (deriv L) (c - u) ≤ 0 := by
   sorry
 
 /-- [DIRX], §3.4: therefore $u\mapsto h_{LJ}(u,c)$ is concave on $[c-\frac14,1-c]$, so it suffices
 to evaluate $h_{LJ}(u,c)$ at the boundaries $u=c-\frac14$ and $u=1-c$. -/
-theorem h_LJ_concave (c : ℝ) (hc : c ∈ Icc (1 / 2 : ℝ) (5 / 8)) :
-    ConcaveOn ℝ (Icc (c - 1 / 4) (1 - c)) (fun u ↦ h_LJ u c) := by
+theorem h_LJ_concave (c : ℝ) (hc : c ∈ Icc (2⁻¹ : ℝ) (5 / 8)) :
+    ConcaveOn ℝ (Icc (c - 4⁻¹) (1 - c)) (fun u ↦ h_LJ u c) := by
   sorry
 
 section Case_I
 /-! ### Case I: $u=c-\frac14$ -/
 
 /-- $h_{LJ,1}(c)=h_{LJ}(c-\frac14,c)$ ([DIRX], §3.4, Case I). -/
-noncomputable def h_LJ₁ (c : ℝ) : ℝ := h_LJ (c - 1 / 4) c
+noncomputable def h_LJ₁ (c : ℝ) : ℝ := h_LJ (c - 4⁻¹) c
 
 /-- **(3.8)** ([DIRX], §3.4, Case I) (🚗). Dyadic partitioning yields
 $$h_{LJ,1}(c)>0.01\quad\text{for all } c\in[\tfrac12,\tfrac58].$$ -/
-theorem eqn_3_8 (c : ℝ) (hc : c ∈ Icc (1 / 2 : ℝ) (5 / 8)) : h_LJ₁ c > 0.01 := by
+theorem eqn_3_8 (c : ℝ) (hc : c ∈ Icc (2⁻¹ : ℝ) (5 / 8)) : h_LJ₁ c > 0.01 := by
   sorry
 
 end Case_I
@@ -100,25 +100,25 @@ theorem h_LJ_eq_gX (c : ℝ) : h_LJ (1 - c) c = g c := by
   sorry
 
 /-- [DIRX], §3.4, Case II: $g(\frac12)=0$. -/
-theorem gX_half : g (1 / 2) = 0 := by
+theorem gX_half : g 2⁻¹ = 0 := by
   sorry
 
 /-- [DIRX], §3.4, Case II: $g'(c)=-2+2L'(2c-1)-2\mathrm{J}'(c)$ for $c\in(\frac12,\frac58]$. -/
-theorem gX_deriv (c : ℝ) (hc : c ∈ Ioc (1 / 2 : ℝ) (5 / 8)) :
+theorem gX_deriv (c : ℝ) (hc : c ∈ Ioc (2⁻¹ : ℝ) (5 / 8)) :
     deriv g c = -2 + 2 * deriv L (2 * c - 1) - 2 * deriv J c := by
   sorry
 
 /-- [DIRX], §3.4, Case II: $L'$ and $\mathrm{J}'$ are both decreasing (on $(0,1)$, resp. on
 $[\frac12,1)$). -/
 theorem deriv_LX_JX_anti :
-    AntitoneOn (deriv L) (Ioo 0 1) ∧ AntitoneOn (deriv J) (Ico (1 / 2) 1) := by
+    AntitoneOn (deriv L) (Ioo 0 1) ∧ AntitoneOn (deriv J) (Ico 2⁻¹ 1) := by
   sorry
 
 /-- [DIRX], §3.4, Case II: for $c\in(\frac12,\frac9{16}]$,
 $g'(c)\ge-2+2L'(\frac18)-2\mathrm{J}'(\frac12)\ge0.26$. -/
-theorem gX_deriv_ge_1 (c : ℝ) (hc : c ∈ Ioc (1 / 2 : ℝ) (9 / 16)) :
-    deriv g c ≥ -2 + 2 * deriv L (1 / 8) - 2 * deriv J (1 / 2) ∧
-      -2 + 2 * deriv L (1 / 8) - 2 * deriv J (1 / 2) ≥ 0.26 := by
+theorem gX_deriv_ge_1 (c : ℝ) (hc : c ∈ Ioc (2⁻¹ : ℝ) (9 / 16)) :
+    deriv g c ≥ -2 + 2 * deriv L 8⁻¹ - 2 * deriv J 2⁻¹ ∧
+      -2 + 2 * deriv L 8⁻¹ - 2 * deriv J 2⁻¹ ≥ 0.26 := by
   sorry
 
 /-- [DIRX], §3.4, Case II: for $c\in[\frac9{16},\frac{19}{32}]$,
@@ -131,31 +131,31 @@ theorem gX_deriv_ge_2 (c : ℝ) (hc : c ∈ Icc (9 / 16 : ℝ) (19 / 32)) :
 /-- [DIRX], §3.4, Case II: for $c\in[\frac{19}{32},\frac58]$,
 $g'(c)\ge-2+2L'(\frac14)-2\mathrm{J}'(\frac{19}{32})\ge0.17$. -/
 theorem gX_deriv_ge_3 (c : ℝ) (hc : c ∈ Icc (19 / 32 : ℝ) (5 / 8)) :
-    deriv g c ≥ -2 + 2 * deriv L (1 / 4) - 2 * deriv J (19 / 32) ∧
-      -2 + 2 * deriv L (1 / 4) - 2 * deriv J (19 / 32) ≥ 0.17 := by
+    deriv g c ≥ -2 + 2 * deriv L 4⁻¹ - 2 * deriv J (19 / 32) ∧
+      -2 + 2 * deriv L 4⁻¹ - 2 * deriv J (19 / 32) ≥ 0.17 := by
   sorry
 
 /-- [DIRX], §3.4, Case II: thus $g'(c)\ge0.17$ for all $c\in(\frac12,\frac58]$; in particular $g$
 is increasing on $[\frac12,\frac58]$. -/
-theorem gX_deriv_ge (c : ℝ) (hc : c ∈ Ioc (1 / 2 : ℝ) (5 / 8)) : deriv g c ≥ 0.17 := by
+theorem gX_deriv_ge (c : ℝ) (hc : c ∈ Ioc (2⁻¹ : ℝ) (5 / 8)) : deriv g c ≥ 0.17 := by
   sorry
 
 /-- [DIRX], §3.4, Case II: $g(c)\ge0$ for all $c\in[\frac12,\frac58]$. -/
-theorem gX_nonneg (c : ℝ) (hc : c ∈ Icc (1 / 2 : ℝ) (5 / 8)) : g c ≥ 0 := by
+theorem gX_nonneg (c : ℝ) (hc : c ∈ Icc (2⁻¹ : ℝ) (5 / 8)) : g c ≥ 0 := by
   sorry
 
 end Case_II
 
 /-- [DIRX], §3.4: $h_{LJ}(u,c)\ge0$ for all $c\in[\frac12,\frac58]$ and $u\in[c-\frac14,1-c]$. -/
-theorem h_LJ_nonneg (u c : ℝ) (hc : c ∈ Icc (1 / 2 : ℝ) (5 / 8))
-    (hu : u ∈ Icc (c - 1 / 4) (1 - c)) : h_LJ u c ≥ 0 := by
+theorem h_LJ_nonneg (u c : ℝ) (hc : c ∈ Icc (2⁻¹ : ℝ) (5 / 8))
+    (hu : u ∈ Icc (c - 4⁻¹) (1 - c)) : h_LJ u c ≥ 0 := by
   sorry
 
 /-! ### §3.4 Case LJ: $0\le x\le\frac14$, $\frac12\le y\le1$, $1\le x+y$ -/
 
 /-- [DIRX], §3.4 (Case $LJ$): $G[B_{w_1}](x,y)\ge0$ for $0\le x\le\frac14$, $\frac12\le y\le1$,
 $1\le x+y$. -/
-theorem caseLJ (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 4)) (hy : y ∈ Icc (1 / 2 : ℝ) 1)
+theorem caseLJ (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) 4⁻¹) (hy : y ∈ Icc (2⁻¹ : ℝ) 1)
     (hxy : 1 ≤ x + y) : G (BX w₁) x y ≥ 0 := by
   sorry
 

@@ -31,29 +31,29 @@ open Auto.DIR
 
 open Real Set
 
-local notation "G₁" => Auto.DIR.G₁ (1 / 2)
+local notation "G₁" => Auto.DIR.G₁ 2⁻¹
 
-local notation "G" => Auto.DIR.G (1 / 2)
+local notation "G" => Auto.DIR.G 2⁻¹
 
-local notation "L" => Auto.DIR.L (1 / 2)
+local notation "L" => Auto.DIR.L 2⁻¹
 
-local notation "Q" => Auto.DIR.Q (1 / 2)
+local notation "Q" => Auto.DIR.Q 2⁻¹
 
 /-- [DIRX], §3.2 (cited from [DIR], Proposition 6.2 with $\beta=\frac12$, `Auto.DIR.prop_6_2`):
 $G_1[\max(L,Q)](x,y)\ge0$ for $0\le x\le y\le\frac12$. -/
-theorem caseQ_G₁_max (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y) (hy : y ≤ 1 / 2) :
+theorem caseQ_G₁_max (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y) (hy : y ≤ 2⁻¹) :
     G₁ (fun t ↦ max (L t) (Q t)) x y ≥ 0 := by
   sorry
 
 /-- [DIRX], §3.2: this implies the claim, since $B_w=\max(L,Q)$ on $[0,\frac12]$ (by [DIR],
 Lemma 5.9, `Auto.DIR.lemma_5_9`). -/
-theorem BX_eq_max (w x : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 2)) : BX w x = max (L x) (Q x) := by
+theorem BX_eq_max (w x : ℝ) (hx : x ∈ Icc (0 : ℝ) 2⁻¹) : BX w x = max (L x) (Q x) := by
   sorry
 
 /-! ### §3.2 Case Q: $0\le x\le y\le\frac12$ -/
 
 /-- [DIRX], §3.2 (Case $Q$): $G[B_{w_1}](x,y)\ge0$ for $0\le x\le y\le\frac12$. -/
-theorem caseQ (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y) (hy : y ≤ 1 / 2) :
+theorem caseQ (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y) (hy : y ≤ 2⁻¹) :
     G (BX w₁) x y ≥ 0 := by
   sorry
 

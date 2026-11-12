@@ -38,11 +38,11 @@ $$\tfrac12\le\mathbf{E}\sqrt{h_{B\cup W}}\le\mathbf{E}(h_{B\cup W}\mathbf{1}_B)
 which is no greater than $|\nabla(A,B)|+\sqrt n|W|$. -/
 theorem thm_1_2_chain (n : ℕ) (hn : 1 ≤ n) (A B W : Set ({0,1}^n))
     (hAB : Disjoint A B) (hAW : Disjoint A W) (hBW : Disjoint B W)
-    (hcover : A ∪ B ∪ W = Set.univ) (hBW' : ｜B ∪ W｜ = 1 / 2) (hA : ｜A｜ = 1 / 2) :
-    1 / 2 ≤ 𝐄 (fun x ↦ √(h (B ∪ W) x)) ∧
+    (hcover : A ∪ B ∪ W = Set.univ) (hBW' : ｜B ∪ W｜ = 2⁻¹) (hA : ｜A｜ = 2⁻¹) :
+    2⁻¹ ≤ 𝐄 (fun x ↦ √(h (B ∪ W) x)) ∧
     𝐄 (fun x ↦ √(h (B ∪ W) x)) ≤
-      𝐄 (h (B ∪ W) * ind B) + 𝐄 (fun x ↦ √(h (B ∪ W) x) * ind W x) ∧
-    𝐄 (h (B ∪ W) * ind B) + 𝐄 (fun x ↦ √(h (B ∪ W) x) * ind W x) ≤
+      𝐄 (h (B ∪ W) * 𝟏 B) + 𝐄 (fun x ↦ √(h (B ∪ W) x) * 𝟏 W x) ∧
+    𝐄 (h (B ∪ W) * 𝟏 B) + 𝐄 (fun x ↦ √(h (B ∪ W) x) * 𝟏 W x) ≤
       |∇(A, B)| + √n * ｜W｜ := by
   sorry
 
@@ -56,8 +56,8 @@ $|\nabla(A,B)|=2^{-n}\#\{(x,y)\in\mathcal{E} : x\in A,y\in B\}$, where $\mathcal
 edges of $\{0,1\}^n$. -/
 theorem thm_1_2 (n : ℕ) (hn : 1 ≤ n) (A B W : Set ({0,1}^n))
     (hAB : Disjoint A B) (hAW : Disjoint A W) (hBW : Disjoint B W)
-    (hcover : A ∪ B ∪ W = Set.univ) (hA : ｜A｜ = 1 / 2) :
-    |∇(A, B)| + √n * ｜W｜ ≥ 1 / 2 := by
+    (hcover : A ∪ B ∪ W = Set.univ) (hA : ｜A｜ = 2⁻¹) :
+    |∇(A, B)| + √n * ｜W｜ ≥ 2⁻¹ := by
   sorry
 
 end Auto.DIRX

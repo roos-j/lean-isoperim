@@ -39,7 +39,7 @@ noncomputable def Mi {n : ℕ} (i : Fin n) (f : ({0,1}^n) → ℝ) (x : {0,1}^n)
 noncomputable def M {n : ℕ} (f : ({0,1}^n) → ℝ) (x : {0,1}^n) : ℝ := √(∑ i, (Mi i f x) ^ 2)
 
 /-- [DIR], §3: observe $M\mathbf{1}_A=\sqrt{h_A}$. -/
-theorem M_indicator (n : ℕ) (A : Set ({0,1}^n)) : M (ind A) = fun x ↦ √(h A x) := by
+theorem M_indicator (n : ℕ) (A : Set ({0,1}^n)) : M (𝟏 A) = fun x ↦ √(h A x) := by
   sorry
 
 /-- **Lemma 3.1** ([DIR]). Suppose that $\mathcal{I}\subset[0,\infty)$ is an interval and
@@ -78,29 +78,29 @@ $B(\min(f(0),f(1)))\ge0$ (cf. the hypothesis $B\ge0$ added to Lemma 3.1). -/
 theorem eqn_3_2 (B : ℝ → ℝ) (f : ({0,1}^1) → ℝ) (hB : 0 ≤ B (min (f 0) (f 1))) :
     B (𝐄 f) ≤ 𝐄 (fun x ↦ √(B (f x) ^ 2 + (M f x) ^ 2)) ↔
       B ((min (f 0) (f 1) + max (f 0) (f 1)) / 2) ≤
-        1 / 2 * √((max (f 0) (f 1) - min (f 0) (f 1)) ^ 2 + B (max (f 0) (f 1)) ^ 2) +
-          1 / 2 * B (min (f 0) (f 1)) := by
+        2⁻¹ * √((max (f 0) (f 1) - min (f 0) (f 1)) ^ 2 + B (max (f 0) (f 1)) ^ 2) +
+          2⁻¹ * B (min (f 0) (f 1)) := by
   sorry
 
 /-- [DIR], §3: observe that (3.2) is equivalent to $G^1_{\frac12}[B](x,y)\ge0$ with $G^1_\beta$ as
 in (2.1) (for $x\le y$ and $B(y)\ge0$). -/
 theorem eqn_3_2_iff_G₁ (B : ℝ → ℝ) (x y : ℝ) (hxy : x ≤ y) (hBy : 0 ≤ B y) :
-    B ((x + y) / 2) ≤ 1 / 2 * √((y - x) ^ 2 + B y ^ 2) + 1 / 2 * B x ↔
-      G₁ (1 / 2) B x y ≥ 0 := by
+    B ((x + y) / 2) ≤ 2⁻¹ * √((y - x) ^ 2 + B y ^ 2) + 2⁻¹ * B x ↔
+      G₁ 2⁻¹ B x y ≥ 0 := by
   sorry
 
 section Proof_Theorem_1_6
 /-- [DIR], §3, proof of Theorem 1.6 (cited from [BIM23, Lemma 2.2]): the function
 $L(x)=x\sqrt{\log_2(1/x)}$ satisfies (3.2) when $0\le x\le y\le\frac12$. -/
-theorem L_half_eqn_3_2 (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y) (hy : y ≤ 1 / 2) :
-    L (1 / 2) ((x + y) / 2) ≤ 1 / 2 * √((y - x) ^ 2 + L (1 / 2) y ^ 2) + 1 / 2 * L (1 / 2) x := by
+theorem L_half_eqn_3_2 (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y) (hy : y ≤ 2⁻¹) :
+    L 2⁻¹ ((x + y) / 2) ≤ 2⁻¹ * √((y - x) ^ 2 + L 2⁻¹ y ^ 2) + 2⁻¹ * L 2⁻¹ x := by
   sorry
 
 /-- [DIR], §3, proof of Theorem 1.6: applying Lemma 3.1 with $\mathcal{I}=[0,\frac12]$,
 $L(\mathbf{E}f)\le\mathbf{E}\sqrt{L(f)^2+(Mf)^2}$ for all $f:\{0,1\}^n\to[0,\frac12]$. -/
 theorem L_half_eqn_3_1 (n : ℕ) (hn : 1 ≤ n) (f : ({0,1}^n) → ℝ)
-    (hf : ∀ x, f x ∈ Icc (0 : ℝ) (1 / 2)) :
-    L (1 / 2) (𝐄 f) ≤ 𝐄 (fun x ↦ √(L (1 / 2) (f x) ^ 2 + (M f x) ^ 2)) := by
+    (hf : ∀ x, f x ∈ Icc (0 : ℝ) 2⁻¹) :
+    L 2⁻¹ (𝐄 f) ≤ 𝐄 (fun x ↦ √(L 2⁻¹ (f x) ^ 2 + (M f x) ^ 2)) := by
   sorry
 
 /-- [DIR], §3, proof of Theorem 1.6: plugging in $f=\frac12\mathbf{1}_A$ we have
@@ -108,15 +108,15 @@ $\mathbf{E}f=\frac12|A|$ and the inequality becomes
 $$L(\tfrac12|A|)\le\tfrac12\mathbf{E}(\mathbf{1}_A\sqrt{1+h_A})
 \le\tfrac12(|A|+\mathbf{E}\sqrt{h_A}).$$ -/
 theorem proof_thm_1_6_chain (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) :
-    𝐄 (fun x ↦ 1 / 2 * ind A x) = 1 / 2 * ｜A｜ ∧
-    L (1 / 2) (1 / 2 * ｜A｜) ≤ 1 / 2 * 𝐄 (fun x ↦ ind A x * √(1 + h A x)) ∧
-    1 / 2 * 𝐄 (fun x ↦ ind A x * √(1 + h A x)) ≤ 1 / 2 * (｜A｜ + 𝐄 (fun x ↦ √(h A x))) := by
+    𝐄 (fun x ↦ 2⁻¹ * 𝟏 A x) = 2⁻¹ * ｜A｜ ∧
+    L 2⁻¹ (2⁻¹ * ｜A｜) ≤ 2⁻¹ * 𝐄 (fun x ↦ 𝟏 A x * √(1 + h A x)) ∧
+    2⁻¹ * 𝐄 (fun x ↦ 𝟏 A x * √(1 + h A x)) ≤ 2⁻¹ * (｜A｜ + 𝐄 (fun x ↦ √(h A x))) := by
   sorry
 
 end Proof_Theorem_1_6
 
 /-- The standard Gaussian density $\varphi(t)=(2\pi)^{-1/2}e^{-t^2/2}$ ([DIR], §3). -/
-noncomputable def φ (t : ℝ) : ℝ := (2 * π) ^ (-(1 / 2 : ℝ)) * exp (-t ^ 2 / 2)
+noncomputable def φ (t : ℝ) : ℝ := (2 * π) ^ (-(2⁻¹ : ℝ)) * exp (-t ^ 2 / 2)
 
 /-- The standard Gaussian distribution function $\Phi(t)=\int_{-\infty}^t\varphi(s)\,ds$
 ([DIR], §3). -/
@@ -153,13 +153,13 @@ theorem Jw_spec (w : ℝ) (hw : 0 < w) :
 
 /-- [DIR], §3, (3.4) and Corollary 5.12: there is a unique $w_0\in(0,1)$ with
 $J_{w_0}(\frac12)=\frac12$. -/
-theorem existsUnique_w₀ : ∃! w : ℝ, w ∈ Ioo 0 1 ∧ Jw w (1 / 2) = 1 / 2 := by
+theorem existsUnique_w₀ : ∃! w : ℝ, w ∈ Ioo 0 1 ∧ Jw w 2⁻¹ = 2⁻¹ := by
   sorry
 
 open Classical in
 /-- The constant $w_0$ ([DIR], (3.4)): the value such that $J_{w_0}(\frac12)=\frac12$ (unique in
 $(0,1)$ by `Auto.DIR.existsUnique_w₀`; junk value $0$ if no such value existed). -/
-noncomputable def w₀ : ℝ := if h : ∃ w : ℝ, w ∈ Ioo 0 1 ∧ Jw w (1 / 2) = 1 / 2 then h.choose else 0
+noncomputable def w₀ : ℝ := if h : ∃ w : ℝ, w ∈ Ioo 0 1 ∧ Jw w 2⁻¹ = 2⁻¹ then h.choose else 0
 
 /-- [DIR], §3: one computes $w_0\in[0.895,0.896]$. -/
 theorem w₀_mem : w₀ ∈ Icc (0.895 : ℝ) 0.896 := by
@@ -168,17 +168,17 @@ theorem w₀_mem : w₀ ∈ Icc (0.895 : ℝ) 0.896 := by
 /-- [DIR], §1.3: there is a unique smooth function on $(\frac12,1)$, continuous at the endpoints,
 satisfying $J''J=-2$, $J(\frac12)=\frac12$, $J(1)=0$ (uniqueness on $[\frac12,1]$). -/
 theorem existsUnique_J :
-    (∃ f, IsJ f) ∧ ∀ f g, IsJ f → IsJ g → EqOn f g (Icc (1 / 2) 1) := by
+    (∃ f, IsJ f) ∧ ∀ f g, IsJ f → IsJ g → EqOn f g (Icc 2⁻¹ 1) := by
   sorry
 
 /-- [DIR], §2.2: $J(x)$ and $L_\beta(1-x)$ are equal to $\frac12$ at $x=\frac12$. -/
-theorem J_half_eq_L_half (β : ℝ) : J (1 / 2) = 1 / 2 ∧ L β (1 - 1 / 2) = 1 / 2 := by
+theorem J_half_eq_L_half (β : ℝ) : J 2⁻¹ = 2⁻¹ ∧ L β (1 - 2⁻¹) = 2⁻¹ := by
   sorry
 
 /-- **(3.4)** ([DIR], §3). With $J$ the function of Theorem 1.7,
 $$J(x)=J_{w_0}(x)$$
 (for $x\in[\frac12,1]$), where $w_0$ is such that $J_{w_0}(\frac12)=\frac12$. -/
-theorem eqn_3_4 (x : ℝ) (hx : x ∈ Icc (1 / 2 : ℝ) 1) : J x = Jw w₀ x := by
+theorem eqn_3_4 (x : ℝ) (hx : x ∈ Icc (2⁻¹ : ℝ) 1) : J x = Jw w₀ x := by
   sorry
 
 section Proof_Lemma_3_2
@@ -228,7 +228,7 @@ include hIc hI hI0 hII hI'
 (3.5) amounts to $\sqrt{2u^2+I(c+u)^2}\ge2I(c)-I(c-u)$ for all $u\in[0,c_*]$. -/
 theorem prop_3_3_reduction (c : ℝ) (hc : c ∈ Icc a b) (u : ℝ) (hu : u ∈ Icc 0 (min (c -
     a) (b - c))) :
-    (√(1 / 2 * ((c + u) - (c - u)) ^ 2 + I (c + u) ^ 2) + I (c - u) ≥ 2 * I c ↔
+    (√(2⁻¹ * ((c + u) - (c - u)) ^ 2 + I (c + u) ^ 2) + I (c - u) ≥ 2 * I c ↔
       √(2 * u ^ 2 + I (c + u) ^ 2) ≥ 2 * I c - I (c - u)) := by
   sorry
 
@@ -313,7 +313,7 @@ theorem prop_3_3 (I : ℝ → ℝ) (a b : ℝ) (hIc : ContinuousOn I (Icc a b))
     (hI : ContDiffOn ℝ 2 I (Ioo a b)) (hI0 : ∀ x ∈ Icc a b, 0 ≤ I x)
     (hII : ∀ x ∈ Ioo a b, deriv (deriv I) x * I x = -1) (hI' : ∀ x ∈ Ioo a b, deriv I x ≤ 0)
     (x y : ℝ) (hx : x ∈ Icc a b) (hy : y ∈ Icc a b) (hxy : x ≤ y) :
-    √(1 / 2 * (y - x) ^ 2 + I y ^ 2) + I x ≥ 2 * I ((x + y) / 2) := by
+    √(2⁻¹ * (y - x) ^ 2 + I y ^ 2) + I x ≥ 2 * I ((x + y) / 2) := by
   sorry
 
 /-- **Remark 3.6** ([DIR]). The range of $x,y$ is optimal: if $x<1-\frac w2$, the inequality fails,
@@ -344,7 +344,7 @@ theorem eqn_3_6 : x₀ ∈ Icc (0.552 : ℝ) 0.553 := by
 
 /-- [DIR], §3: setting $w=w_0$, (3.2) holds for $B=J$ as long as $1\ge y\ge x\ge x_0$. -/
 theorem J_eqn_3_2 (x y : ℝ) (hx : x₀ ≤ x) (hxy : x ≤ y) (hy : y ≤ 1) :
-    J ((x + y) / 2) ≤ 1 / 2 * √((y - x) ^ 2 + J y ^ 2) + 1 / 2 * J x := by
+    J ((x + y) / 2) ≤ 2⁻¹ * √((y - x) ^ 2 + J y ^ 2) + 2⁻¹ * J x := by
   sorry
 
 /-! ### Remark 3.7 -/

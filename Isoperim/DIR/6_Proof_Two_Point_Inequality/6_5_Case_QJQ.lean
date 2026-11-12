@@ -28,7 +28,7 @@ monotonicity claims, the computer-assisted bound (6.25) and the polynomial $p_\b
 * `G_QJQ β x y`, `g_QJQ β x y`, `g_QJQ_lo β xl xu yl yu`, `p_QJQ β x` : $G_{QJQ,\beta}(x,y)$,
   $g_{QJQ,\beta}(x,y)$, $\underline{g_{QJQ,\beta}}$ and $p_\beta(x)$.
 * `J` is only meaningful on $[\frac12,1]$. The derivative $J'(y)$ for $y\in[\frac12,1)$, including
-  the endpoint $y=\frac12$ where it is one-sided, is written `derivWithin J (Icc (1 / 2) 1) y`
+  the endpoint $y=\frac12$ where it is one-sided, is written `derivWithin J (Icc 2⁻¹ 1) y`
   (this equals `deriv J y` for $y\in(\frac12,1)$).
 -/
 
@@ -40,12 +40,12 @@ open Real Set
 
 /-- [DIR], §6.5: the region $QJQ$ ($\frac14\le x\le\frac12\le y$, $x+y\le1$) is contained in the
 rectangle $[\frac14,\frac12]\times[\frac12,\frac34]$. -/
-theorem caseQJQ_region (x y : ℝ) (hx : 1 / 4 ≤ x) (hx' : x ≤ 1 / 2) (hy : 1 / 2 ≤ y)
-    (hxy : x + y ≤ 1) : x ∈ Icc (1 / 4 : ℝ) (1 / 2) ∧ y ∈ Icc (1 / 2 : ℝ) (3 / 4) := by
+theorem caseQJQ_region (x y : ℝ) (hx : 4⁻¹ ≤ x) (hx' : x ≤ 2⁻¹) (hy : 2⁻¹ ≤ y)
+    (hxy : x + y ≤ 1) : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹ ∧ y ∈ Icc (2⁻¹ : ℝ) (3 / 4) := by
   sorry
 
 /-- The constant $\beta_1=\frac12+\frac{31}{1024}\approx0.53$ ([DIR], Proposition 6.9). -/
-noncomputable def β₁ : ℝ := 1 / 2 + 31 / 1024
+noncomputable def β₁ : ℝ := 2⁻¹ + 31 / 1024
 
 /-- [DIR], Proposition 6.9: $\beta_1\approx0.53$ (precisely, $\beta_1\in[0.53,0.531]$). -/
 theorem β₁_approx : β₁ ∈ Icc (0.53 : ℝ) 0.531 := by
@@ -58,23 +58,23 @@ noncomputable def G_QJQ (β x y : ℝ) : ℝ :=
 
 /-- The function ([DIR], (6.24))
 $$g_{QJQ,\beta}(x,y)=(y-x)+J(y)J'(y)-(2Q_\beta(\tfrac{x+y}2)-Q_\beta(x))Q_\beta'(\tfrac{x+y}2).$$
-(Here $J'(y)$ is `derivWithin J (Icc (1 / 2) 1) y`, one-sided at $y=\frac12$.) -/
+(Here $J'(y)$ is `derivWithin J (Icc 2⁻¹ 1) y`, one-sided at $y=\frac12$.) -/
 noncomputable def g_QJQ (β x y : ℝ) : ℝ :=
-  (y - x) + J y * derivWithin J (Icc (1 / 2) 1) y -
+  (y - x) + J y * derivWithin J (Icc 2⁻¹ 1) y -
     (2 * Q β ((x + y) / 2) - Q β x) * deriv (Q β) ((x + y) / 2)
 
 /-- [DIR], §6.5: the $y$-derivative of the left-hand side in (6.23) is $2$ times
 $g_{QJQ,\beta}(x,y)$ (6.24). (Stated for $y\in(\frac12,\frac34]$, where the two-sided derivative
 of `J` at $y$ is meaningful.) -/
-theorem G_QJQ_deriv_y (β x y : ℝ) (hy : y ∈ Ioc (1 / 2 : ℝ) (3 / 4)) :
+theorem G_QJQ_deriv_y (β x y : ℝ) (hy : y ∈ Ioc (2⁻¹ : ℝ) (3 / 4)) :
     deriv (fun y ↦ G_QJQ β x y) y = 2 * g_QJQ β x y := by
   sorry
 
 section Proof_Claim_2
 /-- [DIR], §6.5, proof of item 2: first, $2Q_\beta(\frac{x+y}2)-Q_\beta(x)\ge Q_\beta(y)>0$
 follows since $Q_\beta$ is concave. -/
-theorem two_Q_sub_Q_ge (β : ℝ) (hβ : β ∈ Icc (1 / 2) β₁) (x y : ℝ)
-    (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2)) (hy : y ∈ Icc (1 / 2 : ℝ) (3 / 4)) :
+theorem two_Q_sub_Q_ge (β : ℝ) (hβ : β ∈ Icc 2⁻¹ β₁) (x y : ℝ)
+    (hx : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹) (hy : y ∈ Icc (2⁻¹ : ℝ) (3 / 4)) :
     2 * Q β ((x + y) / 2) - Q β x ≥ Q β y ∧ Q β y > 0 := by
   sorry
 
@@ -82,27 +82,27 @@ end Proof_Claim_2
 
 /-- [DIR], §6.5: from (5.9) we see that for each fixed $(x,y)$ the left-hand side in (6.23) is
 either monotone increasing or decreasing in $\beta$ (for $\beta\in[\frac12,\beta_1]$). -/
-theorem G_QJQ_monotone_or_antitone (x y : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2))
-    (hy : y ∈ Icc (1 / 2 : ℝ) (3 / 4)) :
-    MonotoneOn (fun β ↦ G_QJQ β x y) (Icc (1 / 2) β₁) ∨
-      AntitoneOn (fun β ↦ G_QJQ β x y) (Icc (1 / 2) β₁) := by
+theorem G_QJQ_monotone_or_antitone (x y : ℝ) (hx : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹)
+    (hy : y ∈ Icc (2⁻¹ : ℝ) (3 / 4)) :
+    MonotoneOn (fun β ↦ G_QJQ β x y) (Icc 2⁻¹ β₁) ∨
+      AntitoneOn (fun β ↦ G_QJQ β x y) (Icc 2⁻¹ β₁) := by
   sorry
 
 /-- [DIR], §6.5: thus
 $G_{QJQ,\beta}(x,y)\ge\min(G_{QJQ,1/2}(x,y),G_{QJQ,\beta_1}(x,y))$ (for $\beta\in[\frac12,\beta_1]$,
 $(x,y)\in[\frac14,\frac12]\times[\frac12,\frac34]$). -/
-theorem G_QJQ_ge_min (x y : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2))
-    (hy : y ∈ Icc (1 / 2 : ℝ) (3 / 4)) (β : ℝ) (hβ : β ∈ Icc (1 / 2) β₁) :
-    G_QJQ β x y ≥ min (G_QJQ (1 / 2) x y) (G_QJQ β₁ x y) := by
+theorem G_QJQ_ge_min (x y : ℝ) (hx : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹)
+    (hy : y ∈ Icc (2⁻¹ : ℝ) (3 / 4)) (β : ℝ) (hβ : β ∈ Icc 2⁻¹ β₁) :
+    G_QJQ β x y ≥ min (G_QJQ 2⁻¹ x y) (G_QJQ β₁ x y) := by
   sorry
 
 /-- [DIR], §6.5: it suffices to show the claim (Proposition 6.9) for $\beta=\frac12$ and
 $\beta=\beta_1$. -/
 theorem prop_6_9_of_endpoints
-    (h : ∀ β ∈ ({1 / 2, β₁} : Set ℝ), ∀ x ∈ Icc (1 / 4 : ℝ) (1 / 2), ∀ y ∈ Icc (1 / 2 : ℝ) (3 / 4),
+    (h : ∀ β ∈ ({2⁻¹, β₁} : Set ℝ), ∀ x ∈ Icc (4⁻¹ : ℝ) 2⁻¹, ∀ y ∈ Icc (2⁻¹ : ℝ) (3 / 4),
       G_QJQ β x y ≥ 0)
-    (x y : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2)) (hy : y ∈ Icc (1 / 2 : ℝ) (3 / 4)) (β : ℝ)
-    (hβ : β ∈ Icc (1 / 2) β₁) : G_QJQ β x y ≥ 0 := by
+    (x y : ℝ) (hx : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹) (hy : y ∈ Icc (2⁻¹ : ℝ) (3 / 4)) (β : ℝ)
+    (hβ : β ∈ Icc 2⁻¹ β₁) : G_QJQ β x y ≥ 0 := by
   sorry
 
 /-- **(6.25)** ([DIR], §6.5) (🚗). Calling
@@ -119,24 +119,24 @@ $\beta=\frac12$ and $\approx3.0\cdot10^{-2}$ for $\beta=\beta_1$, both attained 
 $y\approx0.58$–$0.59$ (inside the region $x+y\le1$). Note that Proposition 6.9 as stated on the
 full rectangle needs (6.25) on the full rectangle (for the reduction to $y=\frac12$), whereas Case
 $QJQ$ of Theorem 2.2 only needs the part $x+y\le1$. The statement is kept as in the paper. -/
-theorem eqn_6_25 (β : ℝ) (hβ : β ∈ ({1 / 2, β₁} : Set ℝ)) (x y : ℝ)
-    (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2)) (hy : y ∈ Icc (1 / 2 : ℝ) (3 / 4)) :
+theorem eqn_6_25 (β : ℝ) (hβ : β ∈ ({2⁻¹, β₁} : Set ℝ)) (x y : ℝ)
+    (hx : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹) (hy : y ∈ Icc (2⁻¹ : ℝ) (3 / 4)) :
     g_QJQ β x y > 10 ^ (-5 : ℤ) := by
   sorry
 
 /-- [DIR], §6.5: we begin by showing that this quantity is strictly positive for all
 $(x,y)\in[\frac14,\frac12]\times[\frac12,\frac34]$, thus reducing to the case $y=\frac12$:
 for $\beta\in\{\frac12,\beta_1\}$, $G_{QJQ,\beta}(x,y)\ge G_{QJQ,\beta}(x,\frac12)$. -/
-theorem G_QJQ_ge_G_QJQ_half (β : ℝ) (hβ : β ∈ ({1 / 2, β₁} : Set ℝ)) (x y : ℝ)
-    (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2)) (hy : y ∈ Icc (1 / 2 : ℝ) (3 / 4)) :
-    G_QJQ β x y ≥ G_QJQ β x (1 / 2) := by
+theorem G_QJQ_ge_G_QJQ_half (β : ℝ) (hβ : β ∈ ({2⁻¹, β₁} : Set ℝ)) (x y : ℝ)
+    (hx : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹) (hy : y ∈ Icc (2⁻¹ : ℝ) (3 / 4)) :
+    G_QJQ β x y ≥ G_QJQ β x 2⁻¹ := by
   sorry
 
 /-- [DIR], §6.5: to finish the proof it now suffices to show (6.23) for $y=\frac12$, that is
 $$(\tfrac12-x)^2+\tfrac14-(2Q_\beta(\tfrac x2+\tfrac14)-Q_\beta(x))^2\ge0$$
 for $x\in[\frac14,\frac12]$ (here $J(\frac12)=\frac12$). -/
 theorem G_QJQ_y_half_eq (β x : ℝ) :
-    G_QJQ β x (1 / 2) = (1 / 2 - x) ^ 2 + 1 / 4 - (2 * Q β (x / 2 + 1 / 4) - Q β x) ^ 2 := by
+    G_QJQ β x 2⁻¹ = (2⁻¹ - x) ^ 2 + 4⁻¹ - (2 * Q β (x / 2 + 4⁻¹) - Q β x) ^ 2 := by
   sorry
 
 /-- The cubic polynomial ([DIR], §6.5)
@@ -150,13 +150,13 @@ noncomputable def p_QJQ (β x : ℝ) : ℝ :=
 /-- [DIR], §6.5: the left-hand side is a polynomial in $x$ that factors as
 $\frac14(1-2x)^3p_\beta(x)$. -/
 theorem G_QJQ_y_half_factor (β x : ℝ) :
-    (1 / 2 - x) ^ 2 + 1 / 4 - (2 * Q β (x / 2 + 1 / 4) - Q β x) ^ 2 =
-      1 / 4 * (1 - 2 * x) ^ 3 * p_QJQ β x := by
+    (2⁻¹ - x) ^ 2 + 4⁻¹ - (2 * Q β (x / 2 + 4⁻¹) - Q β x) ^ 2 =
+      4⁻¹ * (1 - 2 * x) ^ 3 * p_QJQ β x := by
   sorry
 
 /-- [DIR], §6.5: plugging in $\beta=\beta_1,\frac12$ one sees that the coefficients of
 $x,x^2,x^3$ (in $p_\beta$) are positive. -/
-theorem p_QJQ_coeffs_pos (β : ℝ) (hβ : β ∈ ({β₁, 1 / 2} : Set ℝ)) :
+theorem p_QJQ_coeffs_pos (β : ℝ) (hβ : β ∈ ({β₁, 2⁻¹} : Set ℝ)) :
     (18 : ℝ) - 3 * 2 ^ (3 + β) + 2 ^ (3 + 2 * β) > 0 ∧
       (2 : ℝ) ^ (5 + β) - 3 * 2 ^ (2 + 2 * β) - 21 > 0 ∧
       (8 : ℝ) + 3 * 2 ^ (1 + 2 * β) - 7 * 2 ^ (1 + β) > 0 := by
@@ -164,29 +164,29 @@ theorem p_QJQ_coeffs_pos (β : ℝ) (hβ : β ∈ ({β₁, 1 / 2} : Set ℝ)) :
 
 /-- [DIR], §6.5: so $p_\beta$ is an increasing function (on $[0,\infty)$, for
 $\beta\in\{\beta_1,\frac12\}$). -/
-theorem p_QJQ_monotoneOn (β : ℝ) (hβ : β ∈ ({β₁, 1 / 2} : Set ℝ)) :
+theorem p_QJQ_monotoneOn (β : ℝ) (hβ : β ∈ ({β₁, 2⁻¹} : Set ℝ)) :
     MonotoneOn (p_QJQ β) (Ici 0) := by
   sorry
 
 /-- [DIR], §6.5: finally, at $x=\frac14$ one computes $p_\beta(\frac14)>10^{-4}>0$ for
 $\beta\in\{\beta_1,\frac12\}$. -/
-theorem p_QJQ_quarter (β : ℝ) (hβ : β ∈ ({β₁, 1 / 2} : Set ℝ)) :
-    p_QJQ β (1 / 4) > 10 ^ (-4 : ℤ) := by
+theorem p_QJQ_quarter (β : ℝ) (hβ : β ∈ ({β₁, 2⁻¹} : Set ℝ)) :
+    p_QJQ β 4⁻¹ > 10 ^ (-4 : ℤ) := by
   sorry
 
 /-- [DIR], §6.5: the inequality
 $(\frac12-x)^2+\frac14-(2Q_\beta(\frac x2+\frac14)-Q_\beta(x))^2\ge0$ for $x\in[\frac14,\frac12]$
 and $\beta\in\{\frac12,\beta_1\}$. -/
-theorem G_QJQ_y_half_nonneg (β : ℝ) (hβ : β ∈ ({1 / 2, β₁} : Set ℝ)) (x : ℝ)
-    (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
-    (1 / 2 - x) ^ 2 + 1 / 4 - (2 * Q β (x / 2 + 1 / 4) - Q β x) ^ 2 ≥ 0 := by
+theorem G_QJQ_y_half_nonneg (β : ℝ) (hβ : β ∈ ({2⁻¹, β₁} : Set ℝ)) (x : ℝ)
+    (hx : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
+    (2⁻¹ - x) ^ 2 + 4⁻¹ - (2 * Q β (x / 2 + 4⁻¹) - Q β x) ^ 2 ≥ 0 := by
   sorry
 
 /-- **Proposition 6.9** ([DIR], $QJQ$). Let $\beta_1=\frac12+\frac{31}{1024}\approx0.53$. For all
 $(x,y)\in[\frac14,\frac12]\times[\frac12,\frac34]$ and $\beta\in[\frac12,\beta_1]$:
 $$G_{QJQ,\beta}(x,y)=(y-x)^2+J(y)^2-(2Q_\beta(\tfrac{x+y}2)-Q_\beta(x))^2\ge0. \tag{6.23}$$ -/
-theorem prop_6_9 (x y : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2)) (hy : y ∈ Icc (1 / 2 : ℝ) (3 / 4))
-    (β : ℝ) (hβ : β ∈ Icc (1 / 2) β₁) : G_QJQ β x y ≥ 0 := by
+theorem prop_6_9 (x y : ℝ) (hx : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹) (hy : y ∈ Icc (2⁻¹ : ℝ) (3 / 4))
+    (β : ℝ) (hβ : β ∈ Icc 2⁻¹ β₁) : G_QJQ β x y ≥ 0 := by
   sorry
 
 end Auto.DIR

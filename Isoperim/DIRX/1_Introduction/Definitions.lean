@@ -47,7 +47,7 @@ noncomputable def s {n : ℕ} (f : ({0,1}^n) → ℝ) (x : {0,1}^n) : ℝ :=
 
 /-- [DIRX], §1, after (1.4): for $f=\mathbf{1}_A$, $s_f(x)=h_A(x)+h_{A^c}(x)$. -/
 theorem sensitivity_indicator (n : ℕ) (A : Set ({0,1}^n)) (x : {0,1}^n) :
-    s (ind A) x = h A x + h Aᶜ x := by
+    s (𝟏 A) x = h A x + h Aᶜ x := by
   sorry
 
 /-- [DIRX], §1, after (1.4): $h_A$ and $h_{A^c}$ have disjoint support. -/
@@ -58,7 +58,7 @@ theorem hA_mul_hA_compl (n : ℕ) (A : Set ({0,1}^n)) (x : {0,1}^n) :
 /-- [DIRX], §1, after (1.4): since $h_A$ and $h_{A^c}$ have disjoint support,
 $\sqrt{s_f}=\sqrt{h_A}+\sqrt{h_{A^c}}$ for $f=\mathbf{1}_A$. -/
 theorem sqrt_sensitivity_indicator (n : ℕ) (A : Set ({0,1}^n)) (x : {0,1}^n) :
-    √(s (ind A) x) = √(h A x) + √(h Aᶜ x) := by
+    √(s (𝟏 A) x) = √(h A x) + √(h Aᶜ x) := by
   sorry
 
 end Auto.DIRX

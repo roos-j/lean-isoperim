@@ -45,7 +45,7 @@ theorem thm_1_3 (n : ℕ) (hn : 1 ≤ n) :
     (∀ f : ({0,1}^n) → ℝ, (∀ x, f x = 0 ∨ f x = 1) →
       pNorm 1 (∇f) ≥ pNorm 1 (f - fun _ ↦ 𝐄 f)) ∧
     (∀ A : Set ({0,1}^n), IsHalfCube A →
-      pNorm 1 (∇(ind A)) = pNorm 1 (ind A - fun _ ↦ 𝐄 ind A)) := by
+      pNorm 1 (∇(𝟏 A)) = pNorm 1 (𝟏 A - fun _ ↦ 𝐄 𝟏 A)) := by
   sorry
 
 /-! ### Acknowledgments -/

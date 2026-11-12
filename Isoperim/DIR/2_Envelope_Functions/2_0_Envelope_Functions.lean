@@ -43,7 +43,7 @@ holds:
 $$G_\beta[B](x,y)\ge0 \tag{2.2}$$
 for all $0\le x\le y\le1$. Then $\mathcal{B}_\beta\ge B$ (on $\mathcal{Q}$, where
 $\mathcal{B}_\beta$ is defined). -/
-theorem prop_2_1 (β : ℝ) (hβ : 1 / 2 ≤ β) (B : ℝ → ℝ) (hB : ∀ x ∈ Icc (0 : ℝ) 1, 0 ≤ B x)
+theorem prop_2_1 (β : ℝ) (hβ : 2⁻¹ ≤ β) (B : ℝ → ℝ) (hB : ∀ x ∈ Icc (0 : ℝ) 1, 0 ≤ B x)
     (hB0 : B 0 = 0) (hB1 : B 1 = 0)
     (h22 : ∀ x y : ℝ, 0 ≤ x → x ≤ y → y ≤ 1 → G β B x y ≥ 0) :
     ∀ x ∈ 𝒬, 𝓑 β x ≥ B x := by
@@ -54,7 +54,7 @@ Then for all $0\le x\le y\le1$:
 $$G_{\beta_0}[b_{\beta_0}](x,y)\ge0, \tag{2.4}$$
 $$G_{\frac12}[c_0\cdot b_{\frac12}](x,y)\ge0. \tag{2.5}$$ -/
 theorem thm_2_2 (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y) (hy : y ≤ 1) :
-    G β₀ (b β₀) x y ≥ 0 ∧ G (1 / 2) (c₀ • b (1 / 2)) x y ≥ 0 := by
+    G β₀ (b β₀) x y ≥ 0 ∧ G 2⁻¹ (c₀ • b 2⁻¹) x y ≥ 0 := by
   sorry
 
 /-! ### Remark 2.4 -/
@@ -63,7 +63,7 @@ theorem thm_2_2 (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y) (hy : y ≤ 1) :
 $$\mathcal{B}_{\beta_0}\ge b_{\beta_0}, \tag{2.6}$$
 $$\mathcal{B}_{\frac12}\ge0.997\cdot b_{\frac12}. \tag{2.7}$$ -/
 theorem cor_2_5 :
-    (∀ x ∈ 𝒬, 𝓑 β₀ x ≥ b β₀ x) ∧ (∀ x ∈ 𝒬, 𝓑 (1 / 2) x ≥ 0.997 * b (1 / 2) x) := by
+    (∀ x ∈ 𝒬, 𝓑 β₀ x ≥ b β₀ x) ∧ (∀ x ∈ 𝒬, 𝓑 2⁻¹ x ≥ 0.997 * b 2⁻¹ x) := by
   sorry
 
 end Auto.DIR

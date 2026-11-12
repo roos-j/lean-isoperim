@@ -17,7 +17,7 @@ Source [DIRX]: P. Durcik, P. Ivanisvili, J. Roos, X. Xie, *Sharp isoperimetric i
 Hamming cube II: The critical exponent*, arXiv:2602.20462v1.
 
 Here `L x`, `Q x` are the functions $L$, $Q$ of [DIRX], §2.1 (the [DIR] functions `Auto.DIR.L (1 /
-2)`, `Auto.DIR.Q (1 / 2)`).
+2)`, `Auto.DIR.Q 2⁻¹`).
 -/
 
 @[expose] public section
@@ -28,9 +28,9 @@ open Auto.DIR
 
 open Real Set
 
-local notation "L" => Auto.DIR.L (1 / 2)
+local notation "L" => Auto.DIR.L 2⁻¹
 
-local notation "Q" => Auto.DIR.Q (1 / 2)
+local notation "Q" => Auto.DIR.Q 2⁻¹
 
 /-! ### §2.3 Properties of the functions L and Q -/
 

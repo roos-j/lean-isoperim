@@ -54,7 +54,7 @@ theorem eqn_5_4 (β x : ℝ) (hx : x ∈ Ioo (0 : ℝ) 1) :
   sorry
 
 /-- **Remark 5.7** ([DIR]). Note $e^{-\sqrt3/2}>e^{-1}>\frac14$. -/
-theorem rem_5_7 : exp (-(√3 / 2)) > exp (-1) ∧ exp (-1) > (1 / 4 : ℝ) := by
+theorem rem_5_7 : exp (-(√3 / 2)) > exp (-1) ∧ exp (-1) > (4⁻¹ : ℝ) := by
   sorry
 
 section Proof_Lemma_5_6
@@ -85,31 +85,31 @@ theorem lemma_5_6_2_coeffs (x : ℝ) (hx : x ∈ Ioo 0 (exp (-1))) :
 $\beta\mapsto\ell(x,\beta)$ is concave and thus $\ell(x,\beta)\ge\min(\ell(x,\frac12),\ell(x,1))$
 for $\beta\in[\frac12,1]$. -/
 theorem lemma_5_6_2_concave (x : ℝ) (hx : x ∈ Ioo 0 (exp (-1))) (β : ℝ)
-    (hβ : β ∈ Icc (1 / 2 : ℝ) 1) :
+    (hβ : β ∈ Icc (2⁻¹ : ℝ) 1) :
     deriv (deriv (fun β' ↦ ℓ x β')) β = -2 * a₂ x ∧ -2 * a₂ x < 0 ∧
-      ℓ x β ≥ min (ℓ x (1 / 2)) (ℓ x 1) := by
+      ℓ x β ≥ min (ℓ x 2⁻¹) (ℓ x 1) := by
   sorry
 
 /-- [DIR], proof of Lemma 5.6 (2): $x\mapsto\ell(x,\frac12)$ and $x\mapsto\ell(x,1)$ are decreasing
 functions (on $(0,e^{-1})$), so $\ell(x,\beta)\ge\min(\ell(e^{-1},\frac12),\ell(e^{-1},1))$. -/
 theorem lemma_5_6_2_decreasing :
-    AntitoneOn (fun x ↦ ℓ x (1 / 2)) (Ioc 0 (exp (-1))) ∧
+    AntitoneOn (fun x ↦ ℓ x 2⁻¹) (Ioc 0 (exp (-1))) ∧
     AntitoneOn (fun x ↦ ℓ x 1) (Ioc 0 (exp (-1))) ∧
-    ∀ x ∈ Ioo 0 (exp (-1)), ∀ β ∈ Icc (1 / 2 : ℝ) 1,
-      ℓ x β ≥ min (ℓ (exp (-1)) (1 / 2)) (ℓ (exp (-1)) 1) := by
+    ∀ x ∈ Ioo 0 (exp (-1)), ∀ β ∈ Icc (2⁻¹ : ℝ) 1,
+      ℓ x β ≥ min (ℓ (exp (-1)) 2⁻¹) (ℓ (exp (-1)) 1) := by
   sorry
 
 /-- [DIR], proof of Lemma 5.6 (2): $\ell(e^{-1},\frac12)=1+\frac34\log\frac1{\log2}>0$ and
 $\ell(e^{-1},1)=\log\frac1{\log2}>0$. -/
 theorem lemma_5_6_2_values :
-    ℓ (exp (-1)) (1 / 2) = 1 + 3 / 4 * log ((log 2)⁻¹) ∧ 1 + 3 / 4 * log ((log 2)⁻¹) > 0 ∧
+    ℓ (exp (-1)) 2⁻¹ = 1 + 3 / 4 * log ((log 2)⁻¹) ∧ 1 + 3 / 4 * log ((log 2)⁻¹) > 0 ∧
     ℓ (exp (-1)) 1 = log ((log 2)⁻¹) ∧ log ((log 2)⁻¹) > 0 := by
   sorry
 
 /-- [DIR], proof of Lemma 5.6 (2): we show $\partial_\beta\log(-L''_\beta(x))>0$, which means that
 $\beta\mapsto\log(-L''_\beta(x))$ is increasing, so $L''_\beta(x)$ is decreasing in $\beta$. The
 left-hand side equals $\beta^{-1}(1-\beta+\log\frac1x)^{-1}\ell(x,\beta)$. -/
-theorem lemma_5_6_2_log_deriv (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1) (x : ℝ)
+theorem lemma_5_6_2_log_deriv (β : ℝ) (hβ : β ∈ Icc (2⁻¹ : ℝ) 1) (x : ℝ)
     (hx : x ∈ Ioo 0 (exp (-1))) :
     deriv (fun β' ↦ log (-deriv (deriv (L β')) x)) β =
         β⁻¹ * (1 - β + log x⁻¹)⁻¹ * ℓ x β ∧
@@ -126,11 +126,11 @@ since its derivative is $3-2\beta\ge1$; solving $\beta(3-\beta)-2+(\log\frac1x)^
 $\beta=\frac12$ for $x$ gives $x=e^{-\sqrt3/2}$. (This also shows that $L'''_\beta(x)$ is
 increasing in $\beta$.) -/
 theorem lemma_5_6_3_steps :
-    (∀ β ∈ Icc (1 / 2 : ℝ) 1, ∀ x ∈ Ioo 0 (exp (-(√3 / 2))),
+    (∀ β ∈ Icc (2⁻¹ : ℝ) 1, ∀ x ∈ Ioo 0 (exp (-(√3 / 2))),
       β * (3 - β) - 2 + (log x⁻¹) ^ 2 > 0) ∧
     (∀ β : ℝ, StrictAntiOn (fun x ↦ β * (3 - β) - 2 + (log x⁻¹) ^ 2) (Ioo 0 1)) ∧
-    (∀ β ∈ Icc (1 / 2 : ℝ) 1, deriv (fun β' ↦ β' * (3 - β')) β = 3 - 2 * β ∧ 3 - 2 * β ≥ 1) ∧
-    (1 / 2 * (3 - 1 / 2) - 2 + (log ((exp (-(√3 / 2)))⁻¹)) ^ 2 = (0 : ℝ)) := by
+    (∀ β ∈ Icc (2⁻¹ : ℝ) 1, deriv (fun β' ↦ β' * (3 - β')) β = 3 - 2 * β ∧ 3 - 2 * β ≥ 1) ∧
+    (2⁻¹ * (3 - 2⁻¹) - 2 + (log ((exp (-(√3 / 2)))⁻¹)) ^ 2 = (0 : ℝ)) := by
   sorry
 
 end Proof_Claim_3
@@ -155,18 +155,18 @@ theorem lemma_5_6_4_formula (β x : ℝ) (hx : x ∈ Ioo (0 : ℝ) 1) :
 $\partial_\beta f_\beta(\frac12)=3\beta^2+4(\log2-3)\beta+11-(\log2)^2-6\log2$, which has both roots
 strictly greater than $1$ and is thus positive for $\beta\in[\frac12,1]$, so
 $\beta\mapsto f_\beta(\frac12)$ is increasing. -/
-theorem lemma_5_6_4_dbeta (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1) :
-    deriv (fun β' ↦ f_L4 β' (1 / 2)) β = 3 * β ^ 2 + 4 * (log 2 - 3) * β + 11 - (log 2) ^ 2 - 6 *
+theorem lemma_5_6_4_dbeta (β : ℝ) (hβ : β ∈ Icc (2⁻¹ : ℝ) 1) :
+    deriv (fun β' ↦ f_L4 β' 2⁻¹) β = 3 * β ^ 2 + 4 * (log 2 - 3) * β + 11 - (log 2) ^ 2 - 6 *
         log 2 ∧
     (∀ r : ℝ, 3 * r ^ 2 + 4 * (log 2 - 3) * r + 11 - (log 2) ^ 2 - 6 * log 2 = 0 → r > 1) ∧
     3 * β ^ 2 + 4 * (log 2 - 3) * β + 11 - (log 2) ^ 2 - 6 * log 2 > 0 ∧
-    MonotoneOn (fun β' ↦ f_L4 β' (1 / 2)) (Icc (1 / 2) 1) := by
+    MonotoneOn (fun β' ↦ f_L4 β' 2⁻¹) (Icc 2⁻¹ 1) := by
   sorry
 
 /-- [DIR], proof of Lemma 5.6 (4): evaluating $f_1(\frac12)<-0.6$; this implies
 $f_\beta(\frac12)<0$ for all $\beta\in[\frac12,1]$. -/
-theorem lemma_5_6_4_at_half : f_L4 1 (1 / 2) < -0.6 ∧ ∀ β ∈ Icc (1 / 2 : ℝ) 1,
-    f_L4 β (1 / 2) < 0 := by
+theorem lemma_5_6_4_at_half : f_L4 1 2⁻¹ < -0.6 ∧ ∀ β ∈ Icc (2⁻¹ : ℝ) 1,
+    f_L4 β 2⁻¹ < 0 := by
   sorry
 
 /-- [DIR], proof of Lemma 5.6 (4): the left-hand side is increasing in $\beta$, so it suffices to
@@ -174,9 +174,9 @@ verify the inequality for $\beta=\frac12$; setting $u=\log\frac1x$ it suffices t
 $12u^2-2u-3\ge0$ for $u\in[\log2,\infty)$, which can be verified by solving for $u$ and noting
 that the solutions are not greater than $\log2$. -/
 theorem lemma_5_6_4_quadratic :
-    (∀ x ∈ Ioc (0 : ℝ) (1 / 2),
+    (∀ x ∈ Ioc (0 : ℝ) 2⁻¹,
       MonotoneOn (fun β ↦ 3 * (log x⁻¹) ^ 2 - (1 - β) * log x⁻¹ - β ^ 2 + 3 * β - 2)
-        (Icc (1 / 2) 1)) ∧
+        (Icc 2⁻¹ 1)) ∧
     (∀ u : ℝ, log 2 ≤ u → 12 * u ^ 2 - 2 * u - 3 ≥ 0) ∧
     (∀ r : ℝ, 12 * r ^ 2 - 2 * r - 3 = 0 → r ≤ log 2) := by
   sorry
@@ -185,8 +185,8 @@ theorem lemma_5_6_4_quadratic :
 $f_\beta'(x)=2x^{-1}(3(\log\frac1x)^2-(1-\beta)\log\frac1x-\beta^2+3\beta-2)$ is non-negative on
 $(0,\frac12]$; for this it suffices to show
 $3(\log\frac1x)^2-(1-\beta)\log\frac1x-\beta^2+3\beta-2\ge0$ on $(0,\frac12]$. -/
-theorem lemma_5_6_4_deriv (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1) (x : ℝ)
-    (hx : x ∈ Ioc 0 (1 / 2)) :
+theorem lemma_5_6_4_deriv (β : ℝ) (hβ : β ∈ Icc (2⁻¹ : ℝ) 1) (x : ℝ)
+    (hx : x ∈ Ioc 0 2⁻¹) :
     deriv (f_L4 β) x =
         2 * x⁻¹ * (3 * (log x⁻¹) ^ 2 - (1 - β) * log x⁻¹ - β ^ 2 + 3 * β - 2) ∧
       3 * (log x⁻¹) ^ 2 - (1 - β) * log x⁻¹ - β ^ 2 + 3 * β - 2 ≥ 0 := by
@@ -203,19 +203,19 @@ end Proof_Lemma_5_6
 4. if $x\in(0,\frac12]$, $L^{(4)}_\beta(x)$ is negative.
 
 (In 2 and 3 monotonicity in $\beta$ is over $\beta\in[\frac12,1]$.) -/
-theorem lemma_5_6 (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1) :
+theorem lemma_5_6 (β : ℝ) (hβ : β ∈ Icc (2⁻¹ : ℝ) 1) :
     StrictConcaveOn ℝ (Icc 0 1) (L β) ∧
-    (∀ x ∈ Ioo 0 (exp (-1)), AntitoneOn (fun β' ↦ deriv (deriv (L β')) x) (Icc (1 / 2) 1)) ∧
+    (∀ x ∈ Ioo 0 (exp (-1)), AntitoneOn (fun β' ↦ deriv (deriv (L β')) x) (Icc 2⁻¹ 1)) ∧
     (∀ x ∈ Ioo 0 (exp (-(√3 / 2))), iteratedDeriv 3 (L β) x > 0 ∧
-      MonotoneOn (fun β' ↦ iteratedDeriv 3 (L β') x) (Icc (1 / 2) 1)) ∧
-    (∀ x ∈ Ioc 0 (1 / 2), iteratedDeriv 4 (L β) x < 0) := by
+      MonotoneOn (fun β' ↦ iteratedDeriv 3 (L β') x) (Icc 2⁻¹ 1)) ∧
+    (∀ x ∈ Ioc 0 2⁻¹, iteratedDeriv 4 (L β) x < 0) := by
   sorry
 
 /-- $\alpha_0=2^{2+\beta}-5$ ([DIR], (5.5)). -/
 noncomputable def α₀ (β : ℝ) : ℝ := 2 ^ (2 + β) - 5
 
 /-- **(5.5)** ([DIR], §5.3). For $\beta\in[\frac12,1]$, $\alpha_0=2^{2+\beta}-5\ge2^{2.5}-5>0$. -/
-theorem eqn_5_5 (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1) :
+theorem eqn_5_5 (β : ℝ) (hβ : β ∈ Icc (2⁻¹ : ℝ) 1) :
     α₀ β ≥ 2 ^ (2.5 : ℝ) - 5 ∧ (2 : ℝ) ^ (2.5 : ℝ) - 5 > 0 := by
   sorry
 
@@ -241,7 +241,7 @@ theorem eqn_5_8 (β x : ℝ) : iteratedDeriv 3 (Q β) x = -16 * α₁ β := by
 
 /-- **(5.9)** ([DIR], §5.3). $\partial_\beta Q_\beta(x)=\frac13\log(2)2^{3+\beta}x(1-x)(1-2x)$. -/
 theorem eqn_5_9 (β x : ℝ) :
-    deriv (fun β' ↦ Q β' x) β = 1 / 3 * log 2 * 2 ^ (3 + β) * x * (1 - x) * (1 - 2 * x) := by
+    deriv (fun β' ↦ Q β' x) β = 3⁻¹ * log 2 * 2 ^ (3 + β) * x * (1 - x) * (1 - 2 * x) := by
   sorry
 
 section Proof_Lemma_5_8
@@ -254,8 +254,8 @@ $\beta\in[\frac12,\log_2(\frac32)]$, but at $\beta=\log_2(\frac32)$ (where $\alp
 $x=\frac12$ the right-hand side vanishes, so strict positivity fails there. Lemma 5.8 itself
 assumes the half-open range $[\frac12,\log_2(\frac32))$, on which the claim is true; the Lean
 statement uses this half-open range. -/
-theorem lemma_5_8_2_rewrite (x : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 2)) (β : ℝ)
-    (hβ : β ∈ Ico (1 / 2 : ℝ) (log₂ (3 / 2))) :
+theorem lemma_5_8_2_rewrite (x : ℝ) (hx : x ∈ Icc (0 : ℝ) 2⁻¹) (β : ℝ)
+    (hβ : β ∈ Ico (2⁻¹ : ℝ) (log₂ (3 / 2))) :
     deriv (Q β) x = 2 / 3 * (1 - 2 * x) * (2 ^ (β + 2) - 3 + 4 * α₁ β * x) +
         8 / 3 * α₁ β * x * (1 - x) ∧
       2 / 3 * (1 - 2 * x) * (2 ^ (β + 2) - 3 + 4 * α₁ β * x) + 8 / 3 * α₁ β * x * (1 - x) > 0 := by
@@ -271,15 +271,15 @@ $(x-\frac12-\frac{\sqrt3}6)(x-\frac12+\frac{\sqrt3}6)=x^2-x+\frac16$, so the cor
 $6x^2-6x+1=6(x-\frac12-\frac{\sqrt3}6)(x-\frac12+\frac{\sqrt3}6)$ (the sign argument is
 unaffected). The Lean statement includes the factor $6$. -/
 theorem lemma_5_8_2_dbeta (x β : ℝ) :
-    deriv (fun β' ↦ deriv (Q β') x) β = 1 / 3 * log 2 * 2 ^ (3 + β) * (6 * x ^ 2 - 6 * x + 1) ∧
-    6 * x ^ 2 - 6 * x + 1 = 6 * (x - 1 / 2 - √3 / 6) * (x - 1 / 2 + √3 / 6) ∧
-    (x ∈ Icc (1 / 4) (1 / 2) → 1 / 3 * log 2 * 2 ^ (3 + β) * (6 * x ^ 2 - 6 * x + 1) < 0) := by
+    deriv (fun β' ↦ deriv (Q β') x) β = 3⁻¹ * log 2 * 2 ^ (3 + β) * (6 * x ^ 2 - 6 * x + 1) ∧
+    6 * x ^ 2 - 6 * x + 1 = 6 * (x - 2⁻¹ - √3 / 6) * (x - 2⁻¹ + √3 / 6) ∧
+    (x ∈ Icc 4⁻¹ 2⁻¹ → 3⁻¹ * log 2 * 2 ^ (3 + β) * (6 * x ^ 2 - 6 * x + 1) < 0) := by
   sorry
 
 /-- [DIR], proof of Lemma 5.8 (3): the first part follows from (5.7), (5.8). To see that
 $Q_\beta''(x)$ is decreasing in $\beta$, compute
 $\partial_\beta Q''_\beta(x)=-\log(2)2^{4+\beta}(1-2x)\le0$, since $x\le\frac12$. -/
-theorem lemma_5_8_3_dbeta (x : ℝ) (hx : x ≤ 1 / 2) (β : ℝ) :
+theorem lemma_5_8_3_dbeta (x : ℝ) (hx : x ≤ 2⁻¹) (β : ℝ) :
     deriv (fun β' ↦ deriv (deriv (Q β')) x) β = -log 2 * 2 ^ (4 + β) * (1 - 2 * x) ∧
       -log 2 * 2 ^ (4 + β) * (1 - 2 * x) ≤ 0 := by
   sorry
@@ -292,27 +292,27 @@ end Proof_Lemma_5_8
 3. $Q''_\beta(x)<0$, $Q'''_\beta(x)<0$ and $Q''_\beta(x)$ is decreasing in $\beta$.
 
 (Monotonicity in $\beta$ is over $\beta\in[\frac12,\log_2(\frac32))$.) -/
-theorem lemma_5_8 (x : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 2)) (β : ℝ)
-    (hβ : β ∈ Ico (1 / 2 : ℝ) (log₂ (3 / 2))) :
-    (Q β x ≥ 0 ∧ MonotoneOn (fun β' ↦ Q β' x) (Ico (1 / 2) (log₂ (3 / 2)))) ∧
+theorem lemma_5_8 (x : ℝ) (hx : x ∈ Icc (0 : ℝ) 2⁻¹) (β : ℝ)
+    (hβ : β ∈ Ico (2⁻¹ : ℝ) (log₂ (3 / 2))) :
+    (Q β x ≥ 0 ∧ MonotoneOn (fun β' ↦ Q β' x) (Ico 2⁻¹ (log₂ (3 / 2)))) ∧
     (deriv (Q β) x > 0 ∧
-      (x ∈ Icc (1 / 4) (1 / 2) →
-          AntitoneOn (fun β' ↦ deriv (Q β') x) (Ico (1 / 2) (log₂ (3 / 2))))) ∧
+      (x ∈ Icc 4⁻¹ 2⁻¹ →
+          AntitoneOn (fun β' ↦ deriv (Q β') x) (Ico 2⁻¹ (log₂ (3 / 2))))) ∧
     (deriv (deriv (Q β)) x < 0 ∧ iteratedDeriv 3 (Q β) x < 0 ∧
-      AntitoneOn (fun β' ↦ deriv (deriv (Q β')) x) (Ico (1 / 2) (log₂ (3 / 2)))) := by
+      AntitoneOn (fun β' ↦ deriv (deriv (Q β')) x) (Ico 2⁻¹ (log₂ (3 / 2)))) := by
   sorry
 
 section Proof_Lemma_5_9
 section Proof_Claim_1
 
-variable (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) (log₂ (3 / 2)))
+variable (β : ℝ) (hβ : β ∈ Icc (2⁻¹ : ℝ) (log₂ (3 / 2)))
 
 include hβ
 /-- [DIR], proof of Lemma 5.9 (1): $L_\beta'''-Q_\beta'''>0$ on $[0,\frac14]$ (i.e. on
 $(0,\frac14]$), so $L_\beta'-Q_\beta'$ is strictly convex there. -/
 theorem lemma_5_9_1_convex :
-    (∀ x ∈ Ioc (0 : ℝ) (1 / 4), iteratedDeriv 3 (L β) x - iteratedDeriv 3 (Q β) x > 0) ∧
-    StrictConvexOn ℝ (Ioc 0 (1 / 4)) (fun x ↦ deriv (L β) x - deriv (Q β) x) := by
+    (∀ x ∈ Ioc (0 : ℝ) 4⁻¹, iteratedDeriv 3 (L β) x - iteratedDeriv 3 (Q β) x > 0) ∧
+    StrictConvexOn ℝ (Ioc 0 4⁻¹) (fun x ↦ deriv (L β) x - deriv (Q β) x) := by
   sorry
 
 /-- [DIR], proof of Lemma 5.9 (1): $Q_\beta'(0)>0$ and $L'_\beta(x)\to\infty$ as $x\to0^+$. -/
@@ -327,25 +327,25 @@ $\frac14$) is decreasing in $\beta$, which in turn follows from
 $\partial_\beta(L_\beta'-Q_\beta')(\frac14)=\frac1{\log64}2^\beta(-3-\beta\log8+8(\log2)^2)$ and
 $-3-\beta\log8+8(\log2)^2\le-3-\frac12\log8+8(\log2)^2<-0.06$. -/
 theorem lemma_5_9_1_quarter_steps :
-    deriv (L (1 / 2)) (1 / 4) - deriv (Q (1 / 2)) (1 / 4) < -0.12 ∧
-    (∀ β : ℝ, deriv (fun β' ↦ deriv (L β') (1 / 4) - deriv (Q β') (1 / 4)) β =
+    deriv (L 2⁻¹) 4⁻¹ - deriv (Q 2⁻¹) 4⁻¹ < -0.12 ∧
+    (∀ β : ℝ, deriv (fun β' ↦ deriv (L β') 4⁻¹ - deriv (Q β') 4⁻¹) β =
       (log 64)⁻¹ * 2 ^ β * (-3 - β * log 8 + 8 * (log 2) ^ 2)) ∧
-    (∀ β ∈ Icc (1 / 2 : ℝ) 1, -3 - β * log 8 + 8 * (log 2) ^ 2 ≤ -3 - 1 / 2 * log 8 + 8 *
+    (∀ β ∈ Icc (2⁻¹ : ℝ) 1, -3 - β * log 8 + 8 * (log 2) ^ 2 ≤ -3 - 2⁻¹ * log 8 + 8 *
         (log 2) ^ 2) ∧
-    -3 - 1 / 2 * log 8 + 8 * (log 2) ^ 2 < (-0.06 : ℝ) := by
+    -3 - 2⁻¹ * log 8 + 8 * (log 2) ^ 2 < (-0.06 : ℝ) := by
   sorry
 
 /-- [DIR], proof of Lemma 5.9 (1):
 $L_\beta'(\frac14)-Q_\beta'(\frac14)=2^\beta(\frac43-\frac\beta{\log4})-\frac32<0$. -/
 theorem lemma_5_9_1_quarter :
-    deriv (L β) (1 / 4) - deriv (Q β) (1 / 4) = 2 ^ β * (4 / 3 - β / log 4) - 3 / 2 ∧
+    deriv (L β) 4⁻¹ - deriv (Q β) 4⁻¹ = 2 ^ β * (4 / 3 - β / log 4) - 3 / 2 ∧
       2 ^ β * (4 / 3 - β / log 4) - 3 / 2 < 0 := by
   sorry
 
 /-- [DIR], proof of Lemma 5.9 (1): therefore $L_\beta'-Q_\beta'$ has a unique zero $\tilde x$ on
 $[0,\frac14]$ (on $(0,\frac14]$, as $L_\beta'(0)$ is undefined). -/
 theorem lemma_5_9_1_unique_zero :
-    ∃! xtilde ∈ Ioc (0 : ℝ) (1 / 4), deriv (L β) xtilde - deriv (Q β) xtilde = 0 := by
+    ∃! xtilde ∈ Ioc (0 : ℝ) 4⁻¹, deriv (L β) xtilde - deriv (Q β) xtilde = 0 := by
   sorry
 
 /-- [DIR], proof of Lemma 5.9 (1): thus $L_\beta-Q_\beta$ has a unique local extreme on this
@@ -358,29 +358,29 @@ convex and tends to $+\infty$ at $0^+$, so it is *not* increasing on $[0,\tilde 
 $(\tilde x,\frac14]$, i.e. $L_\beta-Q_\beta$ is increasing on $[0,\tilde x]$ and decreasing on
 $[\tilde x,\frac14]$. The Lean statement formalizes this corrected version. -/
 theorem lemma_5_9_1_max :
-    ∃ xtilde ∈ Ioc (0 : ℝ) (1 / 4), deriv (L β) xtilde - deriv (Q β) xtilde = 0 ∧
+    ∃ xtilde ∈ Ioc (0 : ℝ) 4⁻¹, deriv (L β) xtilde - deriv (Q β) xtilde = 0 ∧
       MonotoneOn (fun x ↦ L β x - Q β x) (Icc 0 xtilde) ∧
-      AntitoneOn (fun x ↦ L β x - Q β x) (Icc xtilde (1 / 4)) := by
+      AntitoneOn (fun x ↦ L β x - Q β x) (Icc xtilde 4⁻¹) := by
   sorry
 
 /-- [DIR], proof of Lemma 5.9 (1): together with
 $L_\beta(0)-Q_\beta(0)=L_\beta(\frac14)-Q_\beta(\frac14)=0$ this shows $L_\beta-Q_\beta\ge0$ on
 $[0,\frac14]$. -/
 theorem lemma_5_9_1_endpoints :
-    L β 0 - Q β 0 = 0 ∧ L β (1 / 4) - Q β (1 / 4) = 0 := by
+    L β 0 - Q β 0 = 0 ∧ L β 4⁻¹ - Q β 4⁻¹ = 0 := by
   sorry
 
 end Proof_Claim_1
 
 section Proof_Claim_2
 
-variable (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) (log₂ (3 / 2)))
+variable (β : ℝ) (hβ : β ∈ Icc (2⁻¹ : ℝ) (log₂ (3 / 2)))
 
 include hβ
 /-- [DIR], proof of Lemma 5.9 (2): $L_\beta^{(4)}\le0$, thus $L_\beta''-Q_\beta''$ is concave (on
 $(0,\frac12]$). -/
 theorem lemma_5_9_2_concave :
-    ConcaveOn ℝ (Ioc 0 (1 / 2)) (fun x ↦ deriv (deriv (L β)) x - deriv (deriv (Q β)) x) := by
+    ConcaveOn ℝ (Ioc 0 2⁻¹) (fun x ↦ deriv (deriv (L β)) x - deriv (deriv (Q β)) x) := by
   sorry
 
 /-- [DIR], proof of Lemma 5.9 (2): we compute
@@ -389,13 +389,13 @@ positive, which can be seen by computing
 $\partial_\beta(L_\beta''(\frac12)-Q_\beta''(\frac12))=2(\log2)^{-2}(2\beta-1-\log2)<0$ and
 $L_{\log_2(3/2)}''(\frac12)-Q_{\log_2(3/2)}''(\frac12)>1.3$. -/
 theorem lemma_5_9_2_half :
-    deriv (deriv (L β)) (1 / 2) - deriv (deriv (Q β)) (1 / 2) =
+    deriv (deriv (L β)) 2⁻¹ - deriv (deriv (Q β)) 2⁻¹ =
         (log 2) ^ (-2 : ℤ) * (2 * β * (β - 1 - log 2) + 4 * (log 2) ^ 2) ∧
-    deriv (fun β' ↦ deriv (deriv (L β')) (1 / 2) - deriv (deriv (Q β')) (1 / 2)) β =
+    deriv (fun β' ↦ deriv (deriv (L β')) 2⁻¹ - deriv (deriv (Q β')) 2⁻¹) β =
         2 * (log 2) ^ (-2 : ℤ) * (2 * β - 1 - log 2) ∧
     2 * (log 2) ^ (-2 : ℤ) * (2 * β - 1 - log 2) < 0 ∧
-    deriv (deriv (L (log₂ (3 / 2)))) (1 / 2) - deriv (deriv (Q (log₂ (3 / 2)))) (1 / 2) > 1.3 ∧
-    deriv (deriv (L β)) (1 / 2) - deriv (deriv (Q β)) (1 / 2) > 0 := by
+    deriv (deriv (L (log₂ (3 / 2)))) 2⁻¹ - deriv (deriv (Q (log₂ (3 / 2)))) 2⁻¹ > 1.3 ∧
+    deriv (deriv (L β)) 2⁻¹ - deriv (deriv (Q β)) 2⁻¹ > 0 := by
   sorry
 
 /-- [DIR], proof of Lemma 5.9 (2):
@@ -406,17 +406,17 @@ $\partial_\beta(L_\beta''(\frac14)-Q_\beta''(\frac14))=\frac{2^\beta}{(\log2)^2}
 increasing in $\beta$, positive at $\beta=\frac12$, and $8(\log2)^3-1-\log4>0$. Moreover,
 $L_{\frac12}''(\frac14)-Q_{\frac12}''(\frac14)>0.5$. -/
 theorem lemma_5_9_2_quarter :
-    deriv (deriv (L β)) (1 / 4) - deriv (deriv (Q β)) (1 / 4) =
+    deriv (deriv (L β)) 4⁻¹ - deriv (deriv (Q β)) 4⁻¹ =
         8 * (2 ^ β - 1) + (log 2) ^ (-2 : ℤ) * (2 ^ β * β * (β - 1 - log 4)) ∧
-    deriv (fun β' ↦ deriv (deriv (L β')) (1 / 4) - deriv (deriv (Q β')) (1 / 4)) β =
+    deriv (fun β' ↦ deriv (deriv (L β')) 4⁻¹ - deriv (deriv (Q β')) 4⁻¹) β =
         2 ^ β / (log 2) ^ 2 * (β ^ 2 * log 2 + 2 * β - β * log 2 * (1 + log 4) - 1 - log 4 +
           8 * (log 2) ^ 3) ∧
-    MonotoneOn (fun β' : ℝ ↦ β' ^ 2 * log 2 + 2 * β' - β' * log 2 * (1 + log 4)) (Icc (1 / 2) 1) ∧
-    (1 / 2 : ℝ) ^ 2 * log 2 + 2 * (1 / 2) - 1 / 2 * log 2 * (1 + log 4) > 0 ∧
+    MonotoneOn (fun β' : ℝ ↦ β' ^ 2 * log 2 + 2 * β' - β' * log 2 * (1 + log 4)) (Icc 2⁻¹ 1) ∧
+    (2⁻¹ : ℝ) ^ 2 * log 2 + 2 * 2⁻¹ - 2⁻¹ * log 2 * (1 + log 4) > 0 ∧
     8 * (log 2) ^ 3 - 1 - log 4 > 0 ∧
-    MonotoneOn (fun β' ↦ deriv (deriv (L β')) (1 / 4) - deriv (deriv (Q β')) (1 / 4))
-      (Icc (1 / 2) (log₂ (3 / 2))) ∧
-    deriv (deriv (L (1 / 2))) (1 / 4) - deriv (deriv (Q (1 / 2))) (1 / 4) > 0.5 := by
+    MonotoneOn (fun β' ↦ deriv (deriv (L β')) 4⁻¹ - deriv (deriv (Q β')) 4⁻¹)
+      (Icc 2⁻¹ (log₂ (3 / 2))) ∧
+    deriv (deriv (L 2⁻¹)) 4⁻¹ - deriv (deriv (Q 2⁻¹)) 4⁻¹ > 0.5 := by
   sorry
 
 /-- [DIR], proof of Lemma 5.9 (2): therefore $L_\beta''-Q_\beta''\ge0$ (on $[\frac14,\frac12]$), so
@@ -424,9 +424,9 @@ $L_\beta-Q_\beta$ is convex. Since
 $L_\beta(\frac14)-Q_\beta(\frac14)=L_\beta(\frac12)-Q_\beta(\frac12)=0$, we have
 $L_\beta-Q_\beta\le0$ as desired. -/
 theorem lemma_5_9_2_convex :
-    (∀ x ∈ Icc (1 / 4 : ℝ) (1 / 2), deriv (deriv (L β)) x - deriv (deriv (Q β)) x ≥ 0) ∧
-    ConvexOn ℝ (Icc (1 / 4) (1 / 2)) (fun x ↦ L β x - Q β x) ∧
-    L β (1 / 4) - Q β (1 / 4) = 0 ∧ L β (1 / 2) - Q β (1 / 2) = 0 := by
+    (∀ x ∈ Icc (4⁻¹ : ℝ) 2⁻¹, deriv (deriv (L β)) x - deriv (deriv (Q β)) x ≥ 0) ∧
+    ConvexOn ℝ (Icc 4⁻¹ 2⁻¹) (fun x ↦ L β x - Q β x) ∧
+    L β 4⁻¹ - Q β 4⁻¹ = 0 ∧ L β 2⁻¹ - Q β 2⁻¹ = 0 := by
   sorry
 
 end Proof_Claim_2
@@ -436,8 +436,8 @@ end Proof_Lemma_5_9
 /-- **Lemma 5.9** ([DIR]). For $\beta\in[\frac12,\log_2\frac32]$ we have
 1. $L_\beta(x)\ge Q_\beta(x)$ for $x\in[0,\frac14]$,
 2. $L_\beta(x)\le Q_\beta(x)$ for $x\in[\frac14,\frac12]$. -/
-theorem lemma_5_9 (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) (log₂ (3 / 2))) :
-    (∀ x ∈ Icc (0 : ℝ) (1 / 4), L β x ≥ Q β x) ∧ (∀ x ∈ Icc (1 / 4 : ℝ) (1 / 2), L β x ≤
+theorem lemma_5_9 (β : ℝ) (hβ : β ∈ Icc (2⁻¹ : ℝ) (log₂ (3 / 2))) :
+    (∀ x ∈ Icc (0 : ℝ) 4⁻¹, L β x ≥ Q β x) ∧ (∀ x ∈ Icc (4⁻¹ : ℝ) 2⁻¹, L β x ≤
         Q β x) := by
   sorry
 

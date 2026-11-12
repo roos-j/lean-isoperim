@@ -37,11 +37,11 @@ open Auto.DIR
 
 open Real Set
 
-local notation "G₁" => Auto.DIR.G₁ (1 / 2)
+local notation "G₁" => Auto.DIR.G₁ 2⁻¹
 
-local notation "G" => Auto.DIR.G (1 / 2)
+local notation "G" => Auto.DIR.G 2⁻¹
 
-local notation "Q" => Auto.DIR.Q (1 / 2)
+local notation "Q" => Auto.DIR.Q 2⁻¹
 
 local notation "J" => JX
 
@@ -49,7 +49,7 @@ local notation "γ" => γX
 
 /-- [DIRX], §3.5: (3.9) implies Case $QJQ$, since in this region
 $G_1[B_{w_1}](x,y)=\sqrt{(y-x)^2+\mathrm{J}(y)^2}+Q(x)-2Q(\frac{x+y}2)$. -/
-theorem caseQJQ_of_eqn_3_9 (x y : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2)) (hy : 1 / 2 ≤ y)
+theorem caseQJQ_of_eqn_3_9 (x y : ℝ) (hx : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹) (hy : 2⁻¹ ≤ y)
     (hxy : x + y ≤ 1) (h : (y - x) ^ 2 + J y ^ 2 - (2 * Q ((x + y) / 2) - Q x) ^ 2 ≥ 0) :
     G₁ (BX w₁) x y ≥ 0 := by
   sorry
@@ -61,42 +61,42 @@ noncomputable def h_QJQ₁ (x y : ℝ) : ℝ :=
 
 /-- [DIRX], §3.5: the $y$-derivative of the left-hand side of (3.9) is two times
 $h_{QJQ,1}(x,y)$ (for $y\in[\frac12,\frac34]$). -/
-theorem eqn_3_9_deriv (x y : ℝ) (hy : y ∈ Icc (1 / 2 : ℝ) (3 / 4)) :
+theorem eqn_3_9_deriv (x y : ℝ) (hy : y ∈ Icc (2⁻¹ : ℝ) (3 / 4)) :
     deriv (fun t ↦ (t - x) ^ 2 + J t ^ 2 - (2 * Q ((x + t) / 2) - Q x) ^ 2) y =
       2 * h_QJQ₁ x y := by
   sorry
 
 /-- **(3.11)** ([DIRX], §3.5) (🚗). Dyadic partitioning shows that $h_{QJQ,1}>10^{-5}$ on
 $[\frac14,\frac12]\times[\frac12,\frac{33}{64}]$. -/
-theorem eqn_3_11 (x y : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2))
-    (hy : y ∈ Icc (1 / 2 : ℝ) (33 / 64)) : h_QJQ₁ x y > (10 : ℝ) ^ (-5 : ℤ) := by
+theorem eqn_3_11 (x y : ℝ) (hx : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹)
+    (hy : y ∈ Icc (2⁻¹ : ℝ) (33 / 64)) : h_QJQ₁ x y > (10 : ℝ) ^ (-5 : ℤ) := by
   sorry
 
 /-- [DIRX], §3.5: (3.9) for $y=\frac12$ reads (using $\mathrm{J}(\frac12)=\frac12$)
 $(\frac12-x)^2+\frac14-(2Q(\frac x2+\frac14)-Q(x))^2\ge0$ for $x\in[\frac14,\frac12]$; this
 inequality was shown in [DIR], §6.5. -/
-theorem eqn_3_9_half (x : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
-    (1 / 2 - x) ^ 2 + 1 / 4 - (2 * Q (x / 2 + 1 / 4) - Q x) ^ 2 ≥ 0 := by
+theorem eqn_3_9_half (x : ℝ) (hx : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
+    (2⁻¹ - x) ^ 2 + 4⁻¹ - (2 * Q (x / 2 + 4⁻¹) - Q x) ^ 2 ≥ 0 := by
   sorry
 
 /-- [DIRX], §3.5: by (3.11) and the case $y=\frac12$, (3.9) holds for
 $(x,y)\in[\frac14,\frac12]\times[\frac12,\frac{33}{64}]$. -/
-theorem eqn_3_9_low (x y : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2))
-    (hy : y ∈ Icc (1 / 2 : ℝ) (33 / 64)) :
+theorem eqn_3_9_low (x y : ℝ) (hx : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹)
+    (hy : y ∈ Icc (2⁻¹ : ℝ) (33 / 64)) :
     (y - x) ^ 2 + J y ^ 2 - (2 * Q ((x + y) / 2) - Q x) ^ 2 ≥ 0 := by
   sorry
 
 /-- **(3.12)** ([DIRX], §3.5) (🚗). By dyadic partitioning, LHS of (3.9) $>10^{-7}$ on
 $[\frac14,\frac12]\times[\frac{33}{64},\frac34]$. -/
-theorem eqn_3_12 (x y : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2))
+theorem eqn_3_12 (x y : ℝ) (hx : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹)
     (hy : y ∈ Icc (33 / 64 : ℝ) (3 / 4)) :
     (y - x) ^ 2 + J y ^ 2 - (2 * Q ((x + y) / 2) - Q x) ^ 2 > (10 : ℝ) ^ (-7 : ℤ) := by
   sorry
 
 /-- **(3.9)** ([DIRX], §3.5). For all $(x,y)\in[\frac14,\frac12]\times[\frac12,\frac34]$,
 $$(y-x)^2+\mathrm{J}(y)^2-(2Q(\tfrac{x+y}2)-Q(x))^2\ge0.$$ -/
-theorem eqn_3_9 (x y : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2))
-    (hy : y ∈ Icc (1 / 2 : ℝ) (3 / 4)) :
+theorem eqn_3_9 (x y : ℝ) (hx : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹)
+    (hy : y ∈ Icc (2⁻¹ : ℝ) (3 / 4)) :
     (y - x) ^ 2 + J y ^ 2 - (2 * Q ((x + y) / 2) - Q x) ^ 2 ≥ 0 := by
   sorry
 
@@ -104,7 +104,7 @@ theorem eqn_3_9 (x y : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2))
 
 /-- [DIRX], §3.5 (Case $QJQ$): $G[B_{w_1}](x,y)\ge0$ for $\frac14\le x\le\frac12\le y$,
 $x+y\le1$. -/
-theorem caseQJQ (x y : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2)) (hy : 1 / 2 ≤ y)
+theorem caseQJQ (x y : ℝ) (hx : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹) (hy : 2⁻¹ ≤ y)
     (hxy : x + y ≤ 1) : G (BX w₁) x y ≥ 0 := by
   sorry
 

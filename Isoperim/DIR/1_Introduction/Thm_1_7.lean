@@ -34,7 +34,7 @@ open scoped ContDiff
 /-- **Theorem 1.7** ([DIR]). For $\beta=\beta_0=0.50057$ and $A\subset\{0,1\}^n$ with
 $|A|\ge\frac12$,
 $$\mathbf{E}h_A^\beta\ge\max\big(J(|A|),(1-|A|)(\log_2(1/(1-|A|)))^\beta\big). \tag{1.6}$$ -/
-theorem thm_1_7 (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) (hA : ｜A｜ ≥ 1 / 2) :
+theorem thm_1_7 (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) (hA : ｜A｜ ≥ 2⁻¹) :
     𝐄 h A ^ β₀ ≥ max (J ｜A｜) ((1 - ｜A｜) * (log₂ ((1 - ｜A｜)⁻¹)) ^ β₀) := by
   sorry
 

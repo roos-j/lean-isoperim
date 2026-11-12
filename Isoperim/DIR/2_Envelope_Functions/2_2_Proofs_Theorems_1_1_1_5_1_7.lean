@@ -36,12 +36,12 @@ open Real Set
 section Proof_Theorem_1_1
 /-- [DIR], §2.2, proof of Theorem 1.1: $b_\beta(x)=Q_\beta(x)\ge L_\beta(x)$ for
 $x\in[\frac14,\frac12]$ (here $\beta=\beta_0$). -/
-theorem b_eq_Q_ge_L (x : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
+theorem b_eq_Q_ge_L (x : ℝ) (hx : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
     b β₀ x = Q β₀ x ∧ Q β₀ x ≥ L β₀ x := by
   sorry
 
 /-- [DIR], §2.2, proof of Theorem 1.1: for $\beta=\beta_0$, (1.1) follows from (2.6). -/
-theorem eqn_1_1_β₀ (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) (hA : ｜A｜ ≤ 1 / 2) :
+theorem eqn_1_1_β₀ (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) (hA : ｜A｜ ≤ 2⁻¹) :
     𝐄 h A ^ β₀ ≥ ｜A｜ * (log₂ ｜A｜⁻¹) ^ β₀ := by
   sorry
 
@@ -50,16 +50,16 @@ end Proof_Theorem_1_1
 section Proof_Theorem_1_5
 /-- [DIR], §2.2, proof of Theorem 1.5 (implicit): $b_{\frac12}(2^{-k})=2^{-k}\sqrt k$ for $k\ge1$,
 so that (2.7) gives the lower bound of Theorem 1.5. -/
-theorem b_half_two_pow (k : ℕ) (hk : 1 ≤ k) : b (1 / 2) (2⁻¹ ^ k) = 2⁻¹ ^ k * √k := by
+theorem b_half_two_pow (k : ℕ) (hk : 1 ≤ k) : b 2⁻¹ (2⁻¹ ^ k) = 2⁻¹ ^ k * √k := by
   sorry
 
 /-- [DIR], §2.2, proof of Theorem 1.5: the lower bound follows from (2.7). -/
-theorem thm_1_5_lower (k : ℕ) (hk : 1 ≤ k) : 𝓑 (1 / 2) (2⁻¹ ^ k) ≥ 0.997 * 2⁻¹ ^ k * √k := by
+theorem thm_1_5_lower (k : ℕ) (hk : 1 ≤ k) : 𝓑 2⁻¹ (2⁻¹ ^ k) ≥ 0.997 * 2⁻¹ ^ k * √k := by
   sorry
 
 /-- [DIR], §2.2, proof of Theorem 1.5: the upper bound follows from letting $A$ be a subcube of
 codimension $k$. -/
-theorem thm_1_5_upper (k : ℕ) (hk : 1 ≤ k) : 2⁻¹ ^ k * √k ≥ 𝓑 (1 / 2) (2⁻¹ ^ k) := by
+theorem thm_1_5_upper (k : ℕ) (hk : 1 ≤ k) : 2⁻¹ ^ k * √k ≥ 𝓑 2⁻¹ (2⁻¹ ^ k) := by
   sorry
 
 end Proof_Theorem_1_5
@@ -67,7 +67,7 @@ end Proof_Theorem_1_5
 section Proof_Theorem_1_7
 /-- **(2.9)** ([DIR], §2.2, shown in Lemma 5.13).
 $$J(x)>L_{\beta_0}(1-x)\quad\text{for}\quad x\in(\tfrac12,1-10^{-10^{380}}).$$ -/
-theorem eqn_2_9 (x : ℝ) (hx : x ∈ Ioo (1 / 2) (1 - (10 : ℝ) ^ (-(10 : ℝ) ^ 380))) :
+theorem eqn_2_9 (x : ℝ) (hx : x ∈ Ioo 2⁻¹ (1 - (10 : ℝ) ^ (-(10 : ℝ) ^ 380))) :
     J x > L β₀ (1 - x) := by
   sorry
 
@@ -77,7 +77,7 @@ theorem btilde_eq_max (x : ℝ) (hx : x ∈ Icc (0 : ℝ) 1) : b̃ β₀ x = max
 
 /-- [DIR], §2.2 (cited from [BIM23, Lemma 2.3]): the function $x\mapsto L_{\beta_0}(1-x)$
 satisfies $G_{\beta_0}[\tilde L](x,y)\ge0$ for all $\frac12\le x\le y\le1$. -/
-theorem Ltilde_twopt (x y : ℝ) (hx : 1 / 2 ≤ x) (hxy : x ≤ y) (hy : y ≤ 1) :
+theorem Ltilde_twopt (x y : ℝ) (hx : 2⁻¹ ≤ x) (hxy : x ≤ y) (hy : y ≤ 1) :
     G β₀ (fun t ↦ L β₀ (1 - t)) x y ≥ 0 := by
   sorry
 
@@ -87,7 +87,7 @@ $\frac{x+y}2\ge1-10^{-10^{380}}$, which in particular implies
 $y\ge x=2\frac{x+y}2-y\ge\frac12$ (for $0\le x\le y\le1$). -/
 theorem b_lt_Ltilde_imp (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y) (hy : y ≤ 1)
     (h : b β₀ ((x + y) / 2) < L̃ ((x + y) / 2)) :
-    (x + y) / 2 ≥ 1 - (10 : ℝ) ^ (-(10 : ℝ) ^ 380) ∧ y ≥ x ∧ x ≥ 1 / 2 := by
+    (x + y) / 2 ≥ 1 - (10 : ℝ) ^ (-(10 : ℝ) ^ 380) ∧ y ≥ x ∧ x ≥ 2⁻¹ := by
   sorry
 
 /-- **(2.8)** ([DIR], §2.2). $\tilde b_{\beta_0}$ also satisfies the two-point inequality

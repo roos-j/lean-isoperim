@@ -66,9 +66,9 @@ $Q_\beta(0)=Q_\beta(1)=0$, $Q_\beta(\frac12)=\frac12$ and $Q_\beta(\frac14)=2^{\
 $Q_\beta(x)=\frac23x(1-x)(2^{\beta+2}-3+4(3-2^{\beta+1})x)$. -/
 theorem Q_spec (β : ℝ) :
     (∃! p : Polynomial ℝ, p.natDegree ≤ 3 ∧ p.eval 0 = 0 ∧ p.eval 1 = 0 ∧
-      p.eval (1 / 2) = 1 / 2 ∧ p.eval (1 / 4) = 2 ^ (β - 2)) ∧
+      p.eval 2⁻¹ = 2⁻¹ ∧ p.eval 4⁻¹ = 2 ^ (β - 2)) ∧
     ∀ p : Polynomial ℝ, p.natDegree ≤ 3 → p.eval 0 = 0 → p.eval 1 = 0 →
-      p.eval (1 / 2) = 1 / 2 → p.eval (1 / 4) = 2 ^ (β - 2) → ∀ x, p.eval x = Q β x := by
+      p.eval 2⁻¹ = 2⁻¹ → p.eval 4⁻¹ = 2 ^ (β - 2) → ∀ x, p.eval x = Q β x := by
   sorry
 
 /-- **(2.3)** ([DIR], §2).
@@ -76,7 +76,7 @@ $$b_\beta(x)=\begin{cases}L_\beta(x)&x\in[0,\frac14],\\ Q_\beta(x)&x\in[\frac14,
 J(x)&x\in[\frac12,1].\end{cases}$$
 Only the values on $[0,1]$ are meaningful. -/
 noncomputable def b (β x : ℝ) : ℝ :=
-  if x ≤ 1 / 4 then L β x else if x ≤ 1 / 2 then Q β x else J x
+  if x ≤ 4⁻¹ then L β x else if x ≤ 2⁻¹ then Q β x else J x
 
 /-- The constant $c_0=0.997$ ([DIR], Theorem 2.2). -/
 noncomputable def c₀ : ℝ := 0.997
@@ -85,12 +85,12 @@ noncomputable def c₀ : ℝ := 0.997
 $$\tilde b_\beta(x)=\begin{cases}L_\beta(x)&x\in[0,\frac14],\\ Q_\beta(x)&x\in[\frac14,\frac12],
 \\ \max(J(x),L_\beta(1-x))&x\in[\frac12,1].\end{cases}$$ -/
 noncomputable def btilde (β x : ℝ) : ℝ :=
-  if x ≤ 1 / 4 then L β x else if x ≤ 1 / 2 then Q β x else max (J x) (L β (1 - x))
+  if x ≤ 4⁻¹ then L β x else if x ≤ 2⁻¹ then Q β x else max (J x) (L β (1 - x))
 
 @[inherit_doc] notation "b̃" => btilde
 
 /-- The function $\tilde L(x)=L_{\beta_0}(1-x)\mathbf{1}_{x\ge\frac12}$ ([DIR], §2.2). -/
-noncomputable def Ltilde (x : ℝ) : ℝ := if 1 / 2 ≤ x then L β₀ (1 - x) else 0
+noncomputable def Ltilde (x : ℝ) : ℝ := if 2⁻¹ ≤ x then L β₀ (1 - x) else 0
 
 @[inherit_doc] notation "L̃" => Ltilde
 

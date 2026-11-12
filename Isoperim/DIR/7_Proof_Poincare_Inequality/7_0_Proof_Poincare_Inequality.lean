@@ -46,20 +46,20 @@ open Real Set
 /-- [DIR], §7: every Boolean-valued function $f$ can be written as $f=\mathbf{1}_A$ for some
 $A\subset\{0,1\}^n$. -/
 theorem boolean_eq_indicator (n : ℕ) (f : ({0,1}^n) → ℝ) (hf : ∀ x, f x = 0 ∨ f x = 1) :
-    ∃ A : Set ({0,1}^n), f = ind A := by
+    ∃ A : Set ({0,1}^n), f = 𝟏 A := by
   sorry
 
 /-- [DIR], §7: for $f=\mathbf{1}_A$, $\mathbf{E}f=|A|=2^{-n}\#A$ and
 $\|f-\mathbf{E}f\|_p^p=|A|^p(1-|A|)+|A|(1-|A|)^p$ (for $p>0$). -/
 theorem indicator_norms (n : ℕ) (A : Set ({0,1}^n)) (p : ℝ) (hp : 0 < p) :
-    𝐄 ind A = ｜A｜ ∧ ｜A｜ = (2 : ℝ)⁻¹ ^ n * A.ncard ∧
-    pNorm p (ind A - fun _ ↦ 𝐄 ind A) ^ p = ｜A｜ ^ p * (1 - ｜A｜) + ｜A｜ * (1 - ｜A｜) ^ p := by
+    𝐄 𝟏 A = ｜A｜ ∧ ｜A｜ = (2 : ℝ)⁻¹ ^ n * A.ncard ∧
+    pNorm p (𝟏 A - fun _ ↦ 𝐄 𝟏 A) ^ p = ｜A｜ ^ p * (1 - ｜A｜) + ｜A｜ * (1 - ｜A｜) ^ p := by
   sorry
 
 /-- **(7.1)** ([DIR], §7). For $f=\mathbf{1}_A$ (and $p>0$),
 $$\|\nabla f\|_p^p=2^{-p}(\mathbf{E}h_A^{p/2}+\mathbf{E}h_{A^c}^{p/2}).$$ -/
 theorem eqn_7_1 (n : ℕ) (A : Set ({0,1}^n)) (p : ℝ) (hp : 0 < p) :
-    pNorm p (∇(ind A)) ^ p = 2 ^ (-p) * (𝐄 h A ^ (p / 2) + 𝐄 h Aᶜ ^ (p / 2)) := by
+    pNorm p (∇(𝟏 A)) ^ p = 2 ^ (-p) * (𝐄 h A ^ (p / 2) + 𝐄 h Aᶜ ^ (p / 2)) := by
   sorry
 
 /-- [DIR], §7: set $p=2\beta$. If $\mathbf{E}h_A^\beta\ge B(|A|)$ for some function $B$ (for all
@@ -67,7 +67,7 @@ $A\subset\{0,1\}^n$), then
 $\|\nabla f\|_p^p\ge2^{-2\beta}(B(|A|)+B(1-|A|))$ for $f=\mathbf{1}_A$. -/
 theorem grad_norm_ge (n : ℕ) (β : ℝ) (hβ : 0 < β) (B : ℝ → ℝ)
     (hB : ∀ A : Set ({0,1}^n), 𝐄 h A ^ β ≥ B ｜A｜) (A : Set ({0,1}^n)) :
-    pNorm (2 * β) (∇(ind A)) ^ (2 * β) ≥ 2 ^ (-(2 * β)) * (B ｜A｜ + B (1 - ｜A｜)) := by
+    pNorm (2 * β) (∇(𝟏 A)) ^ (2 * β) ≥ 2 ^ (-(2 * β)) * (B ｜A｜ + B (1 - ｜A｜)) := by
   sorry
 
 /-- The function
@@ -79,8 +79,8 @@ noncomputable def G_P (β x : ℝ) : ℝ :=
 section Proof_Proposition_7_1
 /-- [DIR], proof of Proposition 7.1: since $G_{P,\beta}(x)=G_{P,\beta}(1-x)$ it suffices to show
 this for $x\in[0,\frac12]$. Notice that $G_{P,\beta}$ vanishes at $x=0,\frac12,1$. -/
-theorem G_P_symm (β : ℝ) (hβ : β ∈ Icc (1 / 2) β₀) :
-    (∀ x, G_P β x = G_P β (1 - x)) ∧ G_P β 0 = 0 ∧ G_P β (1 / 2) = 0 ∧ G_P β 1 = 0 := by
+theorem G_P_symm (β : ℝ) (hβ : β ∈ Icc 2⁻¹ β₀) :
+    (∀ x, G_P β x = G_P β (1 - x)) ∧ G_P β 0 = 0 ∧ G_P β 2⁻¹ = 0 ∧ G_P β 1 = 0 := by
   sorry
 
 section Case_I
@@ -88,7 +88,7 @@ section Case_I
 
 /-- [DIR], proof of Proposition 7.1, Case I: for $x\in[0,\frac1{64}]$ we need to show
 $2^{-2\beta}(L_\beta(x)+J(1-x))-x^{2\beta}(1-x)-x(1-x)^{2\beta}\ge0$; this is $G_{P,\beta}(x)$. -/
-theorem prop_7_1_case_I_eq (β : ℝ) (x : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 64)) :
+theorem prop_7_1_case_I_eq (β : ℝ) (x : ℝ) (hx : x ∈ Icc (0 : ℝ) 64⁻¹) :
     G_P β x = 2 ^ (-(2 * β)) * (L β x + J (1 - x)) - x ^ (2 * β) * (1 - x) -
       x * (1 - x) ^ (2 * β) := by
   sorry
@@ -105,21 +105,21 @@ $$\ge2^{-2\beta_0}(L_{\frac12}(x)+J(1-x))-2x(1-x)
 \ge x\big(2^{-2\beta_0}\sqrt{\log_2(1/x)}+2^{-2\beta_0}\sqrt{\log(w_0/x)}-2\big)=x\cdot
 g_{P,1}(x).$$
 -/
-theorem prop_7_1_case_I_chain (β : ℝ) (hβ : β ∈ Icc (1 / 2) β₀) (x : ℝ)
-    (hx : x ∈ Ioc (0 : ℝ) (1 / 64)) :
-    G_P β x ≥ 2 ^ (-(2 * β₀)) * (L (1 / 2) x + J (1 - x)) - 2 * x * (1 - x) ∧
-    2 ^ (-(2 * β₀)) * (L (1 / 2) x + J (1 - x)) - 2 * x * (1 - x) ≥ x * g_P_1 x := by
+theorem prop_7_1_case_I_chain (β : ℝ) (hβ : β ∈ Icc 2⁻¹ β₀) (x : ℝ)
+    (hx : x ∈ Ioc (0 : ℝ) 64⁻¹) :
+    G_P β x ≥ 2 ^ (-(2 * β₀)) * (L 2⁻¹ x + J (1 - x)) - 2 * x * (1 - x) ∧
+    2 ^ (-(2 * β₀)) * (L 2⁻¹ x + J (1 - x)) - 2 * x * (1 - x) ≥ x * g_P_1 x := by
   sorry
 
 /-- **(7.2)** ([DIR], proof of Proposition 7.1, Case I). $g_{P,1}$ is a decreasing function of $x$
 and one can evaluate $g_{P,1}(\frac1{64})>0.2$. -/
-theorem eqn_7_2 : AntitoneOn g_P_1 (Ioc 0 (1 / 64)) ∧ g_P_1 (1 / 64) > 0.2 := by
+theorem eqn_7_2 : AntitoneOn g_P_1 (Ioc 0 64⁻¹) ∧ g_P_1 64⁻¹ > 0.2 := by
   sorry
 
 /-- [DIR], proof of Proposition 7.1, Case I: thus $G_{P,\beta}(x)\ge0.2\,x$ for all
 $x\in[0,\frac1{64}]$ and $\beta\in[\frac12,\beta_0]$. -/
-theorem prop_7_1_case_I (β : ℝ) (hβ : β ∈ Icc (1 / 2) β₀) (x : ℝ)
-    (hx : x ∈ Icc (0 : ℝ) (1 / 64)) : G_P β x ≥ 0.2 * x := by
+theorem prop_7_1_case_I (β : ℝ) (hβ : β ∈ Icc 2⁻¹ β₀) (x : ℝ)
+    (hx : x ∈ Icc (0 : ℝ) 64⁻¹) : G_P β x ≥ 0.2 * x := by
   sorry
 
 end Case_I
@@ -131,7 +131,7 @@ section Case_II
 $\textsc{Partition}_1(\underline{g_{P,2}},[\frac1{64},\frac14])$ shows that
 $$G_{P,\beta}(x)>10^{-4}$$
 for all $x\in[\frac1{64},\frac14]$ and $\beta\in[\frac12,\beta_0]$. -/
-theorem eqn_7_3 (β : ℝ) (hβ : β ∈ Icc (1 / 2) β₀) (x : ℝ) (hx : x ∈ Icc (1 / 64 : ℝ) (1 / 4)) :
+theorem eqn_7_3 (β : ℝ) (hβ : β ∈ Icc 2⁻¹ β₀) (x : ℝ) (hx : x ∈ Icc (64⁻¹ : ℝ) 4⁻¹) :
     G_P β x > 1e-4 := by
   sorry
 
@@ -143,24 +143,24 @@ section Case_III
 /-- [DIR], proof of Proposition 7.1, Case III: for $x\in[\frac14,\frac12]$ we need to show
 $2^{-2\beta}(Q_\beta(x)+J(1-x))-x^{2\beta}(1-x)-x(1-x)^{2\beta}\ge0$; this is $G_{P,\beta}(x)$, and
 the left-hand side equals $0$ at $x=\frac12$. -/
-theorem prop_7_1_case_III_eq (β : ℝ) (x : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
+theorem prop_7_1_case_III_eq (β : ℝ) (x : ℝ) (hx : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
     G_P β x = 2 ^ (-(2 * β)) * (Q β x + J (1 - x)) - x ^ (2 * β) * (1 - x) -
       x * (1 - x) ^ (2 * β) ∧
-    2 ^ (-(2 * β)) * (Q β (1 / 2) + J (1 - 1 / 2)) - (1 / 2 : ℝ) ^ (2 * β) * (1 - 1 / 2) -
-      1 / 2 * (1 - 1 / 2) ^ (2 * β) = 0 := by
+    2 ^ (-(2 * β)) * (Q β 2⁻¹ + J (1 - 2⁻¹)) - (2⁻¹ : ℝ) ^ (2 * β) * (1 - 2⁻¹) -
+      2⁻¹ * (1 - 2⁻¹) ^ (2 * β) = 0 := by
   sorry
 
 /-- The function $g_{P,3,\beta}(x)=-\partial_xG_{P,\beta}(x)$ ([DIR], proof of Proposition 7.1,
 Case III), for $x\in[\frac14,\frac12]$; the derivative is taken within $[\frac14,\frac12]$, so it is
 one-sided at the endpoints (see the module docstring). -/
-noncomputable def g_P_3 (β x : ℝ) : ℝ := -derivWithin (G_P β) (Icc (1 / 4) (1 / 2)) x
+noncomputable def g_P_3 (β x : ℝ) : ℝ := -derivWithin (G_P β) (Icc 4⁻¹ 2⁻¹) x
 
 /-- **(7.4)** (🚗) ([DIR], proof of Proposition 7.1, Case III). Running
 $\textsc{Partition}_1(\underline{g_{P,3}},[\frac14,\frac12])$ shows
 $$g_{P,3,\beta}(x)>0.001$$
 for all $x\in[\frac14,\frac12]$ (and $\beta\in[\frac12,\beta_0]$), which finishes the proof of
 Proposition 7.1. -/
-theorem eqn_7_4 (β : ℝ) (hβ : β ∈ Icc (1 / 2) β₀) (x : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
+theorem eqn_7_4 (β : ℝ) (hβ : β ∈ Icc 2⁻¹ β₀) (x : ℝ) (hx : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
     g_P_3 β x > 0.001 := by
   sorry
 
@@ -170,7 +170,7 @@ end Proof_Proposition_7_1
 
 /-- **Proposition 7.1** ([DIR]). For all $x\in[0,1]$, $\beta\in[\frac12,\beta_0]$:
 $$G_{P,\beta}(x)=2^{-2\beta}(b_\beta(x)+b_\beta(1-x))-x^{2\beta}(1-x)-x(1-x)^{2\beta}\ge0.$$ -/
-theorem prop_7_1 (x : ℝ) (hx : x ∈ Icc (0 : ℝ) 1) (β : ℝ) (hβ : β ∈ Icc (1 / 2) β₀) :
+theorem prop_7_1 (x : ℝ) (hx : x ∈ Icc (0 : ℝ) 1) (β : ℝ) (hβ : β ∈ Icc 2⁻¹ β₀) :
     G_P β x ≥ 0 := by
   sorry
 

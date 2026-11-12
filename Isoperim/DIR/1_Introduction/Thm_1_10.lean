@@ -46,7 +46,7 @@ theorem thm_1_10 (n : ℕ) (hn : 1 ≤ n) :
     (∀ p : ℝ, 2 * β₀ ≤ p → ∀ f : ({0,1}^n) → ℝ, (∀ x, f x = 0 ∨ f x = 1) →
       pNorm p (∇f) ≥ pNorm p (f - fun _ ↦ 𝐄 f)) ∧
     (∀ p : ℝ, 2 * β₀ ≤ p → ∀ A : Set ({0,1}^n), IsHalfCube A →
-      pNorm p (∇(ind A)) = pNorm p (ind A - fun _ ↦ 𝐄 ind A)) ∧
+      pNorm p (∇(𝟏 A)) = pNorm p (𝟏 A - fun _ ↦ 𝐄 𝟏 A)) ∧
     (∀ f : ({0,1}^n) → ℝ, (∀ x, f x = 0 ∨ f x = 1) →
       pNorm 1 (∇f) ≥ 0.997 * pNorm 1 (f - fun _ ↦ 𝐄 f)) := by
   sorry

@@ -58,8 +58,8 @@ theorem prop_5_11_Phi_le (t : ℝ) (ht : t < 0) :
 /-- [DIR], proof of Proposition 5.11: $I=\varphi\circ\Phi^{-1}$ is an increasing function on
 $[0,\frac12]$; applying it on both sides, $\varphi(t)\le I(|t|^{-1}\varphi(t))$, at least as long
 as $x=|t|^{-1}\varphi(t)\le\frac12$. This means $I(x)\ge x\cdot|t|$. -/
-theorem prop_5_11_apply_I (t : ℝ) (ht : t < 0) (hx : |t|⁻¹ * φ t ≤ 1 / 2) :
-    MonotoneOn I (Icc 0 (1 / 2)) ∧ φ t ≤ I (|t|⁻¹ * φ t) ∧
+theorem prop_5_11_apply_I (t : ℝ) (ht : t < 0) (hx : |t|⁻¹ * φ t ≤ 2⁻¹) :
+    MonotoneOn I (Icc 0 2⁻¹) ∧ φ t ≤ I (|t|⁻¹ * φ t) ∧
       I (|t|⁻¹ * φ t) ≥ |t|⁻¹ * φ t * |t| := by
   sorry
 
@@ -67,47 +67,47 @@ theorem prop_5_11_apply_I (t : ℝ) (ht : t < 0) (hx : |t|⁻¹ * φ t ≤ 1 / 2
 $x=|t|^{-1}\varphi(t)$), we have $|t|=\sqrt2\sqrt{\log(1/x)-\log((2\pi)^{1/2}|t|)}$ (the expression
 under the square root is positive because it equals $t^2/2$). -/
 theorem prop_5_11_t_formula (t : ℝ) (ht : t < 0) :
-    |t|⁻¹ * φ t * |t| = (2 * π) ^ (-(1 / 2 : ℝ)) * exp (-t ^ 2 / 2) ∧
-    log ((|t|⁻¹ * φ t)⁻¹) - log ((2 * π) ^ (1 / 2 : ℝ) * |t|) = t ^ 2 / 2 ∧
-    |t| = √2 * √(log ((|t|⁻¹ * φ t)⁻¹) - log ((2 * π) ^ (1 / 2 : ℝ) * |t|)) := by
+    |t|⁻¹ * φ t * |t| = (2 * π) ^ (-(2⁻¹ : ℝ)) * exp (-t ^ 2 / 2) ∧
+    log ((|t|⁻¹ * φ t)⁻¹) - log ((2 * π) ^ (2⁻¹ : ℝ) * |t|) = t ^ 2 / 2 ∧
+    |t| = √2 * √(log ((|t|⁻¹ * φ t)⁻¹) - log ((2 * π) ^ (2⁻¹ : ℝ) * |t|)) := by
   sorry
 
 /-- [DIR], proof of Proposition 5.11: the assumption $x\le\frac12$ implies $|t|>0.64$, which also
 means $(2\pi)^{1/2}|t|>1$, and thus $|t|\le\sqrt2\sqrt{\log(1/x)}$. -/
-theorem prop_5_11_t_bounds (t : ℝ) (ht : t < 0) (hx : |t|⁻¹ * φ t ≤ 1 / 2) :
-    |t| > 0.64 ∧ (2 * π) ^ (1 / 2 : ℝ) * |t| > 1 ∧ |t| ≤ √2 * √(log ((|t|⁻¹ * φ t)⁻¹)) := by
+theorem prop_5_11_t_bounds (t : ℝ) (ht : t < 0) (hx : |t|⁻¹ * φ t ≤ 2⁻¹) :
+    |t| > 0.64 ∧ (2 * π) ^ (2⁻¹ : ℝ) * |t| > 1 ∧ |t| ≤ √2 * √(log ((|t|⁻¹ * φ t)⁻¹)) := by
   sorry
 
 /-- [DIR], proof of Proposition 5.11: this, in turn, implies
 $\log((2\pi)^{1/2}|t|)\le\log(2\pi^{1/2}\sqrt{\log(1/x)})=\log(2\pi^{1/2})+\frac12\log\log(1/x)$. -/
-theorem prop_5_11_log_bound (t : ℝ) (ht : t < 0) (hx : |t|⁻¹ * φ t ≤ 1 / 2) :
-    log ((2 * π) ^ (1 / 2 : ℝ) * |t|) ≤
-        log (2 * π ^ (1 / 2 : ℝ) * √(log ((|t|⁻¹ * φ t)⁻¹))) ∧
-      log (2 * π ^ (1 / 2 : ℝ) * √(log ((|t|⁻¹ * φ t)⁻¹))) =
-        log (2 * π ^ (1 / 2 : ℝ)) + 1 / 2 * log (log ((|t|⁻¹ * φ t)⁻¹)) := by
+theorem prop_5_11_log_bound (t : ℝ) (ht : t < 0) (hx : |t|⁻¹ * φ t ≤ 2⁻¹) :
+    log ((2 * π) ^ (2⁻¹ : ℝ) * |t|) ≤
+        log (2 * π ^ (2⁻¹ : ℝ) * √(log ((|t|⁻¹ * φ t)⁻¹))) ∧
+      log (2 * π ^ (2⁻¹ : ℝ) * √(log ((|t|⁻¹ * φ t)⁻¹))) =
+        log (2 * π ^ (2⁻¹ : ℝ)) + 2⁻¹ * log (log ((|t|⁻¹ * φ t)⁻¹)) := by
   sorry
 
 /-- [DIR], proof of Proposition 5.11: we can write $\sqrt2\sqrt{\log(1/x)}\sqrt{1-\varepsilon}=|t|$,
 where $\varepsilon=(\log(1/x))^{-1}\log((2\pi)^{1/2}|t|)$ satisfies
 $\varepsilon\le\frac{\log(2\pi^{1/2})}{\log(1/x)}+\frac12\frac{\log\log(1/x)}{\log(1/x)}$. -/
-theorem prop_5_11_eps (t : ℝ) (ht : t < 0) (hx : |t|⁻¹ * φ t ≤ 1 / 2) :
+theorem prop_5_11_eps (t : ℝ) (ht : t < 0) (hx : |t|⁻¹ * φ t ≤ 2⁻¹) :
     √2 * √(log ((|t|⁻¹ * φ t)⁻¹)) *
-        √(1 - (log ((|t|⁻¹ * φ t)⁻¹))⁻¹ * log ((2 * π) ^ (1 / 2 : ℝ) * |t|)) = |t| ∧
-    (log ((|t|⁻¹ * φ t)⁻¹))⁻¹ * log ((2 * π) ^ (1 / 2 : ℝ) * |t|) ≤
-      log (2 * π ^ (1 / 2 : ℝ)) / log ((|t|⁻¹ * φ t)⁻¹) +
-        1 / 2 * (log (log ((|t|⁻¹ * φ t)⁻¹)) / log ((|t|⁻¹ * φ t)⁻¹)) := by
+        √(1 - (log ((|t|⁻¹ * φ t)⁻¹))⁻¹ * log ((2 * π) ^ (2⁻¹ : ℝ) * |t|)) = |t| ∧
+    (log ((|t|⁻¹ * φ t)⁻¹))⁻¹ * log ((2 * π) ^ (2⁻¹ : ℝ) * |t|) ≤
+      log (2 * π ^ (2⁻¹ : ℝ)) / log ((|t|⁻¹ * φ t)⁻¹) +
+        2⁻¹ * (log (log ((|t|⁻¹ * φ t)⁻¹)) / log ((|t|⁻¹ * φ t)⁻¹)) := by
   sorry
 
 /-- The bound
 $\varepsilon(x)=\frac{\log(2\pi^{1/2})}{\log(1/x)}+\frac12\frac{\log\log(1/x)}{\log(1/x)}$
 for the relative error in Proposition 5.11 ([DIR], proof of Proposition 5.11). -/
 noncomputable def εI (x : ℝ) : ℝ :=
-  log (2 * π ^ (1 / 2 : ℝ)) / log x⁻¹ + 1 / 2 * (log (log x⁻¹) / log x⁻¹)
+  log (2 * π ^ (2⁻¹ : ℝ)) / log x⁻¹ + 2⁻¹ * (log (log x⁻¹) / log x⁻¹)
 
 /-- [DIR], proof of Proposition 5.11: the bound for $\varepsilon$ tends to $0$ as $x\to0^+$; in
 particular $\varepsilon<1$ if $x\le\frac15$. -/
 theorem prop_5_11_eps_small :
-    Tendsto εI (𝓝[>] 0) (𝓝 0) ∧ ∀ x ∈ Ioc (0 : ℝ) (1 / 5), εI x < 1 := by
+    Tendsto εI (𝓝[>] 0) (𝓝 0) ∧ ∀ x ∈ Ioc (0 : ℝ) 5⁻¹, εI x < 1 := by
   sorry
 
 /-- [DIR], proof of Proposition 5.11: thus
@@ -122,15 +122,15 @@ end Proof_Proposition_5_11
 /-- **Proposition 5.11** ([DIR]). For all $0<x\le\frac15$:
 $$I(x)\ge\sqrt2\cdot x\sqrt{\log(1/x)}\Big(1-\frac12\frac{\log\log(1/x)}{\log(1/x)}
 -\frac{\log(2\pi^{1/2})}{\log(1/x)}\Big).$$ -/
-theorem prop_5_11 (x : ℝ) (hx : x ∈ Ioc (0 : ℝ) (1 / 5)) :
+theorem prop_5_11 (x : ℝ) (hx : x ∈ Ioc (0 : ℝ) 5⁻¹) :
     I x ≥ √2 * x * √(log x⁻¹) *
-      (1 - 1 / 2 * (log (log x⁻¹) / log x⁻¹) - log (2 *
-          π ^ (1 / 2 : ℝ)) / log x⁻¹) := by
+      (1 - 2⁻¹ * (log (log x⁻¹) / log x⁻¹) - log (2 *
+          π ^ (2⁻¹ : ℝ)) / log x⁻¹) := by
   sorry
 
 /-- [DIR], §5.4, after Corollary 5.12: from (3.4), $J(1-x)=\sqrt2w_0I(xw_0^{-1})$ (for
 $0\le x\le\frac12$), and $w_0\in[0.895,0.896]$. -/
-theorem J_one_sub (x : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 2)) : J (1 - x) = √2 * w₀ * I (x *
+theorem J_one_sub (x : ℝ) (hx : x ∈ Icc (0 : ℝ) 2⁻¹) : J (1 - x) = √2 * w₀ * I (x *
     w₀⁻¹) := by
   sorry
 
@@ -138,7 +138,7 @@ theorem J_one_sub (x : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 2)) : J (1 - x) = √
 $\varepsilon=\frac12\frac{\log\log(w_0/x)}{\log(w_0/x)}+\frac{\log(2\pi^{1/2})}{\log(w_0/x)}$
 ([DIR], §5.4, after (5.10)). -/
 noncomputable def εJ (x : ℝ) : ℝ :=
-  1 / 2 * (log (log (w₀ / x)) / log (w₀ / x)) + log (2 * π ^ (1 / 2 : ℝ)) / log (w₀ / x)
+  2⁻¹ * (log (log (w₀ / x)) / log (w₀ / x)) + log (2 * π ^ (2⁻¹ : ℝ)) / log (w₀ / x)
 
 /-- **(5.10)** ([DIR], §5.4). Thus
 $$J(1-x)\ge2x\sqrt{\log(w_0/x)}(1-\varepsilon),$$
@@ -151,14 +151,14 @@ theorem eqn_5_10 (x : ℝ) (hx : x ∈ Ioc 0 (w₀ / 5)) : J (1 - x) ≥ 2 * x *
 /-- [DIR], §5.4: finally, if $x\le\frac1{64}$, then $2(1-\varepsilon)>1$ (by evaluating this
 decreasing function at $x=\frac1{64}$). -/
 theorem two_one_sub_εJ :
-    AntitoneOn (fun x ↦ 2 * (1 - εJ x)) (Ioc 0 (1 / 64)) ∧ ∀ x ∈ Ioc (0 : ℝ) (1 / 64), 2 * (1 -
+    AntitoneOn (fun x ↦ 2 * (1 - εJ x)) (Ioc 0 64⁻¹) ∧ ∀ x ∈ Ioc (0 : ℝ) 64⁻¹, 2 * (1 -
         εJ x) > 1 := by
   sorry
 
 /-- **Corollary 5.12** ([DIR]). For $0<x\le\frac1{64}$,
 $$J(1-x)\ge x\sqrt{\log(w_0/x)},$$
 where we recall that $w_0\in(0,1)$ is the unique value such that $J_{w_0}(\frac12)=\frac12$. -/
-theorem cor_5_12 (x : ℝ) (hx : x ∈ Ioc (0 : ℝ) (1 / 64)) : J (1 - x) ≥ x * √(log (w₀ / x)) := by
+theorem cor_5_12 (x : ℝ) (hx : x ∈ Ioc (0 : ℝ) 64⁻¹) : J (1 - x) ≥ x * √(log (w₀ / x)) := by
   sorry
 
 section Proof_Lemma_5_13
@@ -167,7 +167,7 @@ $\textsc{Partition}_1(\underline{g_{JL,\beta_0}},[\frac12,\frac{2047}{2048}])$ s
 $$-\partial_x^2[J(x)-L_\beta(1-x)]>0.08$$
 for $x\in[\frac12,\frac{2047}{2048}]$ (with $\beta=\beta_0$; $J$ is differentiated as $J_{w_0}$,
 see the module docstring, so that the value at $x=\frac12$ is the one-sided derivative). -/
-theorem eqn_5_11 (x : ℝ) (hx : x ∈ Icc (1 / 2 : ℝ) (2047 / 2048)) :
+theorem eqn_5_11 (x : ℝ) (hx : x ∈ Icc (2⁻¹ : ℝ) (2047 / 2048)) :
     -deriv (deriv (fun t ↦ Jw w₀ t - L β₀ (1 - t))) x > 0.08 := by
   sorry
 
@@ -175,8 +175,8 @@ theorem eqn_5_11 (x : ℝ) (hx : x ∈ Icc (1 / 2 : ℝ) (2047 / 2048)) :
 $[\frac12,\frac{2047}{2048}]$ and it suffices to evaluate it at $x=\frac12$, where the value is
 zero, and at $x=\frac{2047}{2048}$, where the value is $>10^{-4}$. -/
 theorem lemma_5_13_case_1 :
-    StrictConcaveOn ℝ (Icc (1 / 2) (2047 / 2048)) (fun x ↦ J x - L β₀ (1 - x)) ∧
-    J (1 / 2) - L β₀ (1 - 1 / 2) = 0 ∧ J (2047 / 2048) - L β₀ (1 - 2047 / 2048) > 1e-4 := by
+    StrictConcaveOn ℝ (Icc 2⁻¹ (2047 / 2048)) (fun x ↦ J x - L β₀ (1 - x)) ∧
+    J 2⁻¹ - L β₀ (1 - 2⁻¹) = 0 ∧ J (2047 / 2048) - L β₀ (1 - 2047 / 2048) > 1e-4 := by
   sorry
 
 /-- [DIR], proof of Lemma 5.13: setting $s=1-x<\frac1{2048}$, (5.10) implies
@@ -184,7 +184,7 @@ $J(x)=J(1-s)\ge2s(1-\varepsilon)\sqrt{\log(w_0/s)}$ with
 $\varepsilon=\frac12\frac{\log\log(w_0/s)}{\log(w_0/s)}+\frac{\log(2\pi^{1/2})}{\log(w_0/s)}$; thus
 $$J(x)-L_\beta(1-x)\ge s\Big(2(1-\varepsilon)\sqrt{\log(w_0/s)}-(\log2)^{-\beta_0}
 (\log(1/s))^{\beta_0}\Big).$$ -/
-theorem lemma_5_13_case_2 (s : ℝ) (hs : s ∈ Ioo 0 (1 / 2048)) :
+theorem lemma_5_13_case_2 (s : ℝ) (hs : s ∈ Ioo 0 2048⁻¹) :
     J (1 - s) ≥ 2 * s * (1 - εJ s) * √(log (w₀ / s)) ∧
     J (1 - s) - L β₀ s ≥
       s * (2 * (1 - εJ s) * √(log (w₀ / s)) - (log 2) ^ (-β₀) * (log s⁻¹) ^ β₀) := by
@@ -192,7 +192,7 @@ theorem lemma_5_13_case_2 (s : ℝ) (hs : s ∈ Ioo 0 (1 / 2048)) :
 
 /-- [DIR], proof of Lemma 5.13: let $u=\log(w_0/s)$. If $s\in(10^{-10^{380}},\frac1{2048})$, then
 $u\in(7,10^{381})$. -/
-theorem lemma_5_13_u_range (s : ℝ) (hs : s ∈ Ioo ((10 : ℝ) ^ (-(10 : ℝ) ^ 380)) (1 / 2048)) :
+theorem lemma_5_13_u_range (s : ℝ) (hs : s ∈ Ioo ((10 : ℝ) ^ (-(10 : ℝ) ^ 380)) 2048⁻¹) :
     log (w₀ / s) ∈ Ioo 7 ((10 : ℝ) ^ 381) := by
   sorry
 
@@ -206,7 +206,7 @@ theorem lemma_5_13_used (s : ℝ) (hs : 0 < s) (u v : ℝ) (hu : 0 ≤ u) (hv : 
 function $u\mapsto-\log(u)-\log(4\pi)$ at $u=10^{381}$ and the coefficients of other terms, the
 left-hand side of (5.12) is $>-1.21u^{1.00057}+2u-0.4u^{0.5}-880$. -/
 theorem lemma_5_13_frac_poly_bound (u : ℝ) (hu : u ∈ Icc 1200 ((10 : ℝ) ^ 381)) :
-    2 * u - log u - log (4 * π) - (log 2) ^ (-β₀) * u ^ (1 / 2 : ℝ) * (u ^ β₀ + (log w₀⁻¹) ^ β₀) >
+    2 * u - log u - log (4 * π) - (log 2) ^ (-β₀) * u ^ (2⁻¹ : ℝ) * (u ^ β₀ + (log w₀⁻¹) ^ β₀) >
       -1.21 * u ^ (1.00057 : ℝ) + 2 * u - 0.4 * u ^ (0.5 : ℝ) - 880 := by
   sorry
 
@@ -229,7 +229,7 @@ theorem lemma_5_13_roots :
 /-- [DIR], proof of Lemma 5.13: showing that (5.12) also holds for $u\in[7,1200]$ follows the same
 argument. -/
 theorem eqn_5_12_small (u : ℝ) (hu : u ∈ Icc (7 : ℝ) 1200) :
-    2 * u - log u - log (4 * π) - (log 2) ^ (-β₀) * u ^ (1 / 2 : ℝ) * (u ^ β₀ + (log w₀⁻¹) ^ β₀) >
+    2 * u - log u - log (4 * π) - (log 2) ^ (-β₀) * u ^ (2⁻¹ : ℝ) * (u ^ β₀ + (log w₀⁻¹) ^ β₀) >
         0 := by
   sorry
 
@@ -237,14 +237,14 @@ theorem eqn_5_12_small (u : ℝ) (hu : u ∈ Icc (7 : ℝ) 1200) :
 $$2u-\log(u)-\log(4\pi)-(\log2)^{-\beta_0}u^{\frac12}(u^{\beta_0}+\log(w_0^{-1})^{\beta_0})>0$$
 for all $u\in[7,10^{381}]$. -/
 theorem eqn_5_12 (u : ℝ) (hu : u ∈ Icc 7 ((10 : ℝ) ^ 381)) :
-    2 * u - log u - log (4 * π) - (log 2) ^ (-β₀) * u ^ (1 / 2 : ℝ) * (u ^ β₀ + (log w₀⁻¹) ^ β₀) >
+    2 * u - log u - log (4 * π) - (log 2) ^ (-β₀) * u ^ (2⁻¹ : ℝ) * (u ^ β₀ + (log w₀⁻¹) ^ β₀) >
         0 := by
   sorry
 
 end Proof_Lemma_5_13
 
 /-- **Lemma 5.13** ([DIR]). For all $x\in(\frac12,1-10^{-10^{380}})$, $J(x)>L_{\beta_0}(1-x)$. -/
-theorem lemma_5_13 (x : ℝ) (hx : x ∈ Ioo (1 / 2) (1 - (10 : ℝ) ^ (-(10 : ℝ) ^ 380))) :
+theorem lemma_5_13 (x : ℝ) (hx : x ∈ Ioo 2⁻¹ (1 - (10 : ℝ) ^ (-(10 : ℝ) ^ 380))) :
     J x > L β₀ (1 - x) := by
   sorry
 

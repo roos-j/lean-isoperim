@@ -36,9 +36,9 @@ $|A|\le\frac12$,
 $$\mathbf{E}h_A^\beta\ge|A|(\log_2(1/|A|))^\beta. \tag{1.1}$$
 This is an equality if $A$ is a subcube. -/
 theorem thm_1_1 (n : ℕ) (hn : 1 ≤ n) (β : ℝ) (hβ : β₀ ≤ β) :
-    (∀ A : Set ({0,1}^n), ｜A｜ ≤ 1 / 2 →
+    (∀ A : Set ({0,1}^n), ｜A｜ ≤ 2⁻¹ →
       𝐄 h A ^ β ≥ ｜A｜ * (log₂ ｜A｜⁻¹) ^ β) ∧
-    (∀ A : Set ({0,1}^n), ｜A｜ ≤ 1 / 2 → IsSubcube A →
+    (∀ A : Set ({0,1}^n), ｜A｜ ≤ 2⁻¹ → IsSubcube A →
       𝐄 h A ^ β = ｜A｜ * (log₂ ｜A｜⁻¹) ^ β) := by
   sorry
 
@@ -48,10 +48,10 @@ $$\tfrac12\le\mathbf{E}h_{B\cup W}^{\beta_0}\le\mathbf{E}(h_{B\cup W}\mathbf{1}_
 +\mathbf{E}(h_{B\cup W}^{\beta_0}\mathbf{1}_W)\le|\nabla(A,B)|+n^{0.50057}|W|.$$ -/
 theorem cor_1_9_chain (n : ℕ) (hn : 1 ≤ n) (A B W : Set ({0,1}^n))
     (hAB : Disjoint A B) (hAW : Disjoint A W) (hBW : Disjoint B W)
-    (hcover : A ∪ B ∪ W = Set.univ) (hBW' : ｜B ∪ W｜ = 1 / 2) (hA : ｜A｜ = 1 / 2) :
-    1 / 2 ≤ 𝐄 h (B ∪ W) ^ β₀ ∧
-    𝐄 h (B ∪ W) ^ β₀ ≤ 𝐄 (h (B ∪ W) * ind B) + 𝐄 (h (B ∪ W) ^ β₀ * ind W) ∧
-    𝐄 (h (B ∪ W) * ind B) + 𝐄 (h (B ∪ W) ^ β₀ * ind W) ≤
+    (hcover : A ∪ B ∪ W = Set.univ) (hBW' : ｜B ∪ W｜ = 2⁻¹) (hA : ｜A｜ = 2⁻¹) :
+    2⁻¹ ≤ 𝐄 h (B ∪ W) ^ β₀ ∧
+    𝐄 h (B ∪ W) ^ β₀ ≤ 𝐄 (h (B ∪ W) * 𝟏 B) + 𝐄 (h (B ∪ W) ^ β₀ * 𝟏 W) ∧
+    𝐄 (h (B ∪ W) * 𝟏 B) + 𝐄 (h (B ∪ W) ^ β₀ * 𝟏 W) ≤
       |∇(A, B)| + (n : ℝ) ^ (0.50057 : ℝ) * ｜W｜ := by
   sorry
 
@@ -62,8 +62,8 @@ where $|\nabla(A,B)|=2^{-n}\#\{(x,y)\in\mathcal{E} : x\in A, y\in B\}$,
 $|W|=\mathbf{E}\mathbf{1}_W$, and $\mathcal{E}$ is the set of edges of $\{0,1\}^n$. -/
 theorem cor_1_9 (n : ℕ) (hn : 1 ≤ n) (A B W : Set ({0,1}^n))
     (hAB : Disjoint A B) (hAW : Disjoint A W) (hBW : Disjoint B W)
-    (hcover : A ∪ B ∪ W = Set.univ) (hA : ｜A｜ = 1 / 2) :
-    |∇(A, B)| + (n : ℝ) ^ (0.50057 : ℝ) * ｜W｜ ≥ 1 / 2 := by
+    (hcover : A ∪ B ∪ W = Set.univ) (hA : ｜A｜ = 2⁻¹) :
+    |∇(A, B)| + (n : ℝ) ^ (0.50057 : ℝ) * ｜W｜ ≥ 2⁻¹ := by
   sorry
 
 end Auto.DIR

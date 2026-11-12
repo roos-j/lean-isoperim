@@ -25,7 +25,7 @@ From `Thm_1_1.lean`:
 * `e i` : the `i`-th unit vector, so that `x + e i` is `x` with the `i`-th bit flipped;
 * `h A` : the function $h_A$;
 * `𝐄 f` : the expectation $\mathbf{E} f = 2^{-n}\sum_{x} f(x)$;
-* `ind A` : the indicator function $\mathbf{1}_A$ (real valued);
+* `𝟏 A` : the indicator function $\mathbf{1}_A$ (real valued);
 * `｜A｜` : the normalized size $|A| = \mathbf{E}\mathbf{1}_A$ of a set `A ⊆ {0,1}^n`
   (written with the full-width bar `｜`, U+FF5C; `|a|` keeps its usual meaning `abs a`);
 * `log₂` : the binary logarithm `Real.logb 2`;
@@ -83,12 +83,15 @@ noncomputable def expect {n : ℕ} {M : Type*} [AddCommGroup M] [Module ℝ M]
 
 @[inherit_doc] notation:max "𝐄 " f:75 => expect f
 
-/-- The (real-valued) indicator function $\mathbf{1}_A$ of $A\subset\{0,1\}^n$. -/
+/-- The (real-valued) indicator function $\mathbf{1}_A$ of $A\subset\{0,1\}^n$.
+Written `𝟏 A`. -/
 noncomputable def ind {n : ℕ} (A : Set ({0,1}^n)) : ({0,1}^n) → ℝ := A.indicator 1
+
+@[inherit_doc] notation "𝟏" => ind
 
 /-- The normalized size $|A|=\mathbf{E}\mathbf{1}_A$ of $A\subset\{0,1\}^n$
 ([DIR], §1, after Theorem 1.1). Written `｜A｜` (full-width bars). -/
-noncomputable def dens {n : ℕ} (A : Set ({0,1}^n)) : ℝ := 𝐄 ind A
+noncomputable def dens {n : ℕ} (A : Set ({0,1}^n)) : ℝ := 𝐄 𝟏 A
 
 /-- The notation `｜A｜` for `Auto.DIR.dens A`, the paper's $|A|$. It uses the full-width vertical
 bar `｜` (U+FF5C): the ASCII `|` cannot be used by a plain `notation` without clashing with
@@ -137,7 +140,7 @@ $|\nabla f|^2=\sum_{i=1}^n|\tfrac12(f(x)-f(x\oplus e_i))|^2$. Written `∇f` (as
 $x$). -/
 noncomputable def gradNorm {n : ℕ} {M : Type*} [NormedAddCommGroup M] [NormedSpace ℝ M]
     (f : ({0,1}^n) → M) (x : {0,1}^n) : ℝ :=
-  √(∑ i, ‖(1 / 2 : ℝ) • (f x - f (x + e i))‖ ^ 2)
+  √(∑ i, ‖(2⁻¹ : ℝ) • (f x - f (x + e i))‖ ^ 2)
 
 @[inherit_doc] notation:max "∇" f:max => gradNorm f
 
@@ -185,8 +188,8 @@ theorem isoProfile_two_pow_le (β : ℝ) (hβ : 0 < β) (k : ℕ) :
 $(\frac12,1)$, continuous at the endpoints (i.e. on $[\frac12,1]$), and satisfies
 $f''f=-2$ on $(\frac12,1)$, $f(\frac12)=\frac12$, $f(1)=0$. -/
 def IsJ (f : ℝ → ℝ) : Prop :=
-  ContDiffOn ℝ ∞ f (Ioo (1 / 2) 1) ∧ ContinuousOn f (Icc (1 / 2) 1) ∧
-    (∀ x ∈ Ioo (1 / 2 : ℝ) 1, deriv (deriv f) x * f x = -2) ∧ f (1 / 2) = 1 / 2 ∧ f 1 = 0
+  ContDiffOn ℝ ∞ f (Ioo 2⁻¹ 1) ∧ ContinuousOn f (Icc 2⁻¹ 1) ∧
+    (∀ x ∈ Ioo (2⁻¹ : ℝ) 1, deriv (deriv f) x * f x = -2) ∧ f 2⁻¹ = 2⁻¹ ∧ f 1 = 0
 
 open Classical in
 /-- The function $J$ ([DIR], §1.3): the unique smooth function on $(\frac12,1)$ continuous at the

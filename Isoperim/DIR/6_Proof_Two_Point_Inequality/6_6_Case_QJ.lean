@@ -56,17 +56,17 @@ $\beta$-dependent term $((y-x)^{\frac1\beta}+J(y)^{\frac1\beta})^\beta$ is incre
 so that e.g. $G^1_\beta[b_{\beta_0}](x,y)$ is increasing in $\beta$. The Lean statement uses
 `Auto.DIR.J` literally; its (arbitrary) value at $x$ enters only through a $\beta$-independent
 summand, so the statement is true as written. -/
-theorem caseQJ_G₁_monotoneOn_beta (x y : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2))
-    (hy : y ∈ Icc (1 / 2 : ℝ) 1) (hxy : 1 ≤ x + y) :
-    MonotoneOn (fun β ↦ G₁ β J x y) (Icc (1 / 2) 1) := by
+theorem caseQJ_G₁_monotoneOn_beta (x y : ℝ) (hx : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹)
+    (hy : y ∈ Icc (2⁻¹ : ℝ) 1) (hxy : 1 ≤ x + y) :
+    MonotoneOn (fun β ↦ G₁ β J x y) (Icc 2⁻¹ 1) := by
   sorry
 
 section Near_Diagonal
 /-- [DIR], §6.6.1: by monotonicity in $\beta$, it suffices to consider $\beta=\beta_0$ to show the
 first part of the claim: $G^1_\beta[b_{\beta_0}](x,y)\ge G^1_{\beta_0}[b_{\beta_0}](x,y)$ for
 $\beta\in[\beta_0,1]$. -/
-theorem prop_6_11_mono_beta (x y : ℝ) (hx : x ∈ Icc (3 / 8 : ℝ) (1 / 2))
-    (hy : y ∈ Icc (1 / 2 : ℝ) (5 / 8)) (hxy : 1 ≤ x + y) (β : ℝ) (hβ : β ∈ Icc β₀ 1) :
+theorem prop_6_11_mono_beta (x y : ℝ) (hx : x ∈ Icc (3 / 8 : ℝ) 2⁻¹)
+    (hy : y ∈ Icc (2⁻¹ : ℝ) (5 / 8)) (hxy : 1 ≤ x + y) (β : ℝ) (hβ : β ∈ Icc β₀ 1) :
     G₁ β (b β₀) x y ≥ G₁ β₀ (b β₀) x y := by
   sorry
 
@@ -90,16 +90,16 @@ noncomputable def g_QJ (β c x y : ℝ) : ℝ :=
 
 /-- [DIR], §6.6.1: (Observe that $2J(\frac{x+y}2)-Q_\beta(x)>0$) (on triangle I, for
 $\beta\in[\frac12,1]$). -/
-theorem two_J_sub_Q_pos (x y : ℝ) (hx : x ∈ Icc (3 / 8 : ℝ) (1 / 2))
-    (hy : y ∈ Icc (1 / 2 : ℝ) (5 / 8)) (hxy : 1 ≤ x + y) (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1) :
+theorem two_J_sub_Q_pos (x y : ℝ) (hx : x ∈ Icc (3 / 8 : ℝ) 2⁻¹)
+    (hy : y ∈ Icc (2⁻¹ : ℝ) (5 / 8)) (hxy : 1 ≤ x + y) (β : ℝ) (hβ : β ∈ Icc (2⁻¹ : ℝ) 1) :
     2 * J ((x + y) / 2) - Q β x > 0 := by
   sorry
 
 /-- [DIR], §6.6.1: let us consider the equivalent expression $g_{QJ,\beta,c}$:
 $G^1_\beta[c\cdot b_\beta](x,y)\ge0\iff g_{QJ,\beta,c}(x,y)\ge0$ (on triangle I, for
 $\beta\in[\frac12,1]$, $c\in(0,1]$). -/
-theorem G₁_nonneg_iff_g_QJ_nonneg (x y : ℝ) (hx : x ∈ Icc (3 / 8 : ℝ) (1 / 2))
-    (hy : y ∈ Icc (1 / 2 : ℝ) (5 / 8)) (hxy : 1 ≤ x + y) (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1)
+theorem G₁_nonneg_iff_g_QJ_nonneg (x y : ℝ) (hx : x ∈ Icc (3 / 8 : ℝ) 2⁻¹)
+    (hy : y ∈ Icc (2⁻¹ : ℝ) (5 / 8)) (hxy : 1 ≤ x + y) (β : ℝ) (hβ : β ∈ Icc (2⁻¹ : ℝ) 1)
     (c : ℝ) (hc : c ∈ Ioc (0 : ℝ) 1) :
     G₁ β (c • b β) x y ≥ 0 ↔ g_QJ β c x y ≥ 0 := by
   sorry
@@ -126,39 +126,39 @@ involve $Q_\beta$ at $\frac{x+y}2$). The Lean statement keeps the paper's rectan
 stronger than needed and true numerically: $\min\approx0.0328$ for $(\beta_0,1)$ and
 $\approx0.0342$ for $(\frac12,c_0)$ on a $41\times41$ grid). -/
 theorem eqn_6_26 (β c : ℝ)
-    (hβc : (β, c) = (β₀, 1) ∨ (β, c) = (1 / 2, c₀)) (x y : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2))
-    (hy : y ∈ Icc (1 / 2 : ℝ) (5 / 8)) :
+    (hβc : (β, c) = (β₀, 1) ∨ (β, c) = (2⁻¹, c₀)) (x y : ℝ) (hx : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹)
+    (hy : y ∈ Icc (2⁻¹ : ℝ) (5 / 8)) :
     -β * deriv (fun x ↦ g_QJ β c x y) x > 10 ^ (-5 : ℤ) := by
   sorry
 
 /-- [DIR], §6.6.1: we claim that $\partial_xg_{QJ,\beta,c}(x,y)\le0$ for each $y$ (on triangle I,
 for $(\beta,c)\in\{(\beta_0,1),(\frac12,c_0)\}$). -/
-theorem g_QJ_deriv_x_nonpos (β c : ℝ) (hβc : (β, c) = (β₀, 1) ∨ (β, c) = (1 / 2, c₀))
-    (x y : ℝ) (hx : x ∈ Icc (3 / 8 : ℝ) (1 / 2)) (hy : y ∈ Icc (1 / 2 : ℝ) (5 / 8))
+theorem g_QJ_deriv_x_nonpos (β c : ℝ) (hβc : (β, c) = (β₀, 1) ∨ (β, c) = (2⁻¹, c₀))
+    (x y : ℝ) (hx : x ∈ Icc (3 / 8 : ℝ) 2⁻¹) (hy : y ∈ Icc (2⁻¹ : ℝ) (5 / 8))
     (hxy : 1 ≤ x + y) : deriv (fun x ↦ g_QJ β c x y) x ≤ 0 := by
   sorry
 
 /-- [DIR], §6.6.1: thus it only remains to check that $g_{QJ,\beta,c}(\frac12,y)\ge0$ for all
 $y\in[\frac12,\frac58]$ and $(\beta,c)\in\{(\beta_0,1),(\frac12,c_0)\}$: this implies
 $g_{QJ,\beta,c}\ge0$ on triangle I. -/
-theorem g_QJ_nonneg_of_half (β c : ℝ) (hβc : (β, c) = (β₀, 1) ∨ (β, c) = (1 / 2, c₀))
-    (h : ∀ y ∈ Icc (1 / 2 : ℝ) (5 / 8), g_QJ β c (1 / 2) y ≥ 0) (x y : ℝ)
-    (hx : x ∈ Icc (3 / 8 : ℝ) (1 / 2)) (hy : y ∈ Icc (1 / 2 : ℝ) (5 / 8)) (hxy : 1 ≤ x + y) :
+theorem g_QJ_nonneg_of_half (β c : ℝ) (hβc : (β, c) = (β₀, 1) ∨ (β, c) = (2⁻¹, c₀))
+    (h : ∀ y ∈ Icc (2⁻¹ : ℝ) (5 / 8), g_QJ β c 2⁻¹ y ≥ 0) (x y : ℝ)
+    (hx : x ∈ Icc (3 / 8 : ℝ) 2⁻¹) (hy : y ∈ Icc (2⁻¹ : ℝ) (5 / 8)) (hxy : 1 ≤ x + y) :
     g_QJ β c x y ≥ 0 := by
   sorry
 
 /-- [DIR], §6.6.1: $g_{QJ,\beta,c}(\frac12,y)\ge0$ is equivalent to showing
 $G^1_\beta[cJ](\frac12,y)\ge0$ (for $y\in[\frac12,\frac58]$, $\beta\in[\frac12,1]$,
 $c\in(0,1]$). -/
-theorem g_QJ_half_nonneg_iff (y : ℝ) (hy : y ∈ Icc (1 / 2 : ℝ) (5 / 8)) (β : ℝ)
-    (hβ : β ∈ Icc (1 / 2 : ℝ) 1) (c : ℝ) (hc : c ∈ Ioc (0 : ℝ) 1) :
-    g_QJ β c (1 / 2) y ≥ 0 ↔ G₁ β (c • J) (1 / 2) y ≥ 0 := by
+theorem g_QJ_half_nonneg_iff (y : ℝ) (hy : y ∈ Icc (2⁻¹ : ℝ) (5 / 8)) (β : ℝ)
+    (hβ : β ∈ Icc (2⁻¹ : ℝ) 1) (c : ℝ) (hc : c ∈ Ioc (0 : ℝ) 1) :
+    g_QJ β c 2⁻¹ y ≥ 0 ↔ G₁ β (c • J) 2⁻¹ y ≥ 0 := by
   sorry
 
 /-- [DIR], §6.6.1: $G^1_\beta[cJ](\frac12,y)\ge0$ for $y\in[\frac12,\frac58]$ and
 $(\beta,c)\in\{(\beta_0,1),(\frac12,c_0)\}$, which already follows from Proposition 6.1. -/
-theorem G₁_J_half_nonneg (β c : ℝ) (hβc : (β, c) = (β₀, 1) ∨ (β, c) = (1 / 2, c₀)) (y : ℝ)
-    (hy : y ∈ Icc (1 / 2 : ℝ) (5 / 8)) : G₁ β (c • J) (1 / 2) y ≥ 0 := by
+theorem G₁_J_half_nonneg (β c : ℝ) (hβc : (β, c) = (β₀, 1) ∨ (β, c) = (2⁻¹, c₀)) (y : ℝ)
+    (hy : y ∈ Icc (2⁻¹ : ℝ) (5 / 8)) : G₁ β (c • J) 2⁻¹ y ≥ 0 := by
   sorry
 
 /-! ### §6.6.1 Near diagonal: $3/8\le x\le1/2$, $1/2\le y\le5/8$, $x+y\ge1$ -/
@@ -175,9 +175,9 @@ works with $g_{QJ,\beta,c}$, i.e. with $J(\frac{x+y}2)$) does not cover this par
 statement adds the hypothesis $x+y\ge1$. (Numerically the printed version also appears to hold
 on the part $x+y<1$ of $[\frac38,\frac12]\times[\frac12,\frac58]$, with very small margins near
 $(\frac12,\frac12)$, e.g. $\approx1.4\cdot10^{-7}$ at $(0.497,0.5)$; this is not claimed.) -/
-theorem prop_6_11 (x y : ℝ) (hx : x ∈ Icc (3 / 8 : ℝ) (1 / 2))
-    (hy : y ∈ Icc (1 / 2 : ℝ) (5 / 8)) (hxy : 1 ≤ x + y) (β : ℝ) (hβ : β ∈ Icc β₀ 1) :
-    G₁ β (b β₀) x y ≥ 0 ∧ G₁ (1 / 2) (c₀ • b (1 / 2)) x y ≥ 0 := by
+theorem prop_6_11 (x y : ℝ) (hx : x ∈ Icc (3 / 8 : ℝ) 2⁻¹)
+    (hy : y ∈ Icc (2⁻¹ : ℝ) (5 / 8)) (hxy : 1 ≤ x + y) (β : ℝ) (hβ : β ∈ Icc β₀ 1) :
+    G₁ β (b β₀) x y ≥ 0 ∧ G₁ 2⁻¹ (c₀ • b 2⁻¹) x y ≥ 0 := by
   sorry
 
 end Near_Diagonal
@@ -197,23 +197,23 @@ extension $J_{w_0}$ of (3.4). The Lean definition uses `Jw w₀` at $\frac{x+y}2
 paper's $g_{QJ,2}$ where $x+y\ge1$, by `Auto.DIR.eqn_3_4`), so that (6.27) can be stated on the
 paper's full rectangle without a conditional hypothesis on `Auto.DIR.J`. -/
 noncomputable def g_QJ_2 (x y : ℝ) : ℝ :=
-  ((y - x) ^ 2 + J y ^ 2) ^ (1 / 2 : ℝ) + Q (1 / 2) x - 2 * Jw w₀ ((x + y) / 2)
+  ((y - x) ^ 2 + J y ^ 2) ^ (2⁻¹ : ℝ) + Q 2⁻¹ x - 2 * Jw w₀ ((x + y) / 2)
 
 /-- **Proposition 6.12** ([DIR]) (🚗). For all $x\in[\frac14,\frac12]$ and $y\in[\frac58,1]$,
 $$g_{QJ,2}(x,y)=((y-x)^2+J(y)^2)^{1/2}+Q_{\frac12}(x)-2J(\tfrac{x+y}2)>10^{-7}. \tag{6.27}$$
 (With $J(\frac{x+y}2)$ read as $J_{w_0}(\frac{x+y}2)$, see `Auto.DIR.g_QJ_2`; numerically the
 minimum is $\approx3.9\cdot10^{-5}$, at $(x,y)=(\frac12,\frac58)$.) -/
 theorem prop_6_12 (x y : ℝ)
-    (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2)) (hy : y ∈ Icc (5 / 8 : ℝ) 1) :
+    (hx : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹) (hy : y ∈ Icc (5 / 8 : ℝ) 1) :
     g_QJ_2 x y > 10 ^ (-7 : ℤ) := by
   sorry
 
 /-- [DIR], §6.6.2: Proposition 6.12 is stronger than required: if $g_{QJ,2}(x,y)\ge0$ for
 $\frac14\le x\le\frac12$, $\frac58\le y\le1$, $x+y\ge1$, then there
 $G^1_{\beta_0}[b_{\beta_0}](x,y)\ge0$ and $G^1_{\frac12}[c_0\cdot b_{\frac12}](x,y)\ge0$. -/
-theorem prop_6_12_stronger (x y : ℝ) (hx : x ∈ Icc (1 / 4 : ℝ) (1 / 2))
+theorem prop_6_12_stronger (x y : ℝ) (hx : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹)
     (hy : y ∈ Icc (5 / 8 : ℝ) 1) (hxy : 1 ≤ x + y) (h : g_QJ_2 x y ≥ 0) :
-    G₁ β₀ (b β₀) x y ≥ 0 ∧ G₁ (1 / 2) (c₀ • b (1 / 2)) x y ≥ 0 := by
+    G₁ β₀ (b β₀) x y ≥ 0 ∧ G₁ 2⁻¹ (c₀ • b 2⁻¹) x y ≥ 0 := by
   sorry
 
 end Far_From_Diagonal

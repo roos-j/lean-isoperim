@@ -29,7 +29,7 @@ This file covers Proposition 6.8 (Case $LJ$; unlabeled in the TeX source) and it
 * `J` is only meaningful on $[\frac12,1]$ (and smooth on $(\frac12,1)$). Claims involving
   derivatives of `J` at a point are therefore stated for points in the open interval
   $(\frac12,1)$ (e.g. with $1<x+y$ instead of $1\le x+y$); a one-sided derivative at the endpoint
-  $\frac12$ is written `derivWithin J (Icc (1 / 2) 1) (1 / 2)`.
+  $\frac12$ is written `derivWithin J (Icc 2⁻¹ 1) 2⁻¹`.
 -/
 
 @[expose] public section
@@ -40,57 +40,57 @@ open Real Set
 
 /-- [DIR], §6.4: in the region $LJ$ ($0\le x\le\frac14$, $\frac12\le y\le1$, $1\le x+y$) we have
 $y\in[\frac34,1]$. -/
-theorem caseLJ_region (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 4)) (hy : y ∈ Icc (1 / 2 : ℝ) 1)
+theorem caseLJ_region (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) 4⁻¹) (hy : y ∈ Icc (2⁻¹ : ℝ) 1)
     (hxy : 1 ≤ x + y) : y ∈ Icc (3 / 4 : ℝ) 1 := by
   sorry
 
 section Proof_Proposition_6_8
 /-- [DIR], proof of Proposition 6.8: the left-hand side is increasing in $\beta$ (for
 $\beta\in[\frac12,1]$), so it suffices to prove the claim for $\beta=\frac12$. -/
-theorem prop_6_8_monotoneOn_beta (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 4))
+theorem prop_6_8_monotoneOn_beta (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) 4⁻¹)
     (hy : y ∈ Icc (3 / 4 : ℝ) 1) (hxy : 1 ≤ x + y) :
     MonotoneOn (fun β ↦ y - x + (2 ^ β - 1) * J y + L β x - 2 * J ((x + y) / 2))
-      (Icc (1 / 2) 1) := by
+      (Icc 2⁻¹ 1) := by
   sorry
 
 /-- The function ([DIR], proof of Proposition 6.8)
 $$g_{LJ}(x,y)=y-x+(\sqrt2-1)J(y)+L_{\frac12}(x)-2J(\tfrac{x+y}2).$$ -/
-noncomputable def g_LJ (x y : ℝ) : ℝ := y - x + (√2 - 1) * J y + L (1 / 2) x - 2 * J ((x + y) / 2)
+noncomputable def g_LJ (x y : ℝ) : ℝ := y - x + (√2 - 1) * J y + L 2⁻¹ x - 2 * J ((x + y) / 2)
 
 /-- [DIR], proof of Proposition 6.8: $g_{LJ}$ is the left-hand side of Proposition 6.8 for
 $\beta=\frac12$ (as $2^{1/2}=\sqrt2$). -/
 theorem g_LJ_eq (x y : ℝ) :
-    g_LJ x y = y - x + (2 ^ (1 / 2 : ℝ) - 1) * J y + L (1 / 2) x - 2 * J ((x + y) / 2) := by
+    g_LJ x y = y - x + (2 ^ (2⁻¹ : ℝ) - 1) * J y + L 2⁻¹ x - 2 * J ((x + y) / 2) := by
   sorry
 
 /-- [DIR], proof of Proposition 6.8: using $JJ''=-2$ we have
 $$\partial_x^2g_{LJ}(x,y)=L_{\frac12}''(x)+J(\tfrac{x+y}2)^{-1}$$
 (for $(x,y)\in(0,\frac14]\times[\frac34,1]$, $1<x+y$). -/
-theorem g_LJ_deriv2_eq (x y : ℝ) (hx : x ∈ Ioc (0 : ℝ) (1 / 4))
+theorem g_LJ_deriv2_eq (x y : ℝ) (hx : x ∈ Ioc (0 : ℝ) 4⁻¹)
     (hy : y ∈ Icc (3 / 4 : ℝ) 1) (hxy : 1 < x + y) :
-    deriv (deriv (fun x ↦ g_LJ x y)) x = deriv (deriv (L (1 / 2))) x + (J ((x + y) / 2))⁻¹ := by
+    deriv (deriv (fun x ↦ g_LJ x y)) x = deriv (deriv (L 2⁻¹)) x + (J ((x + y) / 2))⁻¹ := by
   sorry
 
 /-- [DIR], proof of Proposition 6.8: Lemma 5.6 shows $L''_{1/2}$ is increasing and negative
 (on $(0,\frac14]$). -/
 theorem L_half_deriv2_monotoneOn_neg :
-    MonotoneOn (deriv (deriv (L (1 / 2)))) (Ioc 0 (1 / 4)) ∧
-      ∀ x ∈ Ioc (0 : ℝ) (1 / 4), deriv (deriv (L (1 / 2))) x < 0 := by
+    MonotoneOn (deriv (deriv (L 2⁻¹))) (Ioc 0 4⁻¹) ∧
+      ∀ x ∈ Ioc (0 : ℝ) 4⁻¹, deriv (deriv (L 2⁻¹)) x < 0 := by
   sorry
 
 /-- **(6.19)** ([DIR], proof of Proposition 6.8). $L''_{\frac12}(\frac14)\le-2.7$. -/
-theorem eqn_6_19 : deriv (deriv (L (1 / 2))) (1 / 4) ≤ -2.7 := by
+theorem eqn_6_19 : deriv (deriv (L 2⁻¹)) 4⁻¹ ≤ -2.7 := by
   sorry
 
 /-- [DIR], proof of Proposition 6.8: if $\frac{x+y}2\in[\frac12,1-\frac{w_0}2]$, then
 $J(\frac{x+y}2)^{-1}\le2$. -/
-theorem J_inv_le_two (m : ℝ) (hm : m ∈ Icc (1 / 2 : ℝ) (1 - w₀ / 2)) : (J m)⁻¹ ≤ 2 := by
+theorem J_inv_le_two (m : ℝ) (hm : m ∈ Icc (2⁻¹ : ℝ) (1 - w₀ / 2)) : (J m)⁻¹ ≤ 2 := by
   sorry
 
 /-- [DIR], proof of Proposition 6.8: if $\frac{x+y}2\in[\frac12,1-\frac{w_0}2]$, then
 $J(\frac{x+y}2)^{-1}\le2$ and hence $\partial_x^2g_{LJ}(x,y)\le0$ (for
 $(x,y)\in(0,\frac14]\times[\frac34,1]$, $1<x+y$). -/
-theorem g_LJ_deriv2_nonpos_of_le (x y : ℝ) (hx : x ∈ Ioc (0 : ℝ) (1 / 4))
+theorem g_LJ_deriv2_nonpos_of_le (x y : ℝ) (hx : x ∈ Ioc (0 : ℝ) 4⁻¹)
     (hy : y ∈ Icc (3 / 4 : ℝ) 1) (hxy : 1 < x + y) (hm : (x + y) / 2 ≤ 1 - w₀ / 2) :
     deriv (deriv (fun x ↦ g_LJ x y)) x ≤ 0 := by
   sorry
@@ -98,15 +98,15 @@ theorem g_LJ_deriv2_nonpos_of_le (x y : ℝ) (hx : x ∈ Ioc (0 : ℝ) (1 / 4))
 /-- [DIR], proof of Proposition 6.8: if $\frac{x+y}2\ge1-\frac{w_0}2$, it suffices to show that
 $\partial_x^3g_{LJ}(x,y)\ge0$ and $\partial_x^2g_{LJ}(\frac14,y)\le0$. (For fixed $y$, as $x$
 increases to $\frac14$, $\frac{x+y}2$ stays $\ge1-\frac{w_0}2$.) -/
-theorem g_LJ_deriv2_nonpos_of_deriv3 (x y : ℝ) (hx : x ∈ Ioc (0 : ℝ) (1 / 4))
+theorem g_LJ_deriv2_nonpos_of_deriv3 (x y : ℝ) (hx : x ∈ Ioc (0 : ℝ) 4⁻¹)
     (hy : y ∈ Icc (3 / 4 : ℝ) 1) (hxy : 1 < x + y) (hm : (x + y) / 2 ≥ 1 - w₀ / 2)
-    (h3 : ∀ x' ∈ Icc x (1 / 4), iteratedDeriv 3 (fun x ↦ g_LJ x y) x' ≥ 0)
-    (h2 : deriv (deriv (fun x ↦ g_LJ x y)) (1 / 4) ≤ 0) :
+    (h3 : ∀ x' ∈ Icc x 4⁻¹, iteratedDeriv 3 (fun x ↦ g_LJ x y) x' ≥ 0)
+    (h2 : deriv (deriv (fun x ↦ g_LJ x y)) 4⁻¹ ≤ 0) :
     deriv (deriv (fun x ↦ g_LJ x y)) x ≤ 0 := by
   sorry
 
 /-- **(6.20)** ([DIR], proof of Proposition 6.8). $\partial_x^2g_{LJ}(\frac14,1)\le-0.7$. -/
-theorem eqn_6_20 : deriv (deriv (fun x ↦ g_LJ x 1)) (1 / 4) ≤ -0.7 := by
+theorem eqn_6_20 : deriv (deriv (fun x ↦ g_LJ x 1)) 4⁻¹ ≤ -0.7 := by
   sorry
 
 /-- [DIR], proof of Proposition 6.8 (the monotonicity actually needed for the next step):
@@ -118,17 +118,17 @@ theorem J_inv_monotoneOn_Ico_x₀ : MonotoneOn (fun x ↦ (J x)⁻¹) (Ico (1 - 
 $\partial_x^2g_{LJ}(\frac14,y)\le0$ for all $y\in[\frac34,1]$. (Stated for $y\in(\frac34,1]$,
 where $\frac{1/4+y}2\in(\frac12,1)$.) -/
 theorem g_LJ_deriv2_quarter_nonpos (y : ℝ) (hy : y ∈ Ioc (3 / 4 : ℝ) 1) :
-    deriv (deriv (fun x ↦ g_LJ x y)) (1 / 4) ≤ 0 := by
+    deriv (deriv (fun x ↦ g_LJ x y)) 4⁻¹ ≤ 0 := by
   sorry
 
 /-- [DIR], proof of Proposition 6.8: to show $\partial_x^3g_{LJ}\ge0$ we calculate
 $$\partial_x^3g_{LJ}(x,y)=L_{\frac12}'''(x)-\tfrac12J'(\tfrac{x+y}2)J(\tfrac{x+y}2)^{-2}$$
 (for $(x,y)\in(0,\frac14]\times[\frac34,1]$, $1<x+y$). -/
-theorem g_LJ_deriv3_eq (x y : ℝ) (hx : x ∈ Ioc (0 : ℝ) (1 / 4))
+theorem g_LJ_deriv3_eq (x y : ℝ) (hx : x ∈ Ioc (0 : ℝ) 4⁻¹)
     (hy : y ∈ Icc (3 / 4 : ℝ) 1) (hxy : 1 < x + y) :
     iteratedDeriv 3 (fun x ↦ g_LJ x y) x =
-      iteratedDeriv 3 (L (1 / 2)) x -
-        1 / 2 * deriv J ((x + y) / 2) * J ((x + y) / 2) ^ (-2 : ℤ) := by
+      iteratedDeriv 3 (L 2⁻¹) x -
+        2⁻¹ * deriv J ((x + y) / 2) * J ((x + y) / 2) ^ (-2 : ℤ) := by
   sorry
 
 /-- [DIR], proof of Proposition 6.8: in the current region ($\frac{x+y}2\ge1-\frac{w_0}2$) we
@@ -137,13 +137,13 @@ theorem deriv_J_nonpos (m : ℝ) (hm : m ∈ Ico (1 - w₀ / 2) 1) : deriv J m �
   sorry
 
 /-- [DIR], proof of Proposition 6.8: $L'''_{1/2}\ge0$ (on $(0,\frac14]$) by Lemma 5.6. -/
-theorem L_half_deriv3_nonneg (x : ℝ) (hx : x ∈ Ioc (0 : ℝ) (1 / 4)) :
-    iteratedDeriv 3 (L (1 / 2)) x ≥ 0 := by
+theorem L_half_deriv3_nonneg (x : ℝ) (hx : x ∈ Ioc (0 : ℝ) 4⁻¹) :
+    iteratedDeriv 3 (L 2⁻¹) x ≥ 0 := by
   sorry
 
 /-- [DIR], proof of Proposition 6.8: if $\frac{x+y}2\ge1-\frac{w_0}2$, then
 $\partial_x^3g_{LJ}(x,y)\ge0$ (for $(x,y)\in(0,\frac14]\times[\frac34,1]$, $1<x+y$). -/
-theorem g_LJ_deriv3_nonneg (x y : ℝ) (hx : x ∈ Ioc (0 : ℝ) (1 / 4))
+theorem g_LJ_deriv3_nonneg (x y : ℝ) (hx : x ∈ Ioc (0 : ℝ) 4⁻¹)
     (hy : y ∈ Icc (3 / 4 : ℝ) 1) (hxy : 1 < x + y) (hm : (x + y) / 2 ≥ 1 - w₀ / 2) :
     iteratedDeriv 3 (fun x ↦ g_LJ x y) x ≥ 0 := by
   sorry
@@ -151,7 +151,7 @@ theorem g_LJ_deriv3_nonneg (x y : ℝ) (hx : x ∈ Ioc (0 : ℝ) (1 / 4))
 /-- [DIR], proof of Proposition 6.8: we claim that if $(x,y)\in(0,\frac14]\times[\frac34,1]$
 and $1\le x+y$, then $\partial_x^2g_{LJ}(x,y)\le0$. (Stated for $1<x+y$, where
 $\frac{x+y}2\in(\frac12,1)$ and the derivative of `J` is meaningful.) -/
-theorem g_LJ_deriv2_nonpos (x y : ℝ) (hx : x ∈ Ioc (0 : ℝ) (1 / 4))
+theorem g_LJ_deriv2_nonpos (x y : ℝ) (hx : x ∈ Ioc (0 : ℝ) 4⁻¹)
     (hy : y ∈ Icc (3 / 4 : ℝ) 1) (hxy : 1 < x + y) :
     deriv (deriv (fun x ↦ g_LJ x y)) x ≤ 0 := by
   sorry
@@ -160,15 +160,15 @@ theorem g_LJ_deriv2_nonpos (x y : ℝ) (hx : x ∈ Ioc (0 : ℝ) (1 / 4))
 region $LJ$: if $g_{LJ}\ge0$ on the boundary pieces $y=1$, $x+y=1$ and $x=\frac14$, then
 $g_{LJ}\ge0$ on the region $\{(x,y)\in[0,\frac14]\times[\frac34,1] : 1\le x+y\}$ (by concavity
 in $x$). -/
-theorem g_LJ_nonneg_of_boundary (h1 : ∀ x ∈ Icc (0 : ℝ) (1 / 4), g_LJ x 1 ≥ 0)
+theorem g_LJ_nonneg_of_boundary (h1 : ∀ x ∈ Icc (0 : ℝ) 4⁻¹, g_LJ x 1 ≥ 0)
     (h2 : ∀ y ∈ Icc (3 / 4 : ℝ) 1, g_LJ (1 - y) y ≥ 0)
-    (h3 : ∀ y ∈ Icc (3 / 4 : ℝ) 1, g_LJ (1 / 4) y ≥ 0) (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 4))
+    (h3 : ∀ y ∈ Icc (3 / 4 : ℝ) 1, g_LJ 4⁻¹ y ≥ 0) (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) 4⁻¹)
     (hy : y ∈ Icc (3 / 4 : ℝ) 1) (hxy : 1 ≤ x + y) : g_LJ x y ≥ 0 := by
   sorry
 
 /-- [DIR], proof of Proposition 6.8: if $y=1$, we already know
 $\frac{d^2}{dx^2}g_{LJ}(x,1)\le0$ (for $x\in(0,\frac14]$). -/
-theorem g_LJ_one_deriv2_nonpos (x : ℝ) (hx : x ∈ Ioc (0 : ℝ) (1 / 4)) :
+theorem g_LJ_one_deriv2_nonpos (x : ℝ) (hx : x ∈ Ioc (0 : ℝ) 4⁻¹) :
     deriv (deriv (fun x ↦ g_LJ x 1)) x ≤ 0 := by
   sorry
 
@@ -177,21 +177,21 @@ theorem g_LJ_zero_one : g_LJ 0 1 = 0 := by
   sorry
 
 /-- **(6.21)** ([DIR], proof of Proposition 6.8). $g_{LJ}(\frac14,1)\ge0.1$. -/
-theorem eqn_6_21 : g_LJ (1 / 4) 1 ≥ 0.1 := by
+theorem eqn_6_21 : g_LJ 4⁻¹ 1 ≥ 0.1 := by
   sorry
 
 /-- [DIR], proof of Proposition 6.8: $g_{LJ}(x,1)\ge0$ for all $x\in[0,\frac14]$. -/
-theorem g_LJ_one_nonneg (x : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 4)) : g_LJ x 1 ≥ 0 := by
+theorem g_LJ_one_nonneg (x : ℝ) (hx : x ∈ Icc (0 : ℝ) 4⁻¹) : g_LJ x 1 ≥ 0 := by
   sorry
 
 /-- [DIR], proof of Proposition 6.8: in the case $x+y=1$, $x\in[0,\frac14]$, $y\in[\frac34,1]$,
 $$g_{LJ}(1-y,y)=2y+(\sqrt2-1)J(y)+L_{\frac12}(1-y)-2.$$ -/
 theorem g_LJ_diag_eq (y : ℝ) (hy : y ∈ Icc (3 / 4 : ℝ) 1) :
-    g_LJ (1 - y) y = 2 * y + (√2 - 1) * J y + L (1 / 2) (1 - y) - 2 := by
+    g_LJ (1 - y) y = 2 * y + (√2 - 1) * J y + L 2⁻¹ (1 - y) - 2 := by
   sorry
 
 /-- **(6.22)** ([DIR], proof of Proposition 6.8). $g_{LJ}(\frac14,\frac34)\ge0.02$. -/
-theorem eqn_6_22 : g_LJ (1 / 4) (3 / 4) ≥ 0.02 := by
+theorem eqn_6_22 : g_LJ 4⁻¹ (3 / 4) ≥ 0.02 := by
   sorry
 
 /-- [DIR], proof of Proposition 6.8:
@@ -199,8 +199,8 @@ $$\partial_y^2(g_{LJ}(1-y,y))=(\sqrt2-1)J''(y)+L_{\frac12}''(1-y)\le0$$
 (for $y\in[\frac34,1)$). -/
 theorem g_LJ_diag_deriv2 (y : ℝ) (hy : y ∈ Ico (3 / 4 : ℝ) 1) :
     deriv (deriv (fun y ↦ g_LJ (1 - y) y)) y =
-        (√2 - 1) * deriv (deriv J) y + deriv (deriv (L (1 / 2))) (1 - y) ∧
-      (√2 - 1) * deriv (deriv J) y + deriv (deriv (L (1 / 2))) (1 - y) ≤ 0 := by
+        (√2 - 1) * deriv (deriv J) y + deriv (deriv (L 2⁻¹)) (1 - y) ∧
+      (√2 - 1) * deriv (deriv J) y + deriv (deriv (L 2⁻¹)) (1 - y) ≤ 0 := by
   sorry
 
 /-- [DIR], proof of Proposition 6.8: $g_{LJ}(1-y,y)\ge0$ for all $y\in[\frac34,1]$. -/
@@ -210,10 +210,10 @@ theorem g_LJ_diag_nonneg (y : ℝ) (hy : y ∈ Icc (3 / 4 : ℝ) 1) : g_LJ (1 - 
 /-- The function ([DIR], proof of Proposition 6.8; denoted $f$ there)
 $$f(y)=y-\tfrac14+(\sqrt2-1)J(y)+L_{\frac12}(\tfrac14)-2J(\tfrac y2+\tfrac18).$$ -/
 noncomputable def f_LJ (y : ℝ) : ℝ :=
-  y - 1 / 4 + (√2 - 1) * J y + L (1 / 2) (1 / 4) - 2 * J (y / 2 + 1 / 8)
+  y - 4⁻¹ + (√2 - 1) * J y + L 2⁻¹ 4⁻¹ - 2 * J (y / 2 + 8⁻¹)
 
 /-- [DIR], proof of Proposition 6.8: $f(y)=g_{LJ}(\frac14,y)$. -/
-theorem f_LJ_eq (y : ℝ) : f_LJ y = g_LJ (1 / 4) y := by
+theorem f_LJ_eq (y : ℝ) : f_LJ y = g_LJ 4⁻¹ y := by
   sorry
 
 /-- [DIR], proof of Proposition 6.8: we already know $f\ge0$ at the endpoints
@@ -226,13 +226,13 @@ $$f''(y)=(\sqrt2-1)J''(y)-\tfrac12J''(\tfrac y2+\tfrac18)
 =-2(\sqrt2-1)J(y)^{-1}+J(\tfrac y2+\tfrac18)^{-1}$$
 (for $y\in(\frac34,1)$). -/
 theorem f_LJ_deriv2 (y : ℝ) (hy : y ∈ Ioo (3 / 4 : ℝ) 1) :
-    deriv (deriv f_LJ) y = (√2 - 1) * deriv (deriv J) y - 1 / 2 * deriv (deriv J) (y / 2 + 1 / 8) ∧
-      (√2 - 1) * deriv (deriv J) y - 1 / 2 * deriv (deriv J) (y / 2 + 1 / 8) =
-        -2 * (√2 - 1) * (J y)⁻¹ + (J (y / 2 + 1 / 8))⁻¹ := by
+    deriv (deriv f_LJ) y = (√2 - 1) * deriv (deriv J) y - 2⁻¹ * deriv (deriv J) (y / 2 + 8⁻¹) ∧
+      (√2 - 1) * deriv (deriv J) y - 2⁻¹ * deriv (deriv J) (y / 2 + 8⁻¹) =
+        -2 * (√2 - 1) * (J y)⁻¹ + (J (y / 2 + 8⁻¹))⁻¹ := by
   sorry
 
 /-- The map $t(y)=\frac y2+\frac18$ ([DIR], proof of Proposition 6.8; denoted $t$ there). -/
-noncomputable def t_LJ (y : ℝ) : ℝ := y / 2 + 1 / 8
+noncomputable def t_LJ (y : ℝ) : ℝ := y / 2 + 8⁻¹
 
 /-- The ratio $r(y)=\frac{J(y)}{J(t(y))}$ ([DIR], proof of Proposition 6.8; denoted $r$
 there). -/
@@ -243,7 +243,7 @@ $$r'(y)=\frac{J'(y)J(t(y))-\frac12J(y)J'(t(y))}{J(t(y))^2}$$
 (for $y\in(\frac34,1)$). -/
 theorem r_LJ_deriv (y : ℝ) (hy : y ∈ Ioo (3 / 4 : ℝ) 1) :
     deriv r_LJ y =
-      (deriv J y * J (t_LJ y) - 1 / 2 * J y * deriv J (t_LJ y)) / J (t_LJ y) ^ 2 := by
+      (deriv J y * J (t_LJ y) - 2⁻¹ * J y * deriv J (t_LJ y)) / J (t_LJ y) ^ 2 := by
   sorry
 
 /-- The function $h(u)=\frac{J'(u)}{J(u)}$ ([DIR], proof of Proposition 6.8; denoted $h$
@@ -253,14 +253,14 @@ noncomputable def h_LJ (u : ℝ) : ℝ := deriv J u / J u
 /-- [DIR], proof of Proposition 6.8: since $JJ''=-2$,
 $$h'(u)=\frac{J''(u)J(u)-(J'(u))^2}{J(u)^2}=\frac{-2-(J'(u))^2}{J(u)^2}\le0$$
 (for $u\in(\frac12,1)$). -/
-theorem h_LJ_deriv (u : ℝ) (hu : u ∈ Ioo (1 / 2 : ℝ) 1) :
+theorem h_LJ_deriv (u : ℝ) (hu : u ∈ Ioo (2⁻¹ : ℝ) 1) :
     deriv h_LJ u = (deriv (deriv J) u * J u - deriv J u ^ 2) / J u ^ 2 ∧
       (deriv (deriv J) u * J u - deriv J u ^ 2) / J u ^ 2 = (-2 - deriv J u ^ 2) / J u ^ 2 ∧
       (-2 - deriv J u ^ 2) / J u ^ 2 ≤ 0 := by
   sorry
 
 /-- [DIR], proof of Proposition 6.8: hence $h$ is decreasing (on $(\frac12,1)$). -/
-theorem h_LJ_antitoneOn : AntitoneOn h_LJ (Ioo (1 / 2) 1) := by
+theorem h_LJ_antitoneOn : AntitoneOn h_LJ (Ioo 2⁻¹ 1) := by
   sorry
 
 /-- [DIR], proof of Proposition 6.8: as $y\ge t(y)$ we have $h(y)\le h(t(y))$
@@ -325,7 +325,7 @@ $$f'(\tfrac34)=1+(\sqrt2-1)J'(\tfrac34)-J'(\tfrac12)$$
 $[\frac12,1]$). -/
 theorem f_LJ_deriv_three_quarters :
     derivWithin f_LJ (Icc (3 / 4) 1) (3 / 4) =
-      1 + (√2 - 1) * deriv J (3 / 4) - derivWithin J (Icc (1 / 2) 1) (1 / 2) := by
+      1 + (√2 - 1) * deriv J (3 / 4) - derivWithin J (Icc 2⁻¹ 1) 2⁻¹ := by
   sorry
 
 /-- [DIR], proof of Proposition 6.8: using (3.4) and $w_0\in[0.895,0.896]$, one checks that
@@ -345,7 +345,7 @@ theorem f_LJ_nonneg (y : ℝ) (hy : y ∈ Icc (3 / 4 : ℝ) 1) : f_LJ y ≥ 0 :=
 
 /-- [DIR], proof of Proposition 6.8 (conclusion for $\beta=\frac12$): $g_{LJ}(x,y)\ge0$ for
 $(x,y)\in[0,\frac14]\times[\frac34,1]$, $1\le x+y$. -/
-theorem g_LJ_nonneg (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 4)) (hy : y ∈ Icc (3 / 4 : ℝ) 1)
+theorem g_LJ_nonneg (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) 4⁻¹) (hy : y ∈ Icc (3 / 4 : ℝ) 1)
     (hxy : 1 ≤ x + y) : g_LJ x y ≥ 0 := by
   sorry
 
@@ -354,8 +354,8 @@ end Proof_Proposition_6_8
 /-- **Proposition 6.8** ([DIR], Case $LJ$). For $(x,y)\in[0,\frac14]\times[\frac34,1]$,
 $1\le x+y$, and $\beta\in[\frac12,1]$,
 $$y-x+(2^\beta-1)J(y)+L_\beta(x)-2J(\tfrac{x+y}2)\ge0.$$ -/
-theorem prop_6_8 (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 4)) (hy : y ∈ Icc (3 / 4 : ℝ) 1)
-    (hxy : 1 ≤ x + y) (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1) :
+theorem prop_6_8 (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) 4⁻¹) (hy : y ∈ Icc (3 / 4 : ℝ) 1)
+    (hxy : 1 ≤ x + y) (β : ℝ) (hβ : β ∈ Icc (2⁻¹ : ℝ) 1) :
     y - x + (2 ^ β - 1) * J y + L β x - 2 * J ((x + y) / 2) ≥ 0 := by
   sorry
 

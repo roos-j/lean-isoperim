@@ -41,13 +41,13 @@ open Auto.DIR
 
 open Real Set
 
-local notation "G₂" => Auto.DIR.G₂ (1 / 2)
+local notation "G₂" => Auto.DIR.G₂ 2⁻¹
 
-local notation "G" => Auto.DIR.G (1 / 2)
+local notation "G" => Auto.DIR.G 2⁻¹
 
-local notation "L" => Auto.DIR.L (1 / 2)
+local notation "L" => Auto.DIR.L 2⁻¹
 
-local notation "Q" => Auto.DIR.Q (1 / 2)
+local notation "Q" => Auto.DIR.Q 2⁻¹
 
 local notation "J" => JX
 
@@ -59,8 +59,8 @@ section Case_I
 /-- **(3.3)** ([DIRX], §3.3, Case I) (🚗). By dyadic partitioning,
 $$G[B_w](x,y)>10^{-6}$$ for $(x,y)\in[\frac1{16},\frac14]\times[\frac12,\frac34]$ (with
 $w=w_1$). -/
-theorem eqn_3_3 (x y : ℝ) (hx : x ∈ Icc (1 / 16 : ℝ) (1 / 4))
-    (hy : y ∈ Icc (1 / 2 : ℝ) (3 / 4)) :
+theorem eqn_3_3 (x y : ℝ) (hx : x ∈ Icc (16⁻¹ : ℝ) 4⁻¹)
+    (hy : y ∈ Icc (2⁻¹ : ℝ) (3 / 4)) :
     G (BX w₁) x y > (10 : ℝ) ^ (-6 : ℤ) := by
   sorry
 
@@ -75,23 +75,23 @@ noncomputable def G_LJQX (x y : ℝ) : ℝ := y - x + (√2 - 1) * J y + L x - 2
 
 /-- [DIRX], §3.3, Case II: in the region of Case $LJQ$, $G_2[B_{w_1}](x,y)=G_{LJQ}(x,y)$ (so that
 it suffices to show $G_{LJQ}\ge0$). -/
-theorem G₂_BX_eq_G_LJQ (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 4)) (hy : y ∈ Icc (1 / 2 : ℝ) 1)
+theorem G₂_BX_eq_G_LJQ (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) 4⁻¹) (hy : y ∈ Icc (2⁻¹ : ℝ) 1)
     (hxy : x + y ≤ 1) : G₂ (BX w₁) x y = G_LJQX x y := by
   sorry
 
 /-- **(3.4)** ([DIRX], §3.3; shown in [DIR], Lemma 6.7, `Auto.DIR.lemma_6_7`). For
 $x\in(0,\frac14]$ and $y\in[0,1]$,
 $$\partial_x^2G_{LJQ}(x,y)=L''(x)-\tfrac12Q''(\tfrac{x+y}2)<0.$$ -/
-theorem eqn_3_4 (x y : ℝ) (hx : x ∈ Ioc (0 : ℝ) (1 / 4)) (hy : y ∈ Icc (0 : ℝ) 1) :
+theorem eqn_3_4 (x y : ℝ) (hx : x ∈ Ioc (0 : ℝ) 4⁻¹) (hy : y ∈ Icc (0 : ℝ) 1) :
     deriv (deriv (fun t ↦ G_LJQX t y)) x =
-        deriv (deriv L) x - 1 / 2 * deriv (deriv Q) ((x + y) / 2) ∧
-      deriv (deriv L) x - 1 / 2 * deriv (deriv Q) ((x + y) / 2) < 0 := by
+        deriv (deriv L) x - 2⁻¹ * deriv (deriv Q) ((x + y) / 2) ∧
+      deriv (deriv L) x - 2⁻¹ * deriv (deriv Q) ((x + y) / 2) < 0 := by
   sorry
 
 /-- [DIRX], §3.3, Case II: for fixed $y\in[0,1]$, the function $x\mapsto G_{LJQ}(x,y)$ is strictly
 concave on $[0,\frac14]$. -/
 theorem G_LJQ_strictConcave (y : ℝ) (hy : y ∈ Icc (0 : ℝ) 1) :
-    StrictConcaveOn ℝ (Icc 0 (1 / 4)) (fun x ↦ G_LJQX x y) := by
+    StrictConcaveOn ℝ (Icc 0 4⁻¹) (fun x ↦ G_LJQX x y) := by
   sorry
 
 /-- [DIRX], §3.3, Case II: by concavity in $x$ it remains to verify non-negativity of $G_{LJQ}$
@@ -99,11 +99,11 @@ on the $x$-boundary of the region, i.e. $G_{LJQ}(0,y)\ge0$ for $y\in[\frac12,1]$
 $G_{LJQ}(\frac1{16},y)\ge0$ for $y\in[\frac12,\frac34]$ and $G_{LJQ}(1-y,y)\ge0$ for
 $y\in[\frac34,1]$. -/
 theorem caseLJQ_II_of_boundary
-    (h0 : ∀ y ∈ Icc (1 / 2 : ℝ) 1, G_LJQX 0 y ≥ 0)
-    (h1 : ∀ y ∈ Icc (1 / 2 : ℝ) (3 / 4), G_LJQX (1 / 16) y ≥ 0)
+    (h0 : ∀ y ∈ Icc (2⁻¹ : ℝ) 1, G_LJQX 0 y ≥ 0)
+    (h1 : ∀ y ∈ Icc (2⁻¹ : ℝ) (3 / 4), G_LJQX 16⁻¹ y ≥ 0)
     (h2 : ∀ y ∈ Icc (3 / 4 : ℝ) 1, G_LJQX (1 - y) y ≥ 0)
-    (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 4)) (hy : y ∈ Icc (1 / 2 : ℝ) 1)
-    (hxy : x + y ≤ 1) (h : x ≤ 1 / 16 ∨ y ≥ 3 / 4) : G_LJQX x y ≥ 0 := by
+    (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) 4⁻¹) (hy : y ∈ Icc (2⁻¹ : ℝ) 1)
+    (hxy : x + y ≤ 1) (h : x ≤ 16⁻¹ ∨ y ≥ 3 / 4) : G_LJQX x y ≥ 0 := by
   sorry
 
 section Boundary_x_eq_0
@@ -115,9 +115,9 @@ local notation "f" => fX
 /-- [DIRX], §3.3, Case II: using $\mathrm{J}\cdot\mathrm{J}''=-\gamma$, we compute, for
 $y\in(\frac12,1)$, $f'(y)=1+(\sqrt2-1)\mathrm{J}'(y)-Q'(\frac y2)$ and
 $f''(y)=-\gamma(\sqrt2-1)\mathrm{J}(y)^{-1}-\frac12Q''(\frac y2)$. -/
-theorem fX_deriv (y : ℝ) (hy : y ∈ Ioo (1 / 2 : ℝ) 1) :
+theorem fX_deriv (y : ℝ) (hy : y ∈ Ioo (2⁻¹ : ℝ) 1) :
     deriv f y = 1 + (√2 - 1) * deriv J y - deriv Q (y / 2) ∧
-      deriv (deriv f) y = -γ * (√2 - 1) * (J y)⁻¹ - 1 / 2 * deriv (deriv Q) (y / 2) := by
+      deriv (deriv f) y = -γ * (√2 - 1) * (J y)⁻¹ - 2⁻¹ * deriv (deriv Q) (y / 2) := by
   sorry
 
 /-- **(3.5)** ([DIRX], §3.3).
@@ -128,17 +128,17 @@ theorem eqn_3_5 (x : ℝ) (hx : x ∈ Ioo (1 - w₁) 1) :
   sorry
 
 /-- [DIRX], §3.3: using (3.5) we compute $f^{(4)}(y)<0$ (for $y\in(\frac12,1)$). -/
-theorem fX_deriv4_neg (y : ℝ) (hy : y ∈ Ioo (1 / 2 : ℝ) 1) : iteratedDeriv 4 f y < 0 := by
+theorem fX_deriv4_neg (y : ℝ) (hy : y ∈ Ioo (2⁻¹ : ℝ) 1) : iteratedDeriv 4 f y < 0 := by
   sorry
 
 /-- [DIRX], §3.3: hence $f''$ is strictly concave on $(\frac12,1)$. -/
-theorem fX_deriv2_strictConcave : StrictConcaveOn ℝ (Ioo (1 / 2) 1) (deriv (deriv f)) := by
+theorem fX_deriv2_strictConcave : StrictConcaveOn ℝ (Ioo 2⁻¹ 1) (deriv (deriv f)) := by
   sorry
 
 /-- **(3.6)** ([DIRX], §3.3).
 $$f''(\tfrac12)>0.03,\quad f''(\tfrac9{16})>0.05,\quad f''(\tfrac45)<-0.2.$$ -/
 theorem eqn_3_6 :
-    deriv (deriv f) (1 / 2) > 0.03 ∧ deriv (deriv f) (9 / 16) > 0.05 ∧
+    deriv (deriv f) 2⁻¹ > 0.03 ∧ deriv (deriv f) (9 / 16) > 0.05 ∧
       deriv (deriv f) (4 / 5) < -0.2 := by
   sorry
 
@@ -146,10 +146,10 @@ theorem eqn_3_6 :
 achieves its unique maximum (on $(\frac12,1)$); $f'$ is increasing on $(\frac12,y_0)$ and
 decreasing on $(y_0,1)$. -/
 theorem fX_deriv2_zero :
-    ∃ y₀ ∈ Ioo (1 / 2 : ℝ) 1, deriv (deriv f) y₀ = 0 ∧
-      (∀ y ∈ Ioo (1 / 2 : ℝ) 1, deriv (deriv f) y = 0 → y = y₀) ∧
-      (∀ y ∈ Ioo (1 / 2 : ℝ) 1, y ≠ y₀ → deriv f y < deriv f y₀) ∧
-      StrictMonoOn (deriv f) (Ioc (1 / 2) y₀) ∧ StrictAntiOn (deriv f) (Ico y₀ 1) := by
+    ∃ y₀ ∈ Ioo (2⁻¹ : ℝ) 1, deriv (deriv f) y₀ = 0 ∧
+      (∀ y ∈ Ioo (2⁻¹ : ℝ) 1, deriv (deriv f) y = 0 → y = y₀) ∧
+      (∀ y ∈ Ioo (2⁻¹ : ℝ) 1, y ≠ y₀ → deriv f y < deriv f y₀) ∧
+      StrictMonoOn (deriv f) (Ioc 2⁻¹ y₀) ∧ StrictAntiOn (deriv f) (Ico y₀ 1) := by
   sorry
 
 /-- [DIRX], §3.3: $f'(\frac9{16})>0.05$ and $f'(\frac{15}{16})<-0.08$. -/
@@ -158,7 +158,7 @@ theorem fX_deriv_eval : deriv f (9 / 16) > 0.05 ∧ deriv f (15 / 16) < -0.08 :=
 
 /-- [DIRX], §3.3 (not stated in the paper; see the discrepancy paragraph of
 `Auto.DIRX.fX_deriv_zero`): $f'(\frac12)>0$. Numerically $f'(\frac12)\approx0.0465$. -/
-theorem fX_deriv_half_pos : deriv f (1 / 2) > 0 := by
+theorem fX_deriv_half_pos : deriv f 2⁻¹ > 0 := by
   sorry
 
 /-- [DIRX], §3.3: $f'$ has exactly one zero $y_1$ on $(\frac12,1)$; therefore $f$ is increasing
@@ -172,17 +172,17 @@ $f'(\frac12)=1+(\sqrt2-1)\mathrm{J}'(\frac12)-Q'(\frac14)\approx0.0465>0$ (singl
 evaluation, Python spot check). The Lean statement is the paper's claim unchanged; the missing
 step is recorded separately as `Auto.DIRX.fX_deriv_half_pos`. -/
 theorem fX_deriv_zero :
-    ∃ y₁ ∈ Ioo (1 / 2 : ℝ) 1, deriv f y₁ = 0 ∧
-      (∀ y ∈ Ioo (1 / 2 : ℝ) 1, deriv f y = 0 → y = y₁) ∧
-      MonotoneOn f (Icc (1 / 2) y₁) ∧ AntitoneOn f (Icc y₁ 1) := by
+    ∃ y₁ ∈ Ioo (2⁻¹ : ℝ) 1, deriv f y₁ = 0 ∧
+      (∀ y ∈ Ioo (2⁻¹ : ℝ) 1, deriv f y = 0 → y = y₁) ∧
+      MonotoneOn f (Icc 2⁻¹ y₁) ∧ AntitoneOn f (Icc y₁ 1) := by
   sorry
 
 /-- [DIRX], §3.3: $f(1)=f(\frac12)=0$. -/
-theorem fX_one_half : f 1 = 0 ∧ f (1 / 2) = 0 := by
+theorem fX_one_half : f 1 = 0 ∧ f 2⁻¹ = 0 := by
   sorry
 
 /-- [DIRX], §3.3: $f(y)\ge0$ for $y\in[\frac12,1]$, i.e. $G_{LJQ}(0,y)\ge0$. -/
-theorem fX_nonneg (y : ℝ) (hy : y ∈ Icc (1 / 2 : ℝ) 1) : f y ≥ 0 := by
+theorem fX_nonneg (y : ℝ) (hy : y ∈ Icc (2⁻¹ : ℝ) 1) : f y ≥ 0 := by
   sorry
 
 end Boundary_x_eq_0
@@ -190,8 +190,8 @@ end Boundary_x_eq_0
 section Boundary_x_eq_1_16
 /-- **(3.7)** ([DIRX], §3.3) (🚗). Dyadic partitioning yields
 $$G_{LJQ}(\tfrac1{16},y)>10^{-4}$$ for all $y\in[\frac12,\frac34]$. -/
-theorem eqn_3_7 (y : ℝ) (hy : y ∈ Icc (1 / 2 : ℝ) (3 / 4)) :
-    G_LJQX (1 / 16) y > (10 : ℝ) ^ (-4 : ℤ) := by
+theorem eqn_3_7 (y : ℝ) (hy : y ∈ Icc (2⁻¹ : ℝ) (3 / 4)) :
+    G_LJQX 16⁻¹ y > (10 : ℝ) ^ (-4 : ℤ) := by
   sorry
 
 end Boundary_x_eq_1_16
@@ -212,7 +212,7 @@ theorem G_LJQ_diag_concave : ConcaveOn ℝ (Icc (3 / 4) 1) (fun y ↦ G_LJQX (1 
   sorry
 
 /-- [DIRX], §3.3: $G_{LJQ}(0,1)=0$ and $G_{LJQ}(\frac14,\frac34)>0.01$. -/
-theorem G_LJQ_diag_eval : G_LJQX 0 1 = 0 ∧ G_LJQX (1 / 4) (3 / 4) > 0.01 := by
+theorem G_LJQ_diag_eval : G_LJQX 0 1 = 0 ∧ G_LJQX 4⁻¹ (3 / 4) > 0.01 := by
   sorry
 
 /-- [DIRX], §3.3: $G_{LJQ}(1-y,y)\ge0$ for all $y\in[\frac34,1]$. -/
@@ -232,8 +232,8 @@ $y\ge\frac34$ the proof uses concavity in $x$ on $[0,1-y]$ and the boundary $x=1
 $x+y\le1$ is $G_{LJQ}=G_2[B_{w_1}]$ (since then $\frac{x+y}2\le\frac12$ and
 $B_{w_1}(\frac{x+y}2)=Q(\frac{x+y}2)$). The Lean statement adds the hypothesis `hxy : x + y ≤ 1`
 (the standing assumption of Case $LJQ$); this is all that is needed for `caseLJQ`. -/
-theorem caseLJQ_II (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 4)) (hy : y ∈ Icc (1 / 2 : ℝ) 1)
-    (hxy : x + y ≤ 1) (h : x ≤ 1 / 16 ∨ y ≥ 3 / 4) : G_LJQX x y ≥ 0 := by
+theorem caseLJQ_II (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) 4⁻¹) (hy : y ∈ Icc (2⁻¹ : ℝ) 1)
+    (hxy : x + y ≤ 1) (h : x ≤ 16⁻¹ ∨ y ≥ 3 / 4) : G_LJQX x y ≥ 0 := by
   sorry
 
 end Case_II
@@ -242,7 +242,7 @@ end Case_II
 
 /-- [DIRX], §3.3 (Case $LJQ$): $G[B_{w_1}](x,y)\ge0$ for $0\le x\le\frac14$,
 $\frac12\le y\le1$, $x+y\le1$. -/
-theorem caseLJQ (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 4)) (hy : y ∈ Icc (1 / 2 : ℝ) 1)
+theorem caseLJQ (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) 4⁻¹) (hy : y ∈ Icc (2⁻¹ : ℝ) 1)
     (hxy : x + y ≤ 1) : G (BX w₁) x y ≥ 0 := by
   sorry
 

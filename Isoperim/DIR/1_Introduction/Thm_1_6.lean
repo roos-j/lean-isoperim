@@ -29,7 +29,7 @@ open Real Filter Topology
 /-- [DIR], §1.2, after Theorem 1.6: the upper bound follows from Cauchy–Schwarz,
 $\mathbf{E}\sqrt{h_A}\le\sqrt{|A|\,\mathbf{E}h_A}$, which gives
 $\mathcal{B}_{\frac12}(x)\le\sqrt{x\,\mathcal{B}_1(x)}$ for $x\in\mathcal{Q}$. -/
-theorem isoProfile_half_le_sqrt (x : ℝ) (hx : x ∈ 𝒬) : 𝓑 (1 / 2) x ≤ √(x * 𝓑 1 x) := by
+theorem isoProfile_half_le_sqrt (x : ℝ) (hx : x ∈ 𝒬) : 𝓑 2⁻¹ x ≤ √(x * 𝓑 1 x) := by
   sorry
 
 /-- [DIR], §1.2, after Theorem 1.6: the characterization (1.3) of $\mathcal{B}_1$ implies
@@ -47,7 +47,7 @@ along $x\in\mathcal{Q}$, where $\mathcal{B}_{\frac12}$ is defined). -/
 theorem thm_1_6 :
     (∀ (n : ℕ), 1 ≤ n → ∀ A : Set ({0,1}^n),
       𝐄 (fun x ↦ √(h A x)) ≥ ｜A｜ * √(log₂ ｜A｜⁻¹ + 1) - ｜A｜) ∧
-    Tendsto (fun x ↦ 𝓑 (1 / 2) x / (x * √(log₂ x⁻¹))) (𝓝[𝒬 ∩ Set.Ioi 0] 0) (𝓝 1) := by
+    Tendsto (fun x ↦ 𝓑 2⁻¹ x / (x * √(log₂ x⁻¹))) (𝓝[𝒬 ∩ Set.Ioi 0] 0) (𝓝 1) := by
   sorry
 
 end Auto.DIR

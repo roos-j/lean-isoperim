@@ -39,22 +39,22 @@ open Real Set Filter Topology
 
 /-- [DIR], §6.2 (cited from [BIM23, Lemma 2.2]): $G^1_\beta[L_\beta](x,y)\ge0$ for all
 $0\le x\le y\le\frac12$ (for $\beta\in[\frac12,1]$). -/
-theorem caseQ_G₁_L (β : ℝ) (hβ : β ∈ Icc (1 / 2 : ℝ) 1) (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y)
-    (hy : y ≤ 1 / 2) : G₁ β (L β) x y ≥ 0 := by
+theorem caseQ_G₁_L (β : ℝ) (hβ : β ∈ Icc (2⁻¹ : ℝ) 1) (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y)
+    (hy : y ≤ 2⁻¹) : G₁ β (L β) x y ≥ 0 := by
   sorry
 
 /-- [DIR], §6.2: by Lemma 5.2 and Lemma 5.9, Proposition 6.2 holds on the triangle I,
 $0\le x\le y\le\frac12$, $\frac{x+y}2\le\frac14$. -/
-theorem caseQ_I (β : ℝ) (hβ : β = 1 / 2 ∨ β = β₀) (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y)
-    (hy : y ≤ 1 / 2) (hxy' : (x + y) / 2 ≤ 1 / 4) :
+theorem caseQ_I (β : ℝ) (hβ : β = 2⁻¹ ∨ β = β₀) (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y)
+    (hy : y ≤ 2⁻¹) (hxy' : (x + y) / 2 ≤ 4⁻¹) :
     G₁ β (fun t ↦ max (L β t) (Q β t)) x y ≥ 0 := by
   sorry
 
 /-- [DIR], §6.2: it suffices to show (6.6), i.e. if $G^1_\beta[Q_\beta](x,y)\ge0$ for all
 $0\le x\le y\le\frac12$ with $\frac{x+y}2\ge\frac14$, then Proposition 6.2 holds for $\beta$. -/
-theorem caseQ_reduction (β : ℝ) (hβ : β = 1 / 2 ∨ β = β₀)
-    (h : ∀ x y : ℝ, 0 ≤ x → x ≤ y → y ≤ 1 / 2 → (x + y) / 2 ≥ 1 / 4 → G₁ β (Q β) x y ≥ 0)
-    (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y) (hy : y ≤ 1 / 2) :
+theorem caseQ_reduction (β : ℝ) (hβ : β = 2⁻¹ ∨ β = β₀)
+    (h : ∀ x y : ℝ, 0 ≤ x → x ≤ y → y ≤ 2⁻¹ → (x + y) / 2 ≥ 4⁻¹ → G₁ β (Q β) x y ≥ 0)
+    (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y) (hy : y ≤ 2⁻¹) :
     G₁ β (fun t ↦ max (L β t) (Q β t)) x y ≥ 0 := by
   sorry
 
@@ -63,8 +63,8 @@ section Case_Q_II
 
 /-- [DIR], §6.2.1: in the region II ($0\le y-x\le\frac14$, $\frac{x+y}2\ge\frac14$) we have
 $y\ge\frac14$. -/
-theorem caseQ_II_y_ge (x y : ℝ) (hxy : 0 ≤ y - x) (hxy' : y - x ≤ 1 / 4)
-    (hm : (x + y) / 2 ≥ 1 / 4) : y ≥ 1 / 4 := by
+theorem caseQ_II_y_ge (x y : ℝ) (hxy : 0 ≤ y - x) (hxy' : y - x ≤ 4⁻¹)
+    (hm : (x + y) / 2 ≥ 4⁻¹) : y ≥ 4⁻¹ := by
   sorry
 
 /-- The function ([DIR], §6.2.1)
@@ -73,13 +73,13 @@ $$g_{Q,1,\beta}(h,y)=\beta Q_\beta(y)^{1-\frac1\beta}
 -\tfrac12\beta(1-\beta)Q_\beta(y)^{1-\frac2\beta}h^{\frac1\beta}.$$ -/
 noncomputable def g_Q_1 (β h y : ℝ) : ℝ :=
   β * Q β y ^ (1 - β⁻¹) - (2 * Q β (y - h / 2) - Q β (y - h) - Q β y) * h ^ (-β⁻¹)
-    - 1 / 2 * β * (1 - β) * Q β y ^ (1 - 2 / β) * h ^ β⁻¹
+    - 2⁻¹ * β * (1 - β) * Q β y ^ (1 - 2 / β) * h ^ β⁻¹
 
 /-- [DIR], §6.2.1 (application of Lemma 5.4). For $\beta\in\{\frac12,\beta_0\}$ and
 $0\le h\le\frac14\le y\le\frac12$, with $x=y-h$:
 $$G^1_\beta[Q_\beta](x,y)\ge h^{\frac1\beta}g_{Q,1,\beta}(h,y).$$ -/
-theorem caseQ_II_neardiag_bound (β : ℝ) (hβ : β = 1 / 2 ∨ β = β₀) (h y : ℝ)
-    (hh : h ∈ Icc (0 : ℝ) (1 / 4)) (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
+theorem caseQ_II_neardiag_bound (β : ℝ) (hβ : β = 2⁻¹ ∨ β = β₀) (h y : ℝ)
+    (hh : h ∈ Icc (0 : ℝ) 4⁻¹) (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
     G₁ β (Q β) (y - h) y ≥ h ^ β⁻¹ * g_Q_1 β h y := by
   sorry
 
@@ -88,7 +88,7 @@ $2Q_\beta(y-\frac h2)-Q_\beta(y-h)-Q_\beta(y)=h^2(\alpha_0-2\alpha_1h+4\alpha_1y
 $\ge0$ for $\beta\in\{\frac12,\beta_0\}$ and $0\le h\le\frac14\le y\le\frac12$. -/
 theorem caseQ_II_second_difference (β h y : ℝ) :
     2 * Q β (y - h / 2) - Q β (y - h) - Q β y = h ^ 2 * (α₀ β - 2 * α₁ β * h + 4 * α₁ β * y) ∧
-      ((β = 1 / 2 ∨ β = β₀) → h ∈ Icc (0 : ℝ) (1 / 4) → y ∈ Icc (1 / 4 : ℝ) (1 / 2) →
+      ((β = 2⁻¹ ∨ β = β₀) → h ∈ Icc (0 : ℝ) 4⁻¹ → y ∈ Icc (4⁻¹ : ℝ) 2⁻¹ →
         h ^ 2 * (α₀ β - 2 * α₁ β * h + 4 * α₁ β * y) ≥ 0) := by
   sorry
 
@@ -97,7 +97,7 @@ $$g_{Q,1,\beta}(h,y)=\beta Q_\beta(y)^{1-\frac1\beta}-(\alpha_0-2\alpha_1h+4\alp
 h^{2-\frac1\beta}-\tfrac12\beta(1-\beta)Q_\beta(y)^{1-\frac2\beta}h^{\frac1\beta}.$$ -/
 theorem caseQ_II_g_Q_1_eq (β h y : ℝ) (hh : 0 < h) :
     g_Q_1 β h y = β * Q β y ^ (1 - β⁻¹) - (α₀ β - 2 * α₁ β * h + 4 * α₁ β * y) * h ^ (2 - β⁻¹)
-      - 1 / 2 * β * (1 - β) * Q β y ^ (1 - 2 / β) * h ^ β⁻¹ := by
+      - 2⁻¹ * β * (1 - β) * Q β y ^ (1 - 2 / β) * h ^ β⁻¹ := by
   sorry
 
 /-- The lower bound ([DIR], §6.2.1)
@@ -107,89 +107,89 @@ $$\underline{g_{Q,1,\beta}}(\underline h,\overline h,\underline y,\overline y)
 -\tfrac12\beta(1-\beta)Q_\beta(\underline y)^{1-\frac2\beta}\overline h^{\frac1\beta}.$$ -/
 noncomputable def g_Q_1_lo (β hl hu yl yu : ℝ) : ℝ :=
   β * Q β yu ^ (1 - β⁻¹) - (α₀ β - 2 * α₁ β * hl + 4 * α₁ β * yu) * hu ^ (2 - β⁻¹)
-    - 1 / 2 * β * (1 - β) * Q β yl ^ (1 - 2 / β) * hu ^ β⁻¹
+    - 2⁻¹ * β * (1 - β) * Q β yl ^ (1 - 2 / β) * hu ^ β⁻¹
 
 /-- **(6.7)** ([DIR], §6.2.1) (🚗). For $(h,y)\in[0,\frac14]\times[\frac14,\frac12]$:
 $$g_{Q,1,\beta_0}(h,y)>0.001.$$ -/
-theorem eqn_6_7 (h y : ℝ) (hh : h ∈ Icc (0 : ℝ) (1 / 4)) (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
+theorem eqn_6_7 (h y : ℝ) (hh : h ∈ Icc (0 : ℝ) 4⁻¹) (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
     g_Q_1 β₀ h y > 0.001 := by
   sorry
 
 /-- [DIR], §6.2.1: (6.6) near the diagonal for $\beta=\beta_0$: for
 $0\le h\le\frac14\le y\le\frac12$, $G^1_{\beta_0}[Q_{\beta_0}](y-h,y)\ge0$. -/
-theorem caseQ_II_β₀ (h y : ℝ) (hh : h ∈ Icc (0 : ℝ) (1 / 4))
-    (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) : G₁ β₀ (Q β₀) (y - h) y ≥ 0 := by
+theorem caseQ_II_β₀ (h y : ℝ) (hh : h ∈ Icc (0 : ℝ) 4⁻¹)
+    (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) : G₁ β₀ (Q β₀) (y - h) y ≥ 0 := by
   sorry
 
 /-- [DIR], §6.2.1: for $h>0$ (and $\alpha_i=\alpha_i(\frac12)$),
 $$g_{Q,1,\frac12}(h,y)=\tfrac12Q_{\frac12}(y)^{-1}-(\alpha_0+4\alpha_1y)+2\alpha_1h
 -\tfrac18Q_{\frac12}(y)^{-3}h^2.$$ -/
 theorem caseQ_II_g_Q_1_half_eq (h y : ℝ) (hh : 0 < h) :
-    g_Q_1 (1 / 2) h y = 1 / 2 * Q (1 / 2) y ^ (-1 : ℤ) - (α₀ (1 / 2) + 4 * α₁ (1 / 2) * y)
-      + 2 * α₁ (1 / 2) * h - 1 / 8 * Q (1 / 2) y ^ (-3 : ℤ) * h ^ 2 := by
+    g_Q_1 2⁻¹ h y = 2⁻¹ * Q 2⁻¹ y ^ (-1 : ℤ) - (α₀ 2⁻¹ + 4 * α₁ 2⁻¹ * y)
+      + 2 * α₁ 2⁻¹ * h - 8⁻¹ * Q 2⁻¹ y ^ (-3 : ℤ) * h ^ 2 := by
   sorry
 
 /-- [DIR], §6.2.1: $\partial_h^2g_{Q,1,\frac12}(h,y)=-\frac14Q_{\frac12}(y)^{-3}<0$ for $h>0$ and
 $y\in[\frac14,\frac12]$. -/
 theorem caseQ_II_g_Q_1_half_deriv2 (h y : ℝ) (hh : 0 < h)
-    (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
-    deriv (deriv (fun h ↦ g_Q_1 (1 / 2) h y)) h = -1 / 4 * Q (1 / 2) y ^ (-3 : ℤ) ∧
-      -1 / 4 * Q (1 / 2) y ^ (-3 : ℤ) < 0 := by
+    (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
+    deriv (deriv (fun h ↦ g_Q_1 2⁻¹ h y)) h = -4⁻¹ * Q 2⁻¹ y ^ (-3 : ℤ) ∧
+      -4⁻¹ * Q 2⁻¹ y ^ (-3 : ℤ) < 0 := by
   sorry
 
 /-- [DIR], §6.2.1: $h\mapsto g_{Q,1,\frac12}(h,y)$ is concave (on $(0,\frac14]$), so it suffices to
 evaluate at $h=0$ (meaning the limit $h\to0^+$) and $h=\frac14$: for $y\in[\frac14,\frac12]$
 and $g_0=\lim_{h\to0^+}g_{Q,1,\frac12}(h,y)$, $g_{Q,1,\frac12}(h,y)\ge
 \min(g_0,g_{Q,1,\frac12}(\frac14,y))$ for all $h\in(0,\frac14]$. -/
-theorem caseQ_II_g_Q_1_half_concave (y : ℝ) (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
-    ConcaveOn ℝ (Ioc 0 (1 / 4)) (fun h ↦ g_Q_1 (1 / 2) h y) ∧
-      ∀ g₀ : ℝ, Tendsto (fun h ↦ g_Q_1 (1 / 2) h y) (𝓝[>] 0) (𝓝 g₀) →
-        ∀ h ∈ Ioc (0 : ℝ) (1 / 4), g_Q_1 (1 / 2) h y ≥ min g₀ (g_Q_1 (1 / 2) (1 / 4) y) := by
+theorem caseQ_II_g_Q_1_half_concave (y : ℝ) (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
+    ConcaveOn ℝ (Ioc 0 4⁻¹) (fun h ↦ g_Q_1 2⁻¹ h y) ∧
+      ∀ g₀ : ℝ, Tendsto (fun h ↦ g_Q_1 2⁻¹ h y) (𝓝[>] 0) (𝓝 g₀) →
+        ∀ h ∈ Ioc (0 : ℝ) 4⁻¹, g_Q_1 2⁻¹ h y ≥ min g₀ (g_Q_1 2⁻¹ 4⁻¹ y) := by
   sorry
 
 section Proof_Claim_1
 /-- [DIR], §6.2.1, proof of claim (1):
 $g_{Q,1,\frac12}(0,y)=\frac12Q_{\frac12}(y)^{-1}-(\alpha_0+4\alpha_1y)$, i.e.
 $g_{Q,1,\frac12}(h,y)\to\frac12Q_{\frac12}(y)^{-1}-(\alpha_0+4\alpha_1y)$ as $h\to0^+$. -/
-theorem caseQ_II_claim_1_limit (y : ℝ) (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
-    Tendsto (fun h ↦ g_Q_1 (1 / 2) h y) (𝓝[>] 0)
-      (𝓝 (1 / 2 * Q (1 / 2) y ^ (-1 : ℤ) - (α₀ (1 / 2) + 4 * α₁ (1 / 2) * y))) := by
+theorem caseQ_II_claim_1_limit (y : ℝ) (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
+    Tendsto (fun h ↦ g_Q_1 2⁻¹ h y) (𝓝[>] 0)
+      (𝓝 (2⁻¹ * Q 2⁻¹ y ^ (-1 : ℤ) - (α₀ 2⁻¹ + 4 * α₁ 2⁻¹ * y))) := by
   sorry
 
 /-- [DIR], §6.2.1, proof of claim (1): $2Q_{\frac12}(y)>0$, and multiplying by it,
 $\frac12Q_{\frac12}(y)^{-1}-(\alpha_0+4\alpha_1y)\ge0$ is equivalent to
 $1-2(\alpha_0+4\alpha_1y)Q_{\frac12}(y)\ge0$ (for $y\in[\frac14,\frac12]$). -/
-theorem caseQ_II_claim_1_iff (y : ℝ) (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
-    2 * Q (1 / 2) y > 0 ∧
-      (1 / 2 * Q (1 / 2) y ^ (-1 : ℤ) - (α₀ (1 / 2) + 4 * α₁ (1 / 2) * y) ≥ 0 ↔
-        1 - 2 * (α₀ (1 / 2) + 4 * α₁ (1 / 2) * y) * Q (1 / 2) y ≥ 0) := by
+theorem caseQ_II_claim_1_iff (y : ℝ) (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
+    2 * Q 2⁻¹ y > 0 ∧
+      (2⁻¹ * Q 2⁻¹ y ^ (-1 : ℤ) - (α₀ 2⁻¹ + 4 * α₁ 2⁻¹ * y) ≥ 0 ↔
+        1 - 2 * (α₀ 2⁻¹ + 4 * α₁ 2⁻¹ * y) * Q 2⁻¹ y ≥ 0) := by
   sorry
 
 /-- [DIR], §6.2.1, proof of claim (1): with $t=\frac12-y$,
 $1-2(\alpha_0+4\alpha_1y)Q_{\frac12}(y)=1-\frac13(1-4t^2)(1-4\alpha_1t)(3-4\alpha_1t)$. -/
 theorem caseQ_II_claim_1_subst (t : ℝ) :
-    1 - 2 * (α₀ (1 / 2) + 4 * α₁ (1 / 2) * (1 / 2 - t)) * Q (1 / 2) (1 / 2 - t) =
-      1 - 1 / 3 * (1 - 4 * t ^ 2) * (1 - 4 * α₁ (1 / 2) * t) * (3 - 4 * α₁ (1 / 2) * t) := by
+    1 - 2 * (α₀ 2⁻¹ + 4 * α₁ 2⁻¹ * (2⁻¹ - t)) * Q 2⁻¹ (2⁻¹ - t) =
+      1 - 3⁻¹ * (1 - 4 * t ^ 2) * (1 - 4 * α₁ 2⁻¹ * t) * (3 - 4 * α₁ 2⁻¹ * t) := by
   sorry
 
 /-- [DIR], §6.2.1, proof of claim (1): $1-\frac13(1-4t^2)(1-4\alpha_1t)(3-4\alpha_1t)$ equals zero
 at $t=0$, the three factors do not change sign (are positive) on $[0,\frac14]$, and so it is
 increasing in $t\in[0,\frac14]$. -/
 theorem caseQ_II_claim_1_mono :
-    (1 - 1 / 3 * (1 - 4 * (0 : ℝ) ^ 2) * (1 - 4 * α₁ (1 / 2) * 0) * (3 - 4 * α₁ (1 / 2) * 0)
+    (1 - 3⁻¹ * (1 - 4 * (0 : ℝ) ^ 2) * (1 - 4 * α₁ 2⁻¹ * 0) * (3 - 4 * α₁ 2⁻¹ * 0)
         = 0) ∧
-      (∀ t ∈ Icc (0 : ℝ) (1 / 4),
-        0 < 1 - 4 * t ^ 2 ∧ 0 < 1 - 4 * α₁ (1 / 2) * t ∧ 0 < 3 - 4 * α₁ (1 / 2) * t) ∧
-      MonotoneOn (fun t ↦ 1 - 1 / 3 * (1 - 4 * t ^ 2) * (1 - 4 * α₁ (1 / 2) * t) *
-        (3 - 4 * α₁ (1 / 2) * t)) (Icc 0 (1 / 4)) := by
+      (∀ t ∈ Icc (0 : ℝ) 4⁻¹,
+        0 < 1 - 4 * t ^ 2 ∧ 0 < 1 - 4 * α₁ 2⁻¹ * t ∧ 0 < 3 - 4 * α₁ 2⁻¹ * t) ∧
+      MonotoneOn (fun t ↦ 1 - 3⁻¹ * (1 - 4 * t ^ 2) * (1 - 4 * α₁ 2⁻¹ * t) *
+        (3 - 4 * α₁ 2⁻¹ * t)) (Icc 0 4⁻¹) := by
   sorry
 
 end Proof_Claim_1
 
 /-- [DIR], §6.2.1, claim (1): $g_{Q,1,\frac12}(0,y)\ge0$ for all $y\in[\frac14,\frac12]$, where
 $g_{Q,1,\frac12}(0,y)$ is the continuous extension $\lim_{h\to0^+}g_{Q,1,\frac12}(h,y)$. -/
-theorem caseQ_II_claim_1 (y : ℝ) (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
-    ∃ g₀ ≥ 0, Tendsto (fun h ↦ g_Q_1 (1 / 2) h y) (𝓝[>] 0) (𝓝 g₀) := by
+theorem caseQ_II_claim_1 (y : ℝ) (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
+    ∃ g₀ ≥ 0, Tendsto (fun h ↦ g_Q_1 2⁻¹ h y) (𝓝[>] 0) (𝓝 g₀) := by
   sorry
 
 section Proof_Claim_2
@@ -197,21 +197,21 @@ section Proof_Claim_2
 $$\underline{g_{Q,1,\frac12}}(\tfrac14,\tfrac14,\tfrac14,\tfrac38)>0.01\quad\text{and}\quad
 \underline{g_{Q,1,\frac12}}(\tfrac14,\tfrac14,\tfrac38,\tfrac12)>0.001.$$ -/
 theorem eqn_6_8 :
-    g_Q_1_lo (1 / 2) (1 / 4) (1 / 4) (1 / 4) (3 / 8) > 0.01 ∧
-      g_Q_1_lo (1 / 2) (1 / 4) (1 / 4) (3 / 8) (1 / 2) > 0.001 := by
+    g_Q_1_lo 2⁻¹ 4⁻¹ 4⁻¹ 4⁻¹ (3 / 8) > 0.01 ∧
+      g_Q_1_lo 2⁻¹ 4⁻¹ 4⁻¹ (3 / 8) 2⁻¹ > 0.001 := by
   sorry
 
 end Proof_Claim_2
 
 /-- [DIR], §6.2.1, claim (2): $g_{Q,1,\frac12}(\frac14,y)>0$ for all $y\in[\frac14,\frac12]$. -/
-theorem caseQ_II_claim_2 (y : ℝ) (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
-    g_Q_1 (1 / 2) (1 / 4) y > 0 := by
+theorem caseQ_II_claim_2 (y : ℝ) (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
+    g_Q_1 2⁻¹ 4⁻¹ y > 0 := by
   sorry
 
 /-- [DIR], §6.2.1 (conclusion): (6.6) near the diagonal, for $\beta\in\{\frac12,\beta_0\}$ and
 $0\le h\le\frac14\le y\le\frac12$: $G^1_\beta[Q_\beta](y-h,y)\ge0$. -/
-theorem caseQ_II (β : ℝ) (hβ : β = 1 / 2 ∨ β = β₀) (h y : ℝ) (hh : h ∈ Icc (0 : ℝ) (1 / 4))
-    (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) : G₁ β (Q β) (y - h) y ≥ 0 := by
+theorem caseQ_II (β : ℝ) (hβ : β = 2⁻¹ ∨ β = β₀) (h y : ℝ) (hh : h ∈ Icc (0 : ℝ) 4⁻¹)
+    (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) : G₁ β (Q β) (y - h) y ≥ 0 := by
   sorry
 
 end Case_Q_II
@@ -229,8 +229,8 @@ noncomputable def G_Q (β h y : ℝ) : ℝ :=
 -\frac1\beta\log(2Q_\beta(\frac y2))$, and for $y\in[\frac14,\frac12]$,
 $\beta\in\{\beta_0,\frac12\}$, $G_{Q,\beta}(y,y)\ge0$ is equivalent to
 $y^{\frac1\beta}+Q_\beta(y)^{\frac1\beta}-(2Q_\beta(\frac y2))^{\frac1\beta}\ge0$. -/
-theorem caseQ_III_G_Q_diag (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : ℝ)
-    (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
+theorem caseQ_III_G_Q_diag (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) (y : ℝ)
+    (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
     G_Q β y y = log (y ^ β⁻¹ + Q β y ^ β⁻¹) - β⁻¹ * log (2 * Q β (y / 2)) ∧
       (G_Q β y y ≥ 0 ↔ y ^ β⁻¹ + Q β y ^ β⁻¹ - (2 * Q β (y / 2)) ^ β⁻¹ ≥ 0) := by
   sorry
@@ -252,27 +252,27 @@ noncomputable def f_QIII (β y : ℝ) : ℝ := 1 + R β y ^ β⁻¹ - R β (y / 
 $\beta\in\{\beta_0,\frac12\}$,
 $y^{\frac1\beta}+Q_\beta(y)^{\frac1\beta}-(2Q_\beta(\frac y2))^{\frac1\beta}\ge0$ is equivalent
 to $f_\beta(y)\ge0$. -/
-theorem caseQ_III_iff_f_QIII (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : ℝ)
-    (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
+theorem caseQ_III_iff_f_QIII (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) (y : ℝ)
+    (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
     y ^ β⁻¹ + Q β y ^ β⁻¹ - (2 * Q β (y / 2)) ^ β⁻¹ ≥ 0 ↔ f_QIII β y ≥ 0 := by
   sorry
 
 /-- [DIR], §6.2.2: $f_\beta(\frac12)=0$ (for $\beta\in\{\beta_0,\frac12\}$). -/
-theorem f_QIII_half (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) : f_QIII β (1 / 2) = 0 := by
+theorem f_QIII_half (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) : f_QIII β 2⁻¹ = 0 := by
   sorry
 
 /-- [DIR], §6.2.2: for $y\in[\frac14,\frac12]$ and $\beta\in\{\beta_0,\frac12\}$,
 $$f_\beta'(y)=\tfrac1\beta R_\beta(y)^{\frac1\beta-1}R_\beta'(y)
 -\tfrac1{2\beta}R_\beta(\tfrac y2)^{\frac1\beta-1}R_\beta'(\tfrac y2).$$ -/
-theorem deriv_f_QIII (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : ℝ)
-    (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
+theorem deriv_f_QIII (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) (y : ℝ)
+    (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
     deriv (f_QIII β) y = β⁻¹ * R β y ^ (β⁻¹ - 1) * deriv (R β) y
       - (2 * β)⁻¹ * R β (y / 2) ^ (β⁻¹ - 1) * deriv (R β) (y / 2) := by
   sorry
 
 /-- [DIR], §6.2.2: $f_\beta'(y)\le0$ is equivalent to $\beta yf_\beta'(y)\le0$ (for $y>0$ and
 $\beta\in\{\beta_0,\frac12\}$). -/
-theorem deriv_f_QIII_nonpos_iff (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : ℝ) (hy : 0 < y) :
+theorem deriv_f_QIII_nonpos_iff (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) (y : ℝ) (hy : 0 < y) :
     deriv (f_QIII β) y ≤ 0 ↔ β * y * deriv (f_QIII β) y ≤ 0 := by
   sorry
 
@@ -282,8 +282,8 @@ noncomputable def f_QIII_0 (β y : ℝ) : ℝ := y * R β y ^ (β⁻¹ - 1) * de
 
 /-- [DIR], §6.2.2: $\beta yf_\beta'(y)=f_{\beta,0}(y)-f_{\beta,0}(y/2)$ for
 $y\in[\frac14,\frac12]$ and $\beta\in\{\beta_0,\frac12\}$. -/
-theorem f_QIII_deriv_eq_sub (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : ℝ)
-    (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
+theorem f_QIII_deriv_eq_sub (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) (y : ℝ)
+    (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
     β * y * deriv (f_QIII β) y = f_QIII_0 β y - f_QIII_0 β (y / 2) := by
   sorry
 
@@ -303,9 +303,9 @@ $[\frac18,\frac12]$ (numerically $\max_{[\frac18,\frac12]}f_{\beta,0}'=f_{\beta,
 \approx-0.66$). The Lean statement states the reduction with the correct interval
 $[\frac18,\frac12]$; the missing fact is `Auto.DIR.deriv_f_QIII_0_neg_Icc_eighth` (not in the
 paper). -/
-theorem caseQ_III_suffices_f_QIII_0 (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2)
-    (h : ∀ y ∈ Icc (1 / 8 : ℝ) (1 / 2), deriv (f_QIII_0 β) y ≤ 0) :
-    ∀ y ∈ Icc (1 / 4 : ℝ) (1 / 2), deriv (f_QIII β) y ≤ 0 := by
+theorem caseQ_III_suffices_f_QIII_0 (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹)
+    (h : ∀ y ∈ Icc (8⁻¹ : ℝ) 2⁻¹, deriv (f_QIII_0 β) y ≤ 0) :
+    ∀ y ∈ Icc (4⁻¹ : ℝ) 2⁻¹, deriv (f_QIII β) y ≤ 0 := by
   sorry
 
 /-- The function $f_{\beta,1}(y)=R_\beta(y)^{\frac1\beta-1}$ ([DIR], §6.2.2; denoted
@@ -322,8 +322,8 @@ theorem f_QIII_0_eq_mul (β y : ℝ) : f_QIII_0 β y = f_QIII_1 β y * f_QIII_2 
 
 /-- [DIR], §6.2.2: $R_\beta\ge0$ and $R_\beta'\le0$ on $[\frac14,\frac12]$, hence
 $f_{\beta,1}\ge0$ and $f_{\beta,2}\le0$ on this interval (for $\beta\in\{\beta_0,\frac12\}$). -/
-theorem f_QIII_1_nonneg_f_QIII_2_nonpos (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : ℝ)
-    (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
+theorem f_QIII_1_nonneg_f_QIII_2_nonpos (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) (y : ℝ)
+    (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
     R β y ≥ 0 ∧ deriv (R β) y ≤ 0 ∧ f_QIII_1 β y ≥ 0 ∧ f_QIII_2 β y ≤ 0 := by
   sorry
 
@@ -333,8 +333,8 @@ f_{\beta,1}''=(\tfrac1\beta-1)(\tfrac1\beta-2)R_\beta^{\frac1\beta-3}(R_\beta')^
 +(\tfrac1\beta-1)R_\beta^{\frac1\beta-2}R_\beta'',$$
 $$f_{\beta,1}'''=(\tfrac1\beta-1)(\tfrac1\beta-2)\big((\tfrac1\beta-3)R_\beta^{\frac1\beta-4}
 (R_\beta')^3+3R_\beta^{\frac1\beta-3}R_\beta'R_\beta''\big).$$ -/
-theorem derivs_f_QIII_1 (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : ℝ)
-    (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
+theorem derivs_f_QIII_1 (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) (y : ℝ)
+    (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
     deriv (f_QIII_1 β) y = (β⁻¹ - 1) * R β y ^ (β⁻¹ - 2) * deriv (R β) y ∧
     deriv (deriv (f_QIII_1 β)) y =
       (β⁻¹ - 1) * (β⁻¹ - 2) * R β y ^ (β⁻¹ - 3) * (deriv (R β) y) ^ 2
@@ -346,15 +346,15 @@ theorem derivs_f_QIII_1 (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : ℝ)
 
 /-- [DIR], §6.2.2: for $\beta\in\{\beta_0,\frac12\}$: $R_\beta''\le0$, $R_\beta'''=0$ (on
 $(0,\infty)$), and $\frac1\beta>1$, $\frac1\beta\le2$, $\frac1\beta<3$. -/
-theorem R_derivs_one_div_β (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) :
+theorem R_derivs_one_div_β (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) :
     (∀ y > 0, deriv (deriv (R β)) y ≤ 0 ∧ iteratedDeriv 3 (R β) y = 0) ∧
       β⁻¹ > 1 ∧ β⁻¹ ≤ 2 ∧ β⁻¹ < 3 := by
   sorry
 
 /-- [DIR], §6.2.2: $f_{\beta,1}'\le0$, $f_{\beta,1}''\le0$ and $f_{\beta,1}'''\le0$ on
 $[\frac14,\frac12]$ (for $\beta\in\{\beta_0,\frac12\}$). -/
-theorem derivs_f_QIII_1_nonpos (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : ℝ)
-    (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
+theorem derivs_f_QIII_1_nonpos (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) (y : ℝ)
+    (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
     deriv (f_QIII_1 β) y ≤ 0 ∧ deriv (deriv (f_QIII_1 β)) y ≤ 0 ∧
       iteratedDeriv 3 (f_QIII_1 β) y ≤ 0 := by
   sorry
@@ -362,8 +362,8 @@ theorem derivs_f_QIII_1_nonpos (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y :
 /-- [DIR], §6.2.2: for $y\in[\frac14,\frac12]$ and $\beta\in\{\beta_0,\frac12\}$:
 $f_{\beta,2}'(y)=R_\beta'(y)+yR_\beta''(y)$,
 $f_{\beta,2}''(y)=2R_\beta''(y)+yR_\beta'''(y)=2R_\beta''(y)$. -/
-theorem derivs_f_QIII_2 (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : ℝ)
-    (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
+theorem derivs_f_QIII_2 (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) (y : ℝ)
+    (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
     deriv (f_QIII_2 β) y = deriv (R β) y + y * deriv (deriv (R β)) y ∧
       deriv (deriv (f_QIII_2 β)) y = 2 * deriv (deriv (R β)) y + y * iteratedDeriv 3 (R β) y ∧
       2 * deriv (deriv (R β)) y + y * iteratedDeriv 3 (R β) y = 2 * deriv (deriv (R β)) y := by
@@ -371,8 +371,8 @@ theorem derivs_f_QIII_2 (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : ℝ)
 
 /-- [DIR], §6.2.2: $f_{\beta,2}'\le0$ and $f_{\beta,2}''\le0$ on $[\frac14,\frac12]$ (for
 $\beta\in\{\beta_0,\frac12\}$). -/
-theorem derivs_f_QIII_2_nonpos (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : ℝ)
-    (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
+theorem derivs_f_QIII_2_nonpos (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) (y : ℝ)
+    (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
     deriv (f_QIII_2 β) y ≤ 0 ∧ deriv (deriv (f_QIII_2 β)) y ≤ 0 := by
   sorry
 
@@ -380,8 +380,8 @@ theorem derivs_f_QIII_2_nonpos (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y :
 $f_{\beta,2}'''=0$ and
 $$f_{\beta,0}'''=f_{\beta,1}'''f_{\beta,2}+3f_{\beta,1}''f_{\beta,2}'+3f_{\beta,1}'f_{\beta,2}''.$$
 -/
-theorem iteratedDeriv_three_f_QIII_0 (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : ℝ)
-    (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
+theorem iteratedDeriv_three_f_QIII_0 (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) (y : ℝ)
+    (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
     iteratedDeriv 3 (f_QIII_2 β) y = 0 ∧
       iteratedDeriv 3 (f_QIII_0 β) y =
         iteratedDeriv 3 (f_QIII_1 β) y * f_QIII_2 β y
@@ -391,62 +391,62 @@ theorem iteratedDeriv_three_f_QIII_0 (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2
 
 /-- [DIR], §6.2.2: $f_{\beta,0}'''\ge0$ on $[\frac14,\frac12]$ (for $\beta\in\{\beta_0,\frac12\}$).
 -/
-theorem iteratedDeriv_three_f_QIII_0_nonneg (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : ℝ)
-    (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) : iteratedDeriv 3 (f_QIII_0 β) y ≥ 0 := by
+theorem iteratedDeriv_three_f_QIII_0_nonneg (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) (y : ℝ)
+    (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) : iteratedDeriv 3 (f_QIII_0 β) y ≥ 0 := by
   sorry
 
 /-- **(6.9)** ([DIR], §6.2.2). For $\beta\in\{\beta_0,\frac12\}$: $f_{\beta,0}''(\frac14)>3.2$. -/
-theorem eqn_6_9 (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) :
-    deriv (deriv (f_QIII_0 β)) (1 / 4) > 3.2 := by
+theorem eqn_6_9 (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) :
+    deriv (deriv (f_QIII_0 β)) 4⁻¹ > 3.2 := by
   sorry
 
 /-- [DIR], §6.2.2: (6.9) implies $f_{\beta,0}''>0$ (on $[\frac14,\frac12]$, for
 $\beta\in\{\beta_0,\frac12\}$). -/
-theorem deriv2_f_QIII_0_pos (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : ℝ)
-    (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) : deriv (deriv (f_QIII_0 β)) y > 0 := by
+theorem deriv2_f_QIII_0_pos (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) (y : ℝ)
+    (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) : deriv (deriv (f_QIII_0 β)) y > 0 := by
   sorry
 
 /-- **(6.10)** ([DIR], §6.2.2). For $\beta\in\{\beta_0,\frac12\}$: $f_{\beta,0}'(\frac12)<-0.6$. -/
-theorem eqn_6_10 (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) : deriv (f_QIII_0 β) (1 / 2) < -0.6 := by
+theorem eqn_6_10 (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) : deriv (f_QIII_0 β) 2⁻¹ < -0.6 := by
   sorry
 
 /-- [DIR], §6.2.2: $f_{\beta,0}'<0$ on $[\frac14,\frac12]$ (for $\beta\in\{\beta_0,\frac12\}$). -/
-theorem deriv_f_QIII_0_neg (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : ℝ)
-    (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) : deriv (f_QIII_0 β) y < 0 := by
+theorem deriv_f_QIII_0_neg (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) (y : ℝ)
+    (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) : deriv (f_QIII_0 β) y < 0 := by
   sorry
 
 /-- [DIR], §6.2.2 (not stated in the paper; needed by `Auto.DIR.caseQ_III_suffices_f_QIII_0`,
 see the discrepancy noted there): $f_{\beta,0}'<0$ on $[\frac18,\frac12]$ (for
 $\beta\in\{\beta_0,\frac12\}$). It follows as in the paper from $f_{\beta,0}'''\ge0$ on
 $[\frac18,\frac12]$, $f_{\beta,0}''(\frac18)>0$ and (6.10). -/
-theorem deriv_f_QIII_0_neg_Icc_eighth (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : ℝ)
-    (hy : y ∈ Icc (1 / 8 : ℝ) (1 / 2)) : deriv (f_QIII_0 β) y < 0 := by
+theorem deriv_f_QIII_0_neg_Icc_eighth (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) (y : ℝ)
+    (hy : y ∈ Icc (8⁻¹ : ℝ) 2⁻¹) : deriv (f_QIII_0 β) y < 0 := by
   sorry
 
 /-- [DIR], §6.2.2 (claim): $f_\beta'\le0$ on $[\frac14,\frac12]$ (for
 $\beta\in\{\beta_0,\frac12\}$). -/
-theorem deriv_f_QIII_nonpos (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : ℝ)
-    (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) : deriv (f_QIII β) y ≤ 0 := by
+theorem deriv_f_QIII_nonpos (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) (y : ℝ)
+    (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) : deriv (f_QIII β) y ≤ 0 := by
   sorry
 
 /-- [DIR], §6.2.2: $f_\beta\ge0$ on $[\frac14,\frac12]$ (for $\beta\in\{\beta_0,\frac12\}$). -/
-theorem f_QIII_nonneg (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : ℝ)
-    (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) : f_QIII β y ≥ 0 := by
+theorem f_QIII_nonneg (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) (y : ℝ)
+    (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) : f_QIII β y ≥ 0 := by
   sorry
 
 section Proof_Lemma_6_4
 /-- [DIR], proof of Lemma 6.4: $2Q_\beta(y-\frac h2)-Q_\beta(y-h)>0$ (by strict concavity of
 $Q_\beta$) for $h,y\in[\frac14,\frac12]$ and $\beta\in\{\beta_0,\frac12\}$. -/
-theorem lemma_6_4_denom_pos (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (h y : ℝ)
-    (hh : h ∈ Icc (1 / 4 : ℝ) (1 / 2)) (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
+theorem lemma_6_4_denom_pos (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) (h y : ℝ)
+    (hh : h ∈ Icc (4⁻¹ : ℝ) 2⁻¹) (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
     2 * Q β (y - h / 2) - Q β (y - h) > 0 := by
   sorry
 
 /-- [DIR], proof of Lemma 6.4: for $h,y\in[\frac14,\frac12]$ and $\beta\in\{\beta_0,\frac12\}$,
 $$\beta\partial_hG_{Q,\beta}(h,y)=\frac{h^{\frac1\beta-1}}{h^{\frac1\beta}+Q_\beta(y)^{\frac1\beta}}
 -\frac{Q_\beta'(y-h)-Q_\beta'(y-\frac h2)}{2Q_\beta(y-\frac h2)-Q_\beta(y-h)}.$$ -/
-theorem lemma_6_4_deriv (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (h y : ℝ)
-    (hh : h ∈ Icc (1 / 4 : ℝ) (1 / 2)) (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
+theorem lemma_6_4_deriv (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) (h y : ℝ)
+    (hh : h ∈ Icc (4⁻¹ : ℝ) 2⁻¹) (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
     β * deriv (fun h ↦ G_Q β h y) h =
       h ^ (β⁻¹ - 1) / (h ^ β⁻¹ + Q β y ^ β⁻¹)
         - (deriv (Q β) (y - h) - deriv (Q β) (y - h / 2))
@@ -459,8 +459,8 @@ gives the quantity
 $$h^{\frac1\beta-1}(2Q_\beta(y-\tfrac h2)-Q_\beta(y-h))
 -(Q_\beta'(y-h)-Q_\beta'(y-\tfrac h2))(h^{\frac1\beta}+Q_\beta(y)^{\frac1\beta})$$
 (for $h,y\in[\frac14,\frac12]$, $\beta\in\{\beta_0,\frac12\}$). -/
-theorem eqn_6_11 (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (h y : ℝ)
-    (hh : h ∈ Icc (1 / 4 : ℝ) (1 / 2)) (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
+theorem eqn_6_11 (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) (h y : ℝ)
+    (hh : h ∈ Icc (4⁻¹ : ℝ) 2⁻¹) (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
     β * deriv (fun h ↦ G_Q β h y) h * ((h ^ β⁻¹ + Q β y ^ β⁻¹) *
         (2 * Q β (y - h / 2) - Q β (y - h))) =
       h ^ (β⁻¹ - 1) * (2 * Q β (y - h / 2) - Q β (y - h))
@@ -495,10 +495,10 @@ theorem eqn_6_11_eq_p_Q (β h y : ℝ) (hh : 0 < h) :
 /-- [DIR], proof of Lemma 6.4: it suffices to show that $p_{y,\beta}$ is strictly decreasing (on
 $[\frac14,\frac12]$), and thus has at most one zero: then $h\mapsto\partial_hG_{Q,\beta}(h,y)$
 vanishes at most once on $[\frac14,\frac12]$. -/
-theorem lemma_6_4_of_strictAntiOn (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : ℝ)
-    (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) (hp : StrictAntiOn (p_Q β y) (Icc (1 / 4) (1 / 2))) :
-    {h ∈ Icc (1 / 4 : ℝ) (1 / 2) | p_Q β y h = 0}.Subsingleton ∧
-      {h ∈ Icc (1 / 4 : ℝ) (1 / 2) | deriv (fun h ↦ G_Q β h y) h = 0}.Subsingleton := by
+theorem lemma_6_4_of_strictAntiOn (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) (y : ℝ)
+    (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) (hp : StrictAntiOn (p_Q β y) (Icc 4⁻¹ 2⁻¹)) :
+    {h ∈ Icc (4⁻¹ : ℝ) 2⁻¹ | p_Q β y h = 0}.Subsingleton ∧
+      {h ∈ Icc (4⁻¹ : ℝ) 2⁻¹ | deriv (fun h ↦ G_Q β h y) h = 0}.Subsingleton := by
   sorry
 
 /-- The function $g_{Q,2,\beta}(h,y)=-\partial_hp_{y,\beta}(h)$ ([DIR], proof of Lemma 6.4). -/
@@ -506,8 +506,8 @@ noncomputable def g_Q_2 (β h y : ℝ) : ℝ := -deriv (p_Q β y) h
 
 /-- **(6.12)** ([DIR], proof of Lemma 6.4) (🚗). For $\beta\in\{\frac12,\beta_0\}$ and
 $(h,y)\in[\frac14,\frac12]^2$: $$g_{Q,2,\beta}(h,y)>0.01.$$ -/
-theorem eqn_6_12 (β : ℝ) (hβ : β = 1 / 2 ∨ β = β₀) (h y : ℝ)
-    (hh : h ∈ Icc (1 / 4 : ℝ) (1 / 2)) (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
+theorem eqn_6_12 (β : ℝ) (hβ : β = 2⁻¹ ∨ β = β₀) (h y : ℝ)
+    (hh : h ∈ Icc (4⁻¹ : ℝ) 2⁻¹) (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
     g_Q_2 β h y > 0.01 := by
   sorry
 
@@ -516,8 +516,8 @@ end Proof_Lemma_6_4
 /-- [DIR], §6.2.2: on the triangle III ($x=y-h\ge0$, $h\ge\frac14$, $y\le\frac12$,
 $\frac{x+y}2\ge\frac14$), (6.6) is equivalent to $G_{Q,\beta}(h,y)\ge0$ (for
 $\beta\in\{\frac12,\beta_0\}$). -/
-theorem caseQ_III_iff_G_Q (β : ℝ) (hβ : β = 1 / 2 ∨ β = β₀) (h y : ℝ) (hx : 0 ≤ y - h)
-    (hh : 1 / 4 ≤ h) (hy : y ≤ 1 / 2) (hm : y - h / 2 ≥ 1 / 4) :
+theorem caseQ_III_iff_G_Q (β : ℝ) (hβ : β = 2⁻¹ ∨ β = β₀) (h y : ℝ) (hx : 0 ≤ y - h)
+    (hh : 4⁻¹ ≤ h) (hy : y ≤ 2⁻¹) (hm : y - h / 2 ≥ 4⁻¹) :
     G₁ β (Q β) (y - h) y ≥ 0 ↔ G_Q β h y ≥ 0 := by
   sorry
 
@@ -534,39 +534,39 @@ $h\mapsto G_{Q,\beta}(h,y)$ would not be excluded). It is true numerically:
 $\min_{y\in[\frac14,\frac12]}\partial_hG_{Q,\beta}(\frac14,y)\approx0.0367$ for $\beta=\beta_0$
 and $\approx0.0361$ for $\beta=\frac12$. The Lean statement keeps both claims as in the paper.
 -/
-theorem lemma_6_4 (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : ℝ)
-    (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
-    {h ∈ Icc (1 / 4 : ℝ) (1 / 2) | deriv (fun h ↦ G_Q β h y) h = 0}.Subsingleton ∧
-      deriv (fun h ↦ G_Q β h y) (1 / 4) > 0 := by
+theorem lemma_6_4 (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) (y : ℝ)
+    (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
+    {h ∈ Icc (4⁻¹ : ℝ) 2⁻¹ | deriv (fun h ↦ G_Q β h y) h = 0}.Subsingleton ∧
+      deriv (fun h ↦ G_Q β h y) 4⁻¹ > 0 := by
   sorry
 
 /-- [DIR], §6.2.2: Lemma 6.4 implies that $h\mapsto G_{Q,\beta}(h,y)$ achieves its minimum on
 $[\frac14,y]$ at $h=\frac14$ or at $h=y$ (for $\beta\in\{\beta_0,\frac12\}$,
 $y\in[\frac14,\frac12]$). -/
-theorem caseQ_III_min (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : ℝ)
-    (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
-    ∀ h ∈ Icc (1 / 4) y, G_Q β h y ≥ min (G_Q β (1 / 4) y) (G_Q β y y) := by
+theorem caseQ_III_min (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) (y : ℝ)
+    (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
+    ∀ h ∈ Icc 4⁻¹ y, G_Q β h y ≥ min (G_Q β 4⁻¹ y) (G_Q β y y) := by
   sorry
 
 /-- [DIR], §6.2.2: by the near diagonal case, $G_{Q,\beta}(\frac14,y)\ge0$ for
 $\beta\in\{\beta_0,\frac12\}$ and $y\in[\frac14,\frac12]$. -/
-theorem caseQ_III_G_Q_quarter (β : ℝ) (hβ : β = β₀ ∨ β = 1 / 2) (y : ℝ)
-    (hy : y ∈ Icc (1 / 4 : ℝ) (1 / 2)) : G_Q β (1 / 4) y ≥ 0 := by
+theorem caseQ_III_G_Q_quarter (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) (y : ℝ)
+    (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) : G_Q β 4⁻¹ y ≥ 0 := by
   sorry
 
 end Case_Q_III
 
 /-- **(6.6)** ([DIR], §6.2). For $\beta\in\{\frac12,\beta_0\}$ and $0\le x\le y\le\frac12$ with
 $\frac{x+y}2\ge\frac14$: $$G^1_\beta[Q_\beta](x,y)\ge0.$$ -/
-theorem eqn_6_6 (β : ℝ) (hβ : β = 1 / 2 ∨ β = β₀) (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y)
-    (hy : y ≤ 1 / 2) (hxy' : (x + y) / 2 ≥ 1 / 4) : G₁ β (Q β) x y ≥ 0 := by
+theorem eqn_6_6 (β : ℝ) (hβ : β = 2⁻¹ ∨ β = β₀) (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y)
+    (hy : y ≤ 2⁻¹) (hxy' : (x + y) / 2 ≥ 4⁻¹) : G₁ β (Q β) x y ≥ 0 := by
   sorry
 
 /-- **Proposition 6.2** ([DIR], §6.2). For $\beta\in\{\frac12,\beta_0\}$ and
 $0\le x\le y\le\frac12$:
 $$G^1_\beta[\max(L_\beta,Q_\beta)](x,y)\ge0.$$ -/
-theorem prop_6_2 (β : ℝ) (hβ : β = 1 / 2 ∨ β = β₀) (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y)
-    (hy : y ≤ 1 / 2) : G₁ β (fun t ↦ max (L β t) (Q β t)) x y ≥ 0 := by
+theorem prop_6_2 (β : ℝ) (hβ : β = 2⁻¹ ∨ β = β₀) (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y)
+    (hy : y ≤ 2⁻¹) : G₁ β (fun t ↦ max (L β t) (Q β t)) x y ≥ 0 := by
   sorry
 
 end Auto.DIR

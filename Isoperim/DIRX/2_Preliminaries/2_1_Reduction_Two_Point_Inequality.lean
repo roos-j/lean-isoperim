@@ -45,11 +45,11 @@ open Real Set
 
 /-! ### §2.1 Reduction to a two-point inequality -/
 
-local notation "G₁" => Auto.DIR.G₁ (1 / 2)
+local notation "G₁" => Auto.DIR.G₁ 2⁻¹
 
-local notation "G₂" => Auto.DIR.G₂ (1 / 2)
+local notation "G₂" => Auto.DIR.G₂ 2⁻¹
 
-local notation "G" => Auto.DIR.G (1 / 2)
+local notation "G" => Auto.DIR.G 2⁻¹
 
 local notation "J" => JX
 
@@ -63,21 +63,21 @@ theorem kahn_park (B : ℝ → ℝ) (hB : ∀ x ∈ Icc (0 : ℝ) 1, 0 ≤ B x) 
     𝐄 (fun x ↦ √(h A x)) ≥ B ｜A｜ := by
   sorry
 
-local notation "L" => Auto.DIR.L (1 / 2)
+local notation "L" => Auto.DIR.L 2⁻¹
 
-local notation "Q" => Auto.DIR.Q (1 / 2)
+local notation "Q" => Auto.DIR.Q 2⁻¹
 
 /-- [DIRX], §2.1 (cited from [DIR], Lemma 5.9 (2), `Auto.DIR.lemma_5_9`): $B_w(x)\ge L(x)$ for
 $x\in[0,\frac12]$. -/
-theorem BX_ge_LX (w x : ℝ) (hx : x ∈ Icc (0 : ℝ) (1 / 2)) : BX w x ≥ L x := by
+theorem BX_ge_LX (w x : ℝ) (hx : x ∈ Icc (0 : ℝ) 2⁻¹) : BX w x ≥ L x := by
   sorry
 
 /-- [DIRX], §2.1: in order to prove Theorem 1.1 it suffices to prove that there exists $w$ such
 that (2.4) holds for all $0\le x\le y\le1$ (by the Kahn–Park reduction and
 $B_w\ge L$ on $[0,\frac12]$). -/
 theorem thm_1_1_of_eqn_2_4
-    (hyp : ∃ w ∈ Ioc (1 / 2 : ℝ) 1, ∀ x y : ℝ, 0 ≤ x → x ≤ y → y ≤ 1 → G (BX w) x y ≥ 0)
-    (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) (hA : ｜A｜ ≤ 1 / 2) :
+    (hyp : ∃ w ∈ Ioc (2⁻¹ : ℝ) 1, ∀ x y : ℝ, 0 ≤ x → x ≤ y → y ≤ 1 → G (BX w) x y ≥ 0)
+    (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) (hA : ｜A｜ ≤ 2⁻¹) :
     𝐄 (fun x ↦ √(h A x)) ≥ ｜A｜ * √(log₂ ｜A｜⁻¹) := by
   sorry
 

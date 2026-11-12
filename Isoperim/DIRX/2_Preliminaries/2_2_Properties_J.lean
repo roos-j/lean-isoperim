@@ -58,7 +58,7 @@ theorem γX_mem : γ ∈ Icc (1.945 : ℝ) 1.946 := by
 
 /-- [DIRX], §2.2: in particular, $\mathrm{J}$ is concave (on $[\frac12,1]$), and
 $\mathrm{J}\ge0$ there. -/
-theorem JX_concave : ConcaveOn ℝ (Icc (1 / 2) 1) J ∧ ∀ x ∈ Icc (1 / 2 : ℝ) 1, 0 ≤ J x := by
+theorem JX_concave : ConcaveOn ℝ (Icc 2⁻¹ 1) J ∧ ∀ x ∈ Icc (2⁻¹ : ℝ) 1, 0 ≤ J x := by
   sorry
 
 section Proof_Eqn_2_6
@@ -66,34 +66,34 @@ section Proof_Eqn_2_6
 $x\in(0,\frac15]$,
 $$I(x)\ge\sqrt2\cdot x\sqrt{\log(1/x)}\Big(1-\frac12\frac{\log\log(1/x)}{\log(1/x)}
 -\frac{\log(2\sqrt\pi)}{\log(1/x)}\Big).$$ -/
-theorem I_lower (x : ℝ) (hx : x ∈ Ioc (0 : ℝ) (1 / 5)) :
+theorem I_lower (x : ℝ) (hx : x ∈ Ioc (0 : ℝ) 5⁻¹) :
     I x ≥ √2 * x * √(log x⁻¹) *
-      (1 - 1 / 2 * log (log x⁻¹) / log x⁻¹ - log (2 * √π) / log x⁻¹) := by
+      (1 - 2⁻¹ * log (log x⁻¹) / log x⁻¹ - log (2 * √π) / log x⁻¹) := by
   sorry
 
 /-- [DIRX], proof of (2.6): thus, for $x\in(0,\frac1{64}]$,
 $$\mathrm{J}(1-x)\ge\frac{\sqrt2}{2w_1}I(\tfrac1{2w_1})^{-1}(1-\varepsilon)x\sqrt{\log(w_1/x)},$$
 where $\varepsilon=\frac12\frac{\log\log(w_1/x)}{\log(w_1/x)}+\frac{\log(2\sqrt\pi)}{\log(w_1/x)}$.
 -/
-theorem eqn_2_6_step (x : ℝ) (hx : x ∈ Ioc (0 : ℝ) (1 / 64)) :
+theorem eqn_2_6_step (x : ℝ) (hx : x ∈ Ioc (0 : ℝ) 64⁻¹) :
     J (1 - x) ≥ √2 / (2 * w₁) * (I ((2 * w₁)⁻¹))⁻¹ * (1 - ε x) * x * √(log (w₁ / x)) := by
   sorry
 
 /-- [DIRX], proof of (2.6): $\varepsilon$ is an increasing function of $x$ (on
 $(0,\frac1{64}]$). -/
-theorem εX_monotone : MonotoneOn ε (Ioc 0 (1 / 64)) := by
+theorem εX_monotone : MonotoneOn ε (Ioc 0 64⁻¹) := by
   sorry
 
 /-- [DIRX], proof of (2.6): evaluating at $x=\frac1{64}$,
 $\frac{\sqrt2}{2w_1}I(\frac1{2w_1})^{-1}(1-\varepsilon(\frac1{64}))>1$. -/
-theorem eqn_2_6_eval : √2 / (2 * w₁) * (I ((2 * w₁)⁻¹))⁻¹ * (1 - ε (1 / 64)) > 1 := by
+theorem eqn_2_6_eval : √2 / (2 * w₁) * (I ((2 * w₁)⁻¹))⁻¹ * (1 - ε 64⁻¹) > 1 := by
   sorry
 
 end Proof_Eqn_2_6
 
 /-- **(2.6)** ([DIRX], §2.2). For $x\in(0,\frac1{64}]$,
 $$\mathrm{J}(1-x)>x\sqrt{\log(w_1/x)}.$$ -/
-theorem eqn_2_6 (x : ℝ) (hx : x ∈ Ioc (0 : ℝ) (1 / 64)) : J (1 - x) > x * √(log (w₁ / x)) := by
+theorem eqn_2_6 (x : ℝ) (hx : x ∈ Ioc (0 : ℝ) 64⁻¹) : J (1 - x) > x * √(log (w₁ / x)) := by
   sorry
 
 /-- [DIRX], §2.2: $\mathrm{J}'(x_1)=0$ and $\mathrm{J}''<0$ (on $(1-w_1,1)$), so $\mathrm{J}'$ is
@@ -103,7 +103,7 @@ theorem deriv_JX : deriv J x₁ = 0 ∧ (∀ x ∈ Ioo (1 - w₁) 1, deriv (deri
   sorry
 
 /-- [DIRX], §2.2: $\mathrm{J}$ is increasing on $[\frac12,x_1]$ and decreasing on $[x_1,1]$. -/
-theorem JX_mono : MonotoneOn J (Icc (1 / 2) x₁) ∧ AntitoneOn J (Icc x₁ 1) := by
+theorem JX_mono : MonotoneOn J (Icc 2⁻¹ x₁) ∧ AntitoneOn J (Icc x₁ 1) := by
   sorry
 
 end Auto.DIRX

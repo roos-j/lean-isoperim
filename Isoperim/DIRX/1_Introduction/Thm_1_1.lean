@@ -20,7 +20,7 @@ This file covers the abstract, the opening paragraph of §1, Theorem 1.1 and the
 following it (up to the subsection *Applications*).
 
 Notation for the Hamming cube is reused from [DIR] (`Isoperim/DIR/1_Introduction/Thm_1_1.lean`):
-`{0,1}^n`, `e i`, `h A`, `𝐄 f`, `ind A`, `|A|`, `log₂`, `IsSubcube`.
+`{0,1}^n`, `e i`, `h A`, `𝐄 f`, `𝟏 A`, `|A|`, `log₂`, `IsSubcube`.
 
 The definitions and notation used here are in `Definitions.lean` of this folder.
 -/
@@ -37,7 +37,7 @@ open Real Finset
 
 /-- **Theorem 1.1** ([DIRX]). For all $A\subset\{0,1\}^n$ with $|A|\le\frac12$,
 $$\mathbf{E}\sqrt{h_A}\ge|A|\sqrt{\log_2(1/|A|)}. \tag{1.1}$$ -/
-theorem thm_1_1 (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) (hA : ｜A｜ ≤ 1 / 2) :
+theorem thm_1_1 (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) (hA : ｜A｜ ≤ 2⁻¹) :
     𝐄 (fun x ↦ √(h A x)) ≥ ｜A｜ * √(log₂ ｜A｜⁻¹) := by
   sorry
 
