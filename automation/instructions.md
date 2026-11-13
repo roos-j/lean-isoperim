@@ -187,3 +187,6 @@ lake build
 
 Setup complete; proof stage prepared (rules in `AGENTS.md`, split in `automation/splitting.md`, dependency
 list `automation/proof_dependencies.txt`). Next: Task 1 of `automation/splitting.md`.
+- **2026-11-13** (user): `**Discrepancy with the paper.**` paragraphs state very concisely what
+  exactly differs between paper and Lean version, without reasoning or explanation (details stay
+  in `automation/ErrorReport.md`).

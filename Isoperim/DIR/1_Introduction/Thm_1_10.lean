@@ -34,14 +34,8 @@ $$\|\nabla f\|_p\ge\|f-\mathbf{E}f\|_p. \tag{1.7}$$
 Equality is achieved when $f=\mathbf{1}_A$ for a half-cube $A$. Moreover,
 $\|\nabla f\|_1\ge0.997\|f-\mathbf{E}f\|_1$.
 
-**Discrepancy with the paper.** (1.7) is claimed for all $p\ge2\beta_0$, but the proof in §7
-only covers $p=2\beta_0$: it combines (7.1) with $\mathbf{E}h_A^{p/2}\ge b_{p/2}(|A|)$, which is
-available only for $p/2=\beta_0$ ((2.6)) and, with the factor $0.997$, for $p=1$ ((2.7)), and
-Proposition 7.1 is stated for $\beta=p/2\in[\frac12,\beta_0]$. The range $p>2\beta_0$ is not
-argued: for $p\in(2\beta_0,2]$ it would need the omitted Remarks 2.3 and 7.2, for $p>2$ nothing
-is said, and neither Hölder's inequality (Lemma 5.1) nor $h_A^{p/2}\ge h_A^{\beta_0}$ reduces it
-to $p=2\beta_0$. The Lean statement is kept as in the paper; the case $p>2\beta_0$ of the first
-conjunct is an unresolved gap. -/
+**Discrepancy with the paper.** Statement as in the paper, but the paper's proof only covers
+$p=2\beta_0$; the case $p>2\beta_0$ of the first conjunct is an unresolved gap. -/
 theorem thm_1_10 (n : ℕ) (hn : 1 ≤ n) :
     (∀ p : ℝ, 2 * β₀ ≤ p → ∀ f : ({0,1}^n) → ℝ, (∀ x, f x = 0 ∨ f x = 1) →
       pNorm p (∇f) ≥ pNorm p (f - fun _ ↦ 𝐄 f)) ∧

@@ -75,14 +75,8 @@ section Proof_Lemma_5_4
 /-- [DIR], proof of Lemma 5.4: it follows from Taylor's theorem that for $a\ge0$,
 $(1+a)^\beta=1+\beta a-\frac12\beta(1-\beta)\tilde a^2$ for some $\tilde a\in[0,a]$.
 
-**Discrepancy with the paper.** The paper attributes to Taylor's theorem the remainder
-$-\frac12\beta(1-\beta)\tilde a^2$, $\tilde a\in[0,a]$. Taylor's theorem with Lagrange
-remainder gives $-\frac12\beta(1-\beta)(1+\tilde a)^{\beta-2}a^2$ for some $\tilde a\in[0,a]$
-(the second derivative of $(1+a)^\beta$ is evaluated at $\tilde a$, it is not $\tilde a^2$).
-The paper's literal form is not what Taylor's theorem says, although it is a true consequence
-(take $\tilde a'=a(1+\tilde a)^{\beta/2-1}\in[0,a]$), and the bound
-$E_1\le\frac12\beta(1-\beta)B(x+h)^{1-2/\beta}h^{2/\beta}$ is unaffected since
-$(1+\tilde a)^{\beta-2}\le1$. The Lean statement uses the Lagrange form.
+**Discrepancy with the paper.** Paper: remainder $-\frac12\beta(1-\beta)\tilde a^2$. Lean: Lagrange
+remainder $-\frac12\beta(1-\beta)(1+\tilde a)^{\beta-2}a^2$.
 
 **Unused hypothesis.** The paper assumes $\beta\in(0,1)$; the expansion holds for every real
 $\beta$, and this assumption is omitted in the Lean statement. -/
@@ -96,10 +90,8 @@ $$(h^{\frac1\beta}+B(x+h)^{\frac1\beta})^\beta=B(x+h)(1+a)^\beta
 with $E_1=\frac12B(x+h)\beta(1-\beta)\tilde a^2\ge0$; and $E_1$ satisfies the claimed bound because
 $\tilde a^2\le a^2=h^{\frac2\beta}B(x+h)^{-\frac2\beta}$.
 
-**Discrepancy with the paper.** As in `Auto.DIR.lemma_5_4_taylor`, the paper's $\tilde a^2$ is
-replaced by the Lagrange remainder factor $(1+\tilde a)^{\beta-2}a^2$, so that
-$E_1=\frac12B(x+h)\beta(1-\beta)(1+\tilde a)^{\beta-2}a^2$ and the paper's step
-$\tilde a^2\le a^2$ becomes $(1+\tilde a)^{\beta-2}a^2\le a^2$. -/
+**Discrepancy with the paper.** Paper: $\tilde a^2$. Lean: $(1+\tilde a)^{\beta-2}a^2$ (as in
+`Auto.DIR.lemma_5_4_taylor`). -/
 theorem lemma_5_4_expansion (β : ℝ) (hβ : β ∈ Ioo (0 : ℝ) 1) (Bxh h : ℝ) (hB : 0 < Bxh)
     (hh : 0 ≤ h) :
     ∃ ã ∈ Icc 0 ((h * Bxh⁻¹) ^ β⁻¹),
@@ -143,11 +135,7 @@ $$G^1_\beta[B](x,x+h)=\beta B(x+h)^{1-\frac1\beta}h^{\frac1\beta}+[B(x)+B(x+h)-2
 where $E_1$ satisfies
 $$0\le E_1\le\tfrac12\beta(1-\beta)B(x+h)^{1-\frac2\beta}h^{\frac2\beta}=O(h^{\frac2\beta}).$$
 
-**Discrepancy with the paper.** The lemma only assumes $B\ge0$, but the right-hand sides contain
-the negative powers $B(x+h)^{1-\frac1\beta}$, $B(x+h)^{1-\frac2\beta}$ (and the proof divides by
-$B(x+h)$), so $B(x+h)>0$ is implicitly required; for $B(x+h)=0<h$ the identity is meaningless
-(with Lean's convention $0^{r}=0$ for $r\ne0$ the bound forces $E_1=0$ and the identity
-would force $h=0$). The Lean statement adds the hypothesis $B(x+h)>0$.
+**Discrepancy with the paper.** Lean: adds $B(x+h)>0$.
 
 **Unused hypothesis.** The paper assumes that $B$ is non-negative on an interval $\mathcal{I}$
 containing $x,x+h$; given $B(x+h)>0$ this is not needed for the claim, so $\mathcal{I}$ and

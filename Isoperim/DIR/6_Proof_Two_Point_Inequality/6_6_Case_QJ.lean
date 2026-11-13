@@ -50,12 +50,8 @@ open Real Set
 $G^1_\beta[J](x,y)$ is increasing in $\beta$ (for $\beta\in[\frac12,1]$). (The value $J(x)$ enters
 $G^1_\beta[J](x,y)$ only through a $\beta$-independent summand.)
 
-**Discrepancy with the paper.** The paper writes $G^1_\beta[J](x,y)$ although $J(x)$ is undefined
-for $x<\frac12$; what is meant (and used for Proposition 6.11) is that the only
-$\beta$-dependent term $((y-x)^{\frac1\beta}+J(y)^{\frac1\beta})^\beta$ is increasing in $\beta$,
-so that e.g. $G^1_\beta[b_{\beta_0}](x,y)$ is increasing in $\beta$. The Lean statement uses
-`Auto.DIR.J` literally; its (arbitrary) value at $x$ enters only through a $\beta$-independent
-summand, so the statement is true as written. -/
+**Discrepancy with the paper.** Paper: $G^1_\beta[J](x,y)$ with $J(x)$ undefined for $x<\frac12$.
+Lean: `Auto.DIR.J` at $x$. -/
 theorem caseQJ_G₁_monotoneOn_beta (x y : ℝ) (hx : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹)
     (hy : y ∈ Icc (2⁻¹ : ℝ) 1) (hxy : 1 ≤ x + y) :
     MonotoneOn (fun β ↦ G₁ β J x y) (Icc 2⁻¹ 1) := by
@@ -75,15 +71,7 @@ $$g_{QJ,\beta,c}(x,y)=(y-x)^{\frac1\beta}+c^{\frac1\beta}J(y)^{\frac1\beta}
 -c^{\frac1\beta}(2J(\tfrac{x+y}2)-Q_\beta(x))^{\frac1\beta},$$
 with $J(\frac{x+y}2)$ read as $J_{w_0}(\frac{x+y}2)$ (see below).
 
-**Discrepancy with the paper.** The function $J$ is defined only on $[\frac12,1]$, but the
-paper uses $g_{QJ,\beta,c}$ and its $x$-derivative on the rectangle
-$[\frac14,\frac12]\times[\frac12,\frac58]$ ((6.26)), where $\frac{x+y}2\in[\frac38,\frac9{16}]$
-can be $<\frac12$. There $J$ must mean its extension $J_{w_0}$ from (3.4), which is smooth on
-$(1-w_0,1)\ni\frac38$ (as in the companion code). The Lean definition uses `Jw w₀` at the
-argument $\frac{x+y}2$ (and `Auto.DIR.J` at $y\ge\frac12$); on triangle I ($x+y\ge1$) this is the
-paper's $g_{QJ,\beta,c}$ by `Auto.DIR.eqn_3_4`. (This replaces an earlier formulation with a
-conditional hypothesis `EqOn J (Jw w₀) (Icc (1 - w₀) 1)`, which `Auto.DIR.J` does not satisfy in
-general.) -/
+**Discrepancy with the paper.** Paper: $J(\frac{x+y}2)$. Lean: $J_{w_0}(\frac{x+y}2)$. -/
 noncomputable def g_QJ (β c x y : ℝ) : ℝ :=
   (y - x) ^ β⁻¹ + c ^ β⁻¹ * J y ^ β⁻¹ -
     c ^ β⁻¹ * (2 * Jw w₀ ((x + y) / 2) - Q β x) ^ β⁻¹
@@ -117,14 +105,7 @@ shows, for $(\beta,c)\in\{(\beta_0,1),(\frac12,c_0)\}$,
 $$-\beta\partial_xg_{QJ,\beta,c}>10^{-5}$$
 on this region (with $J$ at $\frac{x+y}2$ read as $J_{w_0}$, see `Auto.DIR.g_QJ`).
 
-**Discrepancy with the paper.** Only triangle I ($\frac38\le x\le\frac12\le y\le\frac58$,
-$x+y\ge1$) is needed, but $\textsc{Partition}_2$ is run on the larger rectangle
-$[\frac14,\frac12]\times[\frac12,\frac58]$. On its part with $x+y<1$ the paper's $J(\frac{x+y}2)$
-is evaluated below $\frac12$ and only makes sense as $J_{w_0}$ (which is what the statement
-uses), and the quantity there is not related to the two-point inequality ($b_\beta$ would
-involve $Q_\beta$ at $\frac{x+y}2$). The Lean statement keeps the paper's rectangle (it is
-stronger than needed and true numerically: $\min\approx0.0328$ for $(\beta_0,1)$ and
-$\approx0.0342$ for $(\frac12,c_0)$ on a $41\times41$ grid). -/
+**Discrepancy with the paper.** Paper: $J(\frac{x+y}2)$. Lean: $J_{w_0}(\frac{x+y}2)$. -/
 theorem eqn_6_26 (β c : ℝ)
     (hβc : (β, c) = (β₀, 1) ∨ (β, c) = (2⁻¹, c₀)) (x y : ℝ) (hx : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹)
     (hy : y ∈ Icc (2⁻¹ : ℝ) (5 / 8)) :
@@ -168,13 +149,7 @@ $\beta\in[\beta_0,1]$,
 $$G^1_\beta[b_{\beta_0}](x,y)\ge0\quad\text{and}\quad
 G^1_{\frac12}[c_0\cdot b_{\frac12}](x,y)\ge0.$$
 
-**Discrepancy with the paper.** The proposition as printed does not assume $x+y\ge1$; it is the
-defining condition of triangle I (title of §6.6.1 and of Case $QJ$). For $x+y<1$ one has
-$b_\beta(\frac{x+y}2)=Q_\beta(\frac{x+y}2)$ instead of $J(\frac{x+y}2)$, and the proof (which
-works with $g_{QJ,\beta,c}$, i.e. with $J(\frac{x+y}2)$) does not cover this part. The Lean
-statement adds the hypothesis $x+y\ge1$. (Numerically the printed version also appears to hold
-on the part $x+y<1$ of $[\frac38,\frac12]\times[\frac12,\frac58]$, with very small margins near
-$(\frac12,\frac12)$, e.g. $\approx1.4\cdot10^{-7}$ at $(0.497,0.5)$; this is not claimed.) -/
+**Discrepancy with the paper.** Lean: adds $x+y\ge1$. -/
 theorem prop_6_11 (x y : ℝ) (hx : x ∈ Icc (3 / 8 : ℝ) 2⁻¹)
     (hy : y ∈ Icc (2⁻¹ : ℝ) (5 / 8)) (hxy : 1 ≤ x + y) (β : ℝ) (hβ : β ∈ Icc β₀ 1) :
     G₁ β (b β₀) x y ≥ 0 ∧ G₁ 2⁻¹ (c₀ • b 2⁻¹) x y ≥ 0 := by
@@ -189,13 +164,7 @@ section Far_From_Diagonal
 $$g_{QJ,2}(x,y)=((y-x)^2+J(y)^2)^{1/2}+Q_{\frac12}(x)-2J(\tfrac{x+y}2),$$
 with $J(\frac{x+y}2)$ read as $J_{w_0}(\frac{x+y}2)$ (see below).
 
-**Discrepancy with the paper.** Proposition 6.12 and its proof (the lower bound
-$\underline{g_{QJ,2}}$ and $\textsc{Partition}_2$) concern all of
-$[\frac14,\frac12]\times[\frac58,1]$, including the part $x+y<1$ outside Case $QJ$, where
-$\frac{x+y}2\in[\frac7{16},\frac12)$ and $J(\frac{x+y}2)$ is undefined; there $J$ must mean the
-extension $J_{w_0}$ of (3.4). The Lean definition uses `Jw w₀` at $\frac{x+y}2$ (it equals the
-paper's $g_{QJ,2}$ where $x+y\ge1$, by `Auto.DIR.eqn_3_4`), so that (6.27) can be stated on the
-paper's full rectangle without a conditional hypothesis on `Auto.DIR.J`. -/
+**Discrepancy with the paper.** Paper: $J(\frac{x+y}2)$. Lean: $J_{w_0}(\frac{x+y}2)$. -/
 noncomputable def g_QJ_2 (x y : ℝ) : ℝ :=
   ((y - x) ^ 2 + J y ^ 2) ^ (2⁻¹ : ℝ) + Q 2⁻¹ x - 2 * Jw w₀ ((x + y) / 2)
 

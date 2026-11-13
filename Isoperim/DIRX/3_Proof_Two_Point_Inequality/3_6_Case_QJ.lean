@@ -91,13 +91,7 @@ theorem g_QJ_nonneg (x y : ℝ) (hx : x ∈ Icc (3 / 8 : ℝ) 2⁻¹)
 /-- [DIRX], §3.6.1: for $\frac38\le x\le\frac12\le y\le\frac58$ (and $x+y\ge1$, the standing
 assumption of Case $QJ$), $G_1[B_w](x,y)\ge0$ (with $w=w_1$).
 
-**Discrepancy with the paper.** The sentence states the claim for
-$\frac38\le x\le\frac12\le y\le\frac58$ without the condition $x+y\ge1$ (which appears in the
-heading of §3.6.1 and of Case $QJ$). The proof via $g_{QJ}$ uses
-$B_w(\frac{x+y}2)=\mathrm{J}(\frac{x+y}2)$, which requires $\frac{x+y}2\ge\frac12$; for
-$x+y<1$ one has $B_w(\frac{x+y}2)=Q(\frac{x+y}2)$ and these points belong to Case $QJQ$
-(§3.5). The Lean statement adds the hypothesis `hxy : 1 ≤ x + y`, matching the heading; this is
-all that is needed for `caseQJ`. -/
+**Discrepancy with the paper.** Lean: adds $x+y\ge1$. -/
 theorem caseQJ_near (x y : ℝ) (hx : x ∈ Icc (3 / 8 : ℝ) 2⁻¹)
     (hy : y ∈ Icc (2⁻¹ : ℝ) (5 / 8)) (hxy : 1 ≤ x + y) : G₁ (BX w₁) x y ≥ 0 := by
   sorry

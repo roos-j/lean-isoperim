@@ -43,14 +43,8 @@ section Case_LJQ_I
 /-- **(6.13)** ([DIR], §6.3.1) (🚗). For $\beta\in\{\beta_0,\frac12\}$ and
 $(x,y)\in[\frac1{16},\frac14]\times[\frac12,\frac34]$: $$G_\beta[b_\beta](x,y)>10^{-7}.$$
 
-**Discrepancy with the paper.** The paper only mentions running
-$\textsc{Partition}_2(\underline{g_{LJQ,1,1/2}},\dots)$, i.e. the case $\beta=\frac12$, but
-claims (6.13) for $\beta\in\{\beta_0,\frac12\}$. This is presumably a typo
-($\textsc{Partition}_2(\underline{g_{LJQ,1,\beta}},\dots)$ for both values of $\beta$; the lower
-bound `Auto.DIR.g_LJQ_1_lo_tight` is valid for both). The Lean statement claims (6.13) for both
-values as the paper does; numerically
-$\min G_\beta[b_\beta]\approx2.0\cdot10^{-3}$ ($\beta=\beta_0$) and $\approx1.9\cdot10^{-3}$
-($\beta=\frac12$) on a $31\times31$ grid of the rectangle. -/
+**Discrepancy with the paper.** Statement as in the paper (both values of $\beta$); the paper's
+computation is only described for $\beta=\frac12$. -/
 theorem eqn_6_13 (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) (x y : ℝ)
     (hx : x ∈ Icc (16⁻¹ : ℝ) 4⁻¹) (hy : y ∈ Icc (2⁻¹ : ℝ) (3 / 4)) :
     G β (b β) x y > 10 ^ (-7 : ℤ) := by
@@ -282,12 +276,8 @@ theorem f_LJQ_1_half_deriv4 :
 /-- [DIR], §6.3.2, proof of (1): $f_{\frac12}''(\frac12)=0$ (as a one-sided limit,
 $f_{\frac12}''(y)\to0$ as $y\to\frac12^+$).
 
-**Discrepancy with the paper.** The paper evaluates $f_{\frac12}''$ at the endpoint $y=\frac12$
-of $[\frac12,1]$, where $J''(\frac12)$ (equivalently $J(\frac12)^{-1}$ in the formula for
-$f_{\frac12}''$) is meant one-sidedly. For `Auto.DIR.J`, which is arbitrary left of $\frac12$,
-`deriv (deriv (f_LJQ_1 2⁻¹)) 2⁻¹` is a junk value, so the claim is stated as the limit
-$y\to\frac12^+$ (by the formula, the limit is $-4(\sqrt2-1)-\frac12Q_{\frac12}''(\frac14)
-=-4(\sqrt2-1)+4(\sqrt2-1)=0$). -/
+**Discrepancy with the paper.** Paper: value of $f_{\frac12}''$ at $y=\frac12$. Lean: limit as
+$y\to\frac12^+$. -/
 theorem f_LJQ_1_half_deriv2_half :
     Tendsto (deriv (deriv (f_LJQ_1 2⁻¹))) (𝓝[>] 2⁻¹) (𝓝 0) := by
   sorry
@@ -332,14 +322,9 @@ theorem f_LJQ_1_half_deriv_half :
 /-- [DIR], §6.3.2, proof of (1): $f_{\frac12}'$ has exactly one zero $y_1$ on $(\frac12,1)$;
 therefore $f_{\frac12}$ is increasing on $[\frac12,y_1]$ and decreasing on $[y_1,1]$.
 
-**Discrepancy with the paper.** From "$f_{\frac12}'$ is increasing on $(\frac12,y_0)$ and
-decreasing on $(y_0,1)$" together with (6.16) the paper concludes that $f_{\frac12}'$ has exactly
-one zero on $(\frac12,1)$. This also requires $f_{\frac12}'>0$ near $\frac12$, i.e.
-$f_{\frac12}'(\frac12^+)\ge0$ (otherwise $f_{\frac12}'$ could have a second zero in
-$(\frac12,\frac9{16})$; and if $f_{\frac12}'(\frac12^+)<0$ then, as $f_{\frac12}(\frac12)=0$, the
-claim $f_{\frac12}\ge0$ would even fail). This value is not evaluated in the paper; numerically
-$f_{\frac12}'(\frac12^+)\approx0.0571>0$, recorded as `Auto.DIR.f_LJQ_1_half_deriv_half`. The
-statement itself is kept as in the paper. -/
+**Discrepancy with the paper.** Statement as in the paper; the proof also needs
+$f_{\frac12}'(\frac12^+)\ge0$, not shown in the paper (recorded as
+`Auto.DIR.f_LJQ_1_half_deriv_half`). -/
 theorem f_LJQ_1_half_y₁ :
     ∃ y₁ ∈ Ioo (2⁻¹ : ℝ) 1, deriv (f_LJQ_1 2⁻¹) y₁ = 0 ∧
       (∀ y ∈ Ioo (2⁻¹ : ℝ) 1, deriv (f_LJQ_1 2⁻¹) y = 0 → y = y₁) ∧
@@ -432,14 +417,7 @@ end Proof_Proposition_6_6
 $y\in[\frac12,1]$. If in addition $x\le\frac1{16}$ or $y\ge\frac34$ holds, then
 $$G_{LJQ,\beta}(x,y)=y-x+(2^\beta-1)J(y)+L_\beta(x)-2Q_\beta(\tfrac{x+y}2)\ge0.$$
 
-**Discrepancy with the paper.** The proposition as printed does not assume $x+y\le1$. This is
-the standing assumption of Case $LJQ$ (title of §6.3, needed for $b_\beta(\frac{x+y}2)=
-Q_\beta(\frac{x+y}2)$), and the proof only covers it: the reduction via Lemma 6.7 checks the
-boundary pieces $x=0$, $x=\frac1{16}$ and $x=1-y$ (claims (1)–(3)), which bound region II only
-under $x+y\le1$ (for $y\ge\frac34$ and $x+y>1$ the piece $x=\frac14$ would be needed). The Lean
-statement adds the hypothesis $x+y\le1$. (Numerically the printed statement without it also
-appears to hold: on a grid, $\min G_{LJQ,\beta}$ over the part with $x+y>1$ is
-$\approx0.0055$, $0.013$, $0.025$ for $\beta=\frac12,\frac34,1$.) -/
+**Discrepancy with the paper.** Lean: adds $x+y\le1$. -/
 theorem prop_6_6 (β : ℝ) (hβ : β ∈ Icc (2⁻¹ : ℝ) 1) (x y : ℝ)
     (hx : x ∈ Icc (0 : ℝ) 4⁻¹) (hy : y ∈ Icc (2⁻¹ : ℝ) 1) (hxy : x + y ≤ 1)
     (h : x ≤ 16⁻¹ ∨ y ≥ 3 / 4) : G_LJQ β x y ≥ 0 := by

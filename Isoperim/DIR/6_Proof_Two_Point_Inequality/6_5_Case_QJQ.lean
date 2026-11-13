@@ -112,14 +112,8 @@ $\beta\in\{\frac12,\beta_1\}$ shows that
 $$g_{QJQ,\beta}>10^{-5}$$
 on $[\frac14,\frac12]\times[\frac12,\frac34]$.
 
-**Discrepancy with the paper.** The verification relies on $\underline{g_{QJQ,\beta}}$ being a
-lower bound on the full rectangle, whose justification in the paper is incomplete on the part with
-$x+y>1$ (see `Auto.DIR.g_QJQ_tightLowerBound`). The claim is nevertheless true numerically on the
-full rectangle: on a $41\times41$ grid, $\min g_{QJQ,\beta}\approx7.8\cdot10^{-3}$ for
-$\beta=\frac12$ and $\approx3.0\cdot10^{-2}$ for $\beta=\beta_1$, both attained near $x=\frac14$,
-$y\approx0.58$–$0.59$ (inside the region $x+y\le1$). Note that Proposition 6.9 as stated on the
-full rectangle needs (6.25) on the full rectangle (for the reduction to $y=\frac12$), whereas Case
-$QJQ$ of Theorem 2.2 only needs the part $x+y\le1$. The statement is kept as in the paper. -/
+**Discrepancy with the paper.** Statement as in the paper; the paper's justification of the lower
+bound is incomplete where $x+y>1$ (see `Auto.DIR.g_QJQ_tightLowerBound`). -/
 theorem eqn_6_25 (β : ℝ) (hβ : β ∈ ({2⁻¹, β₁} : Set ℝ)) (x y : ℝ)
     (hx : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹) (hy : y ∈ Icc (2⁻¹ : ℝ) (3 / 4)) :
     g_QJQ β x y > 10 ^ (-5 : ℤ) := by

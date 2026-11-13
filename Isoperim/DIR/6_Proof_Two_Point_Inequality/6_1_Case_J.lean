@@ -123,14 +123,7 @@ theorem deriv_J_x₀ :
 $(x,h)\in[\frac12,\frac58]\times[0,\frac3{16}]$ (here $x>\frac12$, see below):
 $$g_{J,1,\beta,c}(x,h)>10^{-7}$$ (with $N=6$).
 
-**Discrepancy with the paper.** The paper states (6.3) on the closed rectangle
-$[\frac12,\frac58]\times[0,\frac3{16}]$. At $x=\frac12$ the function $g_{J,1,\beta,c}$ involves
-$J^{(k)}(\frac12)$, $k=2,\dots,5$, which the paper understands as one-sided derivatives
-(equivalently, derivatives of $J_{w_0}$, (3.4)); `iteratedDeriv k J 2⁻¹` is a junk value
-for `Auto.DIR.J`. The Lean statement therefore assumes $x\in(\frac12,\frac58]$; the case
-$x=\frac12$ of Case I (`Auto.DIR.caseJ_I`) follows by continuity of $G^1_\beta[c\cdot J]$. The
-inequality was spot-checked numerically (minimum $\approx8.5\cdot10^{-5}$ for $(\beta_0,1)$ and
-$\approx1.7\cdot10^{-4}$ for $(\frac12,c_0)$ on a $41\times41$ grid). -/
+**Discrepancy with the paper.** Paper: $x\in[\frac12,\frac58]$. Lean: $x\in(\frac12,\frac58]$. -/
 theorem eqn_6_3 (β c : ℝ) (hβc : (β, c) = (β₀, 1) ∨ (β, c) = (2⁻¹, c₀)) (x h : ℝ)
     (hx : x ∈ Ioc (2⁻¹ : ℝ) (5 / 8)) (hh : h ∈ Icc (0 : ℝ) (3 / 16)) :
     g_J_1 6 β c x h > 10 ^ (-7 : ℤ) := by

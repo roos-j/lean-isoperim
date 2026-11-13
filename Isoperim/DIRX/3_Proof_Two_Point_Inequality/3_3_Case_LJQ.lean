@@ -164,13 +164,8 @@ theorem fX_deriv_half_pos : deriv f 2⁻¹ > 0 := by
 /-- [DIRX], §3.3: $f'$ has exactly one zero $y_1$ on $(\frac12,1)$; therefore $f$ is increasing
 on $[\frac12,y_1]$ and decreasing on $[y_1,1]$.
 
-**Discrepancy with the paper.** The paper deduces this from "$f'$ is increasing on
-$(\frac12,y_0)$ and decreasing on $(y_0,1)$, and $f'(\frac9{16})>0.05$, $f'(\frac{15}{16})<-0.08$".
-This does not exclude a zero of $f'$ in $(\frac12,\frac9{16})$ (where $f'$ is increasing, it could
-change sign from $-$ to $+$); one also needs $f'(\frac12)\ge0$ (or $f'(\frac12+)\ge0$). This holds:
-$f'(\frac12)=1+(\sqrt2-1)\mathrm{J}'(\frac12)-Q'(\frac14)\approx0.0465>0$ (single point
-evaluation, Python spot check). The Lean statement is the paper's claim unchanged; the missing
-step is recorded separately as `Auto.DIRX.fX_deriv_half_pos`. -/
+**Discrepancy with the paper.** Statement as in the paper; the proof also needs
+$f'(\frac12)\ge0$, not shown in the paper (recorded as `Auto.DIRX.fX_deriv_half_pos`). -/
 theorem fX_deriv_zero :
     ∃ y₁ ∈ Ioo (2⁻¹ : ℝ) 1, deriv f y₁ = 0 ∧
       (∀ y ∈ Ioo (2⁻¹ : ℝ) 1, deriv f y = 0 → y = y₁) ∧
@@ -225,13 +220,7 @@ end Boundary_x_eq_1_sub_y
 assumption of Case $LJQ$, which the proof below uses), and if in addition $x\le\frac1{16}$ or
 $y\ge\frac34$ holds, then $G_{LJQ}(x,y)\ge0$.
 
-**Discrepancy with the paper.** The paper states this claim for $x\in[0,\frac14]$,
-$y\in[\frac12,1]$ with $x\le\frac1{16}$ or $y\ge\frac34$, without repeating the condition
-$x+y\le1$ from the heading of §3.3. Without it the claim is not what the proof shows: for
-$y\ge\frac34$ the proof uses concavity in $x$ on $[0,1-y]$ and the boundary $x=1-y$, and only for
-$x+y\le1$ is $G_{LJQ}=G_2[B_{w_1}]$ (since then $\frac{x+y}2\le\frac12$ and
-$B_{w_1}(\frac{x+y}2)=Q(\frac{x+y}2)$). The Lean statement adds the hypothesis `hxy : x + y ≤ 1`
-(the standing assumption of Case $LJQ$); this is all that is needed for `caseLJQ`. -/
+**Discrepancy with the paper.** Lean: adds $x+y\le1$. -/
 theorem caseLJQ_II (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) 4⁻¹) (hy : y ∈ Icc (2⁻¹ : ℝ) 1)
     (hxy : x + y ≤ 1) (h : x ≤ 16⁻¹ ∨ y ≥ 3 / 4) : G_LJQX x y ≥ 0 := by
   sorry

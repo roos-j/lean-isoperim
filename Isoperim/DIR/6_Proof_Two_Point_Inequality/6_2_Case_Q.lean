@@ -291,17 +291,8 @@ theorem f_QIII_deriv_eq_sub (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) (y : �
 is needed on $[\frac18,\frac12]$: if $f_{\beta,0}'\le0$ on $[\frac18,\frac12]$, then
 $f_\beta'\le0$ on $[\frac14,\frac12]$.)
 
-**Discrepancy with the paper.** For $y\in[\frac14,\frac12]$ the identity
-$\beta yf_\beta'(y)=f_{\beta,0}(y)-f_{\beta,0}(y/2)$ compares $f_{\beta,0}$ at $y$ and at
-$y/2\in[\frac18,\frac14]$, so $f_\beta'\le0$ on $[\frac14,\frac12]$ needs $f_{\beta,0}$ to be
-decreasing on $[\frac18,\frac12]$. The paper only proves $f_{\beta,0}'<0$ on $[\frac14,\frac12]$
-(from $f_{\beta,0}'''\ge0$, (6.9) and (6.10)). The gap is easily closed and the needed fact is
-true: the sign argument for $f_{\beta,0}'''\ge0$ works verbatim on $[\frac18,\frac12]$ (there
-$R_\beta>0$, $R_\beta'<0$, $R_\beta''<0$), and numerically $f_{\beta,0}''(\frac18)\approx1.67$
-($\beta=\beta_0$), $\approx1.64$ ($\beta=\frac12$), so $f_{\beta,0}''>0$ and $f_{\beta,0}'<0$ on
-$[\frac18,\frac12]$ (numerically $\max_{[\frac18,\frac12]}f_{\beta,0}'=f_{\beta,0}'(\frac12)
-\approx-0.66$). The Lean statement states the reduction with the correct interval
-$[\frac18,\frac12]$; the missing fact is `Auto.DIR.deriv_f_QIII_0_neg_Icc_eighth` (not in the
+**Discrepancy with the paper.** Paper: $f_{\beta,0}$ decreasing on $[\frac14,\frac12]$. Lean: on
+$[\frac18,\frac12]$ (the extra fact is `Auto.DIR.deriv_f_QIII_0_neg_Icc_eighth`, not in the
 paper). -/
 theorem caseQ_III_suffices_f_QIII_0 (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹)
     (h : ∀ y ∈ Icc (8⁻¹ : ℝ) 2⁻¹, deriv (f_QIII_0 β) y ≤ 0) :
@@ -525,15 +516,8 @@ theorem caseQ_III_iff_G_Q (β : ℝ) (hβ : β = 2⁻¹ ∨ β = β₀) (h y : �
 function $h\mapsto\partial_hG_{Q,\beta}(h,y)$ vanishes at most once on the interval
 $[\frac14,\frac12]$. Also, $\partial_hG_{Q,\beta}(\frac14,y)>0$.
 
-**Discrepancy with the paper.** The proof of Lemma 6.4 given in the paper (end of §6.2.2) only
-shows the first claim (via $g_{Q,2,\beta}=-\partial_hp_{y,\beta}>0$, i.e. $p_{y,\beta}$ strictly
-decreasing). The second claim $\partial_hG_{Q,\beta}(\frac14,y)>0$, equivalently
-$p_{y,\beta}(\frac14)>0$ by (6.11) and `Auto.DIR.eqn_6_11_eq_p_Q`, is not argued anywhere,
-although it is needed for `Auto.DIR.caseQ_III_min` (without it, an interior minimum of
-$h\mapsto G_{Q,\beta}(h,y)$ would not be excluded). It is true numerically:
-$\min_{y\in[\frac14,\frac12]}\partial_hG_{Q,\beta}(\frac14,y)\approx0.0367$ for $\beta=\beta_0$
-and $\approx0.0361$ for $\beta=\frac12$. The Lean statement keeps both claims as in the paper.
--/
+**Discrepancy with the paper.** Statement as in the paper; the paper's proof does not show the
+second claim. -/
 theorem lemma_6_4 (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) (y : ℝ)
     (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
     {h ∈ Icc (4⁻¹ : ℝ) 2⁻¹ | deriv (fun h ↦ G_Q β h y) h = 0}.Subsingleton ∧
