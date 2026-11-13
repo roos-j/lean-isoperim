@@ -41,7 +41,8 @@ theorem J_x₀_lt : J x₀ < 0.506 := by
 
 /-- $J(\frac{25}{32})>0.39$. -/
 theorem J_25_32_gt : (0.39 : ℝ) < J (25 / 32) := by
-  have := check_sound P11 hw11 [] (.J (25 / 32) 0.4899152162535830 0.4899152162478544) 0.39 (by decide +kernel)
+  have := check_sound P11 hw11 [] (.J (25 / 32) 0.4899152162535830 0.4899152162478544) 0.39
+    (by decide +kernel)
   simpa [denote] using this
 
 /-- [DIR], §6.1.2: $2J(\frac{x+y}2)-J(x)\ge0$ for $\frac12\le x\le\frac9{16}$,

@@ -209,7 +209,7 @@ theorem g_QJ_half_nonneg_iff (y : ℝ) (hy : y ∈ Icc (2⁻¹ : ℝ) (5 / 8)) (
     ring
   have hg : g_QJ β c 2⁻¹ y = ((y - 2⁻¹) ^ β⁻¹ + (c * J y) ^ β⁻¹) -
       (c * (2 * J ((2⁻¹ + y) / 2) - 2⁻¹)) ^ β⁻¹ := by
-    rw [g_QJ, ← eqn_3_4 _ hm, Q_half, mul_rpow hc.1.le hJy, mul_rpow hc.1.le hD.le]
+    rw [g_QJ, ← eqn_3_4 _ hm, Q_half_QJ, mul_rpow hc.1.le hJy, mul_rpow hc.1.le hD.le]
   rw [hG, hg]
   exact (rpow_sub_nonneg_iff hβ0
     (add_nonneg (rpow_nonneg (by linarith [hy.1]) _) (rpow_nonneg (mul_nonneg hc.1.le hJy) _))
@@ -236,7 +236,16 @@ G^1_{\frac12}[c_0\cdot b_{\frac12}](x,y)\ge0.$$
 theorem prop_6_11 (x y : ℝ) (hx : x ∈ Icc (3 / 8 : ℝ) 2⁻¹)
     (hy : y ∈ Icc (2⁻¹ : ℝ) (5 / 8)) (hxy : 1 ≤ x + y) (β : ℝ) (hβ : β ∈ Icc β₀ 1) :
     G₁ β (b β₀) x y ≥ 0 ∧ G₁ 2⁻¹ (c₀ • b 2⁻¹) x y ≥ 0 := by
-  sorry
+  have key : ∀ β' c : ℝ, (β', c) = (β₀, 1) ∨ (β', c) = (2⁻¹, c₀) →
+      β' ∈ Icc (2⁻¹ : ℝ) 1 → c ∈ Ioc (0 : ℝ) 1 → G₁ β' (c • b β') x y ≥ 0 := by
+    intro β' c hβc hβ' hc
+    refine (G₁_nonneg_iff_g_QJ_nonneg x y hx hy hxy β' hβ' c hc).2 ?_
+    refine g_QJ_nonneg_of_half β' c hβc (fun y' hy' ↦ ?_) x y hx hy hxy
+    exact (g_QJ_half_nonneg_iff y' hy' β' hβ' c hc).2 (G₁_J_half_nonneg β' c hβc y' hy')
+  have h1 := key β₀ 1 (Or.inl rfl) ⟨by norm_num [β₀], by norm_num [β₀]⟩ ⟨one_pos, le_rfl⟩
+  have h2 := key 2⁻¹ c₀ (Or.inr rfl) ⟨le_rfl, by norm_num⟩ ⟨by norm_num [c₀], by norm_num [c₀]⟩
+  rw [one_smul] at h1
+  exact ⟨(prop_6_11_mono_beta x y hx hy β hβ).trans' h1, h2⟩
 
 end Near_Diagonal
 

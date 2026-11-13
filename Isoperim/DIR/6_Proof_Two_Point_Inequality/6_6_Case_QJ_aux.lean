@@ -69,7 +69,7 @@ theorem sq_add_sq_rpow_half_le {a b β : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) (hβ
   rwa [e a, e b] at h
 
 /-- The value $Q_\beta(\frac12)=\frac12$. -/
-theorem Q_half (β : ℝ) : Q β 2⁻¹ = 2⁻¹ := by
+theorem Q_half_QJ (β : ℝ) : Q β 2⁻¹ = 2⁻¹ := by
   rw [Q_eq_affine]; norm_num
 
 /-- $b_\beta(x)=Q_\beta(x)$ for $x\in[\frac14,\frac12]$ (at $x=\frac14$:
@@ -94,7 +94,7 @@ theorem b_eq_J_of_le (β x : ℝ) (hx : 2⁻¹ ≤ x) : b β x = J x := by
   · subst h
     have h' : ¬ (2⁻¹ : ℝ) ≤ 4⁻¹ := by norm_num
     simp only [h', le_refl, ↓reduceIte]
-    rw [Q_half, (J_half_eq_L_half 0).1]
+    rw [Q_half_QJ, (J_half_eq_L_half 0).1]
 
 /-- $J_{w_0}(\frac12)=\frac12$. -/
 theorem gJw_w₀_half : gJw w₀ 2⁻¹ = 2⁻¹ := by

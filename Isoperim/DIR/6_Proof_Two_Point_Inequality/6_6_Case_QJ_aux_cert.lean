@@ -175,8 +175,8 @@ theorem min_gJw_le {a m b : ℝ} (ha : 1 - w₀ ≤ a) (ham : a ≤ m) (hmb : m 
 /-- $|J_{w_0}'(m)|\le\max(|J_{w_0}'(a)|,|J_{w_0}'(b)|)$ for $1-w_0<a\le m\le b<1$. -/
 theorem abs_DJr_le {a m b : ℝ} (ha : 1 - w₀ < a) (ham : a ≤ m) (hmb : m ≤ b) (hb : b < 1) :
     |DJr m| ≤ max (|DJr a|) (|DJr b|) := by
-  have h1 := DJr_antitoneOn ⟨ha, by linarith⟩ ⟨by linarith, by linarith⟩ ham
-  have h2 := DJr_antitoneOn ⟨by linarith, by linarith⟩ ⟨by linarith, hb⟩ hmb
+  have h1 := DJr_antitoneOn_QJ ⟨ha, by linarith⟩ ⟨by linarith, by linarith⟩ ham
+  have h2 := DJr_antitoneOn_QJ ⟨by linarith, by linarith⟩ ⟨by linarith, hb⟩ hmb
   rw [abs_le]
   constructor
   · have := neg_abs_le (DJr b); have := le_max_right |DJr a| |DJr b|; linarith
@@ -272,7 +272,7 @@ theorem g_QJ_1_lo_le (β c : ℝ) (hβ : β ∈ Icc (2⁻¹ : ℝ) (2⁻¹ + 31 
         have h2 := Q_mono β hβ (a := x) (b := xu) (by linarith) hx2 hxu
         exact max_le (by linarith) hD.le
       have hDlr := rpow_le_rpow (le_max_right _ _) hDl hr.le
-      have hJ' : DJr mu ≤ DJr m := DJr_antitoneOn ⟨by linarith, by linarith⟩
+      have hJ' : DJr mu ≤ DJr m := DJr_antitoneOn_QJ ⟨by linarith, by linarith⟩
         ⟨by linarith, by linarith⟩ (by linarith)
       have hJ0 : 0 ≤ DJr mu := DJr_nonneg ⟨by linarith, hmu⟩
       have := mul_le_mul hDlr hJ' hJ0 hDr0
@@ -373,7 +373,7 @@ theorem denote_powEx (ρ : ℕ → ℝ) {r : ℚ} (hr : r ≠ 0) (a : ℚ) :
   · rw [denote_rp]; rfl
 
 /-- $2\overline J-Q_\beta(\underline x)$ in case `k` (environment of (6.26)). -/
-def dbarEx (k : ℕ) (xl : ℚ) : Ex := .sub (.mul (.const 2) (jbarEx k 0 1 2)) (qEx 5 xl)
+def dbarEx (k : ℕ) (xl : ℚ) : Ex := .sub (.mul (.const 2) (jbarEx k 0 1 2)) (qEx_QJ 5 xl)
 
 /-- The expression of the checker for $\underline{g_{QJ,1,\beta,c}}$ on $[x_l,x_u]\times[y_l,y_u]$
 in case `k`, with $r=\frac1\beta-1$, $C=c^{1/\beta}$; the variables `0`–`5` stand for
@@ -383,10 +383,10 @@ def gQJ1Ex (k : ℕ) (r C xl xu yl _yu : ℚ) : Ex :=
   .sub (.add (powEx r (yl - xu))
       (if k = 0 then
         .mul (.mul (.const C) (rp r (.max (.sub (.mul (.const 2) (.min (.var 0) (.var 1)))
-          (qEx 5 xu)) (.const 0)))) (.var 4)
+          (qEx_QJ 5 xu)) (.const 0)))) (.var 4)
       else
         .neg (.mul (.mul (.const C) (rp r (dbarEx k xl))) (.max (.abs (.var 3)) (.abs (.var 4))))))
-    (.mul (.mul (.const C) (rp r (dbarEx k xl))) (q1Ex 5 xl))
+    (.mul (.mul (.const C) (rp r (dbarEx k xl))) (q1Ex_QJ 5 xl))
 
 /-- $\underline{g_{QJ,1,\beta,c}}-10^{-5}$ as a function of the corners of a rectangle in
 $\mathbb R^2$ (the function $\underline f$ of [DIR], §4.1 for (6.26)). -/
@@ -544,7 +544,7 @@ theorem g_QJ_2_lo_le {xl xu yl yu x y : ℝ} (hxl : 4⁻¹ ≤ xl) (hxu : xu ≤
 case `k`; the variables `0`–`4` stand for $J(\overline y)$, $J_{w_0}(\underline m)$,
 $J_{w_0}(\overline m)$, $J_{w_0}(x_0)$, $2^{1/2}$. -/
 def gQJ2Ex (k : ℕ) (xl xu yl _yu : ℚ) : Ex :=
-  .sub (.add (.rpow (.add (.const ((yl - xu) ^ 2)) (.npow (.var 0) 2)) (1 / 2)) (qEx 4 xl))
+  .sub (.add (.rpow (.add (.const ((yl - xu) ^ 2)) (.npow (.var 0) 2)) (1 / 2)) (qEx_QJ 4 xl))
     (.mul (.const 2) (jbarEx k 1 2 3))
 
 /-- $\underline{g_{QJ,2}}-10^{-7}$ as a function of the corners of a rectangle in

@@ -65,7 +65,7 @@ theorem Q1f_anti (β : ℝ) (hβ : β ∈ Icc (2⁻¹ : ℝ) (2⁻¹ + 31 / 1024
   nlinarith [mul_nonneg (sub_nonneg.2 hab) (neg_nonneg.2 hK)]
 
 /-- Concavity of $Q_\beta$ on $[0,1]$: $Q_\beta(m)\le Q_\beta(a)+Q_\beta'(a)(m-a)$. -/
-theorem Q_le_tangent (β : ℝ) (hβ : β ∈ Icc (2⁻¹ : ℝ) (2⁻¹ + 31 / 1024)) {a m : ℝ}
+theorem Q_le_tangent_QJ (β : ℝ) (hβ : β ∈ Icc (2⁻¹ : ℝ) (2⁻¹ + 31 / 1024)) {a m : ℝ}
     (ha : a ∈ Icc (0 : ℝ) 1) (hm : m ∈ Icc (0 : ℝ) 1) :
     Q β m ≤ Q β a + Q1f β a * (m - a) := by
   obtain ⟨h1, h2⟩ := two_rpow_bounds β hβ
@@ -82,8 +82,8 @@ theorem Q_le_tangent (β : ℝ) (hβ : β ∈ Icc (2⁻¹ : ℝ) (2⁻¹ + 31 / 
 /-- $Q_\beta(m)\ge\min(Q_\beta(a),Q_\beta(b))$ for $0\le a\le m\le b\le1$ (concavity). -/
 theorem min_le_Q (β : ℝ) (hβ : β ∈ Icc (2⁻¹ : ℝ) (2⁻¹ + 31 / 1024)) {a m b : ℝ} (ha : 0 ≤ a)
     (ham : a ≤ m) (hmb : m ≤ b) (hb : b ≤ 1) : min (Q β a) (Q β b) ≤ Q β m := by
-  have h1 := Q_le_tangent β hβ (a := m) (m := a) ⟨by linarith, by linarith⟩ ⟨ha, by linarith⟩
-  have h2 := Q_le_tangent β hβ (a := m) (m := b) ⟨by linarith, by linarith⟩ ⟨by linarith, hb⟩
+  have h1 := Q_le_tangent_QJ β hβ (a := m) (m := a) ⟨by linarith, by linarith⟩ ⟨ha, by linarith⟩
+  have h2 := Q_le_tangent_QJ β hβ (a := m) (m := b) ⟨by linarith, by linarith⟩ ⟨by linarith, hb⟩
   rcases eq_or_lt_of_le (show a ≤ b by linarith) with h | h
   · subst h
     have : m = a := le_antisymm hmb ham
@@ -106,7 +106,7 @@ theorem Q_le_Qbar (β : ℝ) (hβ : β ∈ Icc (2⁻¹ : ℝ) (2⁻¹ + 31 / 102
     (ham : a ≤ m) (hmb : m ≤ b) (hb : b ≤ 1) : Q β m ≤ Qbar β a b := by
   unfold Qbar
   split_ifs with h
-  · have := Q_le_tangent β hβ (a := a) (m := m) ⟨ha, by linarith⟩ ⟨by linarith, by linarith⟩
+  · have := Q_le_tangent_QJ β hβ (a := a) (m := m) ⟨ha, by linarith⟩ ⟨by linarith, by linarith⟩
     have : Q1f β a * (m - a) ≤ max (Q1f β a) 0 * (b - a) := by
       have h3 : Q1f β a * (m - a) ≤ max (Q1f β a) 0 * (m - a) :=
         mul_le_mul_of_nonneg_right (le_max_left _ _) (by linarith)
@@ -114,7 +114,7 @@ theorem Q_le_Qbar (β : ℝ) (hβ : β ∈ Icc (2⁻¹ : ℝ) (2⁻¹ + 31 / 102
         mul_le_mul_of_nonneg_left (by linarith) (le_max_right _ _)
       linarith
     linarith
-  · have := Q_le_tangent β hβ (a := b) (m := m) ⟨by linarith, hb⟩ ⟨by linarith, by linarith⟩
+  · have := Q_le_tangent_QJ β hβ (a := b) (m := m) ⟨by linarith, hb⟩ ⟨by linarith, by linarith⟩
     have : Q1f β b * (m - b) ≤ 0 :=
       mul_nonpos_of_nonneg_of_nonpos (not_lt.1 h) (by linarith)
     linarith
@@ -131,7 +131,7 @@ theorem Q1f_pos (β : ℝ) (hβ : β ∈ Icc (2⁻¹ : ℝ) (2⁻¹ + 31 / 1024)
 /-- $Q_\beta$ is increasing on $[0,\frac12]$. -/
 theorem Q_mono (β : ℝ) (hβ : β ∈ Icc (2⁻¹ : ℝ) (2⁻¹ + 31 / 1024)) {a b : ℝ} (ha : 0 ≤ a)
     (hab : a ≤ b) (hb : b ≤ 2⁻¹) : Q β a ≤ Q β b := by
-  have := Q_le_tangent β hβ (a := b) (m := a) ⟨by linarith, by linarith⟩ ⟨ha, by linarith⟩
+  have := Q_le_tangent_QJ β hβ (a := b) (m := a) ⟨by linarith, by linarith⟩ ⟨ha, by linarith⟩
   have := Q1f_pos β hβ (x := b) ⟨by linarith, hb⟩
   nlinarith
 
@@ -173,7 +173,7 @@ theorem hasDerivAt_gJw_DJr {x : ℝ} (hx : x ∈ Ioo (1 - w₀) 1) :
   rw [DJr_eq]; exact hasDerivAt_gJw w₀_pos hx
 
 /-- `DJr` is decreasing on $(1-w_0,1)$. -/
-theorem DJr_antitoneOn : AntitoneOn DJr (Ioo (1 - w₀) 1) := by
+theorem DJr_antitoneOn_QJ : AntitoneOn DJr (Ioo (1 - w₀) 1) := by
   intro a ha b hb hab
   rw [DJr_eq, DJr_eq]
   have hw := inv_pos.2 w₀_pos
@@ -207,8 +207,8 @@ theorem DJr_sq_lt {y : ℝ} (hy : y ∈ Icc (2⁻¹ : ℝ) (3 / 4)) : DJr y ^ 2 
   have hw := w₀_mem.1
   have hI : ∀ z ∈ Icc (2⁻¹ : ℝ) (3 / 4), z ∈ Ioo (1 - w₀) 1 :=
     fun z hz ↦ ⟨by linarith [hz.1], by linarith [hz.2]⟩
-  have h1 := DJr_antitoneOn (hI _ ⟨le_rfl, by norm_num⟩) (hI y hy) hy.1
-  have h2 := DJr_antitoneOn (hI y hy) (hI _ ⟨by norm_num, le_rfl⟩) hy.2
+  have h1 := DJr_antitoneOn_QJ (hI _ ⟨le_rfl, by norm_num⟩) (hI y hy) hy.1
+  have h2 := DJr_antitoneOn_QJ (hI y hy) (hI _ ⟨by norm_num, le_rfl⟩) hy.2
   have := DJr_half_lt
   have := DJr_three_fourths_gt
   nlinarith
@@ -328,21 +328,21 @@ def q1a (m : ℚ) : ℚ := -2 + 20 * m - 24 * m ^ 2
 def q1b (m : ℚ) : ℚ := 8 / 3 - 16 * m + 16 * m ^ 2
 
 /-- $Q_\beta(m)$ for rational $m$, with $2^\beta$ the variable `i` of the checker. -/
-def qEx (i : ℕ) (m : ℚ) : Ex := .add (.const (qa m)) (.mul (.const (qb m)) (.var i))
+def qEx_QJ (i : ℕ) (m : ℚ) : Ex := .add (.const (qa m)) (.mul (.const (qb m)) (.var i))
 
 /-- $Q'_\beta(m)$ for rational $m$, with $2^\beta$ the variable `i` of the checker. -/
-def q1Ex (i : ℕ) (m : ℚ) : Ex := .add (.const (q1a m)) (.mul (.const (q1b m)) (.var i))
+def q1Ex_QJ (i : ℕ) (m : ℚ) : Ex := .add (.const (q1a m)) (.mul (.const (q1b m)) (.var i))
 
-/-- The real meaning of `qEx`. -/
+/-- The real meaning of `qEx_QJ`. -/
 theorem denote_qEx (ρ : ℕ → ℝ) (i : ℕ) (m : ℚ) (β : ℝ) (h : ρ i = 2 ^ β) :
-    denote ρ (qEx i m) = Q β m := by
-  simp only [qEx, denote, qa, qb, h, Q_eq_affine]
+    denote ρ (qEx_QJ i m) = Q β m := by
+  simp only [qEx_QJ, denote, qa, qb, h, Q_eq_affine]
   push_cast; ring
 
-/-- The real meaning of `q1Ex`. -/
+/-- The real meaning of `q1Ex_QJ`. -/
 theorem denote_q1Ex (ρ : ℕ → ℝ) (i : ℕ) (m : ℚ) (β : ℝ) (h : ρ i = 2 ^ β) :
-    denote ρ (q1Ex i m) = Q1f β m := by
-  simp only [q1Ex, denote, q1a, q1b, h, Q1f_eq_affine]
+    denote ρ (q1Ex_QJ i m) = Q1f β m := by
+  simp only [q1Ex_QJ, denote, q1a, q1b, h, Q1f_eq_affine]
   push_cast; ring
 
 /-- The value $a^r$ of a `PowVal`. -/
@@ -378,14 +378,14 @@ def gQJQEx (xl xu yl yu : ℚ) : Ex :=
   .sub (.add (.const (yl - xu)) (.mul (.var 0) (.var 1)))
     (.max
       (.mul (.sub (.mul (.const 2)
-          (.ite_lt (q1Ex 2 ((xl + yu) / 2)) (.const 0)
-            (.add (qEx 2 ((xl + yl) / 2))
-              (.mul (.max (q1Ex 2 ((xl + yl) / 2)) (.const 0))
+          (.ite_lt (q1Ex_QJ 2 ((xl + yu) / 2)) (.const 0)
+            (.add (qEx_QJ 2 ((xl + yl) / 2))
+              (.mul (.max (q1Ex_QJ 2 ((xl + yl) / 2)) (.const 0))
                 (.const ((xl + yu) / 2 - (xl + yl) / 2))))
-            (qEx 2 ((xl + yu) / 2))))
-        (qEx 2 xl)) (q1Ex 2 ((xl + yl) / 2)))
-      (.mul (.sub (.mul (.const 2) (.min (qEx 2 ((xu + yl) / 2)) (qEx 2 ((xu + yu) / 2))))
-        (qEx 2 xu)) (q1Ex 2 ((xl + yl) / 2))))
+            (qEx_QJ 2 ((xl + yu) / 2))))
+        (qEx_QJ 2 xl)) (q1Ex_QJ 2 ((xl + yl) / 2)))
+      (.mul (.sub (.mul (.const 2) (.min (qEx_QJ 2 ((xu + yl) / 2)) (qEx_QJ 2 ((xu + yu) / 2))))
+        (qEx_QJ 2 xu)) (q1Ex_QJ 2 ((xl + yl) / 2))))
 
 /-- The real meaning of `gQJQEx`. -/
 theorem denote_gQJQEx (β : ℝ) (xl xu yl yu : ℚ) (a b c : Cert) (hc : c.v = 2 ^ β) :

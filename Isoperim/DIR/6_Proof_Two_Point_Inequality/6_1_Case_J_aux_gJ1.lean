@@ -402,7 +402,8 @@ theorem gJ1lo_le {β c xl xu hl hu x h : ℝ} (hβ : β ∈ Ico (2⁻¹ : ℝ) 1
       mul_nonneg (mul_nonneg (by positivity) (by linarith [hβ.2])) (rpow_nonneg hc.le _)
     have hlo : 0 < Jlo (xl + hl) (xu + hu) := Jlo_pos (by linarith) (by linarith)
       (by linarith [hx.1, hx.2]) (by linarith)
-    have h1 := rpow_le_rpow_of_nonpos hlo (Jlo_le (t := x + h) (by linarith) (by linarith [hx.1, hh.1])
+    have h1 := rpow_le_rpow_of_nonpos hlo (Jlo_le (t := x + h) (by linarith)
+      (by linarith [hx.1, hh.1])
       (by linarith [hx.2, hh.2]) (by linarith)) he2
     have h2 := (rpow_mem_of_mem hbi.le hhl hh).2
     rw [mul_assoc _ (J (x + h) ^ _), mul_assoc _ (Jlo _ _ ^ _)]
@@ -689,8 +690,8 @@ theorem gJ1_box (β c : ℚ) (p : Box) (t : GJ1Tab) (h : gJ1Check β c p t = tru
     0 < gJ1_fl β c (Box.toR p).1 (Box.toR p).2 := by
   obtain ⟨xl, xu, hl, hu⟩ := p
   simp only [gJ1Check, Bool.and_eq_true, beq_iff_eq] at h
-  obtain ⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨e0, e1⟩, e2⟩, e3⟩, e4⟩, e5⟩, e6⟩, e7⟩, e8⟩, a10⟩, r10⟩, a11⟩,
-    r11⟩, a12⟩, r12⟩, a13⟩, r13⟩, a14⟩, r14⟩, a15⟩, r15⟩, a16⟩, r16⟩, a17⟩, r17⟩, a18⟩,
+  obtain ⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨e0, e1⟩, e2⟩, e3⟩, e4⟩, e5⟩, e6⟩, e7⟩, e8⟩, a10⟩, r10⟩,
+    a11⟩, r11⟩, a12⟩, r12⟩, a13⟩, r13⟩, a14⟩, r14⟩, a15⟩, r15⟩, a16⟩, r16⟩, a17⟩, r17⟩, a18⟩,
     r18⟩, a19⟩, r19⟩, a20⟩, r20⟩, hk⟩ := h
   have := check_sound P11 hw11 [t.j0.cert, t.d0.cert, t.j2.cert, t.d2.cert, t.j4.cert,
     t.j5.cert, t.d5.cert, t.j7.cert, t.d7.cert, x0Cert, t.q10.cert, t.q11.cert, t.q12.cert,

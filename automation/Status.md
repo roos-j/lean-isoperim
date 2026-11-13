@@ -189,22 +189,22 @@ its state changes; no free-text entries.
 - complete — 2026-11-13 14:29:06 ET — [DIR] 6_Proof_Two_Point_Inequality/6_5_Case_QJQ: `G_QJQ_monotone_or_antitone`
 - complete — 2026-11-13 14:29:06 ET — [DIR] 6_Proof_Two_Point_Inequality/6_5_Case_QJQ: `G_QJQ_ge_min`
 - complete — 2026-11-13 14:29:06 ET — [DIR] 6_Proof_Two_Point_Inequality/6_5_Case_QJQ: `prop_6_9_of_endpoints`
-- not started — 2026-11-12 15:19:51 ET — [DIR] 6_Proof_Two_Point_Inequality/6_5_Case_QJQ: `eqn_6_25`
-- not started — 2026-11-12 15:19:51 ET — [DIR] 6_Proof_Two_Point_Inequality/6_5_Case_QJQ: `G_QJQ_ge_G_QJQ_half`
+- complete — 2026-11-13 15:12:04 ET — [DIR] 6_Proof_Two_Point_Inequality/6_5_Case_QJQ: `eqn_6_25`
+- complete — 2026-11-13 15:12:04 ET — [DIR] 6_Proof_Two_Point_Inequality/6_5_Case_QJQ: `G_QJQ_ge_G_QJQ_half`
 - complete — 2026-11-13 14:29:06 ET — [DIR] 6_Proof_Two_Point_Inequality/6_5_Case_QJQ: `G_QJQ_y_half_eq`
-- not started — 2026-11-12 15:19:51 ET — [DIR] 6_Proof_Two_Point_Inequality/6_5_Case_QJQ: `prop_6_9`
+- complete — 2026-11-13 15:12:04 ET — [DIR] 6_Proof_Two_Point_Inequality/6_5_Case_QJQ: `prop_6_9`
 - complete — 2026-11-13 14:29:06 ET — [DIR] 6_Proof_Two_Point_Inequality/6_6_Case_QJ: `caseQJ_G₁_monotoneOn_beta`
 - complete — 2026-11-13 14:29:06 ET — [DIR] 6_Proof_Two_Point_Inequality/6_6_Case_QJ: `prop_6_11_mono_beta`
 - complete — 2026-11-13 14:29:06 ET — [DIR] 6_Proof_Two_Point_Inequality/6_6_Case_QJ: `two_J_sub_Q_pos`
 - complete — 2026-11-13 14:29:06 ET — [DIR] 6_Proof_Two_Point_Inequality/6_6_Case_QJ: `G₁_nonneg_iff_g_QJ_nonneg`
 - complete — 2026-11-13 14:29:06 ET — [DIR] 6_Proof_Two_Point_Inequality/6_6_Case_QJ: `g_QJ_deriv_x_nonpos_of_pos`
-- not started — 2026-11-12 15:19:51 ET — [DIR] 6_Proof_Two_Point_Inequality/6_6_Case_QJ: `eqn_6_26`
-- not started — 2026-11-12 15:19:51 ET — [DIR] 6_Proof_Two_Point_Inequality/6_6_Case_QJ: `g_QJ_deriv_x_nonpos`
-- not started — 2026-11-12 15:19:51 ET — [DIR] 6_Proof_Two_Point_Inequality/6_6_Case_QJ: `g_QJ_nonneg_of_half`
+- complete — 2026-11-13 15:12:04 ET — [DIR] 6_Proof_Two_Point_Inequality/6_6_Case_QJ: `eqn_6_26`
+- complete — 2026-11-13 15:12:04 ET — [DIR] 6_Proof_Two_Point_Inequality/6_6_Case_QJ: `g_QJ_deriv_x_nonpos`
+- complete — 2026-11-13 15:12:04 ET — [DIR] 6_Proof_Two_Point_Inequality/6_6_Case_QJ: `g_QJ_nonneg_of_half`
 - complete — 2026-11-13 14:29:06 ET — [DIR] 6_Proof_Two_Point_Inequality/6_6_Case_QJ: `g_QJ_half_nonneg_iff`
 - complete — 2026-11-13 14:29:06 ET — [DIR] 6_Proof_Two_Point_Inequality/6_6_Case_QJ: `G₁_J_half_nonneg`
-- not started — 2026-11-12 15:19:51 ET — [DIR] 6_Proof_Two_Point_Inequality/6_6_Case_QJ: `prop_6_11`
-- not started — 2026-11-12 15:19:51 ET — [DIR] 6_Proof_Two_Point_Inequality/6_6_Case_QJ: `prop_6_12`
+- complete — 2026-11-13 15:12:04 ET — [DIR] 6_Proof_Two_Point_Inequality/6_6_Case_QJ: `prop_6_11`
+- complete — 2026-11-13 15:12:04 ET — [DIR] 6_Proof_Two_Point_Inequality/6_6_Case_QJ: `prop_6_12`
 - complete — 2026-11-13 14:29:06 ET — [DIR] 6_Proof_Two_Point_Inequality/6_6_Case_QJ: `prop_6_12_stronger`
 
 ## Task 3 — [DIRX] two-point inequality (with [DIR] Case Q)
