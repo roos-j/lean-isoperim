@@ -35,8 +35,10 @@ Give the agent of Task *k* the following prompt (replace *k*):
 > 3. Proofs longer than 100 lines and any additional lemmas go into the `_aux.lean` file of the
 >    same folder (see `AGENTS.md`). Facts the paper uses but the scaffold does not state
 >    (`automation/forward_reasoning.md` §4) are added there as needed.
+>    Follow the papers' arguments; for the 🚗 claims use the paper's tight lower bound, its
+>    partition (`partitions.py`) and the tools of [DIR] §4 (`AGENTS.md`, rule 8).
 > 4. A proof is complete only if `#print axioms` shows nothing beyond `propext`,
->    `Classical.choice`, `Quot.sound` (plus LeanCert's standard axioms for the 🚗 claims).
+>    `Classical.choice`, `Quot.sound` (no `native_decide`, no other axioms; also for 🚗 claims).
 > 5. Keep `lake build` green; commit small, verified steps following `CLAUDE.md`, and record
 >    progress in `automation/Status.md`.
 >
@@ -49,7 +51,8 @@ Task-specific notes:
   other tasks depend on (see `automation/proof_dependencies.txt`).
 - **Task 2**, **Task 3**, **Task 4**: independent of each other; they depend only on Task 1. Task 3
   starts with [DIR] Case $Q$ (§6.2). Task 4 can start the Kahn–Park reduction immediately (it depends only on definitions).
-  The computer-verified (🚗) claims are proved with LeanCert (verified interval arithmetic).
+  The computer-verified (🚗) claims are proved as in the paper (tight lower bound, partition from
+  `partitions.py`, [DIR] §4 tools, certified numerics of `4_3_Source_Code_aux.lean`).
 - **Task 5** (wrap-up): starts when the declarations it depends on are proved; it only assembles
   results of Tasks 1–4.
 
@@ -179,5 +182,5 @@ Checked from scratch:
 - Facts that the paper proofs use but the scaffold does not state yet (`forward_reasoning.md` §4)
   are added (in `*_aux.lean` files) by the task that first needs them; if two tasks need the
   same missing fact, it belongs to Task 1.
-- Computer-verified (🚗) claims are proved with LeanCert; only LeanCert's standard axioms are
-  allowed for them (see `AGENTS.md`).
+- Computer-verified (🚗) claims are proved following the paper with standard axioms only (see
+  `AGENTS.md`, rules 3 and 8, and the test on branch `cert-test`, `CertTest/REPORT.md`).

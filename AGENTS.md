@@ -15,10 +15,12 @@
    (only exception: rule 7).
 2. **Completion.** A proof is complete only when it no longer depends on `sorry`, directly or
    transitively (check with `#print axioms <name>`).
-3. **Axioms.** Allowed: the standard Lean axioms `propext`, `Classical.choice`, `Quot.sound`; and,
-   only for the computer-assisted (🚗) claims and declarations depending on them, the standard
-   axioms used by LeanCert's certified-computation tactics. No other axioms, no `admit`, no
-   `implemented_by`/`extern` tricks.
+3. **Axioms.** Allowed: only the standard Lean axioms `propext`, `Classical.choice`,
+   `Quot.sound`, for every declaration including the computer-assisted (🚗) claims. No other
+   axioms, no `native_decide` (nor LeanCert's default trust mode `native`, nor anything else that
+   adds `…native_decide.ax_…`/`Lean.ofReduceBool` axioms), no `admit`, no
+   `implemented_by`/`extern` tricks. Computations are checked by the kernel (`norm_num`,
+   `decide`, `decide +kernel`).
 4. **Start condition.** Work on a proof may start only when the proofs of all its dependencies
    are complete. The dependencies of every declaration (statement plus paper-proof
    dependencies) are listed in `automation/proof_dependencies.txt`; Lean's import order and
@@ -35,6 +37,15 @@
    removal in the docstring, in a paragraph of the form "**Unused hypothesis.** The paper
    assumes $\dots$; this is not needed for the claim and is omitted in the Lean statement." This
    is the only permitted change to a scaffold statement.
+8. **Paper arguments.** Proofs follow the papers' arguments. In particular the computer-assisted
+   (🚗) claims are proved the paper's way: its explicit tight lower bound and the monotonicity
+   argument justifying it, the admissible partition from the paper's ancillary `partitions.py`
+   ([DIR] `anc/partitions.py`, [DIRX] `partitions.py`), soundness of partitioning from [DIR] §4.1
+   (`Auto.DIR.fact_4_1_if`, `Auto.DIR.pos_of_partitionN₀`), and one certificate lemma per
+   box whose numerical side conditions are exact rational arithmetic, using the certified
+   numerics of `Isoperim/DIR/4_Computer_Assisted_Proofs/4_3_Source_Code_aux.lean`. Generate the
+   certificate lemmas with a script kept in the repository. LeanCert stays a dependency but is
+   not used for now (it is not a Lean `module` package, so `module` files cannot import it).
 
 This Lean library formalizes the papers [DIR] (arXiv:2407.12674) and [DIRX]
 (arXiv:2602.20462); it is pinned to `leanprover/lean4:v4.35.0` in
