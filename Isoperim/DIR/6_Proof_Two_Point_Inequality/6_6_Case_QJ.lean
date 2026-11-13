@@ -10,6 +10,7 @@ public import Isoperim.DIR.«2_Envelope_Functions».Definitions
 public import Isoperim.DIR.«3_Variants_Bobkov_Inequality».«3_0_Variants_Bobkov_Inequality»
 public import Isoperim.DIR.«5_Auxiliary_Estimates».«5_3_Properties_L_Q»
 public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_1_Case_J»
+public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_6_Case_QJ_aux»
 
 /-!
 # [DIR] §6.6 Case $QJ$: $\frac14\le x\le\frac12\le y\le1$, $x+y\ge1$
@@ -51,20 +52,31 @@ $G^1_\beta[J](x,y)$ is increasing in $\beta$ (for $\beta\in[\frac12,1]$). (The v
 $G^1_\beta[J](x,y)$ only through a $\beta$-independent summand.)
 
 **Discrepancy with the paper.** Paper: $G^1_\beta[J](x,y)$ with $J(x)$ undefined for $x<\frac12$.
-Lean: `Auto.DIR.J` at $x$. -/
+Lean: `Auto.DIR.J` at $x$.
+
+**Unused hypothesis.** The paper assumes $x+y\ge1$; this is not needed for the claim and is
+omitted in the Lean statement. -/
 theorem caseQJ_G₁_monotoneOn_beta (x y : ℝ) (hx : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹)
-    (hy : y ∈ Icc (2⁻¹ : ℝ) 1) (hxy : 1 ≤ x + y) :
+    (hy : y ∈ Icc (2⁻¹ : ℝ) 1) :
     MonotoneOn (fun β ↦ G₁ β J x y) (Icc 2⁻¹ 1) := by
-  sorry
+  exact (G₁_monotoneOn_beta_of_le J x y (by linarith [hx.2, hy.1]) (J_nonneg hy)).mono
+    fun β hβ ↦ show (0 : ℝ) < β from lt_of_lt_of_le (by norm_num) hβ.1
 
 section Near_Diagonal
 /-- [DIR], §6.6.1: by monotonicity in $\beta$, it suffices to consider $\beta=\beta_0$ to show the
 first part of the claim: $G^1_\beta[b_{\beta_0}](x,y)\ge G^1_{\beta_0}[b_{\beta_0}](x,y)$ for
-$\beta\in[\beta_0,1]$. -/
+$\beta\in[\beta_0,1]$.
+
+**Unused hypothesis.** The paper assumes $x+y\ge1$ (triangle I); this is not needed for the
+claim and is omitted in the Lean statement. -/
 theorem prop_6_11_mono_beta (x y : ℝ) (hx : x ∈ Icc (3 / 8 : ℝ) 2⁻¹)
-    (hy : y ∈ Icc (2⁻¹ : ℝ) (5 / 8)) (hxy : 1 ≤ x + y) (β : ℝ) (hβ : β ∈ Icc β₀ 1) :
+    (hy : y ∈ Icc (2⁻¹ : ℝ) (5 / 8)) (β : ℝ) (hβ : β ∈ Icc β₀ 1) :
     G₁ β (b β₀) x y ≥ G₁ β₀ (b β₀) x y := by
-  sorry
+  have hb : 0 ≤ b β₀ y := by
+    rw [b_eq_J_of_le β₀ y hy.1]; exact J_nonneg ⟨hy.1, by linarith [hy.2]⟩
+  have hβ0 : (0 : ℝ) < β₀ := by norm_num [β₀]
+  exact G₁_monotoneOn_beta_of_le (b β₀) x y (by linarith [hx.2, hy.1]) hb hβ0
+    (lt_of_lt_of_le hβ0 hβ.1) hβ.1
 
 /-- The function ([DIR], §6.6.1)
 $$g_{QJ,\beta,c}(x,y)=(y-x)^{\frac1\beta}+c^{\frac1\beta}J(y)^{\frac1\beta}
@@ -81,7 +93,10 @@ $\beta\in[\frac12,1]$). -/
 theorem two_J_sub_Q_pos (x y : ℝ) (hx : x ∈ Icc (3 / 8 : ℝ) 2⁻¹)
     (hy : y ∈ Icc (2⁻¹ : ℝ) (5 / 8)) (hxy : 1 ≤ x + y) (β : ℝ) (hβ : β ∈ Icc (2⁻¹ : ℝ) 1) :
     2 * J ((x + y) / 2) - Q β x > 0 := by
-  sorry
+  have := two_J_sub_Q_pos_aux x y ⟨by linarith [hx.1], hx.2⟩ hy.2 hxy β
+    ⟨by linarith [hβ.1], hβ.2⟩
+  have : (0 : ℝ) < 24⁻¹ := by norm_num
+  linarith
 
 /-- [DIR], §6.6.1: let us consider the equivalent expression $g_{QJ,\beta,c}$:
 $G^1_\beta[c\cdot b_\beta](x,y)\ge0\iff g_{QJ,\beta,c}(x,y)\ge0$ (on triangle I, for
@@ -90,14 +105,29 @@ theorem G₁_nonneg_iff_g_QJ_nonneg (x y : ℝ) (hx : x ∈ Icc (3 / 8 : ℝ) 2�
     (hy : y ∈ Icc (2⁻¹ : ℝ) (5 / 8)) (hxy : 1 ≤ x + y) (β : ℝ) (hβ : β ∈ Icc (2⁻¹ : ℝ) 1)
     (c : ℝ) (hc : c ∈ Ioc (0 : ℝ) 1) :
     G₁ β (c • b β) x y ≥ 0 ↔ g_QJ β c x y ≥ 0 := by
-  sorry
+  have hm : (x + y) / 2 ∈ Icc (2⁻¹ : ℝ) 1 := ⟨by linarith, by linarith [hx.2, hy.2]⟩
+  have hD := two_J_sub_Q_pos x y hx hy hxy β hβ
+  have hJy : 0 ≤ J y := J_nonneg ⟨hy.1, by linarith [hy.2]⟩
+  have hβ0 : 0 < β := by linarith [hβ.1]
+  have hG : G₁ β (c • b β) x y = ((y - x) ^ β⁻¹ + (c * J y) ^ β⁻¹) ^ β -
+      c * (2 * J ((x + y) / 2) - Q β x) := by
+    simp only [G₁, Pi.smul_apply, smul_eq_mul, b_eq_J_of_le β y hy.1,
+      b_eq_Q_of_mem β x ⟨by linarith [hx.1], hx.2⟩, b_eq_J_of_le β _ hm.1]
+    ring
+  have hg : g_QJ β c x y = ((y - x) ^ β⁻¹ + (c * J y) ^ β⁻¹) -
+      (c * (2 * J ((x + y) / 2) - Q β x)) ^ β⁻¹ := by
+    rw [g_QJ, ← eqn_3_4 _ hm, mul_rpow hc.1.le hJy, mul_rpow hc.1.le hD.le]
+  rw [hG, hg]
+  exact rpow_sub_nonneg_iff hβ0
+    (add_nonneg (rpow_nonneg (by linarith [hx.2, hy.1]) _) (rpow_nonneg (mul_nonneg hc.1.le hJy) _))
+    (mul_nonneg hc.1.le hD.le)
 
 /-- [DIR], §6.6.1: it suffices to show that this is positive: if
 $-\beta\partial_xg_{QJ,\beta,c}(x,y)>0$ then $\partial_xg_{QJ,\beta,c}(x,y)\le0$ (for
 $\beta>0$). -/
 theorem g_QJ_deriv_x_nonpos_of_pos (β c x y : ℝ) (hβ : 0 < β)
     (h : -β * deriv (fun x ↦ g_QJ β c x y) x > 0) : deriv (fun x ↦ g_QJ β c x y) x ≤ 0 := by
-  sorry
+  nlinarith
 
 /-- **(6.26)** ([DIR], §6.6.1) (🚗). Running
 $\textsc{Partition}_2(\underline{g_{QJ,1,\beta,c}},[\frac14,\frac12]\times[\frac12,\frac58])$
@@ -134,7 +164,22 @@ $c\in(0,1]$). -/
 theorem g_QJ_half_nonneg_iff (y : ℝ) (hy : y ∈ Icc (2⁻¹ : ℝ) (5 / 8)) (β : ℝ)
     (hβ : β ∈ Icc (2⁻¹ : ℝ) 1) (c : ℝ) (hc : c ∈ Ioc (0 : ℝ) 1) :
     g_QJ β c 2⁻¹ y ≥ 0 ↔ G₁ β (c • J) 2⁻¹ y ≥ 0 := by
-  sorry
+  have hm : (2⁻¹ + y) / 2 ∈ Icc (2⁻¹ : ℝ) 1 := ⟨by linarith [hy.1], by linarith [hy.2]⟩
+  have hJy : 0 ≤ J y := J_nonneg ⟨hy.1, by linarith [hy.2]⟩
+  have hD : 0 < 2 * J ((2⁻¹ + y) / 2) - 2⁻¹ := by
+    have := one_sub_le_J hm; linarith [hy.2]
+  have hβ0 : 0 < β := by linarith [hβ.1]
+  have hG : G₁ β (c • J) 2⁻¹ y = ((y - 2⁻¹) ^ β⁻¹ + (c * J y) ^ β⁻¹) ^ β -
+      c * (2 * J ((2⁻¹ + y) / 2) - 2⁻¹) := by
+    simp only [G₁, Pi.smul_apply, smul_eq_mul, (J_half_eq_L_half 0).1]
+    ring
+  have hg : g_QJ β c 2⁻¹ y = ((y - 2⁻¹) ^ β⁻¹ + (c * J y) ^ β⁻¹) -
+      (c * (2 * J ((2⁻¹ + y) / 2) - 2⁻¹)) ^ β⁻¹ := by
+    rw [g_QJ, ← eqn_3_4 _ hm, Q_half, mul_rpow hc.1.le hJy, mul_rpow hc.1.le hD.le]
+  rw [hG, hg]
+  exact (rpow_sub_nonneg_iff hβ0
+    (add_nonneg (rpow_nonneg (by linarith [hy.1]) _) (rpow_nonneg (mul_nonneg hc.1.le hJy) _))
+    (mul_nonneg hc.1.le hD.le)).symm
 
 /-- [DIR], §6.6.1: $G^1_\beta[cJ](\frac12,y)\ge0$ for $y\in[\frac12,\frac58]$ and
 $(\beta,c)\in\{(\beta_0,1),(\frac12,c_0)\}$, which already follows from Proposition 6.1. -/
@@ -183,7 +228,34 @@ $G^1_{\beta_0}[b_{\beta_0}](x,y)\ge0$ and $G^1_{\frac12}[c_0\cdot b_{\frac12}](x
 theorem prop_6_12_stronger (x y : ℝ) (hx : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹)
     (hy : y ∈ Icc (5 / 8 : ℝ) 1) (hxy : 1 ≤ x + y) (h : g_QJ_2 x y ≥ 0) :
     G₁ β₀ (b β₀) x y ≥ 0 ∧ G₁ 2⁻¹ (c₀ • b 2⁻¹) x y ≥ 0 := by
-  sorry
+  have hm : (x + y) / 2 ∈ Icc (2⁻¹ : ℝ) 1 := ⟨by linarith, by linarith [hx.2, hy.2]⟩
+  have hJy : 0 ≤ J y := J_nonneg ⟨by linarith [hy.1], hy.2⟩
+  have hyx : 0 ≤ y - x := by linarith [hx.2, hy.1]
+  have hy2 : 2⁻¹ ≤ y := by linarith [hy.1]
+  have hx0 : x ∈ Icc (0 : ℝ) 2⁻¹ := ⟨by linarith [hx.1], hx.2⟩
+  have hg : g_QJ_2 x y = ((y - x) ^ 2 + J y ^ 2) ^ (2⁻¹ : ℝ) + Q 2⁻¹ x - 2 * J ((x + y) / 2) := by
+    rw [g_QJ_2, ← eqn_3_4 _ hm]
+  rw [hg] at h
+  constructor
+  · simp only [G₁, b_eq_J_of_le β₀ y hy2, b_eq_Q_of_mem β₀ x hx, b_eq_J_of_le β₀ _ hm.1]
+    have h1 := sq_add_sq_rpow_half_le hyx hJy (show 2⁻¹ ≤ β₀ by norm_num [β₀])
+    have h2 := Q_half_le_Q β₀ (by norm_num [β₀]) x hx0
+    linarith
+  · simp only [G₁, Pi.smul_apply, smul_eq_mul, b_eq_J_of_le 2⁻¹ y hy2, b_eq_Q_of_mem 2⁻¹ x hx,
+      b_eq_J_of_le 2⁻¹ _ hm.1]
+    have hc : c₀ ∈ Icc (0 : ℝ) 1 := by norm_num [c₀]
+    have e : ((2⁻¹ : ℝ))⁻¹ = ((2 : ℕ) : ℝ) := by norm_num
+    have e2 : ∀ z : ℝ, z ^ (2⁻¹ : ℝ) = √z := fun z ↦ by rw [sqrt_eq_rpow]; norm_num
+    rw [e, rpow_natCast, rpow_natCast]
+    have key : c₀ * ((y - x) ^ 2 + J y ^ 2) ^ (2⁻¹ : ℝ) ≤
+        ((y - x) ^ 2 + (c₀ * J y) ^ 2) ^ (2⁻¹ : ℝ) := by
+      rw [e2, e2]
+      have hc2 : c₀ ^ 2 ≤ 1 := by nlinarith [hc.1, hc.2]
+      calc c₀ * √((y - x) ^ 2 + J y ^ 2) = √(c₀ ^ 2 * ((y - x) ^ 2 + J y ^ 2)) := by
+            rw [sqrt_mul (sq_nonneg _), sqrt_sq hc.1]
+        _ ≤ √((y - x) ^ 2 + (c₀ * J y) ^ 2) :=
+            sqrt_le_sqrt (by nlinarith [mul_le_mul_of_nonneg_right hc2 (sq_nonneg (y - x))])
+    nlinarith [mul_nonneg hc.1 h]
 
 end Far_From_Diagonal
 
