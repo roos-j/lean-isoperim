@@ -267,8 +267,8 @@ $0<\beta\le1$ (so $\frac1\beta\ge1$; $y-x$ may be $0$ or negative), $\frac{x+y}2
 $J_{w_0}$ is smooth) and $2J_{w_0}(\frac{x+y}2)-Q_\beta(x)>0$,
 $$\partial_x\Big[(y-x)^{\frac1\beta}+c^{\frac1\beta}J(y)^{\frac1\beta}
 -c^{\frac1\beta}(2J_{w_0}(\tfrac{x+y}2)-Q_\beta(x))^{\frac1\beta}\Big]
-=-\tfrac1\beta\Big[(y-x)^{\frac1\beta-1}+c^{\frac1\beta}(2J_{w_0}(\tfrac{x+y}2)-Q_\beta(x))^{\frac1\beta-1}
-(J_{w_0}'(\tfrac{x+y}2)-Q_\beta'(x))\Big].$$ -/
+=-\tfrac1\beta\Big[(y-x)^{\frac1\beta-1}
++c^{\frac1\beta}(2J_{w_0}(\tfrac{x+y}2)-Q_\beta(x))^{\frac1\beta-1}(J_{w_0}'(\tfrac{x+y}2)-Q_\beta'(x))\Big].$$ -/
 theorem hasDerivAt_g_QJ_expr (β c x y : ℝ) (hβ : 0 < β) (hβ1 : β ≤ 1)
     (hm : (x + y) / 2 ∈ Ioo (1 - w₀) 1) (hD : 0 < 2 * Jw w₀ ((x + y) / 2) - Q β x) :
     HasDerivAt (fun x ↦ (y - x) ^ β⁻¹ + c ^ β⁻¹ * J y ^ β⁻¹ -
