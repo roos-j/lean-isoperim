@@ -222,7 +222,18 @@ theorem prop_6_6_reduction (β : ℝ) (hβ : β ∈ Icc (2⁻¹ : ℝ) 1)
     (h₃ : ∀ y ∈ Icc (3 / 4 : ℝ) 1, G_LJQ β (1 - y) y ≥ 0) (x y : ℝ)
     (hx : x ∈ Icc (0 : ℝ) 4⁻¹) (hy : y ∈ Icc (2⁻¹ : ℝ) 1) (hxy : x + y ≤ 1)
     (h : x ≤ 16⁻¹ ∨ y ≥ 3 / 4) : G_LJQ β x y ≥ 0 := by
-  sorry
+  have hy0 : y ∈ Icc (0 : ℝ) 1 := ⟨by linarith [hy.1], hy.2⟩
+  have hc := (lemma_6_7 β hβ y hy0).concaveOn
+  have h0 : (0 : ℝ) ∈ Icc (0 : ℝ) 4⁻¹ := ⟨le_rfl, by norm_num⟩
+  have hup : 3 / 4 ≤ y → G_LJQ β x y ≥ 0 := fun h34 ↦
+    le_trans (le_min (h₁ y hy) (h₃ y ⟨h34, hy.2⟩))
+      (hc.min_le_of_mem_Icc h0 ⟨by linarith [hy.2], by linarith⟩ ⟨hx.1, by linarith⟩)
+  rcases h with h | h
+  · by_cases h34 : 3 / 4 ≤ y
+    · exact hup h34
+    · exact le_trans (le_min (h₁ y hy) (h₂ y ⟨hy.1, (not_le.1 h34).le⟩))
+        (hc.min_le_of_mem_Icc h0 ⟨by norm_num, by norm_num⟩ ⟨hx.1, h⟩)
+  · exact hup h
 
 section Proof_Claim_1
 /-- The function $f_\beta(y)=G_{LJQ,\beta}(0,y)$ ([DIR], §6.3.2, proof of (1); denoted $f_\beta$
@@ -232,30 +243,49 @@ noncomputable def f_LJQ_1 (β y : ℝ) : ℝ := G_LJQ β 0 y
 /-- [DIR], §6.3.2, proof of (1):
 $f_\beta(y)=G_{LJQ,\beta}(0,y)=y+(2^\beta-1)J(y)-2Q_\beta(\frac y2)$. -/
 theorem f_LJQ_1_eq (β y : ℝ) : f_LJQ_1 β y = y + (2 ^ β - 1) * J y - 2 * Q β (y / 2) := by
-  sorry
+  unfold f_LJQ_1 G_LJQ
+  rw [L_zero, zero_add]; ring
 
 /-- [DIR], §6.3.2, proof of (1): $\partial_\beta f_\beta(y)=2^\beta\widetilde f(y)$ for some
 function $\widetilde f$. -/
 theorem f_LJQ_1_deriv_β : ∃ fTilde : ℝ → ℝ, ∀ β y : ℝ,
     deriv (fun β ↦ f_LJQ_1 β y) β = 2 ^ β * fTilde y := by
-  sorry
+  refine ⟨fun y ↦ fJQq y * log 2, fun β y ↦ ?_⟩
+  have e : (fun β ↦ f_LJQ_1 β y) = fun β' ↦ fJQp y + fJQq y * (2 : ℝ) ^ β' :=
+    funext fun β' ↦ by rw [f_LJQ_1_eq]; exact fJQ_eq_affine β' y
+  rw [e, (hasDerivAt_two_rpow_affine _ _ β).deriv]; ring
 
 /-- [DIR], §6.3.2, proof of (1): for fixed $y$, $f_\beta(y)$ is either monotone increasing or
 monotone decreasing in $\beta$. -/
 theorem f_LJQ_1_monotone_or_antitone (y : ℝ) :
     Monotone (fun β ↦ f_LJQ_1 β y) ∨ Antitone (fun β ↦ f_LJQ_1 β y) := by
-  sorry
+  obtain ⟨fT, hfT⟩ := f_LJQ_1_deriv_β
+  have e : (fun β ↦ f_LJQ_1 β y) = fun β' ↦ fJQp y + fJQq y * (2 : ℝ) ^ β' :=
+    funext fun β' ↦ by rw [f_LJQ_1_eq]; exact fJQ_eq_affine β' y
+  have hd : Differentiable ℝ (fun β ↦ f_LJQ_1 β y) := by
+    intro β; rw [e]; exact (hasDerivAt_two_rpow_affine _ _ β).differentiableAt
+  rcases le_total 0 (fT y) with h | h
+  · left
+    exact monotone_of_deriv_nonneg hd fun β ↦ by
+      rw [hfT β y]; exact mul_nonneg (rpow_pos_of_pos two_pos β).le h
+  · right
+    exact antitone_of_deriv_nonpos hd fun β ↦ by
+      rw [hfT β y]; exact mul_nonpos_of_nonneg_of_nonpos (rpow_pos_of_pos two_pos β).le h
 
 /-- [DIR], §6.3.2, proof of (1): for all $\beta\in[\frac12,1]$,
 $f_\beta(y)\ge\min(f_{\frac12}(y),f_1(y))$. -/
 theorem f_LJQ_1_ge_min (β : ℝ) (hβ : β ∈ Icc (2⁻¹ : ℝ) 1) (y : ℝ) :
     f_LJQ_1 β y ≥ min (f_LJQ_1 2⁻¹ y) (f_LJQ_1 1 y) := by
-  sorry
+  rcases f_LJQ_1_monotone_or_antitone y with h | h
+  · exact (min_le_left _ _).trans (h hβ.1)
+  · exact (min_le_right _ _).trans (h hβ.2)
 
 /-- [DIR], §6.3.2, proof of (1), case $\beta=1$ ("very similar", details omitted in the paper):
 $f_1(y)\ge0$ for $y\in[\frac12,1]$. -/
 theorem f_LJQ_1_one_nonneg (y : ℝ) (hy : y ∈ Icc (2⁻¹ : ℝ) 1) : f_LJQ_1 1 y ≥ 0 := by
-  sorry
+  have e : f_LJQ_1 1 y = fJQ 1 1 y := by rw [f_LJQ_1_eq, fJQ]; norm_num
+  rw [e]
+  exact fJQ_one_nonneg hy
 
 /-- [DIR], §6.3.2, proof of (1): using $JJ''=-2$, for $y\in(\frac12,1)$,
 $f_{\frac12}'(y)=1+(\sqrt2-1)J'(y)-Q_{\frac12}'(\frac y2)$ and
@@ -264,14 +294,23 @@ theorem derivs_f_LJQ_1_half (y : ℝ) (hy : y ∈ Ioo (2⁻¹ : ℝ) 1) :
     deriv (f_LJQ_1 2⁻¹) y = 1 + (√2 - 1) * deriv J y - deriv (Q 2⁻¹) (y / 2) ∧
       deriv (deriv (f_LJQ_1 2⁻¹)) y =
         -2 * (√2 - 1) * J y ^ (-1 : ℤ) - 2⁻¹ * deriv (deriv (Q 2⁻¹)) (y / 2) := by
-  sorry
+  have hf : f_LJQ_1 2⁻¹ = fJQ (√2 - 1) 2⁻¹ :=
+    funext fun y ↦ by rw [f_LJQ_1_eq, two_rpow_half]; rfl
+  obtain ⟨h1, h2, -⟩ := derivs_fJQ (√2 - 1) 2⁻¹ hy
+  rw [hf, h1, h2, fJQ1, fJQ2, deriv2_Q_eq, deriv_Q_eq, zpow_neg_one]
+  constructor <;> ring
 
 /-- [DIR], §6.3.2, proof of (1): by (6.1), $f_{\frac12}^{(4)}<0$ on $(\frac12,1)$, so
 $f_{\frac12}''$ is strictly concave on $(\frac12,1)$. -/
 theorem f_LJQ_1_half_deriv4 :
     (∀ y ∈ Ioo (2⁻¹ : ℝ) 1, iteratedDeriv 4 (f_LJQ_1 2⁻¹) y < 0) ∧
       StrictConcaveOn ℝ (Ioo 2⁻¹ 1) (deriv (deriv (f_LJQ_1 2⁻¹))) := by
-  sorry
+  have hf : f_LJQ_1 2⁻¹ = fJQ (√2 - 1) 2⁻¹ :=
+    funext fun y ↦ by rw [f_LJQ_1_eq, two_rpow_half]; rfl
+  have hc : (0 : ℝ) < √2 - 1 := by linarith [sqrt_two_mem.1]
+  rw [hf]
+  exact ⟨fun y hy ↦ by rw [iteratedDeriv_four_fJQ _ _ hy]; exact fJQ4_neg hc hy,
+    strictConcaveOn_deriv2_fJQ hc _⟩
 
 /-- [DIR], §6.3.2, proof of (1): $f_{\frac12}''(\frac12)=0$ (as a one-sided limit,
 $f_{\frac12}''(y)\to0$ as $y\to\frac12^+$).
@@ -280,19 +319,31 @@ $f_{\frac12}''(y)\to0$ as $y\to\frac12^+$).
 $y\to\frac12^+$. -/
 theorem f_LJQ_1_half_deriv2_half :
     Tendsto (deriv (deriv (f_LJQ_1 2⁻¹))) (𝓝[>] 2⁻¹) (𝓝 0) := by
-  sorry
+  have hf : f_LJQ_1 2⁻¹ = fJQ (√2 - 1) 2⁻¹ :=
+    funext fun y ↦ by rw [f_LJQ_1_eq, two_rpow_half]; rfl
+  have h := tendsto_fJQ2_half (√2 - 1) 2⁻¹
+  rw [Q2f_eq_affine, two_rpow_half, show (√2 - 1) * (-2 * (2⁻¹ : ℝ)⁻¹) -
+    2⁻¹ * (20 - 48 * (2⁻¹ / 2) + (-16 + 32 * (2⁻¹ / 2)) * √2) = 0 by ring] at h
+  rw [hf]
+  refine h.congr' ?_
+  filter_upwards [Ioo_mem_nhdsGT (by norm_num : (2⁻¹ : ℝ) < 1)] with y hy
+  exact (derivs_fJQ _ _ hy).2.1.symm
 
 /-- [DIR], §6.3.2, proof of (1): $f_{\frac12}''$ has at most one zero on $(\frac12,1)$. -/
 theorem f_LJQ_1_half_deriv2_zero_subsingleton :
-    {y ∈ Ioo (2⁻¹ : ℝ) 1 | deriv (deriv (f_LJQ_1 2⁻¹)) y = 0}.Subsingleton := by
-  sorry
+    {y ∈ Ioo (2⁻¹ : ℝ) 1 | deriv (deriv (f_LJQ_1 2⁻¹)) y = 0}.Subsingleton :=
+  zero_subsingleton_of_strictConcaveOn f_LJQ_1_half_deriv4.2 f_LJQ_1_half_deriv2_half
 
 /-- **(6.15)** ([DIR], §6.3.2, proof of (1)).
 $f_{\frac12}''(\frac9{16})>0.05$ and $f_{\frac12}''(\frac45)<-0.3$. -/
 theorem eqn_6_15 :
     deriv (deriv (f_LJQ_1 2⁻¹)) (9 / 16) > 0.05 ∧
       deriv (deriv (f_LJQ_1 2⁻¹)) (4 / 5) < -0.3 := by
-  sorry
+  have hf : f_LJQ_1 2⁻¹ = fJQ (√2 - 1) 2⁻¹ :=
+    funext fun y ↦ by rw [f_LJQ_1_eq, two_rpow_half]; rfl
+  rw [hf, (derivs_fJQ _ _ (⟨by norm_num, by norm_num⟩ : (9 / 16 : ℝ) ∈ Ioo 2⁻¹ 1)).2.1,
+    (derivs_fJQ _ _ (⟨by norm_num, by norm_num⟩ : (4 / 5 : ℝ) ∈ Ioo 2⁻¹ 1)).2.1]
+  exact ⟨fJQ2_nine_sixteenths, fJQ2_four_fifths⟩
 
 /-- [DIR], §6.3.2, proof of (1): $f_{\frac12}''$ has exactly one zero $y_0$ in $(\frac12,1)$,
 where $f_{\frac12}'$ achieves its unique maximum (on $(\frac12,1)$); $f_{\frac12}'$ is increasing
@@ -303,13 +354,32 @@ theorem f_LJQ_1_half_y₀ :
       (∀ y ∈ Ioo (2⁻¹ : ℝ) 1, y ≠ y₀ → deriv (f_LJQ_1 2⁻¹) y < deriv (f_LJQ_1 2⁻¹) y₀) ∧
       MonotoneOn (deriv (f_LJQ_1 2⁻¹)) (Ioc 2⁻¹ y₀) ∧
       AntitoneOn (deriv (f_LJQ_1 2⁻¹)) (Ico y₀ 1) := by
-  sorry
+  have hf : f_LJQ_1 2⁻¹ = fJQ (√2 - 1) 2⁻¹ :=
+    funext fun y ↦ by rw [f_LJQ_1_eq, two_rpow_half]; rfl
+  have hF : ∀ z ∈ Ioo (2⁻¹ : ℝ) 1,
+      HasDerivAt (deriv (f_LJQ_1 2⁻¹)) (deriv (deriv (f_LJQ_1 2⁻¹)) z) z := by
+    intro z hz
+    rw [hf]
+    exact (hasDerivAt_derivs_fJQ _ _ hz).1.congr_deriv (derivs_fJQ _ _ hz).2.1.symm
+  have hGc : ContinuousOn (deriv (deriv (f_LJQ_1 2⁻¹))) (Ioo 2⁻¹ 1) := by
+    intro z hz
+    rw [hf]
+    exact (hasDerivAt_derivs_fJQ _ _ hz).2.1.continuousAt.continuousWithinAt
+  obtain ⟨y₀, hy₀, h0, huniq, hmax, hmono, hanti⟩ := unimodal_of_strictConcaveOn_deriv
+    (p := 9 / 16) (q := 4 / 5) hF hGc f_LJQ_1_half_deriv4.2 f_LJQ_1_half_deriv2_half
+    (by norm_num) (by norm_num) (by norm_num) (by linarith [eqn_6_15.1])
+    (by linarith [eqn_6_15.2])
+  exact ⟨y₀, hy₀, h0, huniq, hmax, hmono.monotoneOn, hanti.antitoneOn⟩
 
 /-- **(6.16)** ([DIR], §6.3.2, proof of (1)).
 $f_{\frac12}'(\frac9{16})>0.05$ and $f_{\frac12}'(\frac{15}{16})<-0.1$. -/
 theorem eqn_6_16 :
     deriv (f_LJQ_1 2⁻¹) (9 / 16) > 0.05 ∧ deriv (f_LJQ_1 2⁻¹) (15 / 16) < -0.1 := by
-  sorry
+  have hf : f_LJQ_1 2⁻¹ = fJQ (√2 - 1) 2⁻¹ :=
+    funext fun y ↦ by rw [f_LJQ_1_eq, two_rpow_half]; rfl
+  rw [hf, (derivs_fJQ _ _ (⟨by norm_num, by norm_num⟩ : (9 / 16 : ℝ) ∈ Ioo 2⁻¹ 1)).1,
+    (derivs_fJQ _ _ (⟨by norm_num, by norm_num⟩ : (15 / 16 : ℝ) ∈ Ioo 2⁻¹ 1)).1]
+  exact ⟨fJQ1_nine_sixteenths, fJQ1_fifteen_sixteenths⟩
 
 /-- [DIR], §6.3.2, proof of (1) (not stated in the paper, but needed by the next step, see
 `Auto.DIR.f_LJQ_1_half_y₁`): the one-sided derivative $f_{\frac12}'(\frac12^+)
@@ -317,7 +387,13 @@ theorem eqn_6_16 :
 $>0.05$ (numerically $\approx0.0571$). -/
 theorem f_LJQ_1_half_deriv_half :
     ∃ d > (0.05 : ℝ), Tendsto (deriv (f_LJQ_1 2⁻¹)) (𝓝[>] 2⁻¹) (𝓝 d) := by
-  sorry
+  have hf : f_LJQ_1 2⁻¹ = fJQ (√2 - 1) 2⁻¹ :=
+    funext fun y ↦ by rw [f_LJQ_1_eq, two_rpow_half]; rfl
+  refine ⟨_, fJQ1_half_lim_gt, ?_⟩
+  rw [hf]
+  refine (tendsto_fJQ1_half (√2 - 1) 2⁻¹).congr' ?_
+  filter_upwards [Ioo_mem_nhdsGT (by norm_num : (2⁻¹ : ℝ) < 1)] with y hy
+  exact (derivs_fJQ _ _ hy).1.symm
 
 /-- [DIR], §6.3.2, proof of (1): $f_{\frac12}'$ has exactly one zero $y_1$ on $(\frac12,1)$;
 therefore $f_{\frac12}$ is increasing on $[\frac12,y_1]$ and decreasing on $[y_1,1]$.
@@ -330,17 +406,47 @@ theorem f_LJQ_1_half_y₁ :
       (∀ y ∈ Ioo (2⁻¹ : ℝ) 1, deriv (f_LJQ_1 2⁻¹) y = 0 → y = y₁) ∧
       MonotoneOn (f_LJQ_1 2⁻¹) (Icc 2⁻¹ y₁) ∧
       AntitoneOn (f_LJQ_1 2⁻¹) (Icc y₁ 1) := by
-  sorry
+  have hf : f_LJQ_1 2⁻¹ = fJQ (√2 - 1) 2⁻¹ :=
+    funext fun y ↦ by rw [f_LJQ_1_eq, two_rpow_half]; rfl
+  have hF : ∀ z ∈ Ioo (2⁻¹ : ℝ) 1,
+      HasDerivAt (deriv (f_LJQ_1 2⁻¹)) (deriv (deriv (f_LJQ_1 2⁻¹)) z) z := by
+    intro z hz
+    rw [hf]
+    exact (hasDerivAt_derivs_fJQ _ _ hz).1.congr_deriv (derivs_fJQ _ _ hz).2.1.symm
+  obtain ⟨y₀, hy₀, h0, -, -, hmono, -⟩ := f_LJQ_1_half_y₀
+  obtain ⟨d, hd, hlim⟩ := f_LJQ_1_half_deriv_half
+  have hfc : ContinuousOn (f_LJQ_1 2⁻¹) (Icc 2⁻¹ 1) := by rw [hf]; exact continuousOn_fJQ _ _
+  have hf1 : ∀ z ∈ Ioo (2⁻¹ : ℝ) 1, HasDerivAt (f_LJQ_1 2⁻¹) (deriv (f_LJQ_1 2⁻¹) z) z := by
+    intro z hz
+    rw [hf]
+    exact (hasDerivAt_fJQ _ _ hz).congr_deriv (derivs_fJQ _ _ hz).1.symm
+  have hneg := neg_of_strictConcaveOn_of_tendsto f_LJQ_1_half_deriv4.2
+    f_LJQ_1_half_deriv2_half hy₀.1 h0.le
+  exact unique_zero_of_unimodal (r := 15 / 16) hfc hf1 hF hy₀ hmono hneg (by linarith) hlim
+    ⟨by norm_num, by norm_num⟩ (by linarith [eqn_6_16.2])
 
 /-- [DIR], §6.3.2, proof of (1): $f_{\frac12}(1)=f_{\frac12}(\frac12)=0$. -/
 theorem f_LJQ_1_half_endpoints :
     f_LJQ_1 2⁻¹ 1 = 0 ∧ f_LJQ_1 2⁻¹ 2⁻¹ = 0 := by
-  sorry
+  have hf : f_LJQ_1 2⁻¹ = fJQ (√2 - 1) 2⁻¹ :=
+    funext fun y ↦ by rw [f_LJQ_1_eq, two_rpow_half]; rfl
+  rw [hf]
+  constructor
+  · rw [fJQ, J_one, show (1 : ℝ) / 2 = 2⁻¹ by norm_num, Q_half]; ring
+  · rw [fJQ, J_half, Q_eq_affine, two_rpow_half]; ring
 
 /-- [DIR], §6.3.2, proof of (1): $f_{\frac12}(y)\ge0$ for $y\in[\frac12,1]$. -/
 theorem f_LJQ_1_half_nonneg (y : ℝ) (hy : y ∈ Icc (2⁻¹ : ℝ) 1) :
     f_LJQ_1 2⁻¹ y ≥ 0 := by
-  sorry
+  obtain ⟨y₁, hy₁, -, -, hmono, hanti⟩ := f_LJQ_1_half_y₁
+  obtain ⟨h1, h2⟩ := f_LJQ_1_half_endpoints
+  rcases le_total y y₁ with h | h
+  · have := hmono ⟨le_rfl, hy₁.1.le⟩ ⟨hy.1, h⟩ hy.1
+    rw [h2] at this
+    exact this
+  · have := hanti ⟨h, hy.2⟩ ⟨hy₁.2.le, le_rfl⟩ hy.2
+    rw [h1] at this
+    exact this
 
 end Proof_Claim_1
 
@@ -348,7 +454,9 @@ end Proof_Claim_1
 $\beta\in[\frac12,1]$). -/
 theorem caseLJQ_claim_1 (β : ℝ) (hβ : β ∈ Icc (2⁻¹ : ℝ) 1) (y : ℝ)
     (hy : y ∈ Icc (2⁻¹ : ℝ) 1) : G_LJQ β 0 y ≥ 0 := by
-  sorry
+  show f_LJQ_1 β y ≥ 0
+  exact le_trans (le_min (f_LJQ_1_half_nonneg y hy) (f_LJQ_1_one_nonneg y hy))
+    (f_LJQ_1_ge_min β hβ y)
 
 section Proof_Claim_2
 /-- **(6.17)** ([DIR], §6.3.2, proof of (2)) (🚗). For all $y\in[\frac12,\frac34]$ and all
@@ -371,17 +479,32 @@ $f_\beta$ in the paper). -/
 noncomputable def f_LJQ_3 (β y : ℝ) : ℝ := G_LJQ β (1 - y) y
 
 /-- [DIR], §6.3.2, proof of (3):
-$f_\beta(y)=G_{LJQ,\beta}(1-y,y)=2y-1+(2^\beta-1)J(y)+L_\beta(1-y)-1$ (for
-$\beta\in[\frac12,1]$). -/
-theorem f_LJQ_3_eq (β : ℝ) (hβ : β ∈ Icc (2⁻¹ : ℝ) 1) (y : ℝ) :
+$f_\beta(y)=G_{LJQ,\beta}(1-y,y)=2y-1+(2^\beta-1)J(y)+L_\beta(1-y)-1$.
+
+**Unused hypothesis.** The paper assumes $\beta\in[\frac12,1]$; this is not needed for the claim
+and is omitted in the Lean statement ($Q_\beta(\frac12)=\frac12$ for every $\beta$). -/
+theorem f_LJQ_3_eq (β y : ℝ) :
     f_LJQ_3 β y = 2 * y - 1 + (2 ^ β - 1) * J y + L β (1 - y) - 1 := by
-  sorry
+  unfold f_LJQ_3 G_LJQ
+  rw [show (1 - y + y) / 2 = (2⁻¹ : ℝ) by ring, Q_half]; ring
 
 /-- [DIR], §6.3.2, proof of (3): $f_\beta(y)$ is increasing in $\beta\in[\frac12,1]$ (for
 $y\in[\frac34,1]$), so it suffices to consider $\beta=\frac12$. -/
 theorem f_LJQ_3_monotoneOn_β (y : ℝ) (hy : y ∈ Icc (3 / 4 : ℝ) 1) :
     MonotoneOn (fun β ↦ f_LJQ_3 β y) (Icc 2⁻¹ 1) := by
-  sorry
+  intro a _ b _ hab
+  simp only [f_LJQ_3_eq]
+  have hJ : 0 ≤ J y := J_nonneg ⟨by linarith [hy.1], hy.2⟩
+  have h2 : (2 : ℝ) ^ a ≤ 2 ^ b := rpow_le_rpow_of_exponent_le one_le_two hab
+  have hL : L a (1 - y) ≤ L b (1 - y) := by
+    unfold L
+    rcases eq_or_lt_of_le (sub_nonneg.2 hy.2) with h0 | hpos
+    · rw [← h0]; simp
+    · refine mul_le_mul_of_nonneg_left (rpow_le_rpow_of_exponent_le ?_ hab) hpos.le
+      rw [le_logb_iff_rpow_le one_lt_two (inv_pos.2 hpos), rpow_one,
+        le_inv_comm₀ two_pos hpos]
+      linarith [hy.1]
+  nlinarith [mul_le_mul_of_nonneg_right h2 hJ]
 
 /-- [DIR], §6.3.2, proof of (3): for $y\in(\frac34,1)$,
 $f_{\frac12}''(y)=(\sqrt2-1)J''(y)+L_{\frac12}''(1-y)\le0$ (recall $J''\le0$ and Lemma 5.6). -/
@@ -389,19 +512,41 @@ theorem f_LJQ_3_half_deriv2 (y : ℝ) (hy : y ∈ Ioo (3 / 4 : ℝ) 1) :
     deriv (deriv (f_LJQ_3 2⁻¹)) y =
         (√2 - 1) * deriv (deriv J) y + deriv (deriv (L 2⁻¹)) (1 - y) ∧
       (√2 - 1) * deriv (deriv J) y + deriv (deriv (L 2⁻¹)) (1 - y) ≤ 0 := by
-  sorry
+  have hf : f_LJQ_3 2⁻¹ = fJL (√2 - 1) 2⁻¹ :=
+    funext fun y ↦ by rw [f_LJQ_3_eq, two_rpow_half]; rfl
+  have hy' : y ∈ Ioo (2⁻¹ : ℝ) 1 := ⟨by linarith [hy.1], hy.2⟩
+  have h1y : 1 - y ∈ Ioo (0 : ℝ) 1 := ⟨by linarith [hy.2], by linarith [hy.1]⟩
+  rw [hf, (derivs_fJL _ _ hy').2.1, fJL2, deriv2_J hy', deriv2_L_eq h1y]
+  exact ⟨rfl, fJL2_half_nonpos (by linarith [sqrt_two_mem.1]) hy'⟩
 
 /-- [DIR], §6.3.2, proof of (3): $f_{\frac12}$ is concave on $[\frac34,1]$. -/
 theorem f_LJQ_3_half_concaveOn : ConcaveOn ℝ (Icc (3 / 4) 1) (f_LJQ_3 2⁻¹) := by
-  sorry
+  have hf : f_LJQ_3 2⁻¹ = fJL (√2 - 1) 2⁻¹ :=
+    funext fun y ↦ by rw [f_LJQ_3_eq, two_rpow_half]; rfl
+  have hsub : ∀ z ∈ interior (Icc (3 / 4 : ℝ) 1), z ∈ Ioo (2⁻¹ : ℝ) 1 := fun z hz ↦ by
+    rw [interior_Icc] at hz; exact ⟨by linarith [hz.1], hz.2⟩
+  refine concaveOn_of_deriv2_nonpos (convex_Icc _ _) ?_ (fun z hz ↦ ?_) (fun z hz ↦ ?_)
+    (fun z hz ↦ ?_)
+  · rw [hf]
+    exact (continuousOn_fJL _ (by norm_num) (by norm_num)).mono
+      (Icc_subset_Icc (by norm_num) le_rfl)
+  · rw [hf]; exact (hasDerivAt_fJL _ _ (hsub z hz)).differentiableAt.differentiableWithinAt
+  · rw [hf]
+    exact (derivs_fJL _ _ (hsub z hz)).2.2.differentiableAt.differentiableWithinAt
+  · rw [interior_Icc] at hz
+    have h := f_LJQ_3_half_deriv2 z hz
+    show deriv (deriv (f_LJQ_3 2⁻¹)) z ≤ 0
+    rw [h.1]; exact h.2
 
 /-- [DIR], §6.3.2, proof of (3): $f_{\frac12}(1)=0$. -/
 theorem f_LJQ_3_half_one : f_LJQ_3 2⁻¹ 1 = 0 := by
-  sorry
+  rw [f_LJQ_3_eq, J_one, sub_self, L_zero]; ring
 
 /-- **(6.18)** ([DIR], §6.3.2, proof of (3)). $f_{\frac12}(\frac34)>0.01$. -/
 theorem eqn_6_18 : f_LJQ_3 2⁻¹ (3 / 4) > 0.01 := by
-  sorry
+  have hf : f_LJQ_3 2⁻¹ = fJL (√2 - 1) 2⁻¹ :=
+    funext fun y ↦ by rw [f_LJQ_3_eq, two_rpow_half]; rfl
+  rw [hf]; exact fJL_three_fourths
 
 end Proof_Claim_3
 
@@ -409,7 +554,15 @@ end Proof_Claim_3
 $\beta\in[\frac12,1]$). -/
 theorem caseLJQ_claim_3 (β : ℝ) (hβ : β ∈ Icc (2⁻¹ : ℝ) 1) (y : ℝ)
     (hy : y ∈ Icc (3 / 4 : ℝ) 1) : G_LJQ β (1 - y) y ≥ 0 := by
-  sorry
+  have hm := f_LJQ_3_monotoneOn_β y hy ⟨le_rfl, by norm_num⟩ hβ hβ.1
+  have hc := f_LJQ_3_half_concaveOn.min_le_of_mem_Icc ⟨le_rfl, by norm_num⟩
+    ⟨by norm_num, le_rfl⟩ hy
+  have h1 := f_LJQ_3_half_one
+  have h2 := eqn_6_18
+  show f_LJQ_3 β y ≥ 0
+  simp only at hm
+  have : 0 ≤ min (f_LJQ_3 2⁻¹ (3 / 4)) (f_LJQ_3 2⁻¹ 1) := le_min (by linarith) h1.ge
+  linarith
 
 end Proof_Proposition_6_6
 
