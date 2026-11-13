@@ -102,6 +102,13 @@ public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_3_Case_LJQ»
 public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_4_Case_LJ_aux»
 public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_4_Case_LJ»
 public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_5_Case_QJQ_aux»
+public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_5_Case_QJQ_aux_cert»
+public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_5_Case_QJQ_aux_cert_tab_0»
+public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_5_Case_QJQ_aux_cert_b1_0»
+public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_5_Case_QJQ_aux_cert_b1»
+public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_5_Case_QJQ_aux_cert_h_0»
+public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_5_Case_QJQ_aux_cert_h_1»
+public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_5_Case_QJQ_aux_cert_h»
 public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_5_Case_QJQ»
 public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_6_Case_QJ_aux»
 public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_6_Case_QJ»

@@ -10,6 +10,8 @@ public import Isoperim.DIR.«2_Envelope_Functions».Definitions
 public import Isoperim.DIR.«3_Variants_Bobkov_Inequality».«3_0_Variants_Bobkov_Inequality»
 public import Isoperim.DIR.«5_Auxiliary_Estimates».«5_3_Properties_L_Q»
 public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_5_Case_QJQ_aux»
+public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_5_Case_QJQ_aux_cert_b1»
+public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_5_Case_QJQ_aux_cert_h»
 
 /-!
 # [DIR] §6.5 Case $QJQ$: $\frac14\le x\le\frac12\le y$, $x+y\le1$
@@ -146,12 +148,19 @@ $\beta\in\{\frac12,\beta_1\}$ shows that
 $$g_{QJQ,\beta}>10^{-5}$$
 on $[\frac14,\frac12]\times[\frac12,\frac34]$.
 
-**Discrepancy with the paper.** Statement as in the paper; the paper's justification of the lower
-bound is incomplete where $x+y>1$ (see `Auto.DIR.g_QJQ_tightLowerBound`). -/
+**Discrepancy with the paper.** Statement as in the paper. Lean: tight lower bound
+`Auto.DIR.g_QJQ_lo` (the paper's, corrected where $x+y>1$); partitions `g_QJQ`, `g_QJQh` of
+`partitions.py` refined dyadically (340 and 1180 rectangles). -/
 theorem eqn_6_25 (β : ℝ) (hβ : β ∈ ({2⁻¹, β₁} : Set ℝ)) (x y : ℝ)
     (hx : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹) (hy : y ∈ Icc (2⁻¹ : ℝ) (3 / 4)) :
     g_QJQ β x y > 10 ^ (-5 : ℤ) := by
-  sorry
+  have e : g_QJQ β x y =
+      (y - x) + J y * Checker.DJr y - (2 * Q β ((x + y) / 2) - Q β x) * Q1f β ((x + y) / 2) := by
+    rw [g_QJQ, derivWithin_J_eq ⟨hy.1, by linarith [hy.2]⟩, deriv_Q_eq]
+  rw [e, show (10 : ℝ) ^ (-5 : ℤ) = 1 / 10 ^ 5 by norm_num]
+  rcases hβ with rfl | rfl
+  · exact gQJQ_pos_h x hx y hy
+  · exact gQJQ_pos_b1 x hx y hy
 
 /-- [DIR], §6.5: we begin by showing that this quantity is strictly positive for all
 $(x,y)\in[\frac14,\frac12]\times[\frac12,\frac34]$, thus reducing to the case $y=\frac12$:
@@ -159,7 +168,26 @@ for $\beta\in\{\frac12,\beta_1\}$, $G_{QJQ,\beta}(x,y)\ge G_{QJQ,\beta}(x,\frac1
 theorem G_QJQ_ge_G_QJQ_half (β : ℝ) (hβ : β ∈ ({2⁻¹, β₁} : Set ℝ)) (x y : ℝ)
     (hx : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹) (hy : y ∈ Icc (2⁻¹ : ℝ) (3 / 4)) :
     G_QJQ β x y ≥ G_QJQ β x 2⁻¹ := by
-  sorry
+  have hJc : ContinuousOn J (Icc 2⁻¹ (3 / 4)) :=
+    continuousOn_J.mono (Icc_subset_Icc le_rfl (by norm_num))
+  have hmono : MonotoneOn (fun y ↦ G_QJQ β x y) (Icc 2⁻¹ (3 / 4)) := by
+    refine monotoneOn_of_deriv_nonneg (convex_Icc _ _) ?_ ?_ ?_
+    · unfold G_QJQ Q
+      fun_prop
+    · intro z hz
+      rw [interior_Icc] at hz
+      have hJ := (hasDerivAt_J_deriv (x := z) ⟨hz.1, by linarith [hz.2]⟩).differentiableAt
+      refine DifferentiableAt.differentiableWithinAt ?_
+      unfold G_QJQ Q
+      fun_prop
+    · intro z hz
+      rw [interior_Icc] at hz
+      rw [G_QJQ_deriv_y β x z ⟨hz.1, hz.2.le⟩]
+      have := eqn_6_25 β hβ x z hx ⟨hz.1.le, hz.2.le⟩
+      have : (0 : ℝ) < 10 ^ (-5 : ℤ) := by positivity
+      linarith
+  have h12 : (2⁻¹ : ℝ) ∈ Icc (2⁻¹ : ℝ) (3 / 4) := ⟨le_rfl, by norm_num⟩
+  exact hmono h12 hy hy.1
 
 /-- [DIR], §6.5: to finish the proof it now suffices to show (6.23) for $y=\frac12$, that is
 $$(\tfrac12-x)^2+\tfrac14-(2Q_\beta(\tfrac x2+\tfrac14)-Q_\beta(x))^2\ge0$$
@@ -245,6 +273,10 @@ $(x,y)\in[\frac14,\frac12]\times[\frac12,\frac34]$ and $\beta\in[\frac12,\beta_1
 $$G_{QJQ,\beta}(x,y)=(y-x)^2+J(y)^2-(2Q_\beta(\tfrac{x+y}2)-Q_\beta(x))^2\ge0. \tag{6.23}$$ -/
 theorem prop_6_9 (x y : ℝ) (hx : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹) (hy : y ∈ Icc (2⁻¹ : ℝ) (3 / 4))
     (β : ℝ) (hβ : β ∈ Icc 2⁻¹ β₁) : G_QJQ β x y ≥ 0 := by
-  sorry
+  refine prop_6_9_of_endpoints (fun β hβ x hx y hy ↦ ?_) x y hx hy β hβ
+  have h1 := G_QJQ_ge_G_QJQ_half β hβ x y hx hy
+  have h2 := G_QJQ_y_half_nonneg β hβ x hx
+  rw [← G_QJQ_y_half_eq] at h2
+  linarith
 
 end Auto.DIR
