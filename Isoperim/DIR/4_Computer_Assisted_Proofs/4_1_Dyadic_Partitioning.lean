@@ -6,6 +6,7 @@ Authors: Claude
 module
 
 public import Isoperim.DIR.«1_Introduction».Definitions
+public import Isoperim.DIR.«4_Computer_Assisted_Proofs».«4_1_Dyadic_Partitioning_aux»
 
 /-!
 # [DIR] §4 Computer-assisted proofs, §4.1 Dyadic partitioning
@@ -66,7 +67,11 @@ theorem fact_4_1_if {n : ℕ} (a b : Fin n → ℝ) (f : (Fin n → ℝ) → ℝ
     (hfl : ∀ xl xu, a ≤ xl → xu ≤ b → ∀ x ∈ Icc xl xu, fl xl xu ≤ f x)
     (P : Finset ((Fin n → ℝ) × (Fin n → ℝ))) (hP : IsAdmissiblePartition a b fl P) :
     ∀ x ∈ Icc a b, 0 < f x := by
-  sorry
+  intro x hx
+  rw [← hP.1.2.1] at hx
+  obtain ⟨p, hp, hxp⟩ := mem_iUnion₂.mp hx
+  obtain ⟨-, h2, h3⟩ := hP.1.1 p hp
+  exact (hP.2 p hp).trans_le (hfl _ _ h2 h3 x hxp)
 
 /-- [DIR], proof of Fact 4.1: for the 'only if' part let $f>0$. Then for every $x\in[a,b]$ there
 exists $\varepsilon_x>0$ such that $\underline f(\underline x,\overline x)>0$ for all
@@ -77,7 +82,11 @@ theorem fact_4_1_eps {n : ℕ} (a b : Fin n → ℝ) (f : (Fin n → ℝ) → �
     (hf : ∀ x ∈ Icc a b, 0 < f x) :
     ∀ x ∈ Icc a b, ∃ εx > 0, ∀ xl xu, a ≤ xl → xu ≤ b → x ∈ Icc xl xu →
       dist xl xu ≤ εx → 0 < fl xl xu := by
-  sorry
+  intro x hx
+  obtain ⟨δ, hδ, h⟩ := hfl.2 x hx (f x) (hf x hx)
+  refine ⟨δ / 2, half_pos hδ, fun xl xu h1 h2 hx' hd ↦ ?_⟩
+  have := (abs_lt.mp (h xl xu h1 h2 hx' (by linarith))).1
+  linarith
 
 end Proof_Fact_4_1
 
@@ -86,14 +95,36 @@ $\underline f$. Then $f>0$ on $[a,b]$ if and only if there exists an admissible 
 theorem fact_4_1 {n : ℕ} (a b : Fin n → ℝ) (hab : IsRectangle a b) (f : (Fin n → ℝ) → ℝ)
     (fl : (Fin n → ℝ) → (Fin n → ℝ) → ℝ) (hfl : IsTightLowerBound a b f fl) :
     (∀ x ∈ Icc a b, 0 < f x) ↔ ∃ P, IsAdmissiblePartition a b fl P := by
-  sorry
+  constructor
+  · intro hf
+    obtain ⟨K, hK⟩ := exists_dyadicGood fl (fun i ↦ (hab i).le) (fact_4_1_eps a b f fl hfl hf)
+    obtain ⟨P, hP, hpos⟩ := exists_isBoxPartition_of_dyadicGood fl K hab hK
+    exact ⟨P, hP, hpos⟩
+  · rintro ⟨P, hP⟩
+    exact fact_4_1_if a b f fl hfl.1 P hP
 
 /-- **Remark 4.2** ([DIR]). It is not required that $f$ is continuous; however, existence of a
 tight lower bound implies lower semicontinuity of $f$ (on $[a,b]$). -/
 theorem rem_4_2 {n : ℕ} (a b : Fin n → ℝ) (f : (Fin n → ℝ) → ℝ)
     (fl : (Fin n → ℝ) → (Fin n → ℝ) → ℝ) (hfl : IsTightLowerBound a b f fl) :
     LowerSemicontinuousOn f (Icc a b) := by
-  sorry
+  intro x hx y hy
+  obtain ⟨δ, hδ, h⟩ := hfl.2 x hx (f x - y) (sub_pos.mpr hy)
+  refine Metric.mem_nhdsWithin_iff.mpr ⟨δ, hδ, fun z ⟨hz, hzs⟩ ↦ ?_⟩
+  have hd : dist (x ⊓ z) (x ⊔ z) < δ := by
+    refine lt_of_le_of_lt ((dist_pi_le_iff dist_nonneg).mpr fun i ↦ ?_) (by
+      rw [Metric.mem_ball, dist_comm] at hz; exact hz)
+    refine le_trans (le_of_eq ?_) (dist_le_pi_dist x z i)
+    simp only [Pi.inf_apply, Pi.sup_apply]
+    rcases le_total (x i) (z i) with hi | hi
+    · rw [min_eq_left hi, max_eq_right hi]
+    · rw [min_eq_right hi, max_eq_left hi, dist_comm]
+  have := (abs_lt.mp (h (x ⊓ z) (x ⊔ z) (le_inf hx.1 hzs.1) (sup_le hx.2 hzs.2)
+    ⟨inf_le_left, le_sup_left⟩ hd)).1
+  have := hfl.1 (x ⊓ z) (x ⊔ z) (le_inf hx.1 hzs.1) (sup_le hx.2 hzs.2) z
+    ⟨inf_le_right, le_sup_right⟩
+  show y < f z
+  linarith
 
 /-- The *children* of a rectangle $[a,b]$ ([DIR], §4.1): the $2^n$ congruent subrectangles obtained
 by cutting along the midpoint in each of the $n$ coordinates; the child indexed by
@@ -126,12 +157,28 @@ noncomputable def partitionN₀ {n : ℕ} (fl : (Fin n → ℝ) → (Fin n → �
     (a b : Fin n → ℝ) : Option (List ((Fin n → ℝ) × (Fin n → ℝ))) :=
   partitionN fl maxDepth a b 0
 
+/-- `children` agrees with the auxiliary `dyadicChildren`. -/
+theorem children_eq_dyadicChildren {n : ℕ} (a b : Fin n → ℝ) :
+    children a b = dyadicChildren a b := rfl
+
+/-- The recursion equation of `partitionN`, in terms of the auxiliary `dyadicChildren`. -/
+theorem partitionN_eq {n : ℕ} (fl : (Fin n → ℝ) → (Fin n → ℝ) → ℝ) (maxDepth : ℕ)
+    (a b : Fin n → ℝ) (depth : ℕ) :
+    partitionN fl maxDepth a b depth = if 0 < fl a b then some [(a, b)]
+      else if maxDepth ≤ depth then none
+      else ((dyadicChildren a b).attach.mapM fun c ↦
+        partitionN fl maxDepth c.1.1 c.1.2 (depth + 1)).map List.flatten := by
+  rw [partitionN]
+  rfl
+
 /-- [DIR], §4.1: running $\textsc{Partition}_n(\underline f,[a,b])$ either fails or returns an
 admissible partition. -/
 theorem partitionN₀_admissible {n : ℕ} (a b : Fin n → ℝ) (hab : IsRectangle a b)
     (fl : (Fin n → ℝ) → (Fin n → ℝ) → ℝ) (maxDepth : ℕ) (P : List ((Fin n → ℝ) × (Fin n → ℝ)))
     (hP : partitionN₀ fl maxDepth a b = some P) : IsAdmissiblePartition a b fl P.toFinset := by
-  sorry
+  obtain ⟨h1, h2⟩ := partitionN_spec_aux fl maxDepth _ (partitionN_eq fl maxDepth) maxDepth 0 a b
+    P (by omega) hab hP
+  exact ⟨h1, fun p hp ↦ h2 p (List.mem_toFinset.mp hp)⟩
 
 /-- [DIR], §4.1: running $\textsc{Partition}_n(\underline f,[a,b])$ either fails or returns an
 admissible partition, thus providing a proof that $f>0$ holds on $[a,b]$ (if $\underline f$ is a
@@ -140,8 +187,8 @@ theorem pos_of_partitionN₀ {n : ℕ} (a b : Fin n → ℝ) (hab : IsRectangle 
     (f : (Fin n → ℝ) → ℝ) (fl : (Fin n → ℝ) → (Fin n → ℝ) → ℝ)
     (hfl : ∀ xl xu, a ≤ xl → xu ≤ b → ∀ x ∈ Icc xl xu, fl xl xu ≤ f x) (maxDepth : ℕ)
     (P : List ((Fin n → ℝ) × (Fin n → ℝ))) (hP : partitionN₀ fl maxDepth a b = some P) :
-    ∀ x ∈ Icc a b, 0 < f x := by
-  sorry
+    ∀ x ∈ Icc a b, 0 < f x :=
+  fact_4_1_if a b f fl hfl _ (partitionN₀_admissible a b hab fl maxDepth P hP)
 
 /-- [DIR], §4.1: moreover, Fact 4.1 implies that if it is true that $f>0$ holds on $[a,b]$, then the
 procedure will always succeed in producing a proof of this, provided that $maxDepth$ is chosen
@@ -150,6 +197,8 @@ theorem partitionN₀_succeeds {n : ℕ} (a b : Fin n → ℝ) (hab : IsRectangl
     (f : (Fin n → ℝ) → ℝ) (fl : (Fin n → ℝ) → (Fin n → ℝ) → ℝ)
     (hfl : IsTightLowerBound a b f fl) (hf : ∀ x ∈ Icc a b, 0 < f x) :
     ∃ M, ∀ maxDepth ≥ M, (partitionN₀ fl maxDepth a b).isSome := by
-  sorry
+  obtain ⟨K, hK⟩ := exists_dyadicGood fl (fun i ↦ (hab i).le) (fact_4_1_eps a b f fl hfl hf)
+  exact ⟨K, fun maxDepth hM ↦ partitionN_isSome_of_dyadicGood_aux fl maxDepth _
+    (partitionN_eq fl maxDepth) K 0 a b hK (by omega)⟩
 
 end Auto.DIR

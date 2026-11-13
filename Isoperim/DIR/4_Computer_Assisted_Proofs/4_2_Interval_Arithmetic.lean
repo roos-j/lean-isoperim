@@ -6,6 +6,7 @@ Authors: Claude
 module
 
 public import Isoperim.DIR.«4_Computer_Assisted_Proofs».«4_1_Dyadic_Partitioning»
+public import Isoperim.DIR.«4_Computer_Assisted_Proofs».«4_2_Interval_Arithmetic_aux»
 
 /-!
 # [DIR] §4.2 Interval arithmetic
@@ -57,13 +58,13 @@ partial order: if $\underline{\overline x}>\underline{\overline y}$ does not hol
 $\underline{\overline x},\underline{\overline y}$, this does not imply
 $\underline{\overline x}\le\underline{\overline y}$. -/
 theorem interval_order_partial :
-    ∃ x y : ℝ × ℝ, x.1 ≤ x.2 ∧ y.1 ≤ y.2 ∧ ¬ intervalGT x y ∧ ¬ intervalLE x y := by
-  sorry
+    ∃ x y : ℝ × ℝ, x.1 ≤ x.2 ∧ y.1 ≤ y.2 ∧ ¬ intervalGT x y ∧ ¬ intervalLE x y :=
+  ⟨(0, 2), (1, 1), by norm_num [intervalGT, intervalLE]⟩
 
 /-- [DIR], §4.2: an interval enclosure of the identity: $[\underline x,\overline x]$ itself. -/
 theorem isIntervalEnclosure_id : IsIntervalEnclosure (n := 1) (fun x ↦ x 0)
-    (fun xl xu ↦ (xl 0, xu 0)) := by
-  sorry
+    (fun xl xu ↦ (xl 0, xu 0)) :=
+  ⟨fun _ _ _ hx ↦ ⟨hx.1 0, hx.2 0⟩, fun _ ↦ rfl⟩
 
 /-- [DIR], §4.2: given formulas built from standard arithmetic operations and functions with known
 piecewise monotonicity, an interval enclosure can be automatically constructed; the sum of
@@ -72,13 +73,15 @@ theorem IsIntervalEnclosure.add {n : ℕ} {f g : (Fin n → ℝ) → ℝ}
     {F G : (Fin n → ℝ) → (Fin n → ℝ) → ℝ × ℝ} (hF : IsIntervalEnclosure f F)
     (hG : IsIntervalEnclosure g G) :
     IsIntervalEnclosure (f + g) fun xl xu ↦ ((F xl xu).1 + (G xl xu).1, (F xl xu).2 + (G xl xu).2) :=
-  by sorry
+  ⟨fun xl xu x hx ↦ ⟨add_le_add (hF.1 xl xu x hx).1 (hG.1 xl xu x hx).1,
+    add_le_add (hF.1 xl xu x hx).2 (hG.1 xl xu x hx).2⟩, fun x ↦ by simp [hF.2 x, hG.2 x]⟩
 
 /-- [DIR], §4.2: the negative of an enclosure encloses the negative. -/
 theorem IsIntervalEnclosure.neg {n : ℕ} {f : (Fin n → ℝ) → ℝ}
     {F : (Fin n → ℝ) → (Fin n → ℝ) → ℝ × ℝ} (hF : IsIntervalEnclosure f F) :
-    IsIntervalEnclosure (-f) fun xl xu ↦ (-(F xl xu).2, -(F xl xu).1) := by
-  sorry
+    IsIntervalEnclosure (-f) fun xl xu ↦ (-(F xl xu).2, -(F xl xu).1) :=
+  ⟨fun xl xu x hx ↦ ⟨neg_le_neg (hF.1 xl xu x hx).2, neg_le_neg (hF.1 xl xu x hx).1⟩,
+    fun x ↦ by simp [hF.2 x]⟩
 
 /-- [DIR], §4.2: the product of enclosures: $[\min,\max]$ of the four products of endpoints. -/
 theorem IsIntervalEnclosure.mul {n : ℕ} {f g : (Fin n → ℝ) → ℝ}
@@ -88,8 +91,9 @@ theorem IsIntervalEnclosure.mul {n : ℕ} {f g : (Fin n → ℝ) → ℝ}
       (min (min ((F xl xu).1 * (G xl xu).1) ((F xl xu).1 * (G xl xu).2))
           (min ((F xl xu).2 * (G xl xu).1) ((F xl xu).2 * (G xl xu).2)),
         max (max ((F xl xu).1 * (G xl xu).1) ((F xl xu).1 * (G xl xu).2))
-          (max ((F xl xu).2 * (G xl xu).1) ((F xl xu).2 * (G xl xu).2))) := by
-  sorry
+          (max ((F xl xu).2 * (G xl xu).1) ((F xl xu).2 * (G xl xu).2))) :=
+  ⟨fun xl xu x hx ↦ mul_mem_minmax (hF.1 xl xu x hx) (hG.1 xl xu x hx),
+    fun x ↦ by simp [hF.2 x, hG.2 x]⟩
 
 /-- [DIR], §4.2: composition with a function $\varphi$ that is monotone increasing on an interval
 containing the range: $[\varphi(\underline f),\varphi(\overline f)]$. -/
@@ -98,7 +102,10 @@ theorem IsIntervalEnclosure.comp_monotoneOn {n : ℕ} {f : (Fin n → ℝ) → �
     (s : Set ℝ) (hs : s.OrdConnected) (hφ : MonotoneOn φ s)
     (hrange : ∀ xl xu, (F xl xu).1 ∈ s ∧ (F xl xu).2 ∈ s) :
     IsIntervalEnclosure (φ ∘ f) fun xl xu ↦ (φ (F xl xu).1, φ (F xl xu).2) := by
-  sorry
+  refine ⟨fun xl xu x hx ↦ ?_, fun x ↦ by simp [hF.2 x]⟩
+  have h := hF.1 xl xu x hx
+  have hfx : f x ∈ s := hs.out (hrange xl xu).1 (hrange xl xu).2 h
+  exact ⟨hφ (hrange xl xu).1 hfx h.1, hφ hfx (hrange xl xu).2 h.2⟩
 
 /-- [DIR], §4.2: composition with a function $\varphi$ that is monotone decreasing on an interval
 containing the range: $[\varphi(\overline f),\varphi(\underline f)]$. -/
@@ -107,13 +114,16 @@ theorem IsIntervalEnclosure.comp_antitoneOn {n : ℕ} {f : (Fin n → ℝ) → �
     (s : Set ℝ) (hs : s.OrdConnected) (hφ : AntitoneOn φ s)
     (hrange : ∀ xl xu, (F xl xu).1 ∈ s ∧ (F xl xu).2 ∈ s) :
     IsIntervalEnclosure (φ ∘ f) fun xl xu ↦ (φ (F xl xu).2, φ (F xl xu).1) := by
-  sorry
+  refine ⟨fun xl xu x hx ↦ ?_, fun x ↦ by simp [hF.2 x]⟩
+  have h := hF.1 xl xu x hx
+  have hfx : f x ∈ s := hs.out (hrange xl xu).1 (hrange xl xu).2 h
+  exact ⟨hφ hfx (hrange xl xu).2 h.2, hφ (hrange xl xu).1 hfx h.1⟩
 
 /-- [DIR], §4.2: the lower endpoint of an interval enclosure is a lower bound of $f$ as in the
 definition of a tight lower bound (§4.1). -/
 theorem IsIntervalEnclosure.lower_bound {n : ℕ} {f : (Fin n → ℝ) → ℝ}
     {F : (Fin n → ℝ) → (Fin n → ℝ) → ℝ × ℝ} (hF : IsIntervalEnclosure f F) (a b : Fin n → ℝ) :
-    ∀ xl xu, a ≤ xl → xu ≤ b → ∀ x ∈ Icc xl xu, (F xl xu).1 ≤ f x := by
-  sorry
+    ∀ xl xu, a ≤ xl → xu ≤ b → ∀ x ∈ Icc xl xu, (F xl xu).1 ≤ f x :=
+  fun xl xu _ _ x hx ↦ (hF.1 xl xu x hx).1
 
 end Auto.DIR
