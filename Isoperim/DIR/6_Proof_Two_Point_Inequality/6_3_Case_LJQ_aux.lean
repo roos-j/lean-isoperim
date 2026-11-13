@@ -6,7 +6,9 @@ Authors: Claude
 module
 
 public import Isoperim.DIR.«2_Envelope_Functions».Definitions
+public import Isoperim.DIR.«4_Computer_Assisted_Proofs».«4_3_Source_Code_aux»
 public import Isoperim.DIR.«5_Auxiliary_Estimates».«5_3_Properties_L_Q»
+public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_1_Case_J»
 
 /-!
 # [DIR] §6.3 Case LJQ: auxiliary lemmas
@@ -17,6 +19,12 @@ Auxiliary lemmas for `6_3_Case_LJQ.lean` (proof of Lemma 6.7): the values of $L_
 $L_\beta'''$ at $x=\frac14$, monotonicity of $L_\beta'''$ and $L_\beta''+cx$ on $(0,\frac14]$,
 and the numerical inequalities used for $\beta\ge\log_2\frac32$ (where $\alpha_1\le0$), a case
 the paper only calls "analogous".
+
+For the proof of Proposition 6.6 (claims (1) and (3)): the functions
+$y\mapsto y+cJ(y)-2Q_\beta(\frac y2)$ and $y\mapsto 2y-1+cJ(y)+L_\beta(1-y)-1$ and their
+derivatives on $(\frac12,1)$ (via $JJ''=-2$), one-sided limits at $y=\frac12$, certified values of
+$J$ and $J'$ at the evaluation points (by the verified interval checker `Auto.DIR.Checker`), and
+elementary facts about strictly concave functions used for the zeros $y_0,y_1$.
 -/
 
 @[expose] public section
@@ -140,5 +148,595 @@ theorem L2f_quarter_add_neg {β : ℝ} (hβ : β ∈ Icc (2⁻¹ : ℝ) 1) :
     ring
   rw [this]
   exact div_neg_of_neg_of_pos key hl2'
+
+/-! ### Proposition 6.6: auxiliary facts -/
+
+section Prop_6_6_aux
+
+/-- $2^{1/2}=\sqrt2$. -/
+theorem two_rpow_half : (2 : ℝ) ^ (2⁻¹ : ℝ) = √2 := by
+  rw [sqrt_eq_rpow]; norm_num
+
+/-- $1.41421356<\sqrt2<1.41421357$. -/
+theorem sqrt_two_mem : √2 ∈ Icc (1.41421356 : ℝ) 1.41421357 := by
+  constructor
+  · rw [le_sqrt (by norm_num) (by norm_num)]; norm_num
+  · rw [sqrt_le_left (by norm_num)]; norm_num
+
+/-- $Q_\beta(\frac12)=\frac12$ for every $\beta$. -/
+theorem Q_half (β : ℝ) : Q β 2⁻¹ = 2⁻¹ := by
+  rw [Q_eq_affine]; ring
+
+/-- $J(\frac12)=\frac12$. -/
+theorem J_half : J 2⁻¹ = 2⁻¹ := isJ_J.2.2.2.1
+
+/-- A strictly concave function lies strictly above its chords:
+for $x<z<y$ in $s$, $\frac{y-z}{y-x}g(x)+\frac{z-x}{y-x}g(y)<g(z)$. -/
+theorem StrictConcaveOn.chord_lt {g : ℝ → ℝ} {s : Set ℝ} (hg : StrictConcaveOn ℝ s g)
+    {x y z : ℝ} (hx : x ∈ s) (hy : y ∈ s) (hxz : x < z) (hzy : z < y) :
+    (y - z) / (y - x) * g x + (z - x) / (y - x) * g y < g z := by
+  have hyx : 0 < y - x := by linarith
+  have h := hg.2 hx hy (by linarith : x ≠ y) (div_pos (by linarith : 0 < y - z) hyx)
+    (div_pos (by linarith : 0 < z - x) hyx) (by field_simp; ring)
+  simp only [smul_eq_mul] at h
+  have e : (y - z) / (y - x) * x + (z - x) / (y - x) * y = z := by field_simp; ring
+  rwa [e] at h
+
+/-- If $g$ is strictly concave on $(a,b)$ with $g(y)\to0$ as $y\to a^+$, and $g(u)\ge0$ for some
+$u\in(a,b)$, then $g>0$ on $(a,u)$. -/
+theorem pos_of_strictConcaveOn_of_tendsto {g : ℝ → ℝ} {a b t u : ℝ}
+    (hg : StrictConcaveOn ℝ (Ioo a b) g) (hlim : Tendsto g (𝓝[>] a) (𝓝 0))
+    (hat : a < t) (htu : t < u) (hub : u < b) (hu : 0 ≤ g u) : 0 < g t := by
+  have hnn : ∀ m, a < m → m < u → 0 ≤ g m := by
+    intro m ham hmu
+    have hT : Tendsto (fun s ↦ (u - m) / (u - s) * g s) (𝓝[>] a) (𝓝 ((u - m) / (u - a) * 0)) := by
+      refine Tendsto.mul ?_ hlim
+      refine ((continuousAt_const.div (continuousAt_const.sub continuousAt_id)
+        (by linarith : u - a ≠ 0)).tendsto).mono_left nhdsWithin_le_nhds
+    rw [mul_zero] at hT
+    refine le_of_tendsto hT ?_
+    filter_upwards [Ioo_mem_nhdsGT ham] with s hs
+    have h := StrictConcaveOn.chord_lt hg ⟨hs.1, by linarith [hs.2]⟩ ⟨by linarith, hub⟩ hs.2 hmu
+    have : 0 ≤ (m - s) / (u - s) * g u :=
+      mul_nonneg (div_nonneg (by linarith [hs.2]) (by linarith [hs.2])) hu
+    linarith
+  have hm := hnn ((a + t) / 2) (by linarith) (by linarith)
+  have h := StrictConcaveOn.chord_lt hg (x := (a + t) / 2) ⟨by linarith, by linarith⟩
+    ⟨by linarith, hub⟩ (by linarith) htu
+  have h1 : 0 ≤ (u - t) / (u - (a + t) / 2) * g ((a + t) / 2) :=
+    mul_nonneg (div_nonneg (by linarith) (by linarith)) hm
+  have h2 : 0 ≤ (t - (a + t) / 2) / (u - (a + t) / 2) * g u :=
+    mul_nonneg (div_nonneg (by linarith) (by linarith)) hu
+  linarith
+
+/-- If $g$ is strictly concave on $(a,b)$ with $g(y)\to0$ as $y\to a^+$, then $g$ has at most one
+zero on $(a,b)$. -/
+theorem zero_subsingleton_of_strictConcaveOn {g : ℝ → ℝ} {a b : ℝ}
+    (hg : StrictConcaveOn ℝ (Ioo a b) g) (hlim : Tendsto g (𝓝[>] a) (𝓝 0)) :
+    {y ∈ Ioo a b | g y = 0}.Subsingleton := by
+  intro t ht u hu
+  by_contra hne
+  rcases lt_or_gt_of_ne hne with h | h
+  · have := pos_of_strictConcaveOn_of_tendsto hg hlim ht.1.1 h hu.1.2 hu.2.ge
+    linarith [ht.2]
+  · have := pos_of_strictConcaveOn_of_tendsto hg hlim hu.1.1 h ht.1.2 ht.2.ge
+    linarith [hu.2]
+
+/-- If $g$ is strictly concave on $(a,b)$ with $g(y)\to0$ as $y\to a^+$ and $g(y_0)\le0$, then
+$g<0$ on $(y_0,b)$. -/
+theorem neg_of_strictConcaveOn_of_tendsto {g : ℝ → ℝ} {a b y₀ : ℝ}
+    (hg : StrictConcaveOn ℝ (Ioo a b) g) (hlim : Tendsto g (𝓝[>] a) (𝓝 0)) (hy₀ : a < y₀)
+    (hg₀ : g y₀ ≤ 0) : ∀ z ∈ Ioo y₀ b, g z < 0 := by
+  intro z hz
+  by_contra h
+  have := pos_of_strictConcaveOn_of_tendsto hg hlim hy₀ hz.1 hz.2 (not_lt.1 h)
+  linarith
+
+/-- [DIR], §6.3.2, proof of (1), abstracted: let $F'=G$ on $(a,b)$, $G$ continuous and strictly
+concave on $(a,b)$, $G(y)\to0$ as $y\to a^+$, $G(p)>0>G(q)$ for some $a<p<q<b$. Then $G$ has
+exactly one zero $y_0\in(a,b)$, $F$ is strictly increasing on $(a,y_0]$, strictly decreasing on
+$[y_0,b)$, and attains its unique maximum on $(a,b)$ at $y_0$. -/
+theorem unimodal_of_strictConcaveOn_deriv {F G : ℝ → ℝ} {a b p q : ℝ}
+    (hF : ∀ z ∈ Ioo a b, HasDerivAt F (G z) z) (hGc : ContinuousOn G (Ioo a b))
+    (hG : StrictConcaveOn ℝ (Ioo a b) G) (hlim : Tendsto G (𝓝[>] a) (𝓝 0))
+    (hap : a < p) (hpq : p < q) (hqb : q < b) (hp : 0 < G p) (hq : G q < 0) :
+    ∃ y₀ ∈ Ioo a b, G y₀ = 0 ∧ (∀ y ∈ Ioo a b, G y = 0 → y = y₀) ∧
+      (∀ y ∈ Ioo a b, y ≠ y₀ → F y < F y₀) ∧ StrictMonoOn F (Ioc a y₀) ∧
+      StrictAntiOn F (Ico y₀ b) := by
+  obtain ⟨y₀, ⟨hpy, hyq⟩, hy0⟩ := intermediate_value_Icc' hpq.le
+    (hGc.mono (Icc_subset_Ioo hap hqb)) ⟨hq.le, hp.le⟩
+  have hy₀ : y₀ ∈ Ioo a b := ⟨by linarith, by linarith⟩
+  have huniq : ∀ y ∈ Ioo a b, G y = 0 → y = y₀ := fun y hy hy' ↦
+    zero_subsingleton_of_strictConcaveOn hG hlim ⟨hy, hy'⟩ ⟨hy₀, hy0⟩
+  have hpos : ∀ z ∈ Ioo a y₀, 0 < G z := fun z hz ↦
+    pos_of_strictConcaveOn_of_tendsto hG hlim hz.1 hz.2 hy₀.2 hy0.ge
+  have hneg : ∀ z ∈ Ioo y₀ b, G z < 0 :=
+    neg_of_strictConcaveOn_of_tendsto hG hlim hy₀.1 hy0.le
+  have hcont : ∀ z ∈ Ioo a b, ContinuousWithinAt F (Ioo a b) z := fun z hz ↦
+    (hF z hz).continuousAt.continuousWithinAt
+  have hmono : StrictMonoOn F (Ioc a y₀) := by
+    refine strictMonoOn_of_deriv_pos (convex_Ioc a y₀) (fun z hz ↦ ?_) (fun z hz ↦ ?_)
+    · exact (hF z ⟨hz.1, hz.2.trans_lt hy₀.2⟩).continuousAt.continuousWithinAt
+    · rw [interior_Ioc] at hz
+      rw [(hF z ⟨hz.1, hz.2.trans hy₀.2⟩).deriv]
+      exact hpos z hz
+  have hanti : StrictAntiOn F (Ico y₀ b) := by
+    refine strictAntiOn_of_deriv_neg (convex_Ico y₀ b) (fun z hz ↦ ?_) (fun z hz ↦ ?_)
+    · exact (hF z ⟨hy₀.1.trans_le hz.1, hz.2⟩).continuousAt.continuousWithinAt
+    · rw [interior_Ico] at hz
+      rw [(hF z ⟨hy₀.1.trans hz.1, hz.2⟩).deriv]
+      exact hneg z hz
+  refine ⟨y₀, hy₀, hy0, huniq, fun y hy hne ↦ ?_, hmono, hanti⟩
+  rcases lt_or_gt_of_ne hne with h | h
+  · exact hmono ⟨hy.1, h.le⟩ ⟨hy₀.1, le_rfl⟩ h
+  · exact hanti ⟨le_rfl, hy₀.2⟩ ⟨h.le, hy.2⟩ h
+
+/-- [DIR], §6.3.2, proof of (1), abstracted: let $f'=F$ and $F'=G$ on $(a,b)$, $f$ continuous on
+$[a,b]$, $F$ increasing on $(a,y_0]$ with $F(y)\to d>0$ as $y\to a^+$, $G<0$ on $(y_0,b)$ and
+$F(r)<0$ for some $r\in(a,b)$. Then $F$ has exactly one zero $y_1$ on $(a,b)$, $f$ is increasing
+on $[a,y_1]$ and decreasing on $[y_1,b]$. -/
+theorem unique_zero_of_unimodal {f F G : ℝ → ℝ} {a b y₀ r d : ℝ}
+    (hfc : ContinuousOn f (Icc a b)) (hf : ∀ z ∈ Ioo a b, HasDerivAt f (F z) z)
+    (hF : ∀ z ∈ Ioo a b, HasDerivAt F (G z) z) (hy₀ : y₀ ∈ Ioo a b)
+    (hmono : MonotoneOn F (Ioc a y₀)) (hneg : ∀ z ∈ Ioo y₀ b, G z < 0)
+    (hd : 0 < d) (hlim : Tendsto F (𝓝[>] a) (𝓝 d)) (hr : r ∈ Ioo a b) (hFr : F r < 0) :
+    ∃ y₁ ∈ Ioo a b, F y₁ = 0 ∧ (∀ y ∈ Ioo a b, F y = 0 → y = y₁) ∧
+      MonotoneOn f (Icc a y₁) ∧ AntitoneOn f (Icc y₁ b) := by
+  have hge : ∀ t ∈ Ioc a y₀, d ≤ F t := by
+    intro t ht
+    refine le_of_tendsto hlim ?_
+    filter_upwards [Ioo_mem_nhdsGT ht.1] with s hs
+    exact hmono ⟨hs.1, hs.2.le.trans ht.2⟩ ht hs.2.le
+  have hanti : StrictAntiOn F (Ico y₀ b) := by
+    refine strictAntiOn_of_deriv_neg (convex_Ico y₀ b) (fun z hz ↦ ?_) (fun z hz ↦ ?_)
+    · exact (hF z ⟨hy₀.1.trans_le hz.1, hz.2⟩).continuousAt.continuousWithinAt
+    · rw [interior_Ico] at hz
+      rw [(hF z ⟨hy₀.1.trans hz.1, hz.2⟩).deriv]
+      exact hneg z hz
+  have hry : y₀ < r := by
+    by_contra h
+    have := hge r ⟨hr.1, not_lt.1 h⟩
+    linarith
+  have hFy₀ : 0 < F y₀ := hd.trans_le (hge y₀ ⟨hy₀.1, le_rfl⟩)
+  have hFc : ContinuousOn F (Icc y₀ r) := fun z hz ↦
+    (hF z ⟨hy₀.1.trans_le hz.1, hz.2.trans_lt hr.2⟩).continuousAt.continuousWithinAt
+  obtain ⟨y₁, ⟨h1, h2⟩, hy1⟩ := intermediate_value_Icc' hry.le hFc ⟨hFr.le, hFy₀.le⟩
+  have hy₁ : y₁ ∈ Ioo a b := ⟨hy₀.1.trans_le h1, h2.trans_lt hr.2⟩
+  have hy₁' : y₁ ∈ Ico y₀ b := ⟨h1, hy₁.2⟩
+  have hFpos : ∀ x ∈ Ioo a y₁, 0 < F x := by
+    intro x hx
+    rcases le_or_gt x y₀ with h | h
+    · exact hd.trans_le (hge x ⟨hx.1, h⟩)
+    · rw [← hy1]; exact hanti ⟨h.le, hx.2.trans hy₁.2⟩ hy₁' hx.2
+  refine ⟨y₁, hy₁, hy1, fun y hy hy' ↦ ?_, ?_, ?_⟩
+  · rcases le_or_gt y y₀ with h | h
+    · have := hge y ⟨hy.1, h⟩; linarith
+    · exact hanti.injOn ⟨h.le, hy.2⟩ hy₁' (hy'.trans hy1.symm)
+  · refine monotoneOn_of_deriv_nonneg (convex_Icc a y₁)
+      (hfc.mono (Icc_subset_Icc le_rfl hy₁.2.le)) (fun z hz ↦ ?_) (fun z hz ↦ ?_)
+    · rw [interior_Icc] at hz
+      exact (hf z ⟨hz.1, hz.2.trans hy₁.2⟩).differentiableAt.differentiableWithinAt
+    · rw [interior_Icc] at hz
+      rw [(hf z ⟨hz.1, hz.2.trans hy₁.2⟩).deriv]
+      exact (hFpos z hz).le
+  · refine antitoneOn_of_deriv_nonpos (convex_Icc y₁ b)
+      (hfc.mono (Icc_subset_Icc hy₁.1.le le_rfl)) (fun z hz ↦ ?_) (fun z hz ↦ ?_)
+    · rw [interior_Icc] at hz
+      exact (hf z ⟨hy₁.1.trans hz.1, hz.2⟩).differentiableAt.differentiableWithinAt
+    · rw [interior_Icc] at hz
+      rw [(hf z ⟨hy₁.1.trans hz.1, hz.2⟩).deriv, ← hy1]
+      exact (hanti hy₁' ⟨h1.trans hz.1.le, hz.2⟩ hz.1).le
+
+/-- [DIR], §6.3.2, proof of (1): the function $y+cJ(y)-2Q_\beta(\frac y2)$ (for $c=2^\beta-1$
+this is $f_\beta(y)=G_{LJQ,\beta}(0,y)$). -/
+noncomputable def fJQ (c β y : ℝ) : ℝ := y + c * J y - 2 * Q β (y / 2)
+
+/-- The first derivative of `fJQ` on $(\frac12,1)$: $1+cJ'(y)-Q_\beta'(\frac y2)$. -/
+noncomputable def fJQ1 (c β y : ℝ) : ℝ := 1 + c * deriv J y - Q1f β (y / 2)
+
+/-- The second derivative of `fJQ` on $(\frac12,1)$ (using $J''=-2J^{-1}$):
+$-2cJ(y)^{-1}-\frac12Q_\beta''(\frac y2)$. -/
+noncomputable def fJQ2 (c β y : ℝ) : ℝ := c * (-2 * (J y)⁻¹) - 2⁻¹ * Q2f β (y / 2)
+
+/-- The third derivative of `fJQ` on $(\frac12,1)$: $2cJ'(y)J(y)^{-2}+4(3-2^{1+\beta})$. -/
+noncomputable def fJQ3 (c β y : ℝ) : ℝ :=
+  2 * c * deriv J y * ((J y)⁻¹) ^ 2 + 4 * (3 - 2 ^ (1 + β))
+
+/-- The fourth derivative of `fJQ` on $(\frac12,1)$: $-4c(1+J'(y)^2)J(y)^{-3}$ (cf. (6.1)). -/
+noncomputable def fJQ4 (c y : ℝ) : ℝ := -4 * c * (1 + deriv J y ^ 2) * ((J y)⁻¹) ^ 3
+
+/-- The part of $f_\beta(y)$ not depending on $\beta$:
+$p(y)=y-J(y)-\frac43\frac y2(1-\frac y2)(-3+6y)$. -/
+noncomputable def fJQp (y : ℝ) : ℝ :=
+  y - J y - 2 * (2 / 3 * (y / 2) * (1 - y / 2) * (-3 + 12 * (y / 2)))
+
+/-- The coefficient of $2^\beta$ in $f_\beta(y)$: $q(y)=J(y)-\frac43\frac y2(1-\frac y2)(4-4y)$. -/
+noncomputable def fJQq (y : ℝ) : ℝ := J y - 2 * (2 / 3 * (y / 2) * (1 - y / 2) * (4 - 8 * (y / 2)))
+
+/-- $f_\beta=$ `fJQ` $(2^\beta-1)$ is affine in $2^\beta$:
+$y+(2^\beta-1)J(y)-2Q_\beta(\frac y2)=p(y)+q(y)2^\beta$. -/
+theorem fJQ_eq_affine (β y : ℝ) : fJQ (2 ^ β - 1) β y = fJQp y + fJQq y * 2 ^ β := by
+  rw [fJQ, Q_eq_affine, fJQp, fJQq]; ring
+
+/-- If $g=G$ on $(a,b)$ and $G'=G_1$ there, then $g'=G_1$ on $(a,b)$. -/
+theorem deriv_eq_of_eqOn_Ioo {g G G₁ : ℝ → ℝ} {a b : ℝ} (hg : ∀ z ∈ Ioo a b, g z = G z)
+    (hG : ∀ z ∈ Ioo a b, HasDerivAt G (G₁ z) z) : ∀ z ∈ Ioo a b, HasDerivAt g (G₁ z) z := by
+  intro z hz
+  refine (hG z hz).congr_of_eventuallyEq ?_
+  filter_upwards [Ioo_mem_nhds hz.1 hz.2] with w hw using hg w hw
+
+/-- `fJQ1` is the derivative of `fJQ` on $(\frac12,1)$. -/
+theorem hasDerivAt_fJQ (c β : ℝ) {y : ℝ} (hy : y ∈ Ioo (2⁻¹ : ℝ) 1) :
+    HasDerivAt (fJQ c β) (fJQ1 c β y) y := by
+  have hq := (hasDerivAt_Q β (y / 2)).comp y ((hasDerivAt_id' y).div_const 2)
+  have h : HasDerivAt (fJQ c β) _ y :=
+    ((hasDerivAt_id' y).add ((hasDerivAt_J_deriv hy).const_mul c)).sub (hq.const_mul 2)
+  exact h.congr_deriv (by rw [fJQ1]; ring)
+
+/-- `fJQ2` is the derivative of `fJQ1` on $(\frac12,1)$. -/
+theorem hasDerivAt_fJQ1 (c β : ℝ) {y : ℝ} (hy : y ∈ Ioo (2⁻¹ : ℝ) 1) :
+    HasDerivAt (fJQ1 c β) (fJQ2 c β y) y := by
+  have hq := (hasDerivAt_Q1f β (y / 2)).comp y ((hasDerivAt_id' y).div_const 2)
+  have h : HasDerivAt (fJQ1 c β) _ y :=
+    (((hasDerivAt_deriv_J hy).const_mul c).const_add 1).sub hq
+  exact h.congr_deriv (by rw [fJQ2]; ring)
+
+/-- `fJQ3` is the derivative of `fJQ2` on $(\frac12,1)$. -/
+theorem hasDerivAt_fJQ2 (c β : ℝ) {y : ℝ} (hy : y ∈ Ioo (2⁻¹ : ℝ) 1) :
+    HasDerivAt (fJQ2 c β) (fJQ3 c β y) y := by
+  have hJ := (J_pos ⟨hy.1.le, hy.2⟩).ne'
+  have hq := (hasDerivAt_Q2f β (y / 2)).comp y ((hasDerivAt_id' y).div_const 2)
+  have h : HasDerivAt (fJQ2 c β) _ y :=
+    ((((hasDerivAt_J_deriv hy).inv hJ).const_mul (-2)).const_mul c).sub (hq.const_mul 2⁻¹)
+  exact h.congr_deriv (by rw [fJQ3]; field_simp; ring)
+
+/-- `fJQ4` is the derivative of `fJQ3` on $(\frac12,1)$. -/
+theorem hasDerivAt_fJQ3 (c β : ℝ) {y : ℝ} (hy : y ∈ Ioo (2⁻¹ : ℝ) 1) :
+    HasDerivAt (fJQ3 c β) (fJQ4 c y) y := by
+  have h : HasDerivAt (fJQ3 c β) _ y :=
+    (((hasDerivAt_deriv_J hy).const_mul (2 * c)).mul (hasDerivAt_J_inv_pow 2 hy)).add
+      (hasDerivAt_const y (4 * (3 - (2 : ℝ) ^ (1 + β))))
+  exact h.congr_deriv (by rw [fJQ4]; push_cast; ring)
+
+/-- On $(\frac12,1)$: $(\mathtt{fJQ})'=\mathtt{fJQ1}$, $(\mathtt{fJQ})''=\mathtt{fJQ2}$,
+$(\mathtt{fJQ})'''=\mathtt{fJQ3}$ (as `deriv`). -/
+theorem derivs_fJQ (c β : ℝ) {y : ℝ} (hy : y ∈ Ioo (2⁻¹ : ℝ) 1) :
+    deriv (fJQ c β) y = fJQ1 c β y ∧ deriv (deriv (fJQ c β)) y = fJQ2 c β y ∧
+      deriv (deriv (deriv (fJQ c β))) y = fJQ3 c β y := by
+  have h1 : ∀ z ∈ Ioo (2⁻¹ : ℝ) 1, deriv (fJQ c β) z = fJQ1 c β z :=
+    fun z hz ↦ (hasDerivAt_fJQ c β hz).deriv
+  have h2 : ∀ z ∈ Ioo (2⁻¹ : ℝ) 1, deriv (deriv (fJQ c β)) z = fJQ2 c β z :=
+    fun z hz ↦ (deriv_eq_of_eqOn_Ioo h1 (fun _ hw ↦ hasDerivAt_fJQ1 c β hw) z hz).deriv
+  refine ⟨h1 y hy, h2 y hy, ?_⟩
+  exact (deriv_eq_of_eqOn_Ioo h2 (fun _ hw ↦ hasDerivAt_fJQ2 c β hw) y hy).deriv
+
+/-- On $(\frac12,1)$, $(\mathtt{fJQ})'$, $(\mathtt{fJQ})''$, $(\mathtt{fJQ})'''$ have the
+derivatives `fJQ2`, `fJQ3`, `fJQ4`. -/
+theorem hasDerivAt_derivs_fJQ (c β : ℝ) {y : ℝ} (hy : y ∈ Ioo (2⁻¹ : ℝ) 1) :
+    HasDerivAt (deriv (fJQ c β)) (fJQ2 c β y) y ∧
+      HasDerivAt (deriv (deriv (fJQ c β))) (fJQ3 c β y) y ∧
+      HasDerivAt (deriv (deriv (deriv (fJQ c β)))) (fJQ4 c y) y :=
+  ⟨deriv_eq_of_eqOn_Ioo (fun _ hz ↦ (derivs_fJQ c β hz).1) (fun _ hw ↦ hasDerivAt_fJQ1 c β hw)
+      y hy,
+    deriv_eq_of_eqOn_Ioo (fun _ hz ↦ (derivs_fJQ c β hz).2.1)
+      (fun _ hw ↦ hasDerivAt_fJQ2 c β hw) y hy,
+    deriv_eq_of_eqOn_Ioo (fun _ hz ↦ (derivs_fJQ c β hz).2.2)
+      (fun _ hw ↦ hasDerivAt_fJQ3 c β hw) y hy⟩
+
+/-- $(\mathtt{fJQ})^{(4)}=\mathtt{fJQ4}$ on $(\frac12,1)$. -/
+theorem iteratedDeriv_four_fJQ (c β : ℝ) {y : ℝ} (hy : y ∈ Ioo (2⁻¹ : ℝ) 1) :
+    iteratedDeriv 4 (fJQ c β) y = fJQ4 c y := by
+  simp only [iteratedDeriv_succ, iteratedDeriv_zero]
+  exact (hasDerivAt_derivs_fJQ c β hy).2.2.deriv
+
+/-- For $c>0$, $\mathtt{fJQ4}\,c<0$ on $(\frac12,1)$. -/
+theorem fJQ4_neg {c : ℝ} (hc : 0 < c) {y : ℝ} (hy : y ∈ Ioo (2⁻¹ : ℝ) 1) : fJQ4 c y < 0 := by
+  have hJ := J_pos ⟨hy.1.le, hy.2⟩
+  have : 0 < c * (1 + deriv J y ^ 2) * ((J y)⁻¹) ^ 3 := by positivity
+  simp only [fJQ4]; linarith
+
+/-- For $c>0$, $(\mathtt{fJQ})''$ is strictly concave on $(\frac12,1)$. -/
+theorem strictConcaveOn_deriv2_fJQ {c : ℝ} (hc : 0 < c) (β : ℝ) :
+    StrictConcaveOn ℝ (Ioo 2⁻¹ 1) (deriv (deriv (fJQ c β))) := by
+  refine strictConcaveOn_of_deriv2_neg (convex_Ioo _ _)
+    (fun z hz ↦ (hasDerivAt_derivs_fJQ c β hz).2.1.continuousAt.continuousWithinAt)
+    (fun z hz ↦ ?_)
+  rw [interior_Ioo] at hz
+  show deriv (deriv (deriv (deriv (fJQ c β)))) z < 0
+  rw [(hasDerivAt_derivs_fJQ c β hz).2.2.deriv]
+  exact fJQ4_neg hc hz
+
+/-- $J(y)\to\frac12$ as $y\to\frac12^+$. -/
+theorem tendsto_J_half : Tendsto J (𝓝[>] 2⁻¹) (𝓝 2⁻¹) := by
+  have h := (continuousOn_J (2⁻¹) ⟨le_rfl, by norm_num⟩).mono
+    (Ioo_subset_Icc_self : Ioo (2⁻¹ : ℝ) 1 ⊆ Icc 2⁻¹ 1)
+  rw [ContinuousWithinAt, nhdsWithin_Ioo_eq_nhdsGT (by norm_num : (2⁻¹ : ℝ) < 1), J_half] at h
+  exact h
+
+/-- $\mathtt{fJQ2}(y)\to-4c-\frac12Q_\beta''(\frac14)$ as $y\to\frac12^+$. -/
+theorem tendsto_fJQ2_half (c β : ℝ) :
+    Tendsto (fJQ2 c β) (𝓝[>] 2⁻¹) (𝓝 (c * (-2 * (2⁻¹)⁻¹) - 2⁻¹ * Q2f β (2⁻¹ / 2))) := by
+  have hQ : Continuous (Q2f β) := by unfold Q2f; fun_prop
+  have hQ' : Tendsto (fun y : ℝ ↦ Q2f β (y / 2)) (𝓝[>] 2⁻¹) (𝓝 (Q2f β (2⁻¹ / 2))) :=
+    ((hQ.comp (continuous_id.div_const 2)).tendsto _).mono_left nhdsWithin_le_nhds
+  exact ((((tendsto_J_half.inv₀ (by norm_num)).const_mul (-2)).const_mul c).sub
+    (hQ'.const_mul 2⁻¹))
+
+/-- $J'(y)=\sqrt2\,\Phi^{-1}(\frac{1-y}{w_0})\to\sqrt2\,\Phi^{-1}(\frac1{2w_0})$
+(`Checker.DJr 2⁻¹`) as $y\to\frac12^+$. -/
+theorem tendsto_deriv_J_half : Tendsto (deriv J) (𝓝[>] 2⁻¹) (𝓝 (Checker.DJr 2⁻¹)) := by
+  obtain ⟨h1, h2⟩ := w₀_mem_fine
+  have hw : (1 - 2⁻¹) / w₀ ∈ Ioo (0 : ℝ) 1 :=
+    ⟨by positivity, by rw [div_lt_one (by linarith)]; linarith⟩
+  have hc : ContinuousAt Checker.DJr 2⁻¹ := by
+    have hin : ContinuousAt (fun x : ℝ ↦ (1 - x) / w₀) 2⁻¹ := by fun_prop
+    exact continuousAt_const.mul (ContinuousAt.comp (g := gInv) (continuousAt_gInv hw) hin)
+  refine (hc.tendsto.mono_left nhdsWithin_le_nhds).congr' ?_
+  filter_upwards [Ioo_mem_nhdsGT (by norm_num : (2⁻¹ : ℝ) < 1)] with y hy
+  exact (Checker.deriv_J_eq hy).symm
+
+/-- $\mathtt{fJQ1}(y)\to1+cJ'(\frac12^+)-Q_\beta'(\frac14)$ as $y\to\frac12^+$. -/
+theorem tendsto_fJQ1_half (c β : ℝ) :
+    Tendsto (fJQ1 c β) (𝓝[>] 2⁻¹) (𝓝 (1 + c * Checker.DJr 2⁻¹ - Q1f β (2⁻¹ / 2))) := by
+  have hQ : Continuous (Q1f β) := by unfold Q1f; fun_prop
+  have hQ' : Tendsto (fun y : ℝ ↦ Q1f β (y / 2)) (𝓝[>] 2⁻¹) (𝓝 (Q1f β (2⁻¹ / 2))) :=
+    ((hQ.comp (continuous_id.div_const 2)).tendsto _).mono_left nhdsWithin_le_nhds
+  exact ((tendsto_deriv_J_half.const_mul c).const_add 1).sub hQ'
+
+/-- $J'\le J'(\frac12^+)$ on $(\frac12,1)$: $J'(y)=\sqrt2\,\Phi^{-1}(\frac{1-y}{w_0})\le
+\sqrt2\,\Phi^{-1}(\frac1{2w_0})$. -/
+theorem deriv_J_le_DJr_half {y : ℝ} (hy : y ∈ Ioo (2⁻¹ : ℝ) 1) :
+    deriv J y ≤ Checker.DJr 2⁻¹ := by
+  obtain ⟨h1, h2⟩ := w₀_mem_fine
+  have hw0 : 0 < w₀ := by linarith
+  rw [Checker.deriv_J_eq hy]
+  unfold Checker.DJr
+  have hle : (1 - y) / w₀ ≤ (1 - 2⁻¹) / w₀ :=
+    div_le_div_of_nonneg_right (by linarith [hy.1]) hw0.le
+  have hm := gInv_strictMonoOn.monotoneOn
+    (⟨div_pos (by linarith [hy.2]) hw0, by rw [div_lt_one hw0]; linarith [hy.1]⟩ :
+      (1 - y) / w₀ ∈ Ioo (0 : ℝ) 1)
+    (⟨by positivity, by rw [div_lt_one hw0]; linarith⟩ : (1 - 2⁻¹) / w₀ ∈ Ioo (0 : ℝ) 1) hle
+  exact mul_le_mul_of_nonneg_left hm (sqrt_nonneg 2)
+
+/-- `fJQ` is continuous on $[\frac12,1]$. -/
+theorem continuousOn_fJQ (c β : ℝ) : ContinuousOn (fJQ c β) (Icc 2⁻¹ 1) := by
+  have hQ : Continuous (fun y : ℝ ↦ Q β (y / 2)) :=
+    (continuous_Q β).comp (continuous_id.div_const 2)
+  exact (continuousOn_id.add (continuousOn_J.const_smul c)).sub
+    (hQ.continuousOn.const_smul (2 : ℝ))
+
+/-! #### Certified values of $J$ and $J'$ -/
+
+/-- $J(\frac9{16})\in[0.50517,0.50518]$ (verified interval checker). -/
+theorem J_nine_sixteenths_mem : J (9 / 16) ∈ Icc (0.50517 : ℝ) 0.50518 := by
+  have h := Checker.checkMem_sound Checker.P11 Checker.hw11 []
+    (.J (9 / 16) 0.0205509685746468 0.0205509685657453) 0.50517 0.50518 (by decide +kernel)
+  simp only [Checker.denote] at h
+  norm_num at h ⊢
+  exact h
+
+/-- $J(\frac45)\in[0.37827,0.37828]$ (verified interval checker). -/
+theorem J_four_fifths_mem : J (4 / 5) ∈ Icc (0.37827 : ℝ) 0.37828 := by
+  have h := Checker.checkMem_sound Checker.P11 Checker.hw11 []
+    (.J (4 / 5) 0.5382426780749073 0.5382426780693950) 0.37827 0.37828 (by decide +kernel)
+  simp only [Checker.denote] at h
+  norm_num at h ⊢
+  exact h
+
+/-- $J(\frac34)\in[0.42576,0.42577]$ (verified interval checker). -/
+theorem J_three_fourths_mem : J (3 / 4) ∈ Icc (0.42576 : ℝ) 0.42577 := by
+  have h := Checker.checkMem_sound Checker.P11 Checker.hw11 []
+    (.J (3 / 4) 0.4140448400864266 0.4140448400803269) 0.42576 0.42577 (by decide +kernel)
+  simp only [Checker.denote] at h
+  norm_num at h ⊢
+  exact h
+
+/-- $J'(\frac12^+)=\sqrt2\,\Phi^{-1}(\frac1{2w_0})\in[0.20697,0.20698]$ (verified interval
+checker). -/
+theorem DJr_half_mem : Checker.DJr 2⁻¹ ∈ Icc (0.20697 : ℝ) 0.20698 := by
+  have h := Checker.checkMem_sound Checker.P11 Checker.hw11 []
+    (.DJ (1 / 2) 0.1034885978228266 0.1034885978330739) 0.20697 0.20698 (by decide +kernel)
+  simp only [Checker.denote] at h
+  norm_num at h ⊢
+  exact h
+
+/-- $J'(\frac9{16})\in[-0.04111,-0.04110]$ (verified interval checker). -/
+theorem deriv_J_nine_sixteenths_mem : deriv J (9 / 16) ∈ Icc (-0.04111 : ℝ) (-0.04110) := by
+  have h := Checker.checkMem_sound Checker.P11 Checker.hw11 []
+    (.DJ (9 / 16) (-0.0205509685746468) (-0.0205509685657453)) (-0.04111) (-0.04110)
+    (by decide +kernel)
+  simp only [Checker.denote] at h
+  rw [Checker.deriv_J_eq ⟨by norm_num, by norm_num⟩]
+  norm_num at h ⊢
+  exact h
+
+/-- $J'(\frac{15}{16})\in[-2.08949,-2.08948]$ (verified interval checker). -/
+theorem deriv_J_fifteen_sixteenths_mem :
+    deriv J (15 / 16) ∈ Icc (-2.08949 : ℝ) (-2.08948) := by
+  have h := Checker.checkMem_sound Checker.P11 Checker.hw11 []
+    (.DJ (15 / 16) (-1.0447418325684322) (-1.0447418325645310)) (-2.08949) (-2.08948)
+    (by decide +kernel)
+  simp only [Checker.denote] at h
+  rw [Checker.deriv_J_eq ⟨by norm_num, by norm_num⟩]
+  norm_num at h ⊢
+  exact h
+
+/-! #### Numerical evaluations for claim (1), $\beta=\frac12$ -/
+
+/-- (6.15), first part: $f_{\frac12}''(\frac9{16})=-2(\sqrt2-1)J(\frac9{16})^{-1}
+-\frac12Q_{\frac12}''(\frac9{32})>0.05$. -/
+theorem fJQ2_nine_sixteenths : fJQ2 (√2 - 1) 2⁻¹ (9 / 16) > 0.05 := by
+  obtain ⟨hj1, hj2⟩ := J_nine_sixteenths_mem
+  obtain ⟨hs1, hs2⟩ := sqrt_two_mem
+  have hj : 0 < J (9 / 16) := by linarith
+  have ht : (J (9 / 16))⁻¹ ≤ 1.97954 := by
+    rw [inv_le_comm₀ hj (by norm_num)]; norm_num; linarith
+  rw [fJQ2, Q2f_eq_affine, two_rpow_half]
+  nlinarith [mul_le_mul_of_nonneg_left ht (by linarith : (0 : ℝ) ≤ √2 - 1)]
+
+/-- (6.15), second part: $f_{\frac12}''(\frac45)<-0.3$. -/
+theorem fJQ2_four_fifths : fJQ2 (√2 - 1) 2⁻¹ (4 / 5) < -0.3 := by
+  obtain ⟨hj1, hj2⟩ := J_four_fifths_mem
+  obtain ⟨hs1, hs2⟩ := sqrt_two_mem
+  have hj : 0 < J (4 / 5) := by linarith
+  have ht : 2.6435 ≤ (J (4 / 5))⁻¹ := by
+    rw [le_inv_comm₀ (by norm_num) hj]; norm_num; linarith
+  rw [fJQ2, Q2f_eq_affine, two_rpow_half]
+  nlinarith [mul_le_mul_of_nonneg_left ht (by linarith : (0 : ℝ) ≤ √2 - 1)]
+
+/-- (6.16), first part: $f_{\frac12}'(\frac9{16})=1+(\sqrt2-1)J'(\frac9{16})
+-Q_{\frac12}'(\frac9{32})>0.05$. -/
+theorem fJQ1_nine_sixteenths : fJQ1 (√2 - 1) 2⁻¹ (9 / 16) > 0.05 := by
+  obtain ⟨hd1, hd2⟩ := deriv_J_nine_sixteenths_mem
+  obtain ⟨hs1, hs2⟩ := sqrt_two_mem
+  rw [fJQ1, Q1f_eq_affine, two_rpow_half]
+  nlinarith [mul_le_mul_of_nonneg_left hd1 (by linarith : (0 : ℝ) ≤ √2 - 1)]
+
+/-- (6.16), second part: $f_{\frac12}'(\frac{15}{16})<-0.1$. -/
+theorem fJQ1_fifteen_sixteenths : fJQ1 (√2 - 1) 2⁻¹ (15 / 16) < -0.1 := by
+  obtain ⟨hd1, hd2⟩ := deriv_J_fifteen_sixteenths_mem
+  obtain ⟨hs1, hs2⟩ := sqrt_two_mem
+  rw [fJQ1, Q1f_eq_affine, two_rpow_half]
+  nlinarith [mul_le_mul_of_nonneg_left hd2 (by linarith : (0 : ℝ) ≤ √2 - 1)]
+
+/-- $f_{\frac12}'(\frac12^+)=1+(\sqrt2-1)J'(\frac12^+)-Q_{\frac12}'(\frac14)>0.05$. -/
+theorem fJQ1_half_lim_gt : 1 + (√2 - 1) * Checker.DJr 2⁻¹ - Q1f 2⁻¹ (2⁻¹ / 2) > 0.05 := by
+  obtain ⟨hd1, hd2⟩ := DJr_half_mem
+  obtain ⟨hs1, hs2⟩ := sqrt_two_mem
+  rw [Q1f_eq_affine, two_rpow_half]
+  nlinarith [mul_le_mul_of_nonneg_left hd1 (by linarith : (0 : ℝ) ≤ √2 - 1)]
+
+/-! #### Claim (1), $\beta=1$ -/
+
+/-- $J(y)\le\frac12+\frac12(y-\frac12)=\frac{1+2y}4$ on $[\frac12,1]$: $J$ lies below the line
+through $(\frac12,J(\frac12))$ of slope $\frac12\ge J'(\frac12^+)\ge J'$. -/
+theorem J_le_line {y : ℝ} (hy : y ∈ Icc (2⁻¹ : ℝ) 1) : J y ≤ (1 + 2 * y) / 4 := by
+  have hD := DJr_half_mem.2
+  have ha : AntitoneOn (fun z ↦ J z - z / 2) (Icc 2⁻¹ 1) := by
+    refine antitoneOn_of_deriv_nonpos (convex_Icc _ _)
+      (continuousOn_J.sub (continuousOn_id.div_const 2)) (fun z hz ↦ ?_) (fun z hz ↦ ?_)
+    · rw [interior_Icc] at hz
+      exact ((hasDerivAt_J_deriv hz).sub ((hasDerivAt_id' z).div_const 2)).differentiableAt
+        |>.differentiableWithinAt
+    · rw [interior_Icc] at hz
+      have hd : HasDerivAt (fun z ↦ J z - z / 2) _ z :=
+        (hasDerivAt_J_deriv hz).sub ((hasDerivAt_id' z).div_const 2)
+      rw [hd.deriv]
+      linarith [deriv_J_le_DJr_half hz]
+  have := ha ⟨le_rfl, by norm_num⟩ hy hy.1
+  simp only [J_half] at this
+  linarith
+
+/-- [DIR], §6.3.2, proof of (1), case $\beta=1$ (details omitted in the paper): with
+$f_1(y)=y+J(y)-2Q_1(\frac y2)$, $f_1''(y)=6-4y-2J(y)^{-1}\le0$ on $(\frac12,1)$ (by
+`J_le_line`), so $f_1$ is concave on $[\frac12,1]$; as $f_1(\frac12)=f_1(1)=0$, $f_1\ge0$ on
+$[\frac12,1]$. -/
+theorem fJQ_one_nonneg {y : ℝ} (hy : y ∈ Icc (2⁻¹ : ℝ) 1) : 0 ≤ fJQ 1 1 y := by
+  have hc : ConcaveOn ℝ (Icc 2⁻¹ 1) (fJQ 1 1) := by
+    refine concaveOn_of_deriv2_nonpos (convex_Icc _ _) (continuousOn_fJQ 1 1)
+      (fun z hz ↦ ?_) (fun z hz ↦ ?_) (fun z hz ↦ ?_)
+    · rw [interior_Icc] at hz
+      exact (hasDerivAt_fJQ 1 1 hz).differentiableAt.differentiableWithinAt
+    · rw [interior_Icc] at hz
+      exact (hasDerivAt_derivs_fJQ 1 1 hz).1.differentiableAt.differentiableWithinAt
+    · rw [interior_Icc] at hz
+      show deriv (deriv (fJQ 1 1)) z ≤ 0
+      have hJ := J_pos ⟨hz.1.le, hz.2⟩
+      have hl := J_le_line ⟨hz.1.le, hz.2.le⟩
+      have hi : (6 - 4 * z) / 2 ≤ 1 / J z := by
+        rw [le_div_iff₀ hJ]; nlinarith [hz.1, hz.2]
+      rw [(derivs_fJQ 1 1 hz).2.1, fJQ2, Q2f_eq_affine, rpow_one, ← one_div]
+      linarith
+  have h1 : fJQ 1 1 2⁻¹ = 0 := by
+    rw [fJQ, J_half, Q_eq_affine, rpow_one]; ring
+  have h2 : fJQ 1 1 1 = 0 := by
+    rw [fJQ, J_one, show (1 : ℝ) / 2 = 2⁻¹ by norm_num, Q_half]; ring
+  have := hc.min_le_of_mem_Icc ⟨le_rfl, by norm_num⟩ ⟨by norm_num, le_rfl⟩ hy
+  rw [h1, h2, min_self] at this
+  exact this
+
+/-! #### Claim (3) -/
+
+/-- [DIR], §6.3.2, proof of (3): the function $2y-1+cJ(y)+L_\beta(1-y)-1$ (for $c=2^\beta-1$ this
+is $f_\beta(y)=G_{LJQ,\beta}(1-y,y)$). -/
+noncomputable def fJL (c β y : ℝ) : ℝ := 2 * y - 1 + c * J y + L β (1 - y) - 1
+
+/-- The first derivative of `fJL` on $(\frac12,1)$: $2+cJ'(y)-L_\beta'(1-y)$. -/
+noncomputable def fJL1 (c β y : ℝ) : ℝ := 2 + c * deriv J y - L1f β (1 - y)
+
+/-- The second derivative of `fJL` on $(\frac12,1)$: $-2cJ(y)^{-1}+L_\beta''(1-y)$. -/
+noncomputable def fJL2 (c β y : ℝ) : ℝ := c * (-2 * (J y)⁻¹) + L2f β (1 - y)
+
+/-- `fJL1` is the derivative of `fJL` on $(\frac12,1)$. -/
+theorem hasDerivAt_fJL (c β : ℝ) {y : ℝ} (hy : y ∈ Ioo (2⁻¹ : ℝ) 1) :
+    HasDerivAt (fJL c β) (fJL1 c β y) y := by
+  have h1y : 1 - y ∈ Ioo (0 : ℝ) 1 := ⟨by linarith [hy.2], by linarith [hy.1]⟩
+  have hl := (hasDerivAt_L (β := β) h1y).comp y ((hasDerivAt_id' y).const_sub 1)
+  have h : HasDerivAt (fJL c β) _ y :=
+    ((((hasDerivAt_id' y).const_mul 2).sub_const 1).add
+      ((hasDerivAt_J_deriv hy).const_mul c)).add hl |>.sub_const 1
+  exact h.congr_deriv (by rw [fJL1]; ring)
+
+/-- `fJL2` is the derivative of `fJL1` on $(\frac12,1)$. -/
+theorem hasDerivAt_fJL1 (c β : ℝ) {y : ℝ} (hy : y ∈ Ioo (2⁻¹ : ℝ) 1) :
+    HasDerivAt (fJL1 c β) (fJL2 c β y) y := by
+  have h1y : 1 - y ∈ Ioo (0 : ℝ) 1 := ⟨by linarith [hy.2], by linarith [hy.1]⟩
+  have hl := (hasDerivAt_L1f (β := β) h1y).comp y ((hasDerivAt_id' y).const_sub 1)
+  have h : HasDerivAt (fJL1 c β) _ y :=
+    (((hasDerivAt_deriv_J hy).const_mul c).const_add 2).sub hl
+  exact h.congr_deriv (by rw [fJL2]; ring)
+
+/-- On $(\frac12,1)$: $(\mathtt{fJL})'=\mathtt{fJL1}$, $(\mathtt{fJL})''=\mathtt{fJL2}$, and
+$(\mathtt{fJL})'$ has the derivative `fJL2`. -/
+theorem derivs_fJL (c β : ℝ) {y : ℝ} (hy : y ∈ Ioo (2⁻¹ : ℝ) 1) :
+    deriv (fJL c β) y = fJL1 c β y ∧ deriv (deriv (fJL c β)) y = fJL2 c β y ∧
+      HasDerivAt (deriv (fJL c β)) (fJL2 c β y) y := by
+  have h1 : ∀ z ∈ Ioo (2⁻¹ : ℝ) 1, deriv (fJL c β) z = fJL1 c β z :=
+    fun z hz ↦ (hasDerivAt_fJL c β hz).deriv
+  have h2 := deriv_eq_of_eqOn_Ioo h1 (fun _ hw ↦ hasDerivAt_fJL1 c β hw) y hy
+  exact ⟨h1 y hy, h2.deriv, h2⟩
+
+/-- `fJL` is continuous on $[\frac12,1]$ (for $0<\beta\le1$). -/
+theorem continuousOn_fJL (c : ℝ) {β : ℝ} (hβ0 : 0 < β) (hβ1 : β ≤ 1) :
+    ContinuousOn (fJL c β) (Icc 2⁻¹ 1) := by
+  have hL : ContinuousOn (fun y ↦ L β (1 - y)) (Icc 2⁻¹ 1) :=
+    (continuousOn_L hβ0 hβ1).comp (continuousOn_const.sub continuousOn_id)
+      (fun y hy ↦ ⟨by linarith [hy.2], by linarith [hy.1]⟩)
+  exact ((((continuousOn_const.mul continuousOn_id).sub continuousOn_const).add
+    (continuousOn_J.const_smul c)).add hL).sub continuousOn_const
+
+/-- For $c\ge0$ and $y\in(\frac12,1)$: $-2cJ(y)^{-1}+L_{\frac12}''(1-y)\le0$ ($J>0$ and
+$L_{\frac12}''<0$ on $(0,1)$). -/
+theorem fJL2_half_nonpos {c : ℝ} (hc : 0 ≤ c) {y : ℝ} (hy : y ∈ Ioo (2⁻¹ : ℝ) 1) :
+    c * (-2 * (J y)⁻¹) + L2f 2⁻¹ (1 - y) ≤ 0 := by
+  have h1y : 1 - y ∈ Ioo (0 : ℝ) 1 := ⟨by linarith [hy.2], by linarith [hy.1]⟩
+  have hJ := J_pos ⟨hy.1.le, hy.2⟩
+  have hu : 0 < log (1 - y)⁻¹ := log_pos ((one_lt_inv₀ h1y.1).2 h1y.2)
+  have hl : 0 < log 2 := log_pos one_lt_two
+  have h := neg_L2f_eq (β := 2⁻¹) h1y
+  have : 0 ≤ 2⁻¹ * (1 - 2⁻¹ + log (1 - y)⁻¹) * ((1 - y)⁻¹ * (log (1 - y)⁻¹) ^ (-2 : ℝ)) *
+      (log (1 - y)⁻¹ / log 2) ^ (2⁻¹ : ℝ) := by
+    have := rpow_pos_of_pos hu (-2 : ℝ)
+    have := rpow_pos_of_pos (div_pos hu hl) (2⁻¹ : ℝ)
+    have := inv_pos.2 h1y.1
+    have : 0 < 1 - 2⁻¹ + log (1 - y)⁻¹ := by linarith
+    positivity
+  have : 0 ≤ c * (2 * (J y)⁻¹) := by positivity
+  linarith
+
+/-- (6.18): $f_{\frac12}(\frac34)=\frac12-1+(\sqrt2-1)J(\frac34)+L_{\frac12}(\frac14)
+=-\frac12+(\sqrt2-1)J(\frac34)+\frac{\sqrt2}4>0.01$. -/
+theorem fJL_three_fourths : fJL (√2 - 1) 2⁻¹ (3 / 4) > 0.01 := by
+  obtain ⟨hj1, hj2⟩ := J_three_fourths_mem
+  obtain ⟨hs1, hs2⟩ := sqrt_two_mem
+  have hL : L 2⁻¹ (1 - 3 / 4) = √2 / 4 := by
+    rw [L, show (1 - 3 / 4 : ℝ)⁻¹ = 2 ^ (2 : ℝ) by norm_num,
+      logb_rpow (by norm_num) (by norm_num), two_rpow_half]
+    ring
+  rw [fJL, hL]
+  nlinarith [mul_le_mul_of_nonneg_left hj1 (by linarith : (0 : ℝ) ≤ √2 - 1)]
+
+end Prop_6_6_aux
 
 end Auto.DIR

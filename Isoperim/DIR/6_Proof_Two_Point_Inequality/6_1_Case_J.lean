@@ -9,6 +9,11 @@ public import Isoperim.DIR.«1_Introduction».Definitions
 public import Isoperim.DIR.«2_Envelope_Functions».Definitions
 public import Isoperim.DIR.«3_Variants_Bobkov_Inequality».«3_0_Variants_Bobkov_Inequality»
 public import Isoperim.DIR.«5_Auxiliary_Estimates».«5_2_Two_Point_Inequalities»
+public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_1_Case_J_aux»
+public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_1_Case_J_aux_gJ2_main»
+public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_1_Case_J_aux_gJ1a_main»
+public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_1_Case_J_aux_gJ1b_main»
+public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_1_Case_J_aux_cont»
 
 /-!
 # [DIR] §6 Proof of the two-point inequality, §6.1 Case J
@@ -40,7 +45,8 @@ open Real Set
 
 /-- [DIR], §6.1, Figure 4: $x_0<\frac58$. -/
 theorem x₀_lt_five_div_eight : x₀ < 5 / 8 := by
-  sorry
+  have h := eqn_3_6
+  linarith [h.2]
 
 section Case_J_I
 /-! ### §6.1.1 Case I: $\frac12\le x\le x_0$, $x\le y\le\frac{11}{16}$ -/
@@ -49,7 +55,8 @@ section Case_J_I
 contained in the larger region $\frac12\le x\le\frac58$, $0\le h=y-x\le\frac3{16}$. -/
 theorem caseJ_I_region_subset (x y : ℝ) (hx : 2⁻¹ ≤ x) (hx₀ : x ≤ x₀) (hxy : x ≤ y)
     (hy : y ≤ 11 / 16) : x ∈ Icc (2⁻¹ : ℝ) (5 / 8) ∧ y - x ∈ Icc (0 : ℝ) (3 / 16) := by
-  sorry
+  have h := x₀_lt_five_div_eight
+  exact ⟨⟨hx, by linarith⟩, ⟨by linarith, by linarith⟩⟩
 
 /-- The Taylor remainder $E_N$ ([DIR], §6.1.1), defined here as the exact remainder
 $$E_N=J(x)+J(x+h)-2J(x+\tfrac h2)-\sum_{k=2}^{N-1}\tfrac1{k!}(1-2^{-k+1})J^{(k)}(x)h^k;$$
@@ -73,23 +80,31 @@ noncomputable def g_J_1 (N : ℕ) (β c x h : ℝ) : ℝ :=
 /-- [DIR], §6.1.1: from $J\cdot J''=-2$, $J''=-2J^{-1}$ on $(\frac12,1)$. -/
 theorem iteratedDeriv_two_J (x : ℝ) (hx : x ∈ Ioo (2⁻¹ : ℝ) 1) :
     iteratedDeriv 2 J x = -2 * J x ^ (-1 : ℤ) := by
-  sorry
+  rw [(iteratedDeriv_two_J_eventuallyEq hx).eq_of_nhds, zpow_neg_one]
 
 /-- [DIR], §6.1.1: $J^{(3)}=2J'J^{-2}$ on $(\frac12,1)$. -/
 theorem iteratedDeriv_three_J (x : ℝ) (hx : x ∈ Ioo (2⁻¹ : ℝ) 1) :
     iteratedDeriv 3 J x = 2 * deriv J x * J x ^ (-2 : ℤ) := by
-  sorry
+  rw [(iteratedDeriv_three_J_eventuallyEq hx).eq_of_nhds, zpow_neg, inv_pow]
+  norm_cast
 
 /-- [DIR], §6.1.1: $J$ is increasing on $[\frac12,x_0]$ and decreasing on $[x_0,1]$. -/
 theorem J_monotoneOn_antitoneOn :
     MonotoneOn J (Icc 2⁻¹ x₀) ∧ AntitoneOn J (Icc x₀ 1) := by
-  sorry
+  exact ⟨J_monotoneOn_Icc_half_x₀, J_antitoneOn_Icc_x₀_one⟩
 
 /-- **(6.1)** ([DIR], §6.1.1): $J^{(4)}=-4(1+|J'|^2)J^{-3}<0$ on $(\frac12,1)$. -/
 theorem eqn_6_1 (x : ℝ) (hx : x ∈ Ioo (2⁻¹ : ℝ) 1) :
     iteratedDeriv 4 J x = -4 * (1 + |deriv J x| ^ 2) * J x ^ (-3 : ℤ) ∧
       iteratedDeriv 4 J x < 0 := by
-  sorry
+  have hJ := J_pos ⟨hx.1.le, hx.2⟩
+  have e : iteratedDeriv 4 J x = -4 * (1 + |deriv J x| ^ 2) * J x ^ (-3 : ℤ) := by
+    rw [(iteratedDeriv_four_J_eventuallyEq hx).eq_of_nhds, sq_abs, zpow_neg, inv_pow]
+    norm_cast
+  refine ⟨e, ?_⟩
+  rw [e]
+  have : 0 < J x ^ (-3 : ℤ) := zpow_pos hJ _
+  nlinarith [sq_nonneg |deriv J x|]
 
 /-- [DIR], §6.1.1 (application of Lemma 5.4). For $\beta\in(0,1)$, $c>0$, $\frac12\le x\le\frac58$
 and $0\le h\le\frac3{16}$:
@@ -102,22 +117,67 @@ theorem caseJ_I_neardiag_bound (β c : ℝ) (hβ : β ∈ Ioo (0 : ℝ) 1) (hc :
       β * c ^ (1 - β⁻¹) * J (x + h) ^ (1 - β⁻¹) * h ^ β⁻¹
         + c * (J x + J (x + h) - 2 * J (x + h / 2))
         - 2⁻¹ * β * (1 - β) * c ^ (1 - 2 / β) * J (x + h) ^ (1 - 2 / β) * h ^ (2 / β) := by
-  sorry
+  have hx1 : x + h ∈ Ico (2⁻¹ : ℝ) 1 := ⟨by linarith [hx.1, hh.1], by linarith [hx.2, hh.2]⟩
+  have hJ := J_pos hx1
+  obtain ⟨E, hE, -, hE1⟩ := lemma_5_4 (c • J) β hβ x h hh.1
+    (by simp only [Pi.smul_apply, smul_eq_mul]; positivity)
+  simp only [Pi.smul_apply, smul_eq_mul] at hE hE1
+  rw [hE, mul_rpow hc.le hJ.le, show x + 2⁻¹ * h = x + h / 2 by ring]
+  rw [mul_rpow hc.le hJ.le] at hE1
+  nlinarith
 
 /-- [DIR], §6.1.1. For $N\ge2$, $\beta\in(0,1)$, $c>0$, $\frac12<x\le\frac58$,
 $0\le h\le\frac3{16}$:
-$$G^1_\beta[c\cdot J](x,x+h)\ge h^{\frac1\beta}g_{J,1,\beta,c}(x,h).$$ -/
-theorem caseJ_I_G₁_ge_g_J_1 (N : ℕ) (hN : 2 ≤ N) (β c : ℝ) (hβ : β ∈ Ioo (0 : ℝ) 1)
+$$G^1_\beta[c\cdot J](x,x+h)\ge h^{\frac1\beta}g_{J,1,\beta,c}(x,h).$$
+
+**Unused hypothesis.** The paper assumes $N\ge2$; this is not needed for the claim and is omitted
+in the Lean statement. -/
+theorem caseJ_I_G₁_ge_g_J_1 (N : ℕ) (β c : ℝ) (hβ : β ∈ Ioo (0 : ℝ) 1)
     (hc : 0 < c) (x h : ℝ) (hx : x ∈ Ioc (2⁻¹ : ℝ) (5 / 8)) (hh : h ∈ Icc (0 : ℝ) (3 / 16)) :
     G₁ β (c • J) x (x + h) ≥ h ^ β⁻¹ * g_J_1 N β c x h := by
-  sorry
+  have hnd := caseJ_I_neardiag_bound β c hβ hc x h ⟨hx.1.le, hx.2⟩ hh
+  have hb : 0 < β⁻¹ := inv_pos.2 hβ.1
+  rcases hh.1.eq_or_lt with h0 | hpos
+  · subst h0
+    rw [zero_rpow hb.ne', zero_mul]
+    rw [zero_rpow hb.ne', zero_rpow (div_pos two_pos hβ.1).ne'] at hnd
+    have : c * (J x + J (x + 0) - 2 * J (x + 0 / 2)) = 0 := by
+      rw [add_zero, zero_div, add_zero]; ring
+    linarith
+  · have hp : ∀ a b : ℝ, h ^ a * h ^ b = h ^ (a + b) := fun a b ↦ (rpow_add hpos a b).symm
+    set a : ℕ → ℝ := fun k ↦ (k.factorial : ℝ)⁻¹ * (1 - 2 ^ (-(k : ℝ) + 1)) *
+      iteratedDeriv k J x with ha
+    have hs : h ^ β⁻¹ * ∑ k ∈ Finset.Ico 2 N, a k * h ^ ((k : ℝ) - β⁻¹) =
+        ∑ k ∈ Finset.Ico 2 N, a k * h ^ k := by
+      rw [Finset.mul_sum]
+      refine Finset.sum_congr rfl fun k _ ↦ ?_
+      rw [mul_left_comm, hp, show β⁻¹ + ((k : ℝ) - β⁻¹) = (k : ℕ) by ring, rpow_natCast]
+    have h2 : h ^ β⁻¹ * h ^ β⁻¹ = h ^ (2 / β) := by rw [hp]; ring_nf
+    have h3 : h ^ β⁻¹ * h ^ (-β⁻¹) = 1 := by rw [hp, add_neg_cancel, rpow_zero]
+    have hE : E_J N x h = J x + J (x + h) - 2 * J (x + h / 2) -
+        ∑ k ∈ Finset.Ico 2 N, a k * h ^ k := rfl
+    have hg : g_J_1 N β c x h = β * c ^ (1 - β⁻¹) * J (x + h) ^ (1 - β⁻¹)
+        - 2⁻¹ * β * (1 - β) * c ^ (1 - 2 / β) * J (x + h) ^ (1 - 2 / β) * h ^ β⁻¹
+        + c * ∑ k ∈ Finset.Ico 2 N, a k * h ^ ((k : ℝ) - β⁻¹)
+        + c * E_J N x h * h ^ (-β⁻¹) := rfl
+    have e : h ^ β⁻¹ * g_J_1 N β c x h =
+        β * c ^ (1 - β⁻¹) * J (x + h) ^ (1 - β⁻¹) * h ^ β⁻¹
+          + c * (J x + J (x + h) - 2 * J (x + h / 2))
+          - 2⁻¹ * β * (1 - β) * c ^ (1 - 2 / β) * J (x + h) ^ (1 - 2 / β) * h ^ (2 / β) := by
+      rw [hg]
+      linear_combination (-(2⁻¹ * β * (1 - β) * c ^ (1 - 2 / β) * J (x + h) ^ (1 - 2 / β))) * h2
+        + c * hs + c * E_J N x h * h3 + c * hE
+    rw [e]
+    exact hnd
 
 /-- [DIR], §6.1.1: $J'(x_0)=0$ and $J''<0$ (on $(\frac12,1)$), so $J'$ is strictly decreasing
 (on $(\frac12,1)$). -/
 theorem deriv_J_x₀ :
     deriv J x₀ = 0 ∧ (∀ x ∈ Ioo (2⁻¹ : ℝ) 1, deriv (deriv J) x < 0) ∧
       StrictAntiOn (deriv J) (Ioo 2⁻¹ 1) := by
-  sorry
+  refine ⟨?_, fun x hx ↦ deriv2_J_neg hx, deriv_J_strictAntiOn⟩
+  rw [(deriv_J_eventuallyEq x₀_mem_Ioo).eq_of_nhds, x₀]
+  exact (deriv_gJw_sign w₀_pos).1
 
 /-- **(6.3)** ([DIR], §6.1.1) (🚗). For $(\beta,c)\in\{(\beta_0,1),(\frac12,c_0)\}$ and
 $(x,h)\in[\frac12,\frac58]\times[0,\frac3{16}]$ (here $x>\frac12$, see below):
@@ -127,14 +187,46 @@ $$g_{J,1,\beta,c}(x,h)>10^{-7}$$ (with $N=6$).
 theorem eqn_6_3 (β c : ℝ) (hβc : (β, c) = (β₀, 1) ∨ (β, c) = (2⁻¹, c₀)) (x h : ℝ)
     (hx : x ∈ Ioc (2⁻¹ : ℝ) (5 / 8)) (hh : h ∈ Icc (0 : ℝ) (3 / 16)) :
     g_J_1 6 β c x h > 10 ^ (-7 : ℤ) := by
-  sorry
+  have e : (10 : ℝ) ^ (-7 : ℤ) = 1 / 10 ^ 7 := by norm_num
+  rw [e]
+  rcases hβc with h | h <;> simp only [Prod.mk.injEq] at h <;> obtain ⟨rfl, rfl⟩ := h
+  · have := gJ1a_gt x h hx hh
+    have e1 : (((50057 / 100000 : ℚ)) : ℝ) = β₀ := by norm_num [β₀]
+    have e2 : (((1 : ℚ)) : ℝ) = 1 := by norm_num
+    rw [e1, e2] at this
+    exact this
+  · have := gJ1b_gt x h hx hh
+    have e1 : (((1 / 2 : ℚ)) : ℝ) = 2⁻¹ := by norm_num
+    have e2 : (((997 / 1000 : ℚ)) : ℝ) = c₀ := by norm_num [c₀]
+    rw [e1, e2] at this
+    exact this
 
 /-- [DIR], §6.1.1: the desired inequality holds in the larger region
 $\frac12\le x\le\frac58$, $0\le h\le\frac3{16}$:
 $G^1_{\beta_0}[J](x,x+h)\ge0$ and $G^1_{\frac12}[c_0J](x,x+h)\ge0$. -/
 theorem caseJ_I (x h : ℝ) (hx : x ∈ Icc (2⁻¹ : ℝ) (5 / 8)) (hh : h ∈ Icc (0 : ℝ) (3 / 16)) :
     G₁ β₀ J x (x + h) ≥ 0 ∧ G₁ 2⁻¹ (c₀ • J) x (x + h) ≥ 0 := by
-  sorry
+  have key : ∀ β c : ℝ, (β, c) = (β₀, 1) ∨ (β, c) = (2⁻¹, c₀) → G₁ β (c • J) x (x + h) ≥ 0 := by
+    intro β c hβc
+    have hβ : β ∈ Ioo (0 : ℝ) 1 := by
+      rcases hβc with h | h <;> simp only [Prod.mk.injEq] at h <;> rw [h.1] <;> norm_num [β₀]
+    have hc : 0 < c := by
+      rcases hβc with h | h <;> simp only [Prod.mk.injEq] at h <;> rw [h.2] <;> norm_num [c₀]
+    have hpos : ∀ x' ∈ Ioc (2⁻¹ : ℝ) (5 / 8), 0 ≤ G₁ β (c • J) x' (x' + h) := by
+      intro x' hx'
+      have h1 := caseJ_I_G₁_ge_g_J_1 6 β c hβ hc x' h hx' hh
+      have h2 := eqn_6_3 β c hβc x' h hx' hh
+      have h3 : (0 : ℝ) < 10 ^ (-7 : ℤ) := by positivity
+      have h4 : 0 ≤ h ^ β⁻¹ := rpow_nonneg hh.1 _
+      nlinarith
+    rcases hx.1.lt_or_eq with hx1 | hx1
+    · exact hpos x ⟨hx1, hx.2⟩
+    · rw [← hx1]
+      exact nonneg_left_of_continuousOn (F := fun x ↦ G₁ β (c • J) x (x + h)) (by norm_num)
+        (continuousOn_G₁_cJ β c h hβ.1 hc.le hh) hpos
+  refine ⟨?_, key _ _ (Or.inr rfl)⟩
+  have := key β₀ 1 (Or.inl rfl)
+  rwa [one_smul] at this
 
 end Case_J_I
 
@@ -143,7 +235,11 @@ $G^1_{\beta_0}[J]\ge0$ to show the first part: for $\beta\ge\beta_0$ and
 $\frac12\le x\le y\le1$, $G^1_{\beta_0}[J](x,y)\le G^1_\beta[J](x,y)$. -/
 theorem caseJ_G₁_mono_β (β : ℝ) (hβ : β₀ ≤ β) (x y : ℝ) (hx : 2⁻¹ ≤ x) (hxy : x ≤ y)
     (hy : y ≤ 1) : G₁ β₀ J x y ≤ G₁ β J x y := by
-  sorry
+  have hβ₀ : (0 : ℝ) < β₀ := by norm_num [β₀]
+  have hJ : 0 ≤ J y := J_nonneg ⟨hx.trans hxy, hy⟩
+  simp only [G₁]
+  have := rpow_inv_add_rpow_inv_mono (sub_nonneg.2 hxy) hJ hβ₀ hβ
+  linarith
 
 section Case_J_II
 /-! ### §6.1.2 Case II: $\frac12\le x\le x_0$, $\frac{11}{16}\le y\le 1$ -/
@@ -153,7 +249,27 @@ conclusion $G^1_{\frac12}[J](x,y)\ge0$: for $\frac12\le x\le y\le1$, it implies
 $G^1_{\beta_0}[J](x,y)\ge0$ and $G^1_{\frac12}[c_0J](x,y)\ge0$. -/
 theorem caseJ_II_suffices (x y : ℝ) (hx : 2⁻¹ ≤ x) (hxy : x ≤ y) (hy : y ≤ 1)
     (h : G₁ 2⁻¹ J x y ≥ 0) : G₁ β₀ J x y ≥ 0 ∧ G₁ 2⁻¹ (c₀ • J) x y ≥ 0 := by
-  sorry
+  have hβ₀ : (2⁻¹ : ℝ) ≤ β₀ := by norm_num [β₀]
+  have hJy : 0 ≤ J y := J_nonneg ⟨hx.trans hxy, hy⟩
+  refine ⟨?_, ?_⟩
+  · have := rpow_inv_add_rpow_inv_mono (sub_nonneg.2 hxy) hJy (by norm_num : (0 : ℝ) < 2⁻¹) hβ₀
+    simp only [G₁] at h ⊢
+    linarith
+  · rw [G₁_half_eq] at h ⊢
+    simp only [Pi.smul_apply, smul_eq_mul]
+    have hc0 : (0 : ℝ) < c₀ := by norm_num [c₀]
+    have hc1 : c₀ ≤ 1 := by norm_num [c₀]
+    have hS : √((c₀ * (y - x)) ^ 2 + (c₀ * J y) ^ 2) = c₀ * √((y - x) ^ 2 + J y ^ 2) := by
+      rw [show (c₀ * (y - x)) ^ 2 + (c₀ * J y) ^ 2 = c₀ ^ 2 * ((y - x) ^ 2 + J y ^ 2) by ring,
+        Real.sqrt_mul (by positivity), Real.sqrt_sq hc0.le]
+    have hle : √((c₀ * (y - x)) ^ 2 + (c₀ * J y) ^ 2) ≤ √((y - x) ^ 2 + (c₀ * J y) ^ 2) := by
+      apply Real.sqrt_le_sqrt
+      have : (c₀ * (y - x)) ^ 2 ≤ (y - x) ^ 2 := by
+        rw [mul_pow]
+        have : c₀ ^ 2 ≤ 1 := by nlinarith
+        nlinarith [sq_nonneg (y - x)]
+      linarith
+    nlinarith
 
 /-- The function $g_{J,2}(x,y)=(y-x)^2+J(y)^2-(2J(\frac{x+y}2)-J(x))^2$ ([DIR], §6.1.2). -/
 noncomputable def g_J_2 (x y : ℝ) : ℝ := (y - x) ^ 2 + J y ^ 2 - (2 * J ((x + y) / 2) - J x) ^ 2
@@ -162,29 +278,47 @@ noncomputable def g_J_2 (x y : ℝ) : ℝ := (y - x) ^ 2 + J y ^ 2 - (2 * J ((x 
 $2J(\frac{x+y}2)-J(x)\ge0$. -/
 theorem caseJ_II_nonneg (x y : ℝ) (hx : x ∈ Icc (2⁻¹ : ℝ) (9 / 16))
     (hy : y ∈ Icc (11 / 16 : ℝ) 1) : 2 * J ((x + y) / 2) - J x ≥ 0 := by
-  sorry
+  linarith [two_J_mid_sub_J_nonneg hx hy]
 
 /-- [DIR], §6.1.2: for $\frac12\le x\le\frac9{16}$ and $\frac{11}{16}\le y\le1$,
 $G^1_{\frac12}[J](x,y)\ge0$ is equivalent to $g_{J,2}(x,y)\ge0$. -/
 theorem caseJ_II_iff_g_J_2 (x y : ℝ) (hx : x ∈ Icc (2⁻¹ : ℝ) (9 / 16))
     (hy : y ∈ Icc (11 / 16 : ℝ) 1) : G₁ 2⁻¹ J x y ≥ 0 ↔ g_J_2 x y ≥ 0 := by
-  sorry
+  have hA := two_J_mid_sub_J_nonneg hx hy
+  rw [G₁_half_eq, g_J_2, ge_iff_le, ge_iff_le, sub_nonneg]
+  constructor
+  · intro h
+    have h' : 2 * J ((x + y) / 2) - J x ≤ √((y - x) ^ 2 + J y ^ 2) := by linarith
+    have := (Real.le_sqrt hA (by positivity : (0 : ℝ) ≤ (y - x) ^ 2 + J y ^ 2)).1 h'
+    linarith
+  · intro h
+    have := (Real.le_sqrt hA (by positivity : (0 : ℝ) ≤ (y - x) ^ 2 + J y ^ 2)).2 (by linarith)
+    linarith
 
 /-- **(6.5)** ([DIR], §6.1.2) (🚗). For $(x,y)\in[\frac12,\frac9{16}]\times[\frac{11}{16},1]$:
 $$g_{J,2}(x,y)>10^{-8}.$$ (There is no equation (6.4) in [DIR].) -/
 theorem eqn_6_5 (x y : ℝ) (hx : x ∈ Icc (2⁻¹ : ℝ) (9 / 16))
     (hy : y ∈ Icc (11 / 16 : ℝ) 1) : g_J_2 x y > 10 ^ (-8 : ℤ) := by
-  sorry
+  have := g_J_2_gt x y hx hy
+  rw [g_J_2]
+  norm_num at this ⊢
+  linarith
 
 /-- [DIR], §6.1.2: $\frac9{16}=0.5625>x_0$. -/
 theorem nine_div_sixteen_gt_x₀ : (9 / 16 : ℝ) = 0.5625 ∧ (0.5625 : ℝ) > x₀ := by
-  sorry
+  have h := eqn_3_6
+  exact ⟨by norm_num, by linarith [h.2]⟩
 
 /-- [DIR], §6.1.2 (conclusion of Case II): for $\frac12\le x\le x_0$ and
 $\frac{11}{16}\le y\le1$, $G^1_{\frac12}[J](x,y)\ge0$. -/
 theorem caseJ_II (x y : ℝ) (hx : x ∈ Icc 2⁻¹ x₀) (hy : y ∈ Icc (11 / 16 : ℝ) 1) :
     G₁ 2⁻¹ J x y ≥ 0 := by
-  sorry
+  have hx₀ := nine_div_sixteen_gt_x₀
+  have hx' : x ∈ Icc (2⁻¹ : ℝ) (9 / 16) := ⟨hx.1, by linarith [hx.2, hx₀.2]⟩
+  rw [caseJ_II_iff_g_J_2 x y hx' hy]
+  have := eqn_6_5 x y hx' hy
+  have : (0 : ℝ) < 10 ^ (-8 : ℤ) := by positivity
+  linarith
 
 end Case_J_II
 
@@ -196,6 +330,13 @@ $$G^1_\beta[J](x,y)\ge0\quad\text{and}\quad G^1_{\frac12}[c_0J](x,y)\ge0.$$ -/
 theorem prop_6_1 (β : ℝ) (hβ : β₀ ≤ β) (x y : ℝ) (hx : 2⁻¹ ≤ x) (hx₀ : x ≤ x₀)
     (hxy : x ≤ y) (hy : y ≤ 1) :
     G₁ β J x y ≥ 0 ∧ G₁ 2⁻¹ (c₀ • J) x y ≥ 0 := by
-  sorry
+  have hβ₀ : (0 : ℝ) < β₀ := by norm_num [β₀]
+  rcases le_total y (11 / 16) with hy' | hy'
+  · obtain ⟨h1, h2⟩ := caseJ_I_region_subset x y hx hx₀ hxy hy'
+    obtain ⟨h3, h4⟩ := caseJ_I x (y - x) h1 h2
+    rw [add_sub_cancel] at h3 h4
+    exact ⟨(caseJ_G₁_mono_β β hβ x y hx hxy hy).trans' h3, h4⟩
+  · obtain ⟨h3, h4⟩ := caseJ_II_suffices x y hx hxy hy (caseJ_II x y ⟨hx, hx₀⟩ ⟨hy', hy⟩)
+    exact ⟨(caseJ_G₁_mono_β β hβ x y hx hxy hy).trans' h3, h4⟩
 
 end Auto.DIR

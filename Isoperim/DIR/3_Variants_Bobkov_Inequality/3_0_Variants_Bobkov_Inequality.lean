@@ -418,7 +418,9 @@ noncomputable def x₀ : ℝ := 1 - w₀ / 2
 
 /-- **(3.6)** ([DIR], §3). $x_0=1-\frac{w_0}2\in[0.552,0.553]$. -/
 theorem eqn_3_6 : x₀ ∈ Icc (0.552 : ℝ) 0.553 := by
-  sorry
+  have h := w₀_mem
+  rw [x₀]
+  constructor <;> linarith [h.1, h.2]
 
 /-- [DIR], §3: setting $w=w_0$, (3.2) holds for $B=J$ as long as $1\ge y\ge x\ge x_0$. -/
 theorem J_eqn_3_2 (x y : ℝ) (hx : x₀ ≤ x) (hxy : x ≤ y) (hy : y ≤ 1) :
