@@ -52,7 +52,8 @@ Task-specific notes:
 - **Task 2**, **Task 3**, **Task 4**: independent of each other; they depend only on Task 1. Task 3
   starts with [DIR] Case $Q$ (§6.2). Task 4 can start the Kahn–Park reduction immediately (it depends only on definitions).
   The computer-verified (🚗) claims are proved as in the paper (tight lower bound, partition from
-  `partitions.py`, [DIR] §4 tools, certified numerics of `4_3_Source_Code_aux.lean`).
+  `partitions.py`, [DIR] §4 tools) with the verified checker `Auto.DIR.Checker` and shared
+  tables of certified values (`AGENTS.md`, rule 8).
 - **Task 5** (wrap-up): starts when the declarations it depends on are proved; it only assembles
   results of Tasks 1–4.
 

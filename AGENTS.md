@@ -42,10 +42,18 @@
    argument justifying it, the admissible partition from the paper's ancillary `partitions.py`
    ([DIR] `anc/partitions.py`, [DIRX] `partitions.py`), soundness of partitioning from [DIR] §4.1
    (`Auto.DIR.fact_4_1_if`, `Auto.DIR.pos_of_partitionN₀`), and one certificate lemma per
-   box whose numerical side conditions are exact rational arithmetic, using the certified
-   numerics of `Isoperim/DIR/4_Computer_Assisted_Proofs/4_3_Source_Code_aux.lean`. Generate the
-   certificate lemmas with a script kept in the repository. LeanCert stays a dependency but is
-   not used for now (it is not a Lean `module` package, so `module` files cannot import it).
+   box. Certificates use the verified interval checker `Auto.DIR.Checker` (section of
+   `Isoperim/DIR/4_Computer_Assisted_Proofs/4_3_Source_Code_aux.lean`): write the paper's tight
+   lower bound as an `Ex` expression (with one lemma, for all arguments, that it denotes the real
+   lower bound), certify the values that recur across boxes ($J$, $J'$, $J(x_0)$, powers $h^r$,
+   …) once as table entries (`Cert.ofJ`, `Cert.ofDJ`, `Cert.ofJx0`, `Cert.ofRpow`, …), and prove
+   each box by `check_sound` with the box's table entries and one `decide +kernel`. Use the
+   parameters `Checker.P11` with `Checker.hw11` ($w_0$ to $9\cdot10^{-12}$). Generate tables and
+   certificate lemmas with scripts kept in the repository (witnesses:
+   `automation/cert/checker_witness.py`; worked example and timings: branch `cert-test`,
+   `CertTest/gen/casej_prime.py`, `CertTest/CaseJDefs.lean`, `CertTest/ESTIMATES.md`); split
+   large claims into several files (≈ 0.15 s per table entry, 0.05–1 s per box). LeanCert stays
+   a dependency but is not used (it is not a Lean `module` package).
 
 This Lean library formalizes the papers [DIR] (arXiv:2407.12674) and [DIRX]
 (arXiv:2602.20462); it is pinned to `leanprover/lean4:v4.35.0` in
