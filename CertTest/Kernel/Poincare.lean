@@ -153,25 +153,28 @@ theorem J_ge_box (s c e x : ℝ) (hs : 0 ≤ s) (hc : 0 ≤ c)
   have hg : 0 ≤ gProf (x / 0.896) := le_trans hm hch
   nlinarith
 
-/-- Certified: $\int_0^{39/50}e^{-u^2}\,du\ge6463/10000$. -/
-theorem cert_int_1 : 6463/10000 ≤ ∫ u in (0:ℝ)..(39/50), Real.exp (-(u ^ 2)) := by
-  leancert
+/-- $\int_0^{39/50}e^{-u^2}\,du\ge6463/10000$, from the series bound (no certificate check;
+LeanCert's integral checker is impractical in kernel mode). -/
+theorem cert_int_1 : 6463/10000 ≤ ∫ u in (0:ℝ)..(39/50), Real.exp (-(u ^ 2)) :=
+  le_trans (by norm_num) (integral_exp_neg_sq_ge (39/50) (by norm_num))
 
 /-- Certified: $e^{-(39/50)^2}\ge1359/2500$. -/
 theorem cert_exp_1 : (1359/2500 : ℝ) ≤ Real.exp (-(39/50 : ℝ) ^ 2) := by
   leancert
 
-/-- Certified: $\int_0^{1/2}e^{-u^2}\,du\ge288/625$. -/
-theorem cert_int_2 : 288/625 ≤ ∫ u in (0:ℝ)..(1/2), Real.exp (-(u ^ 2)) := by
-  leancert
+/-- $\int_0^{1/2}e^{-u^2}\,du\ge288/625$, from the series bound (no certificate check;
+LeanCert's integral checker is impractical in kernel mode). -/
+theorem cert_int_2 : 288/625 ≤ ∫ u in (0:ℝ)..(1/2), Real.exp (-(u ^ 2)) :=
+  le_trans (by norm_num) (integral_exp_neg_sq_ge (1/2) (by norm_num))
 
 /-- Certified: $e^{-(1/2)^2}\ge389/500$. -/
 theorem cert_exp_2 : (389/500 : ℝ) ≤ Real.exp (-(1/2 : ℝ) ^ 2) := by
   leancert
 
-/-- Certified: $\int_0^{21/50}e^{-u^2}\,du\ge3961/10000$. -/
-theorem cert_int_3 : 3961/10000 ≤ ∫ u in (0:ℝ)..(21/50), Real.exp (-(u ^ 2)) := by
-  leancert
+/-- $\int_0^{21/50}e^{-u^2}\,du\ge3961/10000$, from the series bound (no certificate check;
+LeanCert's integral checker is impractical in kernel mode). -/
+theorem cert_int_3 : 3961/10000 ≤ ∫ u in (0:ℝ)..(21/50), Real.exp (-(u ^ 2)) :=
+  le_trans (by norm_num) (integral_exp_neg_sq_ge (21/50) (by norm_num))
 
 /-- Certified: $e^{-(21/50)^2}\ge4187/5000$. -/
 theorem cert_exp_3 : (4187/5000 : ℝ) ≤ Real.exp (-(21/50 : ℝ) ^ 2) := by
