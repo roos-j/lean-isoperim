@@ -14,3 +14,8 @@ rev = "v4.35.0"
 
 [[lean_lib]]
 name = "Isoperim"
+
+# Certification test (branch `cert-test`): not a default target; build with `lake build CertTest`.
+[[lean_lib]]
+name = "CertTest"
+globs = ["CertTest.+"]
