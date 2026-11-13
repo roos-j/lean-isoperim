@@ -185,7 +185,11 @@ theorem g_QJ_half_nonneg_iff (y : ℝ) (hy : y ∈ Icc (2⁻¹ : ℝ) (5 / 8)) (
 $(\beta,c)\in\{(\beta_0,1),(\frac12,c_0)\}$, which already follows from Proposition 6.1. -/
 theorem G₁_J_half_nonneg (β c : ℝ) (hβc : (β, c) = (β₀, 1) ∨ (β, c) = (2⁻¹, c₀)) (y : ℝ)
     (hy : y ∈ Icc (2⁻¹ : ℝ) (5 / 8)) : G₁ β (c • J) 2⁻¹ y ≥ 0 := by
-  sorry
+  have hx₀ := eqn_3_6
+  have h := prop_6_1 β₀ le_rfl 2⁻¹ y le_rfl (by linarith [hx₀.1]) hy.1 (by linarith [hy.2])
+  rcases hβc with e | e <;> simp only [Prod.mk.injEq] at e <;> obtain ⟨rfl, rfl⟩ := e
+  · rw [one_smul]; exact h.1
+  · exact h.2
 
 /-! ### §6.6.1 Near diagonal: $3/8\le x\le1/2$, $1/2\le y\le5/8$, $x+y\ge1$ -/
 
