@@ -11,6 +11,9 @@ public import Isoperim.DIR.«3_Variants_Bobkov_Inequality».«3_0_Variants_Bobko
 public import Isoperim.DIR.«5_Auxiliary_Estimates».«5_3_Properties_L_Q»
 public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_1_Case_J»
 public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_3_Case_LJQ_aux»
+public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_3_Case_LJQ_aux_g1_b0_main»
+public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_3_Case_LJQ_aux_g1_h_main»
+public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_3_Case_LJQ_aux_g2_main»
 
 /-!
 # [DIR] §6.3 Case LJQ: $0\le x\le\frac14$, $\frac12\le y\le1$, $x+y\le1$
@@ -44,11 +47,21 @@ section Case_LJQ_I
 $(x,y)\in[\frac1{16},\frac14]\times[\frac12,\frac34]$: $$G_\beta[b_\beta](x,y)>10^{-7}.$$
 
 **Discrepancy with the paper.** Statement as in the paper (both values of $\beta$); the paper's
-computation is only described for $\beta=\frac12$. -/
+computation is only described for $\beta=\frac12$. Lean: both runs, with the paper's partitions
+`g_LJQ_1` ($\beta_0$) and `g_LJQ_1h` ($\frac12$) (`Auto.DIR.g_LJQ_1_b0_gt`,
+`Auto.DIR.g_LJQ_1_h_gt`). -/
 theorem eqn_6_13 (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) (x y : ℝ)
     (hx : x ∈ Icc (16⁻¹ : ℝ) 4⁻¹) (hy : y ∈ Icc (2⁻¹ : ℝ) (3 / 4)) :
     G β (b β) x y > 10 ^ (-7 : ℤ) := by
-  sorry
+  have e7 : (10 : ℝ) ^ (-7 : ℤ) = 1 / 10 ^ 7 := by norm_num
+  rw [gt_iff_lt, e7]
+  rcases hβ with rfl | rfl
+  · have e : β₀ = ((50057 / 100000 : ℚ) : ℝ) := by norm_num [β₀]
+    rw [e]
+    exact g_LJQ_1_b0_gt x y hx hy
+  · have e : (2⁻¹ : ℝ) = ((1 / 2 : ℚ) : ℝ) := by norm_num
+    rw [e]
+    exact g_LJQ_1_h_gt x y hx hy
 
 end Case_LJQ_I
 
@@ -460,10 +473,18 @@ theorem caseLJQ_claim_1 (β : ℝ) (hβ : β ∈ Icc (2⁻¹ : ℝ) 1) (y : ℝ)
 
 section Proof_Claim_2
 /-- **(6.17)** ([DIR], §6.3.2, proof of (2)) (🚗). For all $y\in[\frac12,\frac34]$ and all
-$\beta\in[\frac12,1]$: $$G_{LJQ,\beta}(\tfrac1{16},y)>10^{-5}.$$ -/
+$\beta\in[\frac12,1]$: $$G_{LJQ,\beta}(\tfrac1{16},y)>10^{-5}.$$
+
+**Discrepancy with the paper.** Statement as in the paper. Lean: proved with the tight lower bound
+`Auto.DIR.g_LJQ_2_lo` (tangent bound $Q_{\overline\beta}(m)+|Q_{\overline\beta}'(m)|
+\frac{\overline y-\underline y}4$ in place of the paper's $Q_{\overline\beta}(\frac1{32}+
+\frac{\overline y}2)$, which is not justified: $Q_{\overline\beta}$ is not increasing on
+$[\frac9{32},\frac{13}{32}]$ for $\overline\beta\gtrsim0.6$) and the paper's partition `g_LJQ_2`. -/
 theorem eqn_6_17 (y : ℝ) (hy : y ∈ Icc (2⁻¹ : ℝ) (3 / 4)) (β : ℝ)
     (hβ : β ∈ Icc (2⁻¹ : ℝ) 1) : G_LJQ β 16⁻¹ y > 10 ^ (-5 : ℤ) := by
-  sorry
+  have e5 : (10 : ℝ) ^ (-5 : ℤ) = 1 / 10 ^ 5 := by norm_num
+  rw [gt_iff_lt, e5]
+  exact g_LJQ_2_gt y β hy hβ
 
 end Proof_Claim_2
 
@@ -471,7 +492,9 @@ end Proof_Claim_2
 (and $\beta\in[\frac12,1]$). -/
 theorem caseLJQ_claim_2 (β : ℝ) (hβ : β ∈ Icc (2⁻¹ : ℝ) 1) (y : ℝ)
     (hy : y ∈ Icc (2⁻¹ : ℝ) (3 / 4)) : G_LJQ β 16⁻¹ y ≥ 0 := by
-  sorry
+  have h := eqn_6_17 y hy β hβ
+  have : (0 : ℝ) < 10 ^ (-5 : ℤ) := by positivity
+  exact (this.trans h).le
 
 section Proof_Claim_3
 /-- The function $f_\beta(y)=G_{LJQ,\beta}(1-y,y)$ ([DIR], §6.3.2, proof of (3); denoted
@@ -573,8 +596,9 @@ $$G_{LJQ,\beta}(x,y)=y-x+(2^\beta-1)J(y)+L_\beta(x)-2Q_\beta(\tfrac{x+y}2)\ge0.$
 **Discrepancy with the paper.** Lean: adds $x+y\le1$. -/
 theorem prop_6_6 (β : ℝ) (hβ : β ∈ Icc (2⁻¹ : ℝ) 1) (x y : ℝ)
     (hx : x ∈ Icc (0 : ℝ) 4⁻¹) (hy : y ∈ Icc (2⁻¹ : ℝ) 1) (hxy : x + y ≤ 1)
-    (h : x ≤ 16⁻¹ ∨ y ≥ 3 / 4) : G_LJQ β x y ≥ 0 := by
-  sorry
+    (h : x ≤ 16⁻¹ ∨ y ≥ 3 / 4) : G_LJQ β x y ≥ 0 :=
+  prop_6_6_reduction β hβ (caseLJQ_claim_1 β hβ) (caseLJQ_claim_2 β hβ) (caseLJQ_claim_3 β hβ)
+    x y hx hy hxy h
 
 end Case_LJQ_II
 

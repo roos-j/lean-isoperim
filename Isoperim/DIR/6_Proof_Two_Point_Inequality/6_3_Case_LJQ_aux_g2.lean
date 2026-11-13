@@ -94,7 +94,8 @@ theorem g_LJQ_2_lo_le {yl yu βl βu y β : ℝ} (hyl : 2⁻¹ ≤ yl) (hyu : yu
       y - 16⁻¹ + (2 ^ β - 1) * J y + L β 16⁻¹ - 2 * Q β ((16⁻¹ + y) / 2) := by
   have hJ : min (J yl) (J yu) ≤ J y := Jlo_le hyl hy.1 hy.2 (by linarith)
   have hJ0 : 0 ≤ min (J yl) (J yu) :=
-    le_min (J_nonneg ⟨hyl, by linarith [hy.1, hy.2]⟩) (J_nonneg ⟨by linarith [hy.1, hy.2], by linarith⟩)
+    le_min (J_nonneg ⟨hyl, by linarith [hy.1, hy.2]⟩)
+      (J_nonneg ⟨by linarith [hy.1, hy.2], by linarith⟩)
   have h2 : (2 : ℝ) ^ βl ≤ 2 ^ β := rpow_le_rpow_of_exponent_le one_le_two hβ.1
   have h1 : 1 ≤ (2 : ℝ) ^ βl := one_le_rpow one_le_two (by linarith)
   have hJt : (2 ^ βl - 1) * min (J yl) (J yu) ≤ (2 ^ β - 1) * J y := by nlinarith
@@ -134,7 +135,8 @@ def q1Ex (m : ℚ) (i : ℕ) : Ex :=
 $[y_l,y_u]\times[\beta_l,\beta_u]$, with the variables `0`–`3` standing for $J(y_l)$, $J(y_u)$,
 $2^{\beta_l}$, $2^{\beta_u}$. -/
 def g2Ex (yl yu : ℚ) : Ex :=
-  .sub (.add (.add (.const (yl - 1 / 16)) (.mul (.sub (.var 2) (.const 1)) (.min (.var 0) (.var 1))))
+  .sub (.add (.add (.const (yl - 1 / 16))
+        (.mul (.sub (.var 2) (.const 1)) (.min (.var 0) (.var 1))))
       (.mul (.const (1 / 16)) (.npow (.var 2) 2)))
     (.mul (.const 2) (.add (qEx (1 / 32 + (yl + yu) / 4) 3)
       (.mul (.abs (q1Ex (1 / 32 + (yl + yu) / 4) 3)) (.const ((yu - yl) / 4)))))

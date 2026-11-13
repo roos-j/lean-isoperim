@@ -205,7 +205,8 @@ theorem two_rpow_le_of_checkUpper {β c : ℚ}
 /-- The tight lower bound of $G_\beta[b_\beta]$ on $[\frac1{16},\frac14]\times[\frac12,\frac34]$
 ([DIR], §6.3.1):
 $$\underline{g_{LJQ,1,\beta}}(\underline x,\overline x,\underline y,\overline y)=
-\max\bigl(((\underline y-\overline x)^{\frac1\beta}+\underline J(\underline y,\overline y)^{\frac1\beta})^\beta,
+\max\bigl(((\underline y-\overline x)^{\frac1\beta}
++\underline J(\underline y,\overline y)^{\frac1\beta})^\beta,
 \ \underline y-\overline x+(2^\beta-1)\underline J(\underline y,\overline y)\bigr)
 +L_\beta(\underline x)-2Q_\beta(\tfrac{\overline x+\overline y}2),$$
 with $\underline J(\underline y,\overline y)=\min(J(\underline y),J(\overline y))$ (`Jlo`), and
@@ -303,8 +304,8 @@ noncomputable def g1_fl (β : ℝ) (zl zu : Fin 2 → ℝ) : ℝ :=
 
 /-- The Boolean box check for (6.13): the table entries are at the right points and exponents
 ($J(\underline y)$, $J(\overline y)$, $J(\underline y)^{1/\beta}$, $J(\overline y)^{1/\beta}$,
-$(\underline y-\overline x)^{1/\beta}$, $L_\beta(\underline x)$, $2^\beta$) and the checker certifies
-$\underline{g_{LJQ,1,\beta}}>10^{-7}$. -/
+$(\underline y-\overline x)^{1/\beta}$, $L_\beta(\underline x)$, $2^\beta$) and the checker
+certifies $\underline{g_{LJQ,1,\beta}}>10^{-7}$. -/
 def g1Check (β : ℚ) (p : Box) (ja jb : JVal) (ra rb : JRVal) (d : PowVal) (l : LVal)
     (s : PowVal) : Bool :=
   ja.x == p.2.2.1 && jb.x == p.2.2.2 && ra.x == p.2.2.1 && rb.x == p.2.2.2 && ra.r == 1 / β &&
