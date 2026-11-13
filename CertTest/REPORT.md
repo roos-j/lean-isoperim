@@ -38,12 +38,73 @@ Representative of the 22 🚗 claims and of medium difficulty:
 
 ## Results
 
-RESULTS_TABLE
+Machine: 4 cores, 15 GB RAM; times are wall-clock for `lake env lean`/`lake build` incl. about
+4 s of imports.
+
+| | native (extra axioms) | kernel (standard axioms) |
+|---|---|---|
+| `eqn_7_3` proved | yes | yes |
+| `#print axioms Auto.DIR.eqn_7_3` | standard + **63** `native_decide` axioms | `propext, Classical.choice, Quot.sound` |
+| build of the copy (`lake build CertTest.<mode>.Poincare`) | 102 s | 117 s |
+| 30 point/box certificates of (7.3) | < 41 s (incl. integrals) | 97 s |
+| 40 point inequalities (exp, log) | 17 s (0.3 s each) | 50 s (1.15 s each) |
+| 1 Gaussian integral bound via LeanCert ($\int_0^{1.5}e^{-u^2}\ge0.85$) | ≈ 0 s | 808 s |
+| 3 Gaussian integral bounds via LeanCert | ≈ 0 s | > 53 min, > 13 GB RAM (aborted) |
+| 1 box bound needing 2970 subdivision leaves | 102 s | > 50 min (timed out) |
+
+The kernel copy therefore bounds the three Gaussian integrals by a proved series inequality
+(`Auto.DIR.CertTest.integral_exp_neg_sq_ge`, from $e^{-v}\ge1-v+\frac{v^2}2-\frac{v^3}6$), which
+needs no certificate check at all; the native copy uses LeanCert's integral checker.
 
 ## Findings
 
-FINDINGS
+1. **Extra axioms are not needed for the test case.** With `leancert.trust "kernel"` the same
+   certificates are checked by the kernel; build time is about the same (117 s vs 102 s). Native
+   mode adds one opaque axiom per check (63 for this one claim), each asserting that a compiled
+   evaluation returned `true`; this trusts the Lean compiler and runtime, not just the kernel.
+2. **Kernel cost depends strongly on the kind of certificate.** Point inequalities and moderately
+   subdivided univariate boxes are cheap (about 1 s each, about 3-4× native). LeanCert's integral
+   checker and heavily subdivided boxes are impractical in kernel mode (minutes to hours, many GB),
+   while costing almost nothing natively. Avoiding them is possible: replace integrals by proved
+   elementary bounds, and subdivision by explicit partitions with monotone lower bounds (the paper's
+   own method).
+3. **The Gaussian profile is the bottleneck, in both modes.** 18 of the 22 claims involve $J$,
+   hence $\Phi^{-1}$. LeanCert's `erf` and `sqrt` point enclosures are too loose to be useful, so
+   values of $J$ have to come from proved bounds (as in `CertTest/Common.lean`: series bound for
+   $\int e^{-u^2}$, monotonicity, concavity chords).
+4. **LeanCert's multivariate tactic does not support `log`/`sqrt` (hence `rpow`).** The 2-D claims
+   (14 of 22, up to 11,059 rectangles) must follow the paper: a tight lower bound per rectangle,
+   reducing each rectangle to point evaluations. In total the paper's partitions have 41,633
+   boxes; at about 1.2 s per kernel point check (plus evaluations of $J$) this is of the order of
+   15 CPU-hours in kernel mode against about 4 in native mode, parallelizable across files.
+5. **Module system.** LeanCert is not a Lean `module` package, and a `module` file cannot import a
+   non-`module` file ("cannot import non-`module` LeanCert.Tactic from `module`"). This affects
+   both alternatives: every file containing a LeanCert proof, and every file importing such a file
+   (most of [DIR] §6, §7, [DIRX] §3, §4 and the introduction theorems), cannot be a `module`.
+   Non-`module` files can import `module` files.
+6. LeanCert's front door (`leancert`) needs some care in both modes: strict `<` and `ℚ`-cast
+   bounds for `multivariate_bound`, avoiding `x⁻¹` inside `log` in boxes, and rewriting `rpow` as
+   `exp (log · * ·)`.
 
 ## Recommendations
 
-RECOMMENDATIONS
+1. **Do not allow extra axioms.** Require `leancert.trust "kernel"` (set it project-wide) and
+   check `#print axioms` = `[propext, Classical.choice, Quot.sound]` for every 🚗 claim, as for all
+   other declarations. Drop the LeanCert-axiom exception from rule 3 of `AGENTS.md`; allow
+   `native` only as a temporary development aid, never in a completed proof.
+2. **Build shared certified-numerics infrastructure first** (as a Task-1-like step before the 🚗
+   claims of Tasks 2-4): proved enclosures of $\Phi$, $I$, $J_{w}$ and $J$ at rational points
+   from elementary series bounds with remainder (extending `CertTest/Common.lean`), and a tighter
+   enclosure of $w_0$ (the current $[0.895,0.896]$ suffices for (7.3) but not for claims with
+   margins $10^{-7}$).
+3. **Prove 🚗 claims the paper's way:** explicit partition (from the paper's `partitions.py`),
+   explicit tight lower bound per box, kernel-checked point/1-D inequalities; avoid LeanCert's
+   integral checker and deep automatic subdivision in kernel mode.
+4. **Before scaling up, run a second test on one of the largest claims** (e.g. [DIR] (6.5),
+   11,059 rectangles, margin $1.7\cdot10^{-8}$, or [DIRX] (3.3), 5,506 rectangles) to confirm
+   build time and memory in kernel mode; put each large claim in its own file so builds
+   parallelize.
+5. **Resolve the module-system conflict now:** simplest is to drop the module system
+   project-wide (remove `module`, `@[expose] public section`, and change `public import` to
+   `import`); this is mechanical and loses nothing essential here. Alternatively, wait for or
+   contribute `module` support upstream in LeanCert.

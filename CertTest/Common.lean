@@ -257,4 +257,55 @@ theorem J_one_sub_ge_gProf (x : ℝ) (hx0 : 0 ≤ x) (hx : x ≤ 4⁻¹) :
   rw [ge_iff_le]
   gcongr
 
+/-- If $f'\ge0$ on $[0,\infty)$, then $f(0)\le f(v)$ for $v\ge0$. -/
+theorem le_of_hasDerivAt_nonneg {f f' : ℝ → ℝ} (hf : ∀ x, HasDerivAt f (f' x) x)
+    (hf' : ∀ x, 0 ≤ x → 0 ≤ f' x) (v : ℝ) (hv : 0 ≤ v) : f 0 ≤ f v := by
+  have hm : MonotoneOn f (Ici 0) := by
+    refine monotoneOn_of_hasDerivWithinAt_nonneg (convex_Ici 0)
+      (fun x _ ↦ (hf x).continuousAt.continuousWithinAt) (fun x _ ↦ (hf x).hasDerivWithinAt)
+      fun x hx ↦ hf' x ?_
+    rw [interior_Ici] at hx
+    exact le_of_lt hx
+  exact hm (mem_Ici.2 le_rfl) (mem_Ici.2 hv) hv
+
+/-- $1-v+\frac{v^2}2-\frac{v^3}6\le e^{-v}$ for $v\ge0$. -/
+theorem exp_neg_ge_cubic (v : ℝ) (hv : 0 ≤ v) : 1 - v + v ^ 2 / 2 - v ^ 3 / 6 ≤ Real.exp (-v) := by
+  have hE : ∀ x : ℝ, HasDerivAt (fun x ↦ Real.exp (-x)) (-Real.exp (-x)) x := fun x ↦ by
+    simpa using (hasDerivAt_neg x).exp
+  have h2 : ∀ x : ℝ, 0 ≤ x → 0 ≤ 1 - x + x ^ 2 / 2 - Real.exp (-x) := by
+    intro x hx
+    have := le_of_hasDerivAt_nonneg (f := fun x ↦ 1 - x + x ^ 2 / 2 - Real.exp (-x))
+      (f' := fun x ↦ -1 + x + Real.exp (-x)) (fun x ↦ by
+        have := (((hasDerivAt_id x).const_sub 1).add ((hasDerivAt_pow 2 x).div_const 2)).sub
+          (hE x)
+        exact this.congr_deriv (by norm_num))
+      (fun x _ ↦ by linarith [add_one_le_exp (-x)]) x hx
+    simpa using this
+  have := le_of_hasDerivAt_nonneg
+    (f := fun x ↦ Real.exp (-x) - (1 - x + x ^ 2 / 2 - x ^ 3 / 6))
+    (f' := fun x ↦ 1 - x + x ^ 2 / 2 - Real.exp (-x)) (fun x ↦ by
+      have := (hE x).sub ((((hasDerivAt_id x).const_sub 1).add
+        ((hasDerivAt_pow 2 x).div_const 2)).sub ((hasDerivAt_pow 3 x).div_const 6))
+      exact this.congr_deriv (by norm_num; ring)) h2 v hv
+  simp at this
+  linarith
+
+/-- $\int_0^se^{-u^2}\,du\ge s-\frac{s^3}3+\frac{s^5}{10}-\frac{s^7}{42}$ for $s\ge0$. -/
+theorem integral_exp_neg_sq_ge (s : ℝ) (hs : 0 ≤ s) :
+    s - s ^ 3 / 3 + s ^ 5 / 10 - s ^ 7 / 42 ≤ ∫ u in (0 : ℝ)..s, Real.exp (-(u ^ 2)) := by
+  have hF : ∀ x ∈ uIcc (0 : ℝ) s, HasDerivAt (fun u : ℝ ↦ u - u ^ 3 / 3 + u ^ 5 / 10 - u ^ 7 / 42)
+      (1 - x ^ 2 + (x ^ 2) ^ 2 / 2 - (x ^ 2) ^ 3 / 6) x := fun x _ ↦ by
+    have := (((hasDerivAt_id x).sub ((hasDerivAt_pow 3 x).div_const 3)).add
+      ((hasDerivAt_pow 5 x).div_const 10)).sub ((hasDerivAt_pow 7 x).div_const 42)
+    exact this.congr_deriv (by norm_num; ring)
+  have hcont : Continuous fun x : ℝ ↦ 1 - x ^ 2 + (x ^ 2) ^ 2 / 2 - (x ^ 2) ^ 3 / 6 := by
+    fun_prop
+  rw [show s - s ^ 3 / 3 + s ^ 5 / 10 - s ^ 7 / 42 =
+      ∫ u in (0 : ℝ)..s, (1 - u ^ 2 + (u ^ 2) ^ 2 / 2 - (u ^ 2) ^ 3 / 6) by
+    rw [intervalIntegral.integral_eq_sub_of_hasDerivAt hF (hcont.intervalIntegrable _ _)]
+    ring]
+  exact intervalIntegral.integral_mono_on hs (hcont.intervalIntegrable _ _)
+    ((continuous_exp.comp (by fun_prop)).intervalIntegrable _ _)
+    fun u _ ↦ exp_neg_ge_cubic (u ^ 2) (sq_nonneg u)
+
 end Auto.DIR.CertTest
