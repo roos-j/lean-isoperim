@@ -4,7 +4,7 @@ Proposal (2026-11-12, revised and audited). Computed from the declaration-level 
 (`automation/proof_dependencies.txt`: statement dependencies from Lean plus the paper-proof
 dependencies of every claim), so the following properties are *verified*, not estimated:
 
-- Every one of the 444 theorems belongs to exactly one task.
+- Every one of the 459 theorems belongs to exactly one task.
 - **Task 1** depends on nothing outside Task 1.
 - **Tasks 2, 3, 4** are logically disjoint: no declaration of one of them depends on a
   declaration of another; each depends only on Task 1 and on itself.
@@ -60,7 +60,7 @@ Task-specific notes:
 
 | Task | Theorems | of which computer-verified (🚗) | Main files |
 |---|---|---|---|
-| 1 | 56 | 0 | `5_3_Properties_L_Q`, `3_0_Variants_Bobkov_Inequality`, `6_3_Case_LJQ`, `6_5_Case_QJQ` |
+| 1 | 71 | 0 | `5_3_Properties_L_Q`, `3_0_Variants_Bobkov_Inequality`, `6_3_Case_LJQ`, `6_5_Case_QJQ` |
 | 2 | 120 | 7 | `6_4_Case_LJ`, `6_3_Case_LJQ`, `6_1_Case_J`, `6_6_Case_QJ` |
 | 3 | 157 | 10 | `6_2_Case_Q`, `3_3_Case_LJQ`, `3_1_Case_J`, `3_4_Case_LJ` |
 | 4 | 89 | 5 | `5_4_Lower_Bounds_Gaussian_Isoperimetric_Profile`, `3_0_Variants_Bobkov_Inequality`, `7_0_Proof_Poincare_Inequality`, `4_0_Proof_Poincare_Inequality` |
@@ -70,10 +70,14 @@ Task-specific notes:
 
 Everything that at least two of Tasks 2–4 need, with all its prerequisites: the shared part of the calculus of $L_\beta$, $Q_\beta$ ([DIR] §5.2–§5.3), basic facts on $I$, $J_w$, $J$ ([DIR] §3: existence/uniqueness of $J$, (3.4), $w_0$, $x_0$, Lemma 3.2, $J(\frac12)=\frac12$, the convexity inequality `convex_sub_ge`), Lemma 6.7 ([DIR] §6.3) and the $y=\frac12$ part of Case $QJQ$ ([DIR] §6.5), which both [DIR] §6 and [DIRX] §3 use. Small on purpose, so that Tasks 2–4 can start early.
 
-56 theorems (0 computer-verified):
+**Added 2026-11-13:** [DIR] §4 (computer-assisted proofs: tight lower bounds, admissible partitions, Fact 4.1, soundness and completeness of $\textsc{Partition}_n$, interval enclosures) and the shared certified numerics for the 🚗 claims of Tasks 2–4 (`4_3_Source_Code_aux.lean`: Taylor bounds for $e^{-v}$ and $\int_0^se^{-u^2}$, bounds for $\Phi$, $I$, $J_w$, $J$, $w_0\in[0.89576,0.89577]$, $x_0$, $\log_2$, $2^r$, $L_\beta$).
+
+71 theorems (0 computer-verified):
 
 - `Isoperim/DIR/2_Envelope_Functions/Definitions.lean` (1): `Q_spec`
 - `Isoperim/DIR/3_Variants_Bobkov_Inequality/3_0_Variants_Bobkov_Inequality.lean` (13): `I_characterization`, `J_half_eq_L_half`, `Jw_spec`, `convex_sub_ge`, `eqn_3_4`, `existsUnique_J`, `existsUnique_w₀`, `lemma_3_2`, `lemma_3_2_deriv2`, `lemma_3_2_sq_deriv`, `lemma_3_2_sq_deriv2`, `rem_3_6`, `w₀_mem`
+- `Isoperim/DIR/4_Computer_Assisted_Proofs/4_1_Dyadic_Partitioning.lean` (7): `fact_4_1_if`, `fact_4_1_eps`, `fact_4_1`, `rem_4_2`, `partitionN₀_admissible`, `pos_of_partitionN₀`, `partitionN₀_succeeds`
+- `Isoperim/DIR/4_Computer_Assisted_Proofs/4_2_Interval_Arithmetic.lean` (8): `interval_order_partial`, `isIntervalEnclosure_id`, `IsIntervalEnclosure.add`, `IsIntervalEnclosure.neg`, `IsIntervalEnclosure.mul`, `IsIntervalEnclosure.comp_monotoneOn`, `IsIntervalEnclosure.comp_antitoneOn`, `IsIntervalEnclosure.lower_bound`
 - `Isoperim/DIR/5_Auxiliary_Estimates/5_2_Two_Point_Inequalities.lean` (3): `lemma_5_4`, `lemma_5_4_expansion`, `lemma_5_4_taylor`
 - `Isoperim/DIR/5_Auxiliary_Estimates/5_3_Properties_L_Q.lean` (26): `eqn_5_2`, `eqn_5_3`, `eqn_5_4`, `eqn_5_5`, `eqn_5_6`, `eqn_5_7`, `eqn_5_8`, `eqn_5_9`, `lemma_5_6`, `lemma_5_6_2_coeffs`, `lemma_5_6_2_concave`, `lemma_5_6_2_decreasing`, `lemma_5_6_2_log_deriv`, `lemma_5_6_2_values`, `lemma_5_6_3_steps`, `lemma_5_6_4_at_half`, `lemma_5_6_4_dbeta`, `lemma_5_6_4_deriv`, `lemma_5_6_4_formula`, `lemma_5_6_4_quadratic`, `lemma_5_8`, `lemma_5_8_2_dbeta`, `lemma_5_8_2_rewrite`, `lemma_5_8_3_dbeta`, `rem_5_7`, `α₁_pos_iff`
 - `Isoperim/DIR/6_Proof_Two_Point_Inequality/6_3_Case_LJQ.lean` (6): `Q_deriv2_monotone_β`, `eqn_6_14`, `lemma_6_7`, `lemma_6_7_deriv2`, `lemma_6_7_eval`, `lemma_6_7_mono`
@@ -164,8 +168,9 @@ Checked from scratch:
 - The statement dependencies were re-extracted from the compiled Lean code. The paper-proof
   dependencies were re-derived by three agents that saw only the TeX sources and the Lean
   statements, not the earlier analysis. The split was checked against the old analysis, the
-  fresh one, and their union: **0 violations in each**. Every one of the 444 theorems is in
-  exactly one task, and the union dependency graph is acyclic.
+  fresh one, and their union: **0 violations in each**. Every one of the then 444 theorems was
+  in exactly one task, and the union dependency graph is acyclic. (The 15 theorems of [DIR] §4,
+  added later to Task 1, depend only on §4 definitions.)
 - The fresh analysis found two problems, both fixed by moving the item into Task 1:
   `Auto.DIR.J_half_eq_L_half` ($J(\frac12)=\frac12$, needed by Task 2) and
   `Auto.DIR.convex_sub_ge` (needed by Task 3), both previously in Task 4.

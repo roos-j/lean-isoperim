@@ -553,3 +553,30 @@ Auto.DIRX.γX_le_two [thm, Task 3] : Auto.DIRX.γX, Auto.DIRX.γX_mem
 Auto.DIRX.γX_mem [thm, Task 3] : Auto.DIRX.γX
 Auto.DIRX.εX [def, Task 4] : Auto.DIRX.w₁
 Auto.DIRX.εX_monotone [thm, Task 4] : Auto.DIRX.εX
+Auto.DIR.IsRectangle [def, Task 1] : 
+Auto.DIR.IsTightLowerBound [def, Task 1] : 
+Auto.DIR.IsRectanglePartition [def, Task 1] : 
+Auto.DIR.IsAdmissiblePartition [def, Task 1] : 
+Auto.DIR.child [def, Task 1] : 
+Auto.DIR.children [def, Task 1] : 
+Auto.DIR.partitionN [def, Task 1] : 
+Auto.DIR.partitionN₀ [def, Task 1] : 
+Auto.DIR.IsFloat [def, Task 1] : 
+Auto.DIR.IsIntervalEnclosure [def, Task 1] : 
+Auto.DIR.intervalGT [def, Task 1] : 
+Auto.DIR.intervalLE [def, Task 1] : 
+Auto.DIR.fact_4_1_if [thm, Task 1] : Auto.DIR.IsAdmissiblePartition
+Auto.DIR.fact_4_1_eps [thm, Task 1] : Auto.DIR.IsTightLowerBound
+Auto.DIR.fact_4_1 [thm, Task 1] : Auto.DIR.IsRectangle, Auto.DIR.IsTightLowerBound, Auto.DIR.IsAdmissiblePartition, Auto.DIR.fact_4_1_if, Auto.DIR.fact_4_1_eps
+Auto.DIR.rem_4_2 [thm, Task 1] : Auto.DIR.IsTightLowerBound
+Auto.DIR.partitionN₀_admissible [thm, Task 1] : Auto.DIR.IsRectangle, Auto.DIR.IsAdmissiblePartition, Auto.DIR.partitionN₀
+Auto.DIR.pos_of_partitionN₀ [thm, Task 1] : Auto.DIR.IsRectangle, Auto.DIR.partitionN₀, Auto.DIR.partitionN₀_admissible, Auto.DIR.fact_4_1_if
+Auto.DIR.partitionN₀_succeeds [thm, Task 1] : Auto.DIR.IsRectangle, Auto.DIR.IsTightLowerBound, Auto.DIR.partitionN₀, Auto.DIR.fact_4_1_eps
+Auto.DIR.interval_order_partial [thm, Task 1] : Auto.DIR.IsIntervalEnclosure, Auto.DIR.intervalGT, Auto.DIR.intervalLE
+Auto.DIR.isIntervalEnclosure_id [thm, Task 1] : Auto.DIR.IsIntervalEnclosure
+Auto.DIR.IsIntervalEnclosure.add [thm, Task 1] : Auto.DIR.IsIntervalEnclosure
+Auto.DIR.IsIntervalEnclosure.neg [thm, Task 1] : Auto.DIR.IsIntervalEnclosure
+Auto.DIR.IsIntervalEnclosure.mul [thm, Task 1] : Auto.DIR.IsIntervalEnclosure
+Auto.DIR.IsIntervalEnclosure.comp_monotoneOn [thm, Task 1] : Auto.DIR.IsIntervalEnclosure
+Auto.DIR.IsIntervalEnclosure.comp_antitoneOn [thm, Task 1] : Auto.DIR.IsIntervalEnclosure
+Auto.DIR.IsIntervalEnclosure.lower_bound [thm, Task 1] : Auto.DIR.IsIntervalEnclosure
