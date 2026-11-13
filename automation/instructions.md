@@ -23,7 +23,7 @@ The user's current explicit instructions take precedence over both. Raw prompts 
 
 The binding proof-stage rules are at the top of `AGENTS.md` (auxiliary `*_aux.lean` files for
 proofs over 100 lines or needing extra lemmas; completion = no transitive `sorry`; only
-`propext`, `Classical.choice`, `Quot.sound` plus LeanCert's standard axioms for 🚗 claims; a proof
+`propext`, `Classical.choice`, `Quot.sound` for all declarations, no `native_decide`; a proof
 starts only after all its dependencies, listed in `automation/proof_dependencies.txt`, are
 proved). The work split into Tasks 1–5 is in `automation/splitting.md`.
 
@@ -35,7 +35,12 @@ proved). The work split into Tasks 1–5 is in `automation/splitting.md`.
   removed.
 - The computer-assisted-proof sections ([DIR] §4, [DIRX] §2.4) and everything that only served
   them (tight lower bounds, partitions, enclosures) were removed; computer-verified (🚗) claims
-  are kept and are to be proved directly (e.g. with LeanCert).
+  are kept. **Superseded (2026-11-13):** [DIR] §4 is back (`Isoperim/DIR/4_Computer_Assisted_Proofs/`,
+  part of Task 1) and the 🚗 claims are proved the paper's way, see the next item.
+- **2026-11-13** (user, after the test on branch `cert-test`): no additional axioms, no
+  `native_decide`; proofs follow the papers' arguments, 🚗 claims via the paper's tight lower
+  bounds and partitions with kernel-checked rational arithmetic (`AGENTS.md`, rules 3 and 8);
+  LeanCert stays in the dependencies for possible later use.
 - Paper prose is no longer copied into comments: only docstrings (and module docstrings) remain.
 - Each introduction folder and [DIR] §2, [DIRX] §2 have a `Definitions.lean` with the
   definitions (and the elementary facts about them needed elsewhere).
