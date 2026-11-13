@@ -9,6 +9,7 @@ public import Isoperim.DIR.«1_Introduction».Definitions
 public import Isoperim.DIR.«2_Envelope_Functions».Definitions
 public import Isoperim.DIR.«3_Variants_Bobkov_Inequality».«3_0_Variants_Bobkov_Inequality»
 public import Isoperim.DIR.«5_Auxiliary_Estimates».«5_2_Two_Point_Inequalities»
+public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_1_Case_J_aux»
 
 /-!
 # [DIR] §6 Proof of the two-point inequality, §6.1 Case J
@@ -40,7 +41,8 @@ open Real Set
 
 /-- [DIR], §6.1, Figure 4: $x_0<\frac58$. -/
 theorem x₀_lt_five_div_eight : x₀ < 5 / 8 := by
-  sorry
+  have h := eqn_3_6
+  linarith [h.2]
 
 section Case_J_I
 /-! ### §6.1.1 Case I: $\frac12\le x\le x_0$, $x\le y\le\frac{11}{16}$ -/
@@ -49,7 +51,8 @@ section Case_J_I
 contained in the larger region $\frac12\le x\le\frac58$, $0\le h=y-x\le\frac3{16}$. -/
 theorem caseJ_I_region_subset (x y : ℝ) (hx : 2⁻¹ ≤ x) (hx₀ : x ≤ x₀) (hxy : x ≤ y)
     (hy : y ≤ 11 / 16) : x ∈ Icc (2⁻¹ : ℝ) (5 / 8) ∧ y - x ∈ Icc (0 : ℝ) (3 / 16) := by
-  sorry
+  have h := x₀_lt_five_div_eight
+  exact ⟨⟨hx, by linarith⟩, ⟨by linarith, by linarith⟩⟩
 
 /-- The Taylor remainder $E_N$ ([DIR], §6.1.1), defined here as the exact remainder
 $$E_N=J(x)+J(x+h)-2J(x+\tfrac h2)-\sum_{k=2}^{N-1}\tfrac1{k!}(1-2^{-k+1})J^{(k)}(x)h^k;$$
@@ -73,23 +76,31 @@ noncomputable def g_J_1 (N : ℕ) (β c x h : ℝ) : ℝ :=
 /-- [DIR], §6.1.1: from $J\cdot J''=-2$, $J''=-2J^{-1}$ on $(\frac12,1)$. -/
 theorem iteratedDeriv_two_J (x : ℝ) (hx : x ∈ Ioo (2⁻¹ : ℝ) 1) :
     iteratedDeriv 2 J x = -2 * J x ^ (-1 : ℤ) := by
-  sorry
+  rw [(iteratedDeriv_two_J_eventuallyEq hx).eq_of_nhds, zpow_neg_one]
 
 /-- [DIR], §6.1.1: $J^{(3)}=2J'J^{-2}$ on $(\frac12,1)$. -/
 theorem iteratedDeriv_three_J (x : ℝ) (hx : x ∈ Ioo (2⁻¹ : ℝ) 1) :
     iteratedDeriv 3 J x = 2 * deriv J x * J x ^ (-2 : ℤ) := by
-  sorry
+  rw [(iteratedDeriv_three_J_eventuallyEq hx).eq_of_nhds, zpow_neg, inv_pow]
+  norm_cast
 
 /-- [DIR], §6.1.1: $J$ is increasing on $[\frac12,x_0]$ and decreasing on $[x_0,1]$. -/
 theorem J_monotoneOn_antitoneOn :
     MonotoneOn J (Icc 2⁻¹ x₀) ∧ AntitoneOn J (Icc x₀ 1) := by
-  sorry
+  exact ⟨J_monotoneOn_Icc_half_x₀, J_antitoneOn_Icc_x₀_one⟩
 
 /-- **(6.1)** ([DIR], §6.1.1): $J^{(4)}=-4(1+|J'|^2)J^{-3}<0$ on $(\frac12,1)$. -/
 theorem eqn_6_1 (x : ℝ) (hx : x ∈ Ioo (2⁻¹ : ℝ) 1) :
     iteratedDeriv 4 J x = -4 * (1 + |deriv J x| ^ 2) * J x ^ (-3 : ℤ) ∧
       iteratedDeriv 4 J x < 0 := by
-  sorry
+  have hJ := J_pos ⟨hx.1.le, hx.2⟩
+  have e : iteratedDeriv 4 J x = -4 * (1 + |deriv J x| ^ 2) * J x ^ (-3 : ℤ) := by
+    rw [(iteratedDeriv_four_J_eventuallyEq hx).eq_of_nhds, sq_abs, zpow_neg, inv_pow]
+    norm_cast
+  refine ⟨e, ?_⟩
+  rw [e]
+  have : 0 < J x ^ (-3 : ℤ) := zpow_pos hJ _
+  nlinarith [sq_nonneg |deriv J x|]
 
 /-- [DIR], §6.1.1 (application of Lemma 5.4). For $\beta\in(0,1)$, $c>0$, $\frac12\le x\le\frac58$
 and $0\le h\le\frac3{16}$:
@@ -117,7 +128,21 @@ theorem caseJ_I_G₁_ge_g_J_1 (N : ℕ) (hN : 2 ≤ N) (β c : ℝ) (hβ : β �
 theorem deriv_J_x₀ :
     deriv J x₀ = 0 ∧ (∀ x ∈ Ioo (2⁻¹ : ℝ) 1, deriv (deriv J) x < 0) ∧
       StrictAntiOn (deriv J) (Ioo 2⁻¹ 1) := by
-  sorry
+  have hx₀ := x₀_mem_Ioo
+  have h2 : ∀ x ∈ Ioo (2⁻¹ : ℝ) 1, deriv (deriv J) x < 0 := by
+    intro x hx
+    rw [deriv2_J hx]
+    have := J_pos ⟨hx.1.le, hx.2⟩
+    have : 0 < (J x)⁻¹ := inv_pos.2 this
+    linarith
+  refine ⟨?_, h2, ?_⟩
+  · rw [(deriv_J_eventuallyEq hx₀).eq_of_nhds, x₀]
+    exact (deriv_gJw_sign w₀_pos).1
+  · refine strictAntiOn_of_deriv_neg (convex_Ioo _ _) ?_ ?_
+    · exact fun x hx ↦ (hasDerivAt_deriv_J hx).continuousAt.continuousWithinAt
+    · intro x hx
+      rw [interior_Ioo] at hx
+      exact h2 x hx
 
 /-- **(6.3)** ([DIR], §6.1.1) (🚗). For $(\beta,c)\in\{(\beta_0,1),(\frac12,c_0)\}$ and
 $(x,h)\in[\frac12,\frac58]\times[0,\frac3{16}]$ (here $x>\frac12$, see below):
