@@ -100,6 +100,20 @@ theorem hasDerivAt_deriv_J {x : ℝ} (hx : x ∈ Ioo (2⁻¹ : ℝ) 1) :
 theorem deriv2_J {x : ℝ} (hx : x ∈ Ioo (2⁻¹ : ℝ) 1) : deriv (deriv J) x = -2 * (J x)⁻¹ :=
   (hasDerivAt_deriv_J hx).deriv
 
+/-- $J''<0$ on $(\frac12,1)$. -/
+theorem deriv2_J_neg {x : ℝ} (hx : x ∈ Ioo (2⁻¹ : ℝ) 1) : deriv (deriv J) x < 0 := by
+  rw [deriv2_J hx]
+  have : 0 < (J x)⁻¹ := inv_pos.2 (J_pos ⟨hx.1.le, hx.2⟩)
+  linarith
+
+/-- $J'$ is strictly decreasing on $(\frac12,1)$. -/
+theorem deriv_J_strictAntiOn : StrictAntiOn (deriv J) (Ioo 2⁻¹ 1) := by
+  refine strictAntiOn_of_deriv_neg (convex_Ioo _ _) ?_ ?_
+  · exact fun x hx ↦ (hasDerivAt_deriv_J hx).continuousAt.continuousWithinAt
+  · intro x hx
+    rw [interior_Ioo] at hx
+    exact deriv2_J_neg hx
+
 /-- The second derivative of $J$ near a point of $(\frac12,1)$. -/
 theorem iteratedDeriv_two_J_eventuallyEq {x : ℝ} (hx : x ∈ Ioo (2⁻¹ : ℝ) 1) :
     iteratedDeriv 2 J =ᶠ[𝓝 x] fun y ↦ -2 * (J y)⁻¹ := by
@@ -199,5 +213,22 @@ theorem J_antitoneOn_Icc_x₀_one : AntitoneOn J (Icc x₀ 1) := by
     have hy' : y ∈ Ioo (2⁻¹ : ℝ) 1 := ⟨hx₀.1.trans hy.1, hy.2⟩
     rw [(deriv_J_eventuallyEq hy').eq_of_nhds]
     exact ((deriv_gJw_sign w₀_pos).2.2 y ⟨by rw [← x₀]; exact hy.1, hy.2⟩).le
+
+/-- The $\ell^{1/\beta}$-"norm" $(a^{1/\beta}+b^{1/\beta})^\beta$ of $a,b\ge0$ is increasing in
+$\beta>0$. -/
+theorem rpow_inv_add_rpow_inv_mono {a b β β' : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) (hβ : 0 < β)
+    (h : β ≤ β') : (a ^ β⁻¹ + b ^ β⁻¹) ^ β ≤ (a ^ β'⁻¹ + b ^ β'⁻¹) ^ β' := by
+  lift a to NNReal using ha
+  lift b to NNReal using hb
+  have := NNReal.rpow_add_rpow_le a b (p := β'⁻¹) (q := β⁻¹)
+    (inv_pos.2 (hβ.trans_le h)) (inv_anti₀ hβ h)
+  rw [one_div, inv_inv, one_div, inv_inv] at this
+  exact_mod_cast this
+
+/-- $G^1_{1/2}[B](x,y)=\sqrt{(y-x)^2+B(y)^2}+B(x)-2B(\frac{x+y}2)$. -/
+theorem G₁_half_eq (B : ℝ → ℝ) (x y : ℝ) :
+    G₁ 2⁻¹ B x y = √((y - x) ^ 2 + B y ^ 2) + B x - 2 * B ((x + y) / 2) := by
+  rw [G₁, inv_inv, Real.sqrt_eq_rpow]
+  norm_num
 
 end Auto.DIR
