@@ -83,7 +83,8 @@ Caveats: linear extrapolation from 40-sample tests; M1 glue cost estimated from 
 The M2 figures above only timed ℚ arithmetic, with no connection to the real statements. This
 section replaces them by a test with a working checker.
 
-* `CertTest/Checker.lean`: expression language `Ex` (rational constants, + − × ÷, natural powers,
+* Checker (now in `Isoperim/DIR/4_Computer_Assisted_Proofs/4_3_Source_Code_aux.lean`,
+  namespace `Auto.DIR.Checker`; formerly `CertTest/Checker.lean`): expression language `Ex` (rational constants, + − × ÷, natural powers,
   min, max, abs, certified `if a < b`, $J(x)$, $J'(x)$, $J(x_0)$, $J_w(\frac12)$, real powers
   $X^r$), a ℚ interval evaluator with outward rounding (to $2^{-64}$), and one soundness theorem
   `eval_sound` / `check_sound : check P e c = true → (c : ℝ) < denote e` (standard axioms).
@@ -122,6 +123,23 @@ $J$ points, 1,135 $J'$ points, 228 values of $h$ in Case J) and passing the cert
 the rectangle checks (an environment of variables in `Ex` with the per-point lemmas as
 hypotheses); per-node cost ≈ 0.1–0.15 s, rectangle arithmetic ≈ 0.05 s. Not implemented; the
 estimate counts node evaluations.
+
+**Sharing implemented (update).** `Ex` has variables `var i`; an environment is a list of
+certified values `Cert` ($l\le v\le u$, built once per point by `Cert.ofJ`, `Cert.ofDJ`,
+`Cert.ofJx0`, `Cert.ofRpow`, each one `checkMem` + `decide +kernel`), and
+`check_sound P hw cs e c` gives `c < denote (Cert.val cs) e`. `CertTest/CaseJTable.lean` holds
+the 646 distinct values of the 80 sample rectangles (230 $J$, 133 $J'$, 1 $J(x_0)$, 282 powers);
+`eJ1`/`eJ2` read them as variables. Measured (warm, import baseline ≈ 5.5 s subtracted):
+
+| | per item |
+|---|---|
+| table entry ($J$, $J'$ or $h^r$) | ≈ 0.13 s (646 entries: 90 s) |
+| (6.5) rectangle | ≈ 0.02 s (was 0.44 s) |
+| (6.3) rectangle | ≈ 0.65 s (was 2.6 s); ≈ 0.25 s of it are the two remaining `rpow` nodes $\overline J^{1-1/\beta}$, $\underline J^{1-2/\beta}$ |
+
+Extrapolated to Case J (1,966 $J$ + 1,135 $J'$ points, 228 values of $h$ ⇒ ≈ 3,100 + 9·228 ≈
+5,200 table entries ≈ 11 min; 2,108 (6.3) rectangles ≈ 23 min; 11,059 (6.5) rectangles ≈ 4 min):
+≈ 40 min CPU instead of ≈ 3 h.
 
 Comparison with the earlier estimates: the honest checker as built is ≈ 3× slower than the earlier
 (arithmetic-only) M2 estimate for Case J, about the low end of the M1 (`norm_num`) estimate
