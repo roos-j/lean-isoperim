@@ -43,14 +43,14 @@ open Real Set
 rectangle $[\frac14,\frac12]\times[\frac12,\frac34]$. -/
 theorem caseQJQ_region (x y : ℝ) (hx : 4⁻¹ ≤ x) (hx' : x ≤ 2⁻¹) (hy : 2⁻¹ ≤ y)
     (hxy : x + y ≤ 1) : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹ ∧ y ∈ Icc (2⁻¹ : ℝ) (3 / 4) := by
-  sorry
+  exact ⟨⟨hx, hx'⟩, ⟨hy, by linarith⟩⟩
 
 /-- The constant $\beta_1=\frac12+\frac{31}{1024}\approx0.53$ ([DIR], Proposition 6.9). -/
 noncomputable def β₁ : ℝ := 2⁻¹ + 31 / 1024
 
 /-- [DIR], Proposition 6.9: $\beta_1\approx0.53$ (precisely, $\beta_1\in[0.53,0.531]$). -/
 theorem β₁_approx : β₁ ∈ Icc (0.53 : ℝ) 0.531 := by
-  sorry
+  norm_num [β₁]
 
 /-- The function ([DIR], (6.23))
 $$G_{QJQ,\beta}(x,y)=(y-x)^2+J(y)^2-(2Q_\beta(\tfrac{x+y}2)-Q_\beta(x))^2.$$ -/
@@ -69,7 +69,21 @@ $g_{QJQ,\beta}(x,y)$ (6.24). (Stated for $y\in(\frac12,\frac34]$, where the two-
 of `J` at $y$ is meaningful.) -/
 theorem G_QJQ_deriv_y (β x y : ℝ) (hy : y ∈ Ioc (2⁻¹ : ℝ) (3 / 4)) :
     deriv (fun y ↦ G_QJQ β x y) y = 2 * g_QJQ β x y := by
-  sorry
+  have hy' : y ∈ Ioo (2⁻¹ : ℝ) 1 := ⟨hy.1, by linarith [hy.2]⟩
+  have hJ := hasDerivAt_J_deriv hy'
+  have hdw : derivWithin J (Icc 2⁻¹ 1) y = deriv J y :=
+    derivWithin_of_mem_nhds (Icc_mem_nhds hy'.1 hy'.2)
+  have hm : HasDerivAt (fun y : ℝ ↦ (x + y) / 2) (1 / 2) y := by
+    simpa using ((hasDerivAt_id y).const_add x).div_const 2
+  have hQ := (hasDerivAt_Q β ((x + y) / 2)).comp y hm
+  have h := ((((hasDerivAt_id y).sub_const x).pow 2).add (hJ.pow 2)).sub
+    (((hQ.const_mul 2).sub_const (Q β x)).pow 2)
+  have h' : HasDerivAt (fun y ↦ G_QJQ β x y) _ y :=
+    h.congr_of_eventuallyEq (Filter.Eventually.of_forall fun z ↦ by simp [G_QJQ])
+  rw [h'.deriv, g_QJQ, hdw, deriv_Q_eq]
+  simp only [Function.comp, id]
+  push_cast
+  ring
 
 section Proof_Claim_2
 /-- [DIR], §6.5, proof of item 2: first, $2Q_\beta(\frac{x+y}2)-Q_\beta(x)\ge Q_\beta(y)>0$
@@ -77,7 +91,9 @@ follows since $Q_\beta$ is concave. -/
 theorem two_Q_sub_Q_ge (β : ℝ) (hβ : β ∈ Icc 2⁻¹ β₁) (x y : ℝ)
     (hx : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹) (hy : y ∈ Icc (2⁻¹ : ℝ) (3 / 4)) :
     2 * Q β ((x + y) / 2) - Q β x ≥ Q β y ∧ Q β y > 0 := by
-  sorry
+  have hβ' : β ∈ Icc (2⁻¹ : ℝ) (2⁻¹ + 31 / 1024) := hβ
+  exact ⟨two_Q_mid_sub_ge β hβ' x y (by linarith [hx.1]) (by linarith [hx.2, hy.1]),
+    Q_pos_of_mem β hβ' y ⟨by linarith [hy.1], by linarith [hy.2]⟩⟩
 
 end Proof_Claim_2
 
@@ -87,7 +103,19 @@ theorem G_QJQ_monotone_or_antitone (x y : ℝ) (hx : x ∈ Icc (4⁻¹ : ℝ) 2�
     (hy : y ∈ Icc (2⁻¹ : ℝ) (3 / 4)) :
     MonotoneOn (fun β ↦ G_QJQ β x y) (Icc 2⁻¹ β₁) ∨
       AntitoneOn (fun β ↦ G_QJQ β x y) (Icc 2⁻¹ β₁) := by
-  sorry
+  have e : ∀ β, G_QJQ β x y = ((y - x) ^ 2 + J y ^ 2) -
+      ((2 * (2 / 3 * ((x + y) / 2) * (1 - (x + y) / 2) * (-3 + 12 * ((x + y) / 2))) -
+        2 / 3 * x * (1 - x) * (-3 + 12 * x)) +
+       (2 * (2 / 3 * ((x + y) / 2) * (1 - (x + y) / 2) * (4 - 8 * ((x + y) / 2))) -
+        2 / 3 * x * (1 - x) * (4 - 8 * x)) * 2 ^ β) ^ 2 := by
+    intro β; rw [G_QJQ, Q_eq_affine, Q_eq_affine]; ring
+  simp_rw [e]
+  apply monotoneOn_or_antitoneOn_sub_sq
+  intro β hβ
+  obtain ⟨h1, h2⟩ := two_Q_sub_Q_ge β hβ x y hx hy
+  have e' := Q_eq_affine β ((x + y) / 2)
+  have e'' := Q_eq_affine β x
+  linarith
 
 /-- [DIR], §6.5: thus
 $G_{QJQ,\beta}(x,y)\ge\min(G_{QJQ,1/2}(x,y),G_{QJQ,\beta_1}(x,y))$ (for $\beta\in[\frac12,\beta_1]$,
@@ -95,7 +123,10 @@ $(x,y)\in[\frac14,\frac12]\times[\frac12,\frac34]$). -/
 theorem G_QJQ_ge_min (x y : ℝ) (hx : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹)
     (hy : y ∈ Icc (2⁻¹ : ℝ) (3 / 4)) (β : ℝ) (hβ : β ∈ Icc 2⁻¹ β₁) :
     G_QJQ β x y ≥ min (G_QJQ 2⁻¹ x y) (G_QJQ β₁ x y) := by
-  sorry
+  have h12 : (2⁻¹ : ℝ) ≤ β₁ := by norm_num [β₁]
+  rcases G_QJQ_monotone_or_antitone x y hx hy with h | h
+  · exact (min_le_left _ _).trans (h ⟨le_rfl, h12⟩ hβ hβ.1)
+  · exact (min_le_right _ _).trans (h hβ ⟨h12, le_rfl⟩ hβ.2)
 
 /-- [DIR], §6.5: it suffices to show the claim (Proposition 6.9) for $\beta=\frac12$ and
 $\beta=\beta_1$. -/
@@ -104,7 +135,10 @@ theorem prop_6_9_of_endpoints
       G_QJQ β x y ≥ 0)
     (x y : ℝ) (hx : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹) (hy : y ∈ Icc (2⁻¹ : ℝ) (3 / 4)) (β : ℝ)
     (hβ : β ∈ Icc 2⁻¹ β₁) : G_QJQ β x y ≥ 0 := by
-  sorry
+  have := G_QJQ_ge_min x y hx hy β hβ
+  have h1 := h 2⁻¹ (by simp) x hx y hy
+  have h2 := h β₁ (by simp) x hx y hy
+  exact le_trans (le_min h1 h2) this
 
 /-- **(6.25)** ([DIR], §6.5) (🚗). Calling
 $\textsc{Partition}_2(\underline{g_{QJQ,\beta}},[\frac14,\frac12]\times[\frac12,\frac34])$ for
@@ -132,7 +166,8 @@ $$(\tfrac12-x)^2+\tfrac14-(2Q_\beta(\tfrac x2+\tfrac14)-Q_\beta(x))^2\ge0$$
 for $x\in[\frac14,\frac12]$ (here $J(\frac12)=\frac12$). -/
 theorem G_QJQ_y_half_eq (β x : ℝ) :
     G_QJQ β x 2⁻¹ = (2⁻¹ - x) ^ 2 + 4⁻¹ - (2 * Q β (x / 2 + 4⁻¹) - Q β x) ^ 2 := by
-  sorry
+  rw [G_QJQ, (J_half_eq_L_half 0).1, show (x + 2⁻¹) / 2 = x / 2 + 4⁻¹ by ring]
+  norm_num
 
 /-- The cubic polynomial ([DIR], §6.5)
 $$p_\beta(x)=(18-3\cdot2^{3+\beta}+2^{3+2\beta})x^3+(2^{5+\beta}-3\cdot2^{2+2\beta}-21)x^2
