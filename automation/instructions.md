@@ -86,6 +86,9 @@ Rules:
 
 ## Content conventions (user requirement)
 
+- `**Discrepancy with the paper.**` paragraphs state very concisely what exactly differs between
+  paper and Lean version (e.g. "Lean: adds $x+y\le1$."), without reasoning or explanation; details
+  stay in `automation/ErrorReport.md` (user requirement, 2026-11-13).
 - Follow the paper's order exactly; every piece of the paper is represented in its file in order.
 - Every definition, lemma, proposition, theorem, corollary (numbered or not, in an environment or
   not, displayed or inline, including claims made inside proofs) becomes a Lean `def`/`theorem`.
@@ -186,7 +189,5 @@ lake build
 ## Current status / next step
 
 Setup complete; proof stage prepared (rules in `AGENTS.md`, split in `automation/splitting.md`, dependency
-list `automation/proof_dependencies.txt`). Next: Task 1 of `automation/splitting.md`.
-- **2026-11-13** (user): `**Discrepancy with the paper.**` paragraphs state very concisely what
-  exactly differs between paper and Lean version, without reasoning or explanation (details stay
-  in `automation/ErrorReport.md`).
+list `automation/proof_dependencies.txt`). Task 1 complete (branch `task1`, 2026-11-12). Next: Tasks 2, 3, 4 of
+`automation/splitting.md` in parallel.
