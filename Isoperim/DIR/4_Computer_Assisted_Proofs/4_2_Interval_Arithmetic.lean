@@ -72,7 +72,8 @@ enclosures encloses the sum. -/
 theorem IsIntervalEnclosure.add {n : ℕ} {f g : (Fin n → ℝ) → ℝ}
     {F G : (Fin n → ℝ) → (Fin n → ℝ) → ℝ × ℝ} (hF : IsIntervalEnclosure f F)
     (hG : IsIntervalEnclosure g G) :
-    IsIntervalEnclosure (f + g) fun xl xu ↦ ((F xl xu).1 + (G xl xu).1, (F xl xu).2 + (G xl xu).2) :=
+    IsIntervalEnclosure (f + g)
+      fun xl xu ↦ ((F xl xu).1 + (G xl xu).1, (F xl xu).2 + (G xl xu).2) :=
   ⟨fun xl xu x hx ↦ ⟨add_le_add (hF.1 xl xu x hx).1 (hG.1 xl xu x hx).1,
     add_le_add (hF.1 xl xu x hx).2 (hG.1 xl xu x hx).2⟩, fun x ↦ by simp [hF.2 x, hG.2 x]⟩
 

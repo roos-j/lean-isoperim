@@ -34,10 +34,10 @@ open Set Filter Topology
 with $a_i<b_i$ for all $i=1,\dots,n$. -/
 def IsRectangle {n : ℕ} (a b : Fin n → ℝ) : Prop := ∀ i, a i < b i
 
-/-- A *tight lower bound* ([DIR], §4.1): a map $\underline f:[a,b]\times[a,b]\to\mathbb{R}$ such that
-$f(x)\ge\underline f(\underline x,\overline x)$ for all $x\in[\underline x,\overline x]\subset[a,b]$,
-and $\underline f(\underline x,\overline x)\to f(x)$ as $|\overline x-\underline x|\to0$,
-$x\in[\underline x,\overline x]$. -/
+/-- A *tight lower bound* ([DIR], §4.1): a map $\underline f:[a,b]\times[a,b]\to\mathbb{R}$ such
+that $f(x)\ge\underline f(\underline x,\overline x)$ for all
+$x\in[\underline x,\overline x]\subset[a,b]$, and $\underline f(\underline x,\overline x)\to f(x)$
+as $|\overline x-\underline x|\to0$, $x\in[\underline x,\overline x]$. -/
 def IsTightLowerBound {n : ℕ} (a b : Fin n → ℝ) (f : (Fin n → ℝ) → ℝ)
     (fl : (Fin n → ℝ) → (Fin n → ℝ) → ℝ) : Prop :=
   (∀ xl xu, a ≤ xl → xu ≤ b → ∀ x ∈ Icc xl xu, fl xl xu ≤ f x) ∧
