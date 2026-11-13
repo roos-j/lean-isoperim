@@ -11,6 +11,9 @@ public import Isoperim.DIR.«3_Variants_Bobkov_Inequality».«3_0_Variants_Bobko
 public import Isoperim.DIR.«5_Auxiliary_Estimates».«5_2_Two_Point_Inequalities»
 public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_1_Case_J_aux»
 public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_1_Case_J_aux_gJ2_main»
+public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_1_Case_J_aux_gJ1a_main»
+public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_1_Case_J_aux_gJ1b_main»
+public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_1_Case_J_aux_cont»
 
 /-!
 # [DIR] §6 Proof of the two-point inequality, §6.1 Case J
@@ -184,14 +187,46 @@ $$g_{J,1,\beta,c}(x,h)>10^{-7}$$ (with $N=6$).
 theorem eqn_6_3 (β c : ℝ) (hβc : (β, c) = (β₀, 1) ∨ (β, c) = (2⁻¹, c₀)) (x h : ℝ)
     (hx : x ∈ Ioc (2⁻¹ : ℝ) (5 / 8)) (hh : h ∈ Icc (0 : ℝ) (3 / 16)) :
     g_J_1 6 β c x h > 10 ^ (-7 : ℤ) := by
-  sorry
+  have e : (10 : ℝ) ^ (-7 : ℤ) = 1 / 10 ^ 7 := by norm_num
+  rw [e]
+  rcases hβc with h | h <;> simp only [Prod.mk.injEq] at h <;> obtain ⟨rfl, rfl⟩ := h
+  · have := gJ1a_gt x h hx hh
+    have e1 : (((50057 / 100000 : ℚ)) : ℝ) = β₀ := by norm_num [β₀]
+    have e2 : (((1 : ℚ)) : ℝ) = 1 := by norm_num
+    rw [e1, e2] at this
+    exact this
+  · have := gJ1b_gt x h hx hh
+    have e1 : (((1 / 2 : ℚ)) : ℝ) = 2⁻¹ := by norm_num
+    have e2 : (((997 / 1000 : ℚ)) : ℝ) = c₀ := by norm_num [c₀]
+    rw [e1, e2] at this
+    exact this
 
 /-- [DIR], §6.1.1: the desired inequality holds in the larger region
 $\frac12\le x\le\frac58$, $0\le h\le\frac3{16}$:
 $G^1_{\beta_0}[J](x,x+h)\ge0$ and $G^1_{\frac12}[c_0J](x,x+h)\ge0$. -/
 theorem caseJ_I (x h : ℝ) (hx : x ∈ Icc (2⁻¹ : ℝ) (5 / 8)) (hh : h ∈ Icc (0 : ℝ) (3 / 16)) :
     G₁ β₀ J x (x + h) ≥ 0 ∧ G₁ 2⁻¹ (c₀ • J) x (x + h) ≥ 0 := by
-  sorry
+  have key : ∀ β c : ℝ, (β, c) = (β₀, 1) ∨ (β, c) = (2⁻¹, c₀) → G₁ β (c • J) x (x + h) ≥ 0 := by
+    intro β c hβc
+    have hβ : β ∈ Ioo (0 : ℝ) 1 := by
+      rcases hβc with h | h <;> simp only [Prod.mk.injEq] at h <;> rw [h.1] <;> norm_num [β₀]
+    have hc : 0 < c := by
+      rcases hβc with h | h <;> simp only [Prod.mk.injEq] at h <;> rw [h.2] <;> norm_num [c₀]
+    have hpos : ∀ x' ∈ Ioc (2⁻¹ : ℝ) (5 / 8), 0 ≤ G₁ β (c • J) x' (x' + h) := by
+      intro x' hx'
+      have h1 := caseJ_I_G₁_ge_g_J_1 6 β c hβ hc x' h hx' hh
+      have h2 := eqn_6_3 β c hβc x' h hx' hh
+      have h3 : (0 : ℝ) < 10 ^ (-7 : ℤ) := by positivity
+      have h4 : 0 ≤ h ^ β⁻¹ := rpow_nonneg hh.1 _
+      nlinarith
+    rcases hx.1.lt_or_eq with hx1 | hx1
+    · exact hpos x ⟨hx1, hx.2⟩
+    · rw [← hx1]
+      exact nonneg_left_of_continuousOn (F := fun x ↦ G₁ β (c • J) x (x + h)) (by norm_num)
+        (continuousOn_G₁_cJ β c h hβ.1 hc.le hh) hpos
+  refine ⟨?_, key _ _ (Or.inr rfl)⟩
+  have := key β₀ 1 (Or.inl rfl)
+  rwa [one_smul] at this
 
 end Case_J_I
 
@@ -295,6 +330,13 @@ $$G^1_\beta[J](x,y)\ge0\quad\text{and}\quad G^1_{\frac12}[c_0J](x,y)\ge0.$$ -/
 theorem prop_6_1 (β : ℝ) (hβ : β₀ ≤ β) (x y : ℝ) (hx : 2⁻¹ ≤ x) (hx₀ : x ≤ x₀)
     (hxy : x ≤ y) (hy : y ≤ 1) :
     G₁ β J x y ≥ 0 ∧ G₁ 2⁻¹ (c₀ • J) x y ≥ 0 := by
-  sorry
+  have hβ₀ : (0 : ℝ) < β₀ := by norm_num [β₀]
+  rcases le_total y (11 / 16) with hy' | hy'
+  · obtain ⟨h1, h2⟩ := caseJ_I_region_subset x y hx hx₀ hxy hy'
+    obtain ⟨h3, h4⟩ := caseJ_I x (y - x) h1 h2
+    rw [add_sub_cancel] at h3 h4
+    exact ⟨(caseJ_G₁_mono_β β hβ x y hx hxy hy).trans' h3, h4⟩
+  · obtain ⟨h3, h4⟩ := caseJ_II_suffices x y hx hxy hy (caseJ_II x y ⟨hx, hx₀⟩ ⟨hy', hy⟩)
+    exact ⟨(caseJ_G₁_mono_β β hβ x y hx hxy hy).trans' h3, h4⟩
 
 end Auto.DIR
