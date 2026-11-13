@@ -11,6 +11,9 @@ public import Isoperim.DIR.«3_Variants_Bobkov_Inequality».«3_0_Variants_Bobko
 public import Isoperim.DIR.«5_Auxiliary_Estimates».«5_3_Properties_L_Q»
 public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_1_Case_J»
 public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_6_Case_QJ_aux»
+public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_6_Case_QJ_aux_cert_g1_b0»
+public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_6_Case_QJ_aux_cert_g1_h»
+public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_6_Case_QJ_aux_cert_g2»
 
 /-!
 # [DIR] §6.6 Case $QJ$: $\frac14\le x\le\frac12\le y\le1$, $x+y\ge1$
@@ -135,19 +138,40 @@ shows, for $(\beta,c)\in\{(\beta_0,1),(\frac12,c_0)\}$,
 $$-\beta\partial_xg_{QJ,\beta,c}>10^{-5}$$
 on this region (with $J$ at $\frac{x+y}2$ read as $J_{w_0}$, see `Auto.DIR.g_QJ`).
 
-**Discrepancy with the paper.** Paper: $J(\frac{x+y}2)$. Lean: $J_{w_0}(\frac{x+y}2)$. -/
+**Discrepancy with the paper.** Paper: $J(\frac{x+y}2)$. Lean: $J_{w_0}(\frac{x+y}2)$;
+partitions `g_QJ_1`, `g_QJ_1h` of `partitions.py` refined dyadically (445 and 436 rectangles). -/
 theorem eqn_6_26 (β c : ℝ)
     (hβc : (β, c) = (β₀, 1) ∨ (β, c) = (2⁻¹, c₀)) (x y : ℝ) (hx : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹)
     (hy : y ∈ Icc (2⁻¹ : ℝ) (5 / 8)) :
     -β * deriv (fun x ↦ g_QJ β c x y) x > 10 ^ (-5 : ℤ) := by
-  sorry
+  have hβ' : 0 < β ∧ β ≤ 1 := by
+    rcases hβc with h | h <;> simp only [Prod.mk.injEq] at h <;> rw [h.1] <;> norm_num [β₀]
+  have hm : (x + y) / 2 ∈ Ioo (1 - w₀) 1 := by
+    have := w₀_mem.1
+    constructor <;> linarith [hx.1, hx.2, hy.1, hy.2]
+  have e := (neg_mul_deriv_g_QJ_expr_rect β c x y hβ'.1 hβ'.2 hx hy).2
+  have hJ : deriv (Jw w₀) ((x + y) / 2) = Checker.DJr ((x + y) / 2) :=
+    (hasDerivAt_gJw_DJr hm).deriv
+  rw [hJ, deriv_Q_eq] at e
+  have e' : -β * deriv (fun x ↦ g_QJ β c x y) x = (y - x) ^ (β⁻¹ - 1) + c ^ β⁻¹ *
+      (2 * gJw w₀ ((x + y) / 2) - Q β x) ^ (β⁻¹ - 1) * (Checker.DJr ((x + y) / 2) - Q1f β x) :=
+    e
+  rw [e', show (10 : ℝ) ^ (-5 : ℤ) = 1 / 10 ^ 5 by norm_num]
+  rcases hβc with h | h <;> simp only [Prod.mk.injEq] at h <;> obtain ⟨rfl, rfl⟩ := h
+  · exact gQJ1_pos_b0 x hx y hy
+  · exact gQJ1_pos_h x hx y hy
 
 /-- [DIR], §6.6.1: we claim that $\partial_xg_{QJ,\beta,c}(x,y)\le0$ for each $y$ (on triangle I,
-for $(\beta,c)\in\{(\beta_0,1),(\frac12,c_0)\}$). -/
+for $(\beta,c)\in\{(\beta_0,1),(\frac12,c_0)\}$).
+
+**Unused hypothesis.** The paper assumes $x+y\ge1$ (triangle I); this is not needed for the claim
+and is omitted in the Lean statement. -/
 theorem g_QJ_deriv_x_nonpos (β c : ℝ) (hβc : (β, c) = (β₀, 1) ∨ (β, c) = (2⁻¹, c₀))
-    (x y : ℝ) (hx : x ∈ Icc (3 / 8 : ℝ) 2⁻¹) (hy : y ∈ Icc (2⁻¹ : ℝ) (5 / 8))
-    (hxy : 1 ≤ x + y) : deriv (fun x ↦ g_QJ β c x y) x ≤ 0 := by
-  sorry
+    (x y : ℝ) (hx : x ∈ Icc (3 / 8 : ℝ) 2⁻¹) (hy : y ∈ Icc (2⁻¹ : ℝ) (5 / 8)) : deriv (fun x ↦ g_QJ β c x y) x ≤ 0 := by
+  have hβ : 0 < β := by
+    rcases hβc with h | h <;> simp only [Prod.mk.injEq] at h <;> rw [h.1] <;> norm_num [β₀]
+  have := eqn_6_26 β c hβc x y ⟨by linarith [hx.1], hx.2⟩ hy
+  exact g_QJ_deriv_x_nonpos_of_pos β c x y hβ (lt_trans (by positivity) this)
 
 /-- [DIR], §6.6.1: thus it only remains to check that $g_{QJ,\beta,c}(\frac12,y)\ge0$ for all
 $y\in[\frac12,\frac58]$ and $(\beta,c)\in\{(\beta_0,1),(\frac12,c_0)\}$: this implies
@@ -156,7 +180,17 @@ theorem g_QJ_nonneg_of_half (β c : ℝ) (hβc : (β, c) = (β₀, 1) ∨ (β, c
     (h : ∀ y ∈ Icc (2⁻¹ : ℝ) (5 / 8), g_QJ β c 2⁻¹ y ≥ 0) (x y : ℝ)
     (hx : x ∈ Icc (3 / 8 : ℝ) 2⁻¹) (hy : y ∈ Icc (2⁻¹ : ℝ) (5 / 8)) (hxy : 1 ≤ x + y) :
     g_QJ β c x y ≥ 0 := by
-  sorry
+  have hβ' : 0 < β ∧ β ≤ 1 := by
+    rcases hβc with h | h <;> simp only [Prod.mk.injEq] at h <;> rw [h.1] <;> norm_num [β₀]
+  have hanti := antitoneOn_g_QJ_expr_triangle (c := c) hβ'.1 hβ'.2 hy (fun x hx ↦
+    g_QJ_deriv_x_nonpos β c hβc x y ⟨le_trans (le_max_left _ _) hx.1, hx.2⟩ hy)
+  have hx' : x ∈ Icc (max (3 / 8) (1 - y)) 2⁻¹ := ⟨max_le hx.1 (by linarith), hx.2⟩
+  have hh : (2⁻¹ : ℝ) ∈ Icc (max (3 / 8) (1 - y)) 2⁻¹ :=
+    ⟨max_le (by norm_num) (by linarith [hy.1]), le_rfl⟩
+  have := hanti hx' hh hx.2
+  have h2 := h y hy
+  simp only [g_QJ] at h2 ⊢
+  linarith
 
 /-- [DIR], §6.6.1: $g_{QJ,\beta,c}(\frac12,y)\ge0$ is equivalent to showing
 $G^1_\beta[cJ](\frac12,y)\ge0$ (for $y\in[\frac12,\frac58]$, $\beta\in[\frac12,1]$,
@@ -224,7 +258,8 @@ minimum is $\approx3.9\cdot10^{-5}$, at $(x,y)=(\frac12,\frac58)$.) -/
 theorem prop_6_12 (x y : ℝ)
     (hx : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹) (hy : y ∈ Icc (5 / 8 : ℝ) 1) :
     g_QJ_2 x y > 10 ^ (-7 : ℤ) := by
-  sorry
+  rw [show (10 : ℝ) ^ (-7 : ℤ) = 1 / 10 ^ 7 by norm_num]
+  exact gQJ2_pos x hx y hy
 
 /-- [DIR], §6.6.2: Proposition 6.12 is stronger than required: if $g_{QJ,2}(x,y)\ge0$ for
 $\frac14\le x\le\frac12$, $\frac58\le y\le1$, $x+y\ge1$, then there
