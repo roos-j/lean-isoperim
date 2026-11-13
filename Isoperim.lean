@@ -13,6 +13,7 @@ public import Isoperim.DIR.«4_Computer_Assisted_Proofs».«4_1_Dyadic_Partition
 public import Isoperim.DIR.«4_Computer_Assisted_Proofs».«4_1_Dyadic_Partitioning»
 public import Isoperim.DIR.«4_Computer_Assisted_Proofs».«4_2_Interval_Arithmetic_aux»
 public import Isoperim.DIR.«4_Computer_Assisted_Proofs».«4_2_Interval_Arithmetic»
+public import Isoperim.DIR.«4_Computer_Assisted_Proofs».«4_3_Source_Code_aux»
 public import Isoperim.DIR.«4_Computer_Assisted_Proofs».«4_3_Source_Code»
 public import Isoperim.DIR.«5_Auxiliary_Estimates».«5_3_Properties_L_Q_aux»
 public import Isoperim.DIR.«5_Auxiliary_Estimates».«5_3_Properties_L_Q»

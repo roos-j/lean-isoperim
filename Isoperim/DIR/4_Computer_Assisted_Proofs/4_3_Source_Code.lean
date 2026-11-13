@@ -6,6 +6,7 @@ Authors: Claude
 module
 
 public import Isoperim.DIR.«4_Computer_Assisted_Proofs».«4_2_Interval_Arithmetic»
+public import Isoperim.DIR.«4_Computer_Assisted_Proofs».«4_3_Source_Code_aux»
 
 /-!
 # [DIR] §4.3 Source code
