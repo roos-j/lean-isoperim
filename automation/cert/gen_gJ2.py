@@ -17,6 +17,30 @@ NBOX = 700     # boxes per file
 ROOT = (F(1, 2), F(9, 16), F(11, 16), F(1))
 
 
+FINAL = """/-- **(6.5)** ([DIR], §6.1.2), computer-assisted: $g_{J,2}(x,y)>10^{-8}$ on
+$[\\frac12,\\frac9{16}]\\times[\\frac{11}{16},1]$, by soundness of partitioning
+(`Auto.DIR.pos_of_dtree`, [DIR] Fact 4.1) with the lower bound $\\underline{g_{J,2}}$
+(`Auto.DIR.g_J_2_lo_le`) and the box certificates. -/
+theorem g_J_2_gt (x y : ℝ) (hx : x ∈ Icc (2⁻¹ : ℝ) (9 / 16)) (hy : y ∈ Icc (11 / 16 : ℝ) 1) :
+    (1 : ℝ) / 10 ^ 8 < (y - x) ^ 2 + J y ^ 2 - (2 * J ((x + y) / 2) - J x) ^ 2 := by
+  have h := pos_of_dtree gJ2Tree (1 / 2) (9 / 16) (11 / 16) 1 (by norm_num) (by norm_num)
+    (fun z ↦ (z 1 - z 0) ^ 2 + J (z 1) ^ 2 - (2 * J ((z 0 + z 1) / 2) - J (z 0)) ^ 2 - 1 / 10 ^ 8)
+    gJ2_fl ?_ gJ2Tree_pos ![x, y] (mem_Icc_toR.2 ⟨by norm_num; constructor <;> linarith [hx.1, hx.2],
+      by norm_num; constructor <;> linarith [hy.1, hy.2]⟩)
+  · simp only [Matrix.cons_val_zero, Matrix.cons_val_one] at h
+    linarith
+  · intro zl zu hl hu z hz
+    obtain ⟨⟨h1, h2⟩, h3, h4⟩ := le_toR_iff.1 ⟨hl, hu⟩
+    norm_num at h1 h2 h3 h4
+    have hz0 : z 0 ∈ Icc (zl 0) (zu 0) := ⟨hz.1 0, hz.2 0⟩
+    have hz1 : z 1 ∈ Icc (zl 1) (zu 1) := ⟨hz.1 1, hz.2 1⟩
+    have := g_J_2_lo_le (by linarith) h3 (by linarith) h4 hz0 hz1
+    simp only [gJ2_fl]
+    linarith
+
+"""
+
+
 def main(test=None):
     bs = boxes("g_J_2")
     tree, order = build_tree(bs, *ROOT)
@@ -88,6 +112,7 @@ def main(test=None):
                 "  rcases hp with " + " | ".join("h" for _ in chunks) + "\n"
                 + "".join(f"  · exact gJ2_boxes_{k}_pos p h\n" for k in range(len(chunks)))
                 + "\n")
+        txt += FINAL
     txt += FOOTER
     write(f"{DIR}/{mod}.lean", txt)
     print("tables:", tabmods)

@@ -10,7 +10,7 @@ public import Isoperim.DIR.«2_Envelope_Functions».Definitions
 public import Isoperim.DIR.«3_Variants_Bobkov_Inequality».«3_0_Variants_Bobkov_Inequality»
 public import Isoperim.DIR.«5_Auxiliary_Estimates».«5_2_Two_Point_Inequalities»
 public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_1_Case_J_aux»
-public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_1_Case_J_aux_gJ2»
+public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_1_Case_J_aux_gJ2_main»
 
 /-!
 # [DIR] §6 Proof of the two-point inequality, §6.1 Case J
@@ -264,7 +264,10 @@ theorem caseJ_II_iff_g_J_2 (x y : ℝ) (hx : x ∈ Icc (2⁻¹ : ℝ) (9 / 16))
 $$g_{J,2}(x,y)>10^{-8}.$$ (There is no equation (6.4) in [DIR].) -/
 theorem eqn_6_5 (x y : ℝ) (hx : x ∈ Icc (2⁻¹ : ℝ) (9 / 16))
     (hy : y ∈ Icc (11 / 16 : ℝ) 1) : g_J_2 x y > 10 ^ (-8 : ℤ) := by
-  sorry
+  have := g_J_2_gt x y hx hy
+  rw [g_J_2]
+  norm_num at this ⊢
+  linarith
 
 /-- [DIR], §6.1.2: $\frac9{16}=0.5625>x_0$. -/
 theorem nine_div_sixteen_gt_x₀ : (9 / 16 : ℝ) = 0.5625 ∧ (0.5625 : ℝ) > x₀ := by
@@ -275,7 +278,12 @@ theorem nine_div_sixteen_gt_x₀ : (9 / 16 : ℝ) = 0.5625 ∧ (0.5625 : ℝ) > 
 $\frac{11}{16}\le y\le1$, $G^1_{\frac12}[J](x,y)\ge0$. -/
 theorem caseJ_II (x y : ℝ) (hx : x ∈ Icc 2⁻¹ x₀) (hy : y ∈ Icc (11 / 16 : ℝ) 1) :
     G₁ 2⁻¹ J x y ≥ 0 := by
-  sorry
+  have hx₀ := nine_div_sixteen_gt_x₀
+  have hx' : x ∈ Icc (2⁻¹ : ℝ) (9 / 16) := ⟨hx.1, by linarith [hx.2, hx₀.2]⟩
+  rw [caseJ_II_iff_g_J_2 x y hx' hy]
+  have := eqn_6_5 x y hx' hy
+  have : (0 : ℝ) < 10 ^ (-8 : ℤ) := by positivity
+  linarith
 
 end Case_J_II
 
