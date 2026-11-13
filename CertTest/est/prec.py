@@ -2,7 +2,18 @@ import pickle
 from mpmath import mp, mpf, sqrt, exp, erfinv, pi, findroot
 from fractions import Fraction as F
 mp.dps=30
-vals=pickle.load(open('/tmp/claude-0/est/vals.pkl','rb'))
+def load_partitions(path=None):
+    """The admissible partitions of the paper's ancillary file `partitions.py` (arXiv:2407.12674,
+    `anc/partitions.py`), parsed as data (no code execution). Path: argument, environment
+    variable DIR_PARTITIONS, or /tmp/claude-0/papers/dir24/anc/partitions.py."""
+    import ast, os
+    path = path or os.environ.get('DIR_PARTITIONS', '/tmp/claude-0/papers/dir24/anc/partitions.py')
+    out = {}
+    for node in ast.parse(open(path).read()).body:
+        if isinstance(node, ast.Assign):
+            out[node.targets[0].id] = ast.literal_eval(node.value)
+    return out
+vals = load_partitions()
 def I(t): z=sqrt(2)*erfinv(2*t-1); return exp(-z*z/2)/sqrt(2*pi)
 def Jw(x,w): return sqrt(2)*w*I((1-x)/w)
 w0=findroot(lambda w: Jw(mpf(1)/2,w)-mpf(1)/2, mpf('0.8957693'))

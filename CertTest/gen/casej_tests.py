@@ -26,7 +26,18 @@ from mpmath import mp, mpf
 mp.dps = 50
 exec(open('CertTest/est/prec.py').read().split("q=lambda")[0])   # J, DJ, g_J_1, g_J_2 (mpmath)
 mp.dps = 50
-vals = pickle.load(open('/tmp/claude-0/est/vals.pkl', 'rb'))
+def load_partitions(path=None):
+    """The admissible partitions of the paper's ancillary file `partitions.py` (arXiv:2407.12674,
+    `anc/partitions.py`), parsed as data (no code execution). Path: argument, environment
+    variable DIR_PARTITIONS, or /tmp/claude-0/papers/dir24/anc/partitions.py."""
+    import ast, os
+    path = path or os.environ.get('DIR_PARTITIONS', '/tmp/claude-0/papers/dir24/anc/partitions.py')
+    out = {}
+    for node in ast.parse(open(path).read()).body:
+        if isinstance(node, ast.Assign):
+            out[node.targets[0].id] = ast.literal_eval(node.value)
+    return out
+vals = load_partitions()
 WLs, WUs = '0.895769326048', '0.895769326057'
 WL, WU = mpf(WLs), mpf(WUs)
 WLq, WUq = F(WLs), F(WUs)

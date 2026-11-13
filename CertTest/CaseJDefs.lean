@@ -30,7 +30,8 @@ namespace Auto.DIR.Checker.CaseJ
 open Auto.DIR Auto.DIR.Checker Set Real
 
 /-- $\underline{g_{J,2}}(\underline x,\overline x,\underline y,\overline y)
-=(\underline y-\overline x)^2+J(\overline y)^2-(2J(\frac{\underline x+\underline y}2)-J(\underline x))^2$. -/
+=(\underline y-\overline x)^2+J(\overline y)^2
+-(2J(\frac{\underline x+\underline y}2)-J(\underline x))^2$. -/
 noncomputable def gJ2lo (xm xM ym yM : ℚ) : ℝ :=
   ((ym - xM : ℚ) : ℝ) ^ 2 + J (yM : ℚ) ^ 2 - (2 * J ((xm + ym) / 2 : ℚ) - J (xm : ℚ)) ^ 2
 
