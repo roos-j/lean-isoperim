@@ -10,6 +10,7 @@ public import Isoperim.DIR.«2_Envelope_Functions».Definitions
 public import Isoperim.DIR.«3_Variants_Bobkov_Inequality».«3_0_Variants_Bobkov_Inequality»
 public import Isoperim.DIR.«5_Auxiliary_Estimates».«5_3_Properties_L_Q»
 public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_1_Case_J»
+public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_4_Case_LJ_aux»
 
 /-!
 # [DIR] §6.4 Case $LJ$: $0\le x\le\frac14$, $\frac12\le y\le1$, $1\le x+y$
@@ -36,22 +37,39 @@ This file covers Proposition 6.8 (Case $LJ$; unlabeled in the TeX source) and it
 
 namespace Auto.DIR
 
-open Real Set
+open Real Set Filter Topology
 
 /-- [DIR], §6.4: in the region $LJ$ ($0\le x\le\frac14$, $\frac12\le y\le1$, $1\le x+y$) we have
 $y\in[\frac34,1]$. -/
 theorem caseLJ_region (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) 4⁻¹) (hy : y ∈ Icc (2⁻¹ : ℝ) 1)
     (hxy : 1 ≤ x + y) : y ∈ Icc (3 / 4 : ℝ) 1 := by
-  sorry
+  exact ⟨by linarith [hx.2], hy.2⟩
 
 section Proof_Proposition_6_8
 /-- [DIR], proof of Proposition 6.8: the left-hand side is increasing in $\beta$ (for
-$\beta\in[\frac12,1]$), so it suffices to prove the claim for $\beta=\frac12$. -/
+$\beta\in[\frac12,1]$), so it suffices to prove the claim for $\beta=\frac12$.
+
+**Unused hypothesis.** The paper assumes $1\le x+y$; this is not needed for the claim and is omitted
+in the Lean statement. -/
 theorem prop_6_8_monotoneOn_beta (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) 4⁻¹)
-    (hy : y ∈ Icc (3 / 4 : ℝ) 1) (hxy : 1 ≤ x + y) :
+    (hy : y ∈ Icc (3 / 4 : ℝ) 1) :
     MonotoneOn (fun β ↦ y - x + (2 ^ β - 1) * J y + L β x - 2 * J ((x + y) / 2))
       (Icc 2⁻¹ 1) := by
-  sorry
+  intro b₁ _ b₂ _ hb
+  have hJ : 0 ≤ J y := J_nonneg ⟨by linarith [hy.1], hy.2⟩
+  have h2 : (2 : ℝ) ^ b₁ ≤ 2 ^ b₂ := rpow_le_rpow_of_exponent_le (by norm_num) hb
+  have hL : L b₁ x ≤ L b₂ x := by
+    unfold L
+    rcases eq_or_lt_of_le hx.1 with h0 | hpos
+    · simp [← h0]
+    · have hl : 1 ≤ logb 2 x⁻¹ := by
+        rw [le_logb_iff_rpow_le one_lt_two (inv_pos.2 hpos), rpow_one,
+          le_inv_comm₀ two_pos hpos]
+        linarith [hx.2]
+      exact mul_le_mul_of_nonneg_left (rpow_le_rpow_of_exponent_le hl hb) hx.1
+  have := mul_le_mul_of_nonneg_right (sub_le_sub_right h2 1) hJ
+  simp only
+  linarith
 
 /-- The function ([DIR], proof of Proposition 6.8)
 $$g_{LJ}(x,y)=y-x+(\sqrt2-1)J(y)+L_{\frac12}(x)-2J(\tfrac{x+y}2).$$ -/
@@ -61,7 +79,7 @@ noncomputable def g_LJ (x y : ℝ) : ℝ := y - x + (√2 - 1) * J y + L 2⁻¹ 
 $\beta=\frac12$ (as $2^{1/2}=\sqrt2$). -/
 theorem g_LJ_eq (x y : ℝ) :
     g_LJ x y = y - x + (2 ^ (2⁻¹ : ℝ) - 1) * J y + L 2⁻¹ x - 2 * J ((x + y) / 2) := by
-  sorry
+  rw [g_LJ, show (2 : ℝ) ^ (2⁻¹ : ℝ) = √2 by rw [sqrt_eq_rpow]; norm_num]
 
 /-- [DIR], proof of Proposition 6.8: using $JJ''=-2$ we have
 $$\partial_x^2g_{LJ}(x,y)=L_{\frac12}''(x)+J(\tfrac{x+y}2)^{-1}$$
@@ -69,23 +87,41 @@ $$\partial_x^2g_{LJ}(x,y)=L_{\frac12}''(x)+J(\tfrac{x+y}2)^{-1}$$
 theorem g_LJ_deriv2_eq (x y : ℝ) (hx : x ∈ Ioc (0 : ℝ) 4⁻¹)
     (hy : y ∈ Icc (3 / 4 : ℝ) 1) (hxy : 1 < x + y) :
     deriv (deriv (fun x ↦ g_LJ x y)) x = deriv (deriv (L 2⁻¹)) x + (J ((x + y) / 2))⁻¹ := by
-  sorry
+  have hd := caseLJ_mem_dom hx hy.2 hxy
+  have hg : (fun x ↦ g_LJ x y) =
+      fun x ↦ y - x + (√2 - 1) * J y + L 2⁻¹ x - 2 * J ((x + y) / 2) := rfl
+  rw [hg, (caseLJ_deriv2_G_eventuallyEq y _ hd).eq_of_nhds, deriv2_L_eq hd.1]
 
 /-- [DIR], proof of Proposition 6.8: Lemma 5.6 shows $L''_{1/2}$ is increasing and negative
 (on $(0,\frac14]$). -/
 theorem L_half_deriv2_monotoneOn_neg :
     MonotoneOn (deriv (deriv (L 2⁻¹))) (Ioc 0 4⁻¹) ∧
       ∀ x ∈ Ioc (0 : ℝ) 4⁻¹, deriv (deriv (L 2⁻¹)) x < 0 := by
-  sorry
+  have hsub : ∀ z ∈ Ioc (0 : ℝ) 4⁻¹, z ∈ Ioo (0 : ℝ) 1 :=
+    fun z hz ↦ ⟨hz.1, hz.2.trans_lt (by norm_num)⟩
+  refine ⟨?_, fun x hx ↦ by rw [deriv2_L_eq (hsub x hx)]; exact caseLJ_L2f_neg (hsub x hx)⟩
+  refine monotoneOn_of_deriv_nonneg (convex_Ioc 0 4⁻¹)
+    (fun z hz ↦ (hasDerivAt_deriv2_L (hsub z hz)).continuousAt.continuousWithinAt) ?_ ?_
+  · intro z hz
+    rw [interior_Ioc] at hz
+    exact (hasDerivAt_deriv2_L (hsub z ⟨hz.1, hz.2.le⟩)).differentiableAt.differentiableWithinAt
+  · intro z hz
+    rw [interior_Ioc] at hz
+    rw [(hasDerivAt_deriv2_L (hsub z ⟨hz.1, hz.2.le⟩)).deriv]
+    exact (caseLJ_L3f_pos ⟨hz.1, hz.2.le⟩).le
 
 /-- **(6.19)** ([DIR], proof of Proposition 6.8). $L''_{\frac12}(\frac14)\le-2.7$. -/
 theorem eqn_6_19 : deriv (deriv (L 2⁻¹)) 4⁻¹ ≤ -2.7 := by
-  sorry
+  rw [deriv2_L_eq ⟨by norm_num, by norm_num⟩]
+  linarith [caseLJ_L2f_quarter_le]
 
 /-- [DIR], proof of Proposition 6.8: if $\frac{x+y}2\in[\frac12,1-\frac{w_0}2]$, then
 $J(\frac{x+y}2)^{-1}\le2$. -/
 theorem J_inv_le_two (m : ℝ) (hm : m ∈ Icc (2⁻¹ : ℝ) (1 - w₀ / 2)) : (J m)⁻¹ ≤ 2 := by
-  sorry
+  have hJm : J 2⁻¹ ≤ J m := J_monotoneOn_Icc_half_x₀ ⟨le_rfl, x₀_mem_Ioo.1.le⟩ hm hm.1
+  rw [(J_half_eq_L_half 1).1] at hJm
+  rw [inv_le_comm₀ (by linarith) two_pos]
+  exact hJm
 
 /-- [DIR], proof of Proposition 6.8: if $\frac{x+y}2\in[\frac12,1-\frac{w_0}2]$, then
 $J(\frac{x+y}2)^{-1}\le2$ and hence $\partial_x^2g_{LJ}(x,y)\le0$ (for
@@ -93,33 +129,77 @@ $(x,y)\in(0,\frac14]\times[\frac34,1]$, $1<x+y$). -/
 theorem g_LJ_deriv2_nonpos_of_le (x y : ℝ) (hx : x ∈ Ioc (0 : ℝ) 4⁻¹)
     (hy : y ∈ Icc (3 / 4 : ℝ) 1) (hxy : 1 < x + y) (hm : (x + y) / 2 ≤ 1 - w₀ / 2) :
     deriv (deriv (fun x ↦ g_LJ x y)) x ≤ 0 := by
-  sorry
+  rw [g_LJ_deriv2_eq x y hx hy hxy]
+  have h1 := L_half_deriv2_monotoneOn_neg.1 hx ⟨by norm_num, le_rfl⟩ hx.2
+  have h2 := J_inv_le_two _ ⟨by linarith, hm⟩
+  linarith [eqn_6_19]
 
 /-- [DIR], proof of Proposition 6.8: if $\frac{x+y}2\ge1-\frac{w_0}2$, it suffices to show that
 $\partial_x^3g_{LJ}(x,y)\ge0$ and $\partial_x^2g_{LJ}(\frac14,y)\le0$. (For fixed $y$, as $x$
-increases to $\frac14$, $\frac{x+y}2$ stays $\ge1-\frac{w_0}2$.) -/
+increases to $\frac14$, $\frac{x+y}2$ stays $\ge1-\frac{w_0}2$.)
+
+**Unused hypothesis.** The paper assumes $\frac{x+y}2\ge1-\frac{w_0}2$; this is not needed for the
+claim and is omitted in the Lean statement. -/
 theorem g_LJ_deriv2_nonpos_of_deriv3 (x y : ℝ) (hx : x ∈ Ioc (0 : ℝ) 4⁻¹)
-    (hy : y ∈ Icc (3 / 4 : ℝ) 1) (hxy : 1 < x + y) (hm : (x + y) / 2 ≥ 1 - w₀ / 2)
+    (hy : y ∈ Icc (3 / 4 : ℝ) 1) (hxy : 1 < x + y)
     (h3 : ∀ x' ∈ Icc x 4⁻¹, iteratedDeriv 3 (fun x ↦ g_LJ x y) x' ≥ 0)
     (h2 : deriv (deriv (fun x ↦ g_LJ x y)) 4⁻¹ ≤ 0) :
     deriv (deriv (fun x ↦ g_LJ x y)) x ≤ 0 := by
-  sorry
+  have hg : (fun x ↦ g_LJ x y) =
+      fun x ↦ y - x + (√2 - 1) * J y + L 2⁻¹ x - 2 * J ((x + y) / 2) := rfl
+  have hD : ∀ z ∈ Icc x 4⁻¹, HasDerivAt (deriv (deriv (fun x ↦ g_LJ x y)))
+      (iteratedDeriv 3 (fun x ↦ g_LJ x y) z) z := by
+    intro z hz
+    rw [hg]
+    exact caseLJ_hasDerivAt_deriv2_G y _
+      (caseLJ_mem_dom ⟨hx.1.trans_le hz.1, hz.2⟩ hy.2 (by linarith [hz.1]))
+  have hmono : MonotoneOn (deriv (deriv (fun x ↦ g_LJ x y))) (Icc x 4⁻¹) := by
+    refine monotoneOn_of_deriv_nonneg (convex_Icc _ _)
+      (fun z hz ↦ (hD z hz).continuousAt.continuousWithinAt) ?_ ?_
+    · intro z hz
+      rw [interior_Icc] at hz
+      exact (hD z ⟨hz.1.le, hz.2.le⟩).differentiableAt.differentiableWithinAt
+    · intro z hz
+      rw [interior_Icc] at hz
+      rw [(hD z ⟨hz.1.le, hz.2.le⟩).deriv]
+      exact h3 z ⟨hz.1.le, hz.2.le⟩
+  exact (hmono ⟨le_rfl, hx.2⟩ ⟨hx.2, le_rfl⟩ hx.2).trans h2
 
 /-- **(6.20)** ([DIR], proof of Proposition 6.8). $\partial_x^2g_{LJ}(\frac14,1)\le-0.7$. -/
 theorem eqn_6_20 : deriv (deriv (fun x ↦ g_LJ x 1)) 4⁻¹ ≤ -0.7 := by
-  sorry
+  rw [g_LJ_deriv2_eq _ _ ⟨by norm_num, le_rfl⟩ ⟨by norm_num, le_rfl⟩ (by norm_num),
+    deriv2_L_eq ⟨by norm_num, by norm_num⟩, show ((4⁻¹ : ℝ) + 1) / 2 = 5 / 8 by norm_num]
+  have h1 := caseLJ_L2f_quarter_le
+  have h2 : (J (5 / 8))⁻¹ ≤ (0.4948 : ℝ)⁻¹ := inv_anti₀ (by norm_num) caseLJ_J_five_eighths.1
+  have h3 : (0.4948 : ℝ)⁻¹ ≤ 2.0211 := by norm_num
+  linarith
 
 /-- [DIR], proof of Proposition 6.8 (the monotonicity actually needed for the next step):
 $J^{-1}$ is increasing on $[1-\frac{w_0}2,1)$. -/
 theorem J_inv_monotoneOn_Ico_x₀ : MonotoneOn (fun x ↦ (J x)⁻¹) (Ico (1 - w₀ / 2) 1) := by
-  sorry
+  intro a ha b hb hab
+  have hx₀ := x₀_mem_Ioo
+  have hJb : 0 < J b :=
+    J_pos ⟨by linarith [hx₀.1, hb.1, show x₀ = 1 - w₀ / 2 from rfl], hb.2⟩
+  exact inv_anti₀ hJb (J_antitoneOn_Icc_x₀_one ⟨ha.1, ha.2.le⟩ ⟨hb.1, hb.2.le⟩ hab)
 
 /-- [DIR], proof of Proposition 6.8: since $J^{-1}$ is increasing, we have
 $\partial_x^2g_{LJ}(\frac14,y)\le0$ for all $y\in[\frac34,1]$. (Stated for $y\in(\frac34,1]$,
 where $\frac{1/4+y}2\in(\frac12,1)$.) -/
 theorem g_LJ_deriv2_quarter_nonpos (y : ℝ) (hy : y ∈ Ioc (3 / 4 : ℝ) 1) :
     deriv (deriv (fun x ↦ g_LJ x y)) 4⁻¹ ≤ 0 := by
-  sorry
+  have e20 := eqn_6_20
+  rw [g_LJ_deriv2_eq _ _ ⟨by norm_num, le_rfl⟩ ⟨by norm_num, le_rfl⟩ (by norm_num)] at e20
+  rw [g_LJ_deriv2_eq _ _ ⟨by norm_num, le_rfl⟩ ⟨hy.1.le, hy.2⟩ (by linarith [hy.1])]
+  have hx₀ : x₀ = 1 - w₀ / 2 := rfl
+  have h5 := x₀_lt_five_div_eight
+  rcases le_total ((4⁻¹ + y) / 2) (1 - w₀ / 2) with h | h
+  · have := J_inv_le_two _ ⟨by linarith [hy.1], h⟩
+    linarith [eqn_6_19]
+  · have := J_inv_monotoneOn_Ico_x₀ ⟨h, by linarith [hy.2]⟩ ⟨by linarith, by norm_num⟩
+      (show (4⁻¹ + y) / 2 ≤ (4⁻¹ + 1) / 2 by linarith [hy.2])
+    simp only at this
+    linarith
 
 /-- [DIR], proof of Proposition 6.8: to show $\partial_x^3g_{LJ}\ge0$ we calculate
 $$\partial_x^3g_{LJ}(x,y)=L_{\frac12}'''(x)-\tfrac12J'(\tfrac{x+y}2)J(\tfrac{x+y}2)^{-2}$$
@@ -129,24 +209,39 @@ theorem g_LJ_deriv3_eq (x y : ℝ) (hx : x ∈ Ioc (0 : ℝ) 4⁻¹)
     iteratedDeriv 3 (fun x ↦ g_LJ x y) x =
       iteratedDeriv 3 (L 2⁻¹) x -
         2⁻¹ * deriv J ((x + y) / 2) * J ((x + y) / 2) ^ (-2 : ℤ) := by
-  sorry
+  have hd := caseLJ_mem_dom hx hy.2 hxy
+  have hg : (fun x ↦ g_LJ x y) =
+      fun x ↦ y - x + (√2 - 1) * J y + L 2⁻¹ x - 2 * J ((x + y) / 2) := rfl
+  rw [hg, caseLJ_iteratedDeriv3_G y _ hd, eqn_5_4 _ _ hd.1, L3f]
 
 /-- [DIR], proof of Proposition 6.8: in the current region ($\frac{x+y}2\ge1-\frac{w_0}2$) we
 have $J'(\frac{x+y}2)\le0$. -/
 theorem deriv_J_nonpos (m : ℝ) (hm : m ∈ Ico (1 - w₀ / 2) 1) : deriv J m ≤ 0 := by
-  sorry
+  obtain ⟨h0, -, hanti⟩ := deriv_J_x₀
+  have hx₀ := x₀_mem_Ioo
+  rcases eq_or_lt_of_le hm.1 with h | h
+  · rw [← h]; exact h0.le
+  · have := hanti hx₀ ⟨hx₀.1.trans h, hm.2⟩ h
+    linarith
 
 /-- [DIR], proof of Proposition 6.8: $L'''_{1/2}\ge0$ (on $(0,\frac14]$) by Lemma 5.6. -/
 theorem L_half_deriv3_nonneg (x : ℝ) (hx : x ∈ Ioc (0 : ℝ) 4⁻¹) :
     iteratedDeriv 3 (L 2⁻¹) x ≥ 0 := by
-  sorry
+  rw [eqn_5_4 _ _ ⟨hx.1, hx.2.trans_lt (by norm_num)⟩]
+  exact (caseLJ_L3f_pos hx).le
 
 /-- [DIR], proof of Proposition 6.8: if $\frac{x+y}2\ge1-\frac{w_0}2$, then
 $\partial_x^3g_{LJ}(x,y)\ge0$ (for $(x,y)\in(0,\frac14]\times[\frac34,1]$, $1<x+y$). -/
 theorem g_LJ_deriv3_nonneg (x y : ℝ) (hx : x ∈ Ioc (0 : ℝ) 4⁻¹)
     (hy : y ∈ Icc (3 / 4 : ℝ) 1) (hxy : 1 < x + y) (hm : (x + y) / 2 ≥ 1 - w₀ / 2) :
     iteratedDeriv 3 (fun x ↦ g_LJ x y) x ≥ 0 := by
-  sorry
+  rw [g_LJ_deriv3_eq x y hx hy hxy]
+  have hm1 : (x + y) / 2 < 1 := by linarith [hx.2, hy.2]
+  have hJ := J_pos ⟨by linarith, hm1⟩
+  have hd := deriv_J_nonpos _ ⟨hm, hm1⟩
+  have hL := L_half_deriv3_nonneg x hx
+  have hz : 0 ≤ J ((x + y) / 2) ^ (-2 : ℤ) := (zpow_pos hJ _).le
+  nlinarith [mul_nonneg (neg_nonneg.2 hd) hz]
 
 /-- [DIR], proof of Proposition 6.8: we claim that if $(x,y)\in(0,\frac14]\times[\frac34,1]$
 and $1\le x+y$, then $\partial_x^2g_{LJ}(x,y)\le0$. (Stated for $1<x+y$, where
@@ -154,45 +249,91 @@ $\frac{x+y}2\in(\frac12,1)$ and the derivative of `J` is meaningful.) -/
 theorem g_LJ_deriv2_nonpos (x y : ℝ) (hx : x ∈ Ioc (0 : ℝ) 4⁻¹)
     (hy : y ∈ Icc (3 / 4 : ℝ) 1) (hxy : 1 < x + y) :
     deriv (deriv (fun x ↦ g_LJ x y)) x ≤ 0 := by
-  sorry
+  rcases le_total ((x + y) / 2) (1 - w₀ / 2) with h | h
+  · exact g_LJ_deriv2_nonpos_of_le x y hx hy hxy h
+  · refine g_LJ_deriv2_nonpos_of_deriv3 x y hx hy hxy (fun x' hx' ↦ ?_) ?_
+    · exact g_LJ_deriv3_nonneg x' y ⟨hx.1.trans_le hx'.1, hx'.2⟩ hy (by linarith [hx'.1])
+        (by linarith [hx'.1])
+    · exact g_LJ_deriv2_quarter_nonpos y ⟨by linarith [hx.2], hy.2⟩
 
 /-- [DIR], proof of Proposition 6.8: it remains to show non-negativity on the boundary of the
 region $LJ$: if $g_{LJ}\ge0$ on the boundary pieces $y=1$, $x+y=1$ and $x=\frac14$, then
 $g_{LJ}\ge0$ on the region $\{(x,y)\in[0,\frac14]\times[\frac34,1] : 1\le x+y\}$ (by concavity
-in $x$). -/
-theorem g_LJ_nonneg_of_boundary (h1 : ∀ x ∈ Icc (0 : ℝ) 4⁻¹, g_LJ x 1 ≥ 0)
+in $x$).
+
+**Unused hypothesis.** The paper assumes non-negativity on the boundary piece $y=1$ (for fixed $y$
+the segment $x\in[1-y,\frac14]$ has its endpoints on $x+y=1$ and $x=\frac14$); this is not needed
+for the claim and is omitted in the Lean statement. -/
+theorem g_LJ_nonneg_of_boundary
     (h2 : ∀ y ∈ Icc (3 / 4 : ℝ) 1, g_LJ (1 - y) y ≥ 0)
     (h3 : ∀ y ∈ Icc (3 / 4 : ℝ) 1, g_LJ 4⁻¹ y ≥ 0) (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) 4⁻¹)
     (hy : y ∈ Icc (3 / 4 : ℝ) 1) (hxy : 1 ≤ x + y) : g_LJ x y ≥ 0 := by
-  sorry
+  have hg : (fun x ↦ g_LJ x y) =
+      fun x ↦ y - x + (√2 - 1) * J y + L 2⁻¹ x - 2 * J ((x + y) / 2) := rfl
+  have hy1 : 0 ≤ 1 - y := by linarith [hy.2]
+  have hdom : ∀ z ∈ Ioo (1 - y) 4⁻¹, z ∈ caseLJ_dom y := fun z hz ↦
+    caseLJ_mem_dom ⟨by linarith [hz.1], hz.2.le⟩ hy.2 (by linarith [hz.1])
+  have hc : ContinuousOn (fun x ↦ g_LJ x y) (Icc (1 - y) 4⁻¹) := by
+    rw [hg]
+    exact caseLJ_continuousOn_G y _ hy1 (by norm_num) (by linarith) (by linarith [hy.2])
+  have key := caseLJ_min_le_of_deriv2_nonpos hc
+    (fun z hz ↦ by rw [hg]; exact (caseLJ_hasDerivAt_G y _ (hdom z hz)).differentiableAt)
+    (fun z hz ↦ by rw [hg]; exact (caseLJ_hasDerivAt_deriv_G y _ (hdom z hz)).differentiableAt)
+    (fun z hz ↦ g_LJ_deriv2_nonpos z y ⟨by linarith [hz.1], hz.2.le⟩ hy (by linarith [hz.1]))
+    (show x ∈ Icc (1 - y) 4⁻¹ from ⟨by linarith, hx.2⟩)
+  exact (le_min (h2 y hy) (h3 y hy)).trans key
 
 /-- [DIR], proof of Proposition 6.8: if $y=1$, we already know
 $\frac{d^2}{dx^2}g_{LJ}(x,1)\le0$ (for $x\in(0,\frac14]$). -/
 theorem g_LJ_one_deriv2_nonpos (x : ℝ) (hx : x ∈ Ioc (0 : ℝ) 4⁻¹) :
     deriv (deriv (fun x ↦ g_LJ x 1)) x ≤ 0 := by
-  sorry
+  exact g_LJ_deriv2_nonpos x 1 hx ⟨by norm_num, le_rfl⟩ (by linarith [hx.1])
 
 /-- [DIR], proof of Proposition 6.8: $g_{LJ}(0,1)=0$. -/
 theorem g_LJ_zero_one : g_LJ 0 1 = 0 := by
-  sorry
+  rw [g_LJ, J_one, L_zero, show ((0 : ℝ) + 1) / 2 = 2⁻¹ by norm_num, (J_half_eq_L_half 1).1]
+  ring
 
 /-- **(6.21)** ([DIR], proof of Proposition 6.8). $g_{LJ}(\frac14,1)\ge0.1$. -/
 theorem eqn_6_21 : g_LJ 4⁻¹ 1 ≥ 0.1 := by
-  sorry
+  rw [g_LJ, J_one, caseLJ_L_quarter, show ((4⁻¹ : ℝ) + 1) / 2 = 5 / 8 by norm_num]
+  have h1 := caseLJ_J_five_eighths.2
+  have h2 : (1.414 : ℝ) < √2 := by rw [lt_sqrt (by norm_num)]; norm_num
+  linarith
 
 /-- [DIR], proof of Proposition 6.8: $g_{LJ}(x,1)\ge0$ for all $x\in[0,\frac14]$. -/
 theorem g_LJ_one_nonneg (x : ℝ) (hx : x ∈ Icc (0 : ℝ) 4⁻¹) : g_LJ x 1 ≥ 0 := by
-  sorry
+  have hg : (fun x ↦ g_LJ x 1) =
+      fun x ↦ 1 - x + (√2 - 1) * J 1 + L 2⁻¹ x - 2 * J ((x + 1) / 2) := rfl
+  have hdom : ∀ z ∈ Ioo (0 : ℝ) 4⁻¹, z ∈ caseLJ_dom 1 := fun z hz ↦
+    caseLJ_mem_dom ⟨hz.1, hz.2.le⟩ le_rfl (by linarith [hz.1])
+  have hc : ContinuousOn (fun x ↦ g_LJ x 1) (Icc 0 4⁻¹) := by
+    rw [hg]
+    exact caseLJ_continuousOn_G 1 _ le_rfl (by norm_num) (by norm_num) (by norm_num)
+  have key := caseLJ_min_le_of_deriv2_nonpos hc
+    (fun z hz ↦ by rw [hg]; exact (caseLJ_hasDerivAt_G 1 _ (hdom z hz)).differentiableAt)
+    (fun z hz ↦ by rw [hg]; exact (caseLJ_hasDerivAt_deriv_G 1 _ (hdom z hz)).differentiableAt)
+    (fun z hz ↦ g_LJ_one_deriv2_nonpos z ⟨hz.1, hz.2.le⟩) hx
+  have h4 := eqn_6_21
+  exact (le_min g_LJ_zero_one.ge (by linarith)).trans key
 
 /-- [DIR], proof of Proposition 6.8: in the case $x+y=1$, $x\in[0,\frac14]$, $y\in[\frac34,1]$,
-$$g_{LJ}(1-y,y)=2y+(\sqrt2-1)J(y)+L_{\frac12}(1-y)-2.$$ -/
-theorem g_LJ_diag_eq (y : ℝ) (hy : y ∈ Icc (3 / 4 : ℝ) 1) :
+$$g_{LJ}(1-y,y)=2y+(\sqrt2-1)J(y)+L_{\frac12}(1-y)-2.$$
+
+**Unused hypothesis.** The paper assumes $x\in[0,\frac14]$, $y\in[\frac34,1]$ (the identity holds
+for all real $y$); this is not needed for the claim and is omitted in the Lean statement. -/
+theorem g_LJ_diag_eq (y : ℝ) :
     g_LJ (1 - y) y = 2 * y + (√2 - 1) * J y + L 2⁻¹ (1 - y) - 2 := by
-  sorry
+  rw [g_LJ, show (1 - y + y) / 2 = 2⁻¹ by ring, (J_half_eq_L_half 1).1]
+  ring
 
 /-- **(6.22)** ([DIR], proof of Proposition 6.8). $g_{LJ}(\frac14,\frac34)\ge0.02$. -/
 theorem eqn_6_22 : g_LJ 4⁻¹ (3 / 4) ≥ 0.02 := by
-  sorry
+  rw [g_LJ, caseLJ_L_quarter, show ((4⁻¹ : ℝ) + 3 / 4) / 2 = 2⁻¹ by norm_num,
+    (J_half_eq_L_half 1).1]
+  have h1 := caseLJ_J_three_quarters
+  have h2 : (1.4142 : ℝ) < √2 := by rw [lt_sqrt (by norm_num)]; norm_num
+  nlinarith [mul_le_mul_of_nonneg_left h1 (by linarith : (0 : ℝ) ≤ √2 - 1)]
 
 /-- [DIR], proof of Proposition 6.8:
 $$\partial_y^2(g_{LJ}(1-y,y))=(\sqrt2-1)J''(y)+L_{\frac12}''(1-y)\le0$$
@@ -201,11 +342,44 @@ theorem g_LJ_diag_deriv2 (y : ℝ) (hy : y ∈ Ico (3 / 4 : ℝ) 1) :
     deriv (deriv (fun y ↦ g_LJ (1 - y) y)) y =
         (√2 - 1) * deriv (deriv J) y + deriv (deriv (L 2⁻¹)) (1 - y) ∧
       (√2 - 1) * deriv (deriv J) y + deriv (deriv (L 2⁻¹)) (1 - y) ≤ 0 := by
-  sorry
+  have hy' : y ∈ Ioo (2⁻¹ : ℝ) 1 := ⟨by linarith [hy.1], hy.2⟩
+  have hfun : (fun y ↦ g_LJ (1 - y) y) =
+      fun y ↦ 2 * y + (√2 - 1) * J y + L 2⁻¹ (1 - y) - 2 := funext fun z ↦ g_LJ_diag_eq z
+  refine ⟨by rw [hfun]; exact (caseLJ_hasDerivAt_deriv_diag _ hy').deriv, ?_⟩
+  have h1 : 1 - y ∈ Ioo (0 : ℝ) 1 := ⟨by linarith [hy.2], by linarith [hy.1]⟩
+  have hJ := J_pos ⟨hy'.1.le, hy'.2⟩
+  have hs : (1 : ℝ) < √2 := by rw [lt_sqrt (by norm_num)]; norm_num
+  rw [deriv2_J hy', deriv2_L_eq h1]
+  have h2 := caseLJ_L2f_neg h1
+  have h3 : 0 < (√2 - 1) * (2 * (J y)⁻¹) := mul_pos (by linarith) (by positivity)
+  linarith
 
 /-- [DIR], proof of Proposition 6.8: $g_{LJ}(1-y,y)\ge0$ for all $y\in[\frac34,1]$. -/
 theorem g_LJ_diag_nonneg (y : ℝ) (hy : y ∈ Icc (3 / 4 : ℝ) 1) : g_LJ (1 - y) y ≥ 0 := by
-  sorry
+  have hfun : (fun y ↦ g_LJ (1 - y) y) =
+      fun y ↦ 2 * y + (√2 - 1) * J y + L 2⁻¹ (1 - y) - 2 := funext fun z ↦ g_LJ_diag_eq z
+  have hdom : ∀ z ∈ Ioo (3 / 4 : ℝ) 1, z ∈ Ioo (2⁻¹ : ℝ) 1 :=
+    fun z hz ↦ ⟨by linarith [hz.1], hz.2⟩
+  have hc : ContinuousOn (fun y ↦ g_LJ (1 - y) y) (Icc (3 / 4) 1) := by
+    rw [hfun]
+    have hJ : ContinuousOn J (Icc (3 / 4) 1) :=
+      continuousOn_J.mono (Icc_subset_Icc (by norm_num) le_rfl)
+    have hL : ContinuousOn (fun y ↦ L 2⁻¹ (1 - y)) (Icc (3 / 4) 1) :=
+      (continuousOn_L (by norm_num) (by norm_num)).comp (by fun_prop)
+        (fun z hz ↦ ⟨by linarith [hz.2], by linarith [hz.1]⟩)
+    exact (((continuousOn_const.mul continuousOn_id).add (continuousOn_const.mul hJ)).add
+      hL).sub continuousOn_const
+  have key := caseLJ_min_le_of_deriv2_nonpos hc
+    (fun z hz ↦ by rw [hfun]; exact (caseLJ_hasDerivAt_diag _ (hdom z hz)).differentiableAt)
+    (fun z hz ↦ by
+      rw [hfun]; exact (caseLJ_hasDerivAt_deriv_diag _ (hdom z hz)).differentiableAt)
+    (fun z hz ↦ by
+      obtain ⟨e, h⟩ := g_LJ_diag_deriv2 z ⟨hz.1.le, hz.2⟩
+      rw [e]; exact h) hy
+  have h1 : g_LJ (1 - 3 / 4) (3 / 4) ≥ 0 := by
+    rw [show (1 : ℝ) - 3 / 4 = 4⁻¹ by norm_num]; linarith [eqn_6_22]
+  have h2 : g_LJ (1 - 1) 1 ≥ 0 := by rw [sub_self]; exact g_LJ_zero_one.ge
+  exact (le_min h1 h2).trans key
 
 /-- The function ([DIR], proof of Proposition 6.8; denoted $f$ there)
 $$f(y)=y-\tfrac14+(\sqrt2-1)J(y)+L_{\frac12}(\tfrac14)-2J(\tfrac y2+\tfrac18).$$ -/
@@ -214,12 +388,13 @@ noncomputable def f_LJ (y : ℝ) : ℝ :=
 
 /-- [DIR], proof of Proposition 6.8: $f(y)=g_{LJ}(\frac14,y)$. -/
 theorem f_LJ_eq (y : ℝ) : f_LJ y = g_LJ 4⁻¹ y := by
-  sorry
+  rw [f_LJ, g_LJ, show (4⁻¹ + y) / 2 = y / 2 + 8⁻¹ by ring]
 
 /-- [DIR], proof of Proposition 6.8: we already know $f\ge0$ at the endpoints
 $y=\frac34$, $y=1$. -/
 theorem f_LJ_endpoints_nonneg : f_LJ (3 / 4) ≥ 0 ∧ f_LJ 1 ≥ 0 := by
-  sorry
+  rw [f_LJ_eq, f_LJ_eq]
+  exact ⟨by linarith [eqn_6_22], by linarith [eqn_6_21]⟩
 
 /-- [DIR], proof of Proposition 6.8: using $JJ''=-2$ we calculate
 $$f''(y)=(\sqrt2-1)J''(y)-\tfrac12J''(\tfrac y2+\tfrac18)
@@ -229,7 +404,11 @@ theorem f_LJ_deriv2 (y : ℝ) (hy : y ∈ Ioo (3 / 4 : ℝ) 1) :
     deriv (deriv f_LJ) y = (√2 - 1) * deriv (deriv J) y - 2⁻¹ * deriv (deriv J) (y / 2 + 8⁻¹) ∧
       (√2 - 1) * deriv (deriv J) y - 2⁻¹ * deriv (deriv J) (y / 2 + 8⁻¹) =
         -2 * (√2 - 1) * (J y)⁻¹ + (J (y / 2 + 8⁻¹))⁻¹ := by
-  sorry
+  have hy' : y ∈ Ioo (2⁻¹ : ℝ) 1 := ⟨by linarith [hy.1], hy.2⟩
+  have hf : f_LJ = fun y ↦ y - 4⁻¹ + (√2 - 1) * J y + L 2⁻¹ 4⁻¹ - 2 * J (y / 2 + 8⁻¹) := rfl
+  refine ⟨by rw [hf]; exact (caseLJ_hasDerivAt_deriv_F _ _ hy).deriv, ?_⟩
+  rw [deriv2_J hy', deriv2_J (caseLJ_t_mem hy)]
+  ring
 
 /-- The map $t(y)=\frac y2+\frac18$ ([DIR], proof of Proposition 6.8; denoted $t$ there). -/
 noncomputable def t_LJ (y : ℝ) : ℝ := y / 2 + 8⁻¹
@@ -244,7 +423,9 @@ $$r'(y)=\frac{J'(y)J(t(y))-\frac12J(y)J'(t(y))}{J(t(y))^2}$$
 theorem r_LJ_deriv (y : ℝ) (hy : y ∈ Ioo (3 / 4 : ℝ) 1) :
     deriv r_LJ y =
       (deriv J y * J (t_LJ y) - 2⁻¹ * J y * deriv J (t_LJ y)) / J (t_LJ y) ^ 2 := by
-  sorry
+  have hr : r_LJ = fun y ↦ J y / J (y / 2 + 8⁻¹) := rfl
+  rw [hr]
+  exact (caseLJ_hasDerivAt_ratio hy).deriv
 
 /-- The function $h(u)=\frac{J'(u)}{J(u)}$ ([DIR], proof of Proposition 6.8; denoted $h$
 there). -/
@@ -257,50 +438,121 @@ theorem h_LJ_deriv (u : ℝ) (hu : u ∈ Ioo (2⁻¹ : ℝ) 1) :
     deriv h_LJ u = (deriv (deriv J) u * J u - deriv J u ^ 2) / J u ^ 2 ∧
       (deriv (deriv J) u * J u - deriv J u ^ 2) / J u ^ 2 = (-2 - deriv J u ^ 2) / J u ^ 2 ∧
       (-2 - deriv J u ^ 2) / J u ^ 2 ≤ 0 := by
-  sorry
+  have hh : h_LJ = fun u ↦ deriv J u / J u := rfl
+  have hJ := J_pos ⟨hu.1.le, hu.2⟩
+  refine ⟨by rw [hh]; exact (caseLJ_hasDerivAt_logDeriv_J hu).deriv, ?_, ?_⟩
+  · rw [deriv2_J hu, show -2 * (J u)⁻¹ * J u = -2 by field_simp]
+  · have : 0 ≤ (2 + deriv J u ^ 2) / J u ^ 2 := by positivity
+    rw [show (-2 - deriv J u ^ 2) / J u ^ 2 = -((2 + deriv J u ^ 2) / J u ^ 2) by ring]
+    linarith
 
 /-- [DIR], proof of Proposition 6.8: hence $h$ is decreasing (on $(\frac12,1)$). -/
 theorem h_LJ_antitoneOn : AntitoneOn h_LJ (Ioo 2⁻¹ 1) := by
-  sorry
+  have hh : h_LJ = fun u ↦ deriv J u / J u := rfl
+  refine antitoneOn_of_deriv_nonpos (convex_Ioo _ _) ?_ ?_ ?_
+  · intro u hu
+    rw [hh]
+    exact (caseLJ_hasDerivAt_logDeriv_J hu).continuousAt.continuousWithinAt
+  · intro u hu
+    rw [interior_Ioo] at hu
+    rw [hh]
+    exact (caseLJ_hasDerivAt_logDeriv_J hu).differentiableAt.differentiableWithinAt
+  · intro u hu
+    rw [interior_Ioo] at hu
+    obtain ⟨e1, e2, e3⟩ := h_LJ_deriv u hu
+    rw [e1, e2]
+    exact e3
 
 /-- [DIR], proof of Proposition 6.8: as $y\ge t(y)$ we have $h(y)\le h(t(y))$
 (for $y\in(\frac34,1)$). -/
 theorem h_LJ_le_h_LJ_t (y : ℝ) (hy : y ∈ Ioo (3 / 4 : ℝ) 1) :
     t_LJ y ≤ y ∧ h_LJ y ≤ h_LJ (t_LJ y) := by
-  sorry
+  have ht : t_LJ y ∈ Ioo (2⁻¹ : ℝ) 1 := caseLJ_t_mem hy
+  have hle : t_LJ y ≤ y := by rw [t_LJ]; linarith [hy.1]
+  exact ⟨hle, h_LJ_antitoneOn ht ⟨by linarith [hy.1], hy.2⟩ hle⟩
 
 /-- [DIR], proof of Proposition 6.8: since $J'(y)<0$ and $J(y)>0$ on $[\frac34,1)$ we also have
 $h(y)\le0$. -/
 theorem h_LJ_nonpos (y : ℝ) (hy : y ∈ Ico (3 / 4 : ℝ) 1) :
     deriv J y < 0 ∧ J y > 0 ∧ h_LJ y ≤ 0 := by
-  sorry
+  obtain ⟨h0, -, hanti⟩ := deriv_J_x₀
+  have hx₀ := x₀_mem_Ioo
+  have h58 := x₀_lt_five_div_eight
+  have hy' : y ∈ Ioo (2⁻¹ : ℝ) 1 := ⟨by linarith [hy.1], hy.2⟩
+  have hd : deriv J y < 0 := by
+    have := hanti hx₀ hy' (by linarith [hy.1])
+    linarith
+  have hJ : J y > 0 := J_pos ⟨hy'.1.le, hy.2⟩
+  exact ⟨hd, hJ, (div_neg_of_neg_of_pos hd hJ).le⟩
 
 /-- [DIR], proof of Proposition 6.8: $f''(y)\le0\iff r(y)\le2(\sqrt2-1)$ (for $y\in(\frac34,1)$). -/
 theorem f_LJ_deriv2_nonpos_iff (y : ℝ) (hy : y ∈ Ioo (3 / 4 : ℝ) 1) :
     deriv (deriv f_LJ) y ≤ 0 ↔ r_LJ y ≤ 2 * (√2 - 1) := by
-  sorry
+  obtain ⟨e1, e2⟩ := f_LJ_deriv2 y hy
+  have ht := caseLJ_t_mem hy
+  have hJy : 0 < J y := J_pos ⟨by linarith [hy.1], hy.2⟩
+  have hJt : 0 < J (y / 2 + 8⁻¹) := J_pos ⟨ht.1.le, ht.2⟩
+  rw [e1, e2, show r_LJ y = J y / J (y / 2 + 8⁻¹) from rfl, div_le_iff₀ hJt]
+  have key : -2 * (√2 - 1) * (J y)⁻¹ + (J (y / 2 + 8⁻¹))⁻¹ =
+      (J y - 2 * (√2 - 1) * J (y / 2 + 8⁻¹)) / (J y * J (y / 2 + 8⁻¹)) := by
+    have ha := hJy.ne'
+    have hb := hJt.ne'
+    generalize J (y / 2 + 8⁻¹) = b at hb ⊢
+    generalize J y = a at ha ⊢
+    field_simp
+    ring
+  rw [key, div_le_iff₀ (mul_pos hJy hJt), zero_mul]
+  constructor <;> intro h <;> linarith
 
 /-- [DIR], proof of Proposition 6.8: so (to show $r'(y)\le0$) it is enough to show
 $$\frac{2J'(y)}{J(y)}\le\frac{J'(t(y))}{J(t(y))}$$
 (for $y\in(\frac34,1)$). -/
 theorem r_LJ_deriv_nonpos_of (y : ℝ) (hy : y ∈ Ioo (3 / 4 : ℝ) 1)
     (h : 2 * deriv J y / J y ≤ deriv J (t_LJ y) / J (t_LJ y)) : deriv r_LJ y ≤ 0 := by
-  sorry
+  have ht := caseLJ_t_mem hy
+  have hJy : 0 < J y := J_pos ⟨by linarith [hy.1], hy.2⟩
+  have hJt : 0 < J (t_LJ y) := J_pos ⟨ht.1.le, ht.2⟩
+  rw [r_LJ_deriv y hy]
+  rw [div_le_div_iff₀ hJy hJt] at h
+  refine div_nonpos_of_nonpos_of_nonneg ?_ (sq_nonneg _)
+  linarith
 
 /-- [DIR], proof of Proposition 6.8: hence $2h(y)\le h(t(y))$, proving $r'(y)\le0$
 (for $y\in(\frac34,1)$). -/
 theorem two_h_LJ_le (y : ℝ) (hy : y ∈ Ioo (3 / 4 : ℝ) 1) :
     2 * h_LJ y ≤ h_LJ (t_LJ y) ∧ deriv r_LJ y ≤ 0 := by
-  sorry
+  obtain ⟨-, h1⟩ := h_LJ_le_h_LJ_t y hy
+  obtain ⟨-, -, h2⟩ := h_LJ_nonpos y ⟨hy.1.le, hy.2⟩
+  have h3 : 2 * h_LJ y ≤ h_LJ (t_LJ y) := by linarith
+  refine ⟨h3, r_LJ_deriv_nonpos_of y hy ?_⟩
+  rw [mul_div_assoc]
+  exact h3
 
 /-- [DIR], proof of Proposition 6.8: we claim that $r$ is decreasing on $[\frac34,1)$. -/
 theorem r_LJ_antitoneOn : AntitoneOn r_LJ (Ico (3 / 4) 1) := by
-  sorry
+  have hr : r_LJ = fun y ↦ J y / J (y / 2 + 8⁻¹) := rfl
+  refine antitoneOn_of_deriv_nonpos (convex_Ico _ _) ?_ ?_ ?_
+  · rw [hr]
+    have hJ : ContinuousOn J (Ico (3 / 4) 1) :=
+      continuousOn_J.mono (fun z hz ↦ ⟨by linarith [hz.1], hz.2.le⟩)
+    have hJt : ContinuousOn (fun y ↦ J (y / 2 + 8⁻¹)) (Ico (3 / 4) 1) :=
+      continuousOn_J.comp (by fun_prop) (fun z hz ↦ ⟨by linarith [hz.1], by linarith [hz.2]⟩)
+    exact hJ.div hJt (fun z hz ↦ (J_pos ⟨by linarith [hz.1], by linarith [hz.2]⟩).ne')
+  · intro y hy
+    rw [interior_Ico] at hy
+    rw [hr]
+    exact (caseLJ_hasDerivAt_ratio hy).differentiableAt.differentiableWithinAt
+  · intro y hy
+    rw [interior_Ico] at hy
+    exact (two_h_LJ_le y hy).2
 
 /-- [DIR], proof of Proposition 6.8: therefore $r(y)-2(\sqrt2-1)$ is decreasing
 (on $[\frac34,1)$). -/
 theorem r_LJ_sub_antitoneOn : AntitoneOn (fun y ↦ r_LJ y - 2 * (√2 - 1)) (Ico (3 / 4) 1) := by
-  sorry
+  intro a ha b hb hab
+  have := r_LJ_antitoneOn ha hb hab
+  simp only
+  linarith
 
 /-- [DIR], proof of Proposition 6.8: $f''$ changes sign at most once: there exists
 $y_0\in[\frac34,1)$ such that $f''\ge0$ on $[\frac34,y_0]$ and $f''\le0$ on $[y_0,1)$.
@@ -308,16 +560,85 @@ $y_0\in[\frac34,1)$ such that $f''\ge0$ on $[\frac34,y_0]$ and $f''\le0$ on $[y_
 theorem f_LJ_deriv2_sign_change : ∃ y₀ ∈ Ico (3 / 4 : ℝ) 1,
     (∀ y ∈ Ioo (3 / 4 : ℝ) 1 ∩ Iic y₀, deriv (deriv f_LJ) y ≥ 0) ∧
       ∀ y ∈ Ioo (3 / 4 : ℝ) 1 ∩ Ici y₀, deriv (deriv f_LJ) y ≤ 0 := by
-  sorry
+  set c := 2 * (√2 - 1) with hc_def
+  have hs : (1 : ℝ) < √2 := by rw [lt_sqrt (by norm_num)]; norm_num
+  have hc : 0 < c := by rw [hc_def]; linarith
+  have hr : r_LJ = fun y ↦ J y / J (y / 2 + 8⁻¹) := rfl
+  have hcont : ContinuousOn r_LJ (Icc (3 / 4) 1) := by
+    rw [hr]
+    have hJ : ContinuousOn J (Icc (3 / 4) 1) :=
+      continuousOn_J.mono (Icc_subset_Icc (by norm_num) le_rfl)
+    have hJt : ContinuousOn (fun y ↦ J (y / 2 + 8⁻¹)) (Icc (3 / 4) 1) :=
+      continuousOn_J.comp (by fun_prop) (fun z hz ↦ ⟨by linarith [hz.1], by linarith [hz.2]⟩)
+    exact hJ.div hJt (fun z hz ↦ (J_pos ⟨by linarith [hz.1], by linarith [hz.2]⟩).ne')
+  have hform : ∀ y ∈ Ioo (3 / 4 : ℝ) 1, deriv (deriv f_LJ) y = (r_LJ y - c) / J y := by
+    intro y hy
+    obtain ⟨e1, e2⟩ := f_LJ_deriv2 y hy
+    have ht := caseLJ_t_mem hy
+    have hJy : 0 < J y := J_pos ⟨by linarith [hy.1], hy.2⟩
+    have hJt : 0 < J (y / 2 + 8⁻¹) := J_pos ⟨ht.1.le, ht.2⟩
+    rw [e1, e2, hc_def, show r_LJ y = J y / J (y / 2 + 8⁻¹) from rfl]
+    field_simp
+    ring
+  obtain ⟨y₁, hy₁, hr₁⟩ : ∃ y₁ ∈ Ioo (3 / 4 : ℝ) 1, r_LJ y₁ < c := by
+    have h1 : r_LJ 1 = 0 := by rw [hr]; simp [J_one]
+    have hev : ∀ᶠ z in 𝓝[Icc (3 / 4) 1] (1 : ℝ), r_LJ z < c :=
+      (hcont 1 ⟨by norm_num, le_rfl⟩).eventually (gt_mem_nhds (by rw [h1]; exact hc))
+    have hev' : ∀ᶠ z in 𝓝[<] (1 : ℝ), r_LJ z < c := by
+      rw [← nhdsWithin_Ioo_eq_nhdsLT (show (3 / 4 : ℝ) < 1 by norm_num)]
+      exact hev.filter_mono (nhdsWithin_mono _ Ioo_subset_Icc_self)
+    obtain ⟨z, hz, hz'⟩ :=
+      (hev'.and (Ioo_mem_nhdsLT (show (3 / 4 : ℝ) < 1 by norm_num))).exists
+    exact ⟨z, hz', hz⟩
+  have hanti := r_LJ_antitoneOn
+  rcases le_or_gt (r_LJ (3 / 4)) c with h34 | h34
+  · refine ⟨3 / 4, ⟨le_rfl, by norm_num⟩, fun y hy ↦ absurd hy.2 (not_le.2 hy.1.1),
+      fun y hy ↦ ?_⟩
+    rw [hform y hy.1]
+    have := hanti ⟨le_rfl, by norm_num⟩ ⟨hy.1.1.le, hy.1.2⟩ hy.1.1.le
+    exact div_nonpos_of_nonpos_of_nonneg (by linarith)
+      (J_pos ⟨by linarith [hy.1.1], hy.1.2⟩).le
+  · obtain ⟨y₀, hy₀, hry₀⟩ := intermediate_value_Icc' (show (3 / 4 : ℝ) ≤ y₁ from hy₁.1.le)
+      (hcont.mono (Icc_subset_Icc le_rfl hy₁.2.le)) ⟨hr₁.le, h34.le⟩
+    have hy₀' : y₀ ∈ Ico (3 / 4 : ℝ) 1 := ⟨hy₀.1, hy₀.2.trans_lt hy₁.2⟩
+    refine ⟨y₀, hy₀', fun y hy ↦ ?_, fun y hy ↦ ?_⟩
+    · rw [hform y hy.1]
+      have := hanti ⟨hy.1.1.le, hy.1.2⟩ hy₀' hy.2
+      exact div_nonneg (by linarith) (J_pos ⟨by linarith [hy.1.1], hy.1.2⟩).le
+    · rw [hform y hy.1]
+      have := hanti hy₀' ⟨hy.1.1.le, hy.1.2⟩ hy.2
+      exact div_nonpos_of_nonpos_of_nonneg (by linarith)
+        (J_pos ⟨by linarith [hy.1.1], hy.1.2⟩).le
 
 /-- [DIR], proof of Proposition 6.8: thus (with $y_0$ as in
-`Auto.DIR.f_LJ_deriv2_sign_change`) $f'$ is increasing then decreasing. -/
-theorem f_LJ_deriv_monotone_antitone (y₀ : ℝ) (hy₀ : y₀ ∈ Ico (3 / 4 : ℝ) 1)
+`Auto.DIR.f_LJ_deriv2_sign_change`) $f'$ is increasing then decreasing.
+
+**Unused hypothesis.** The paper assumes $y_0\in[\frac34,1)$; this is not needed for the claim and
+is omitted in the Lean statement. -/
+theorem f_LJ_deriv_monotone_antitone (y₀ : ℝ)
     (h₁ : ∀ y ∈ Ioo (3 / 4 : ℝ) 1 ∩ Iic y₀, deriv (deriv f_LJ) y ≥ 0)
     (h₂ : ∀ y ∈ Ioo (3 / 4 : ℝ) 1 ∩ Ici y₀, deriv (deriv f_LJ) y ≤ 0) :
     MonotoneOn (deriv f_LJ) (Ioo (3 / 4) 1 ∩ Iic y₀) ∧
       AntitoneOn (deriv f_LJ) (Ioo (3 / 4) 1 ∩ Ici y₀) := by
-  sorry
+  have hf : f_LJ = fun y ↦ y - 4⁻¹ + (√2 - 1) * J y + L 2⁻¹ 4⁻¹ - 2 * J (y / 2 + 8⁻¹) := rfl
+  have hD : ∀ y ∈ Ioo (3 / 4 : ℝ) 1, HasDerivAt (deriv f_LJ) (deriv (deriv f_LJ) y) y := by
+    intro y hy
+    have h := caseLJ_hasDerivAt_deriv_F (√2 - 1) (L 2⁻¹ 4⁻¹) hy
+    rw [hf, h.deriv]
+    exact h
+  constructor
+  · refine monotoneOn_of_deriv_nonneg ((convex_Ioo _ _).inter (convex_Iic _))
+      (fun y hy ↦ (hD y hy.1).continuousAt.continuousWithinAt)
+      (fun y hy ↦ (hD y (interior_subset hy).1).differentiableAt.differentiableWithinAt)
+      (fun y hy ↦ ?_)
+    rw [(hD y (interior_subset hy).1).deriv]
+    exact h₁ y (interior_subset hy)
+  · refine antitoneOn_of_deriv_nonpos ((convex_Ioo _ _).inter (convex_Ici _))
+      (fun y hy ↦ (hD y hy.1).continuousAt.continuousWithinAt)
+      (fun y hy ↦ (hD y (interior_subset hy).1).differentiableAt.differentiableWithinAt)
+      (fun y hy ↦ ?_)
+    rw [(hD y (interior_subset hy).1).deriv]
+    exact h₂ y (interior_subset hy)
 
 /-- [DIR], proof of Proposition 6.8:
 $$f'(\tfrac34)=1+(\sqrt2-1)J'(\tfrac34)-J'(\tfrac12)$$
@@ -326,28 +647,72 @@ $[\frac12,1]$). -/
 theorem f_LJ_deriv_three_quarters :
     derivWithin f_LJ (Icc (3 / 4) 1) (3 / 4) =
       1 + (√2 - 1) * deriv J (3 / 4) - derivWithin J (Icc 2⁻¹ 1) 2⁻¹ := by
-  sorry
+  have hy' : (3 / 4 : ℝ) ∈ Ioo (2⁻¹ : ℝ) 1 := ⟨by norm_num, by norm_num⟩
+  have hJ1 := hasDerivAt_J_deriv hy'
+  have h := (((((hasDerivAt_id (3 / 4 : ℝ)).sub_const 4⁻¹).add
+    (hJ1.const_mul (√2 - 1))).add_const (L 2⁻¹ 4⁻¹)).hasDerivWithinAt
+    (s := Icc (3 / 4) 1)).sub (caseLJ_hasDerivWithinAt_J_t.const_mul 2)
+  have h' : HasDerivWithinAt f_LJ (1 + (√2 - 1) * deriv J (3 / 4) - Checker.DJr 2⁻¹)
+      (Icc (3 / 4) 1) (3 / 4) := h.congr_deriv (by ring)
+  rw [h'.derivWithin (uniqueDiffOn_Icc (by norm_num) _ (left_mem_Icc.2 (by norm_num))),
+    caseLJ_derivWithin_J_half]
 
 /-- [DIR], proof of Proposition 6.8: using (3.4) and $w_0\in[0.895,0.896]$, one checks that
 $f'(\frac34)>0$ (one-sided derivative). -/
 theorem f_LJ_deriv_three_quarters_pos : derivWithin f_LJ (Icc (3 / 4) 1) (3 / 4) > 0 := by
-  sorry
+  rw [f_LJ_deriv_three_quarters, Checker.deriv_J_eq (x := 3 / 4) ⟨by norm_num, by norm_num⟩,
+    caseLJ_derivWithin_J_half]
+  have h1 := caseLJ_DJ_three_quarters
+  have h2 := caseLJ_DJ_half
+  have hs1 : (1 : ℝ) < √2 := by rw [lt_sqrt (by norm_num)]; norm_num
+  have hs2 : √2 < (1.5 : ℝ) := by rw [sqrt_lt' (by norm_num)]; norm_num
+  nlinarith [mul_nonneg (by linarith : (0 : ℝ) ≤ √2 - 1)
+    (by linarith : (0 : ℝ) ≤ Checker.DJr (3 / 4) + 1)]
 
 /-- [DIR], proof of Proposition 6.8: hence $f$ has no interior local minimum on $[\frac34,1]$,
 so $\min f$ is attained at an endpoint. -/
 theorem f_LJ_ge_min_endpoints (y : ℝ) (hy : y ∈ Icc (3 / 4 : ℝ) 1) :
     f_LJ y ≥ min (f_LJ (3 / 4)) (f_LJ 1) := by
-  sorry
+  obtain ⟨y₀, hy₀, h₁, h₂⟩ := f_LJ_deriv2_sign_change
+  have hf : f_LJ = fun y ↦ y - 4⁻¹ + (√2 - 1) * J y + L 2⁻¹ 4⁻¹ - 2 * J (y / 2 + 8⁻¹) := rfl
+  have hcont : ContinuousOn f_LJ (Icc (3 / 4) 1) := by
+    rw [hf]; exact caseLJ_continuousOn_F _ _
+  have hd1 : ∀ z ∈ Ioo (3 / 4 : ℝ) 1, DifferentiableAt ℝ f_LJ z := fun z hz ↦ by
+    rw [hf]; exact (caseLJ_hasDerivAt_F _ _ hz).differentiableAt
+  have hd2 : ∀ z ∈ Ioo (3 / 4 : ℝ) 1, DifferentiableAt ℝ (deriv f_LJ) z := fun z hz ↦ by
+    rw [hf]; exact (caseLJ_hasDerivAt_deriv_F _ _ hz).differentiableAt
+  have hA : ∀ z ∈ Icc (3 / 4 : ℝ) y₀, f_LJ (3 / 4) ≤ f_LJ z := by
+    have hsub : Icc (3 / 4 : ℝ) y₀ ⊆ Icc (3 / 4) 1 := Icc_subset_Icc le_rfl hy₀.2.le
+    have hconv : ConvexOn ℝ (Icc (3 / 4) y₀) f_LJ := by
+      refine convexOn_of_deriv2_nonneg (convex_Icc _ _) (hcont.mono hsub) ?_ ?_ ?_ <;>
+        intro z hz <;> rw [interior_Icc] at hz
+      · exact (hd1 z ⟨hz.1, hz.2.trans hy₀.2⟩).differentiableWithinAt
+      · exact (hd2 z ⟨hz.1, hz.2.trans hy₀.2⟩).differentiableWithinAt
+      · exact h₁ z ⟨⟨hz.1, hz.2.trans hy₀.2⟩, hz.2.le⟩
+    have hpos := f_LJ_deriv_three_quarters_pos
+    have hder :=
+      ((differentiableWithinAt_of_derivWithin_ne_zero hpos.ne').hasDerivWithinAt).mono hsub
+    exact fun z hz ↦ caseLJ_le_of_convexOn_of_hasDerivWithinAt_pos hconv hder hpos hz
+  have hB : ∀ z ∈ Icc y₀ 1, min (f_LJ y₀) (f_LJ 1) ≤ f_LJ z := fun z hz ↦
+    caseLJ_min_le_of_deriv2_nonpos (hcont.mono (Icc_subset_Icc hy₀.1 le_rfl))
+      (fun x hx ↦ hd1 x ⟨hy₀.1.trans_lt hx.1, hx.2⟩)
+      (fun x hx ↦ hd2 x ⟨hy₀.1.trans_lt hx.1, hx.2⟩)
+      (fun x hx ↦ h₂ x ⟨⟨hy₀.1.trans_lt hx.1, hx.2⟩, hx.1.le⟩) hz
+  rcases le_total y y₀ with h | h
+  · exact (min_le_left _ _).trans (hA y ⟨hy.1, h⟩)
+  · exact (min_le_min (hA y₀ ⟨hy₀.1, le_rfl⟩) le_rfl).trans (hB y ⟨h, hy.2⟩)
 
 /-- [DIR], proof of Proposition 6.8: we conclude $f(y)\ge0$ for all $y\in[\frac34,1]$. -/
 theorem f_LJ_nonneg (y : ℝ) (hy : y ∈ Icc (3 / 4 : ℝ) 1) : f_LJ y ≥ 0 := by
-  sorry
+  have h := f_LJ_endpoints_nonneg
+  exact (le_min h.1 h.2).trans (f_LJ_ge_min_endpoints y hy)
 
 /-- [DIR], proof of Proposition 6.8 (conclusion for $\beta=\frac12$): $g_{LJ}(x,y)\ge0$ for
 $(x,y)\in[0,\frac14]\times[\frac34,1]$, $1\le x+y$. -/
 theorem g_LJ_nonneg (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) 4⁻¹) (hy : y ∈ Icc (3 / 4 : ℝ) 1)
     (hxy : 1 ≤ x + y) : g_LJ x y ≥ 0 := by
-  sorry
+  exact g_LJ_nonneg_of_boundary (fun y hy ↦ g_LJ_diag_nonneg y hy)
+    (fun y hy ↦ by rw [← f_LJ_eq]; exact f_LJ_nonneg y hy) x y hx hy hxy
 
 end Proof_Proposition_6_8
 
@@ -357,6 +722,10 @@ $$y-x+(2^\beta-1)J(y)+L_\beta(x)-2J(\tfrac{x+y}2)\ge0.$$ -/
 theorem prop_6_8 (x y : ℝ) (hx : x ∈ Icc (0 : ℝ) 4⁻¹) (hy : y ∈ Icc (3 / 4 : ℝ) 1)
     (hxy : 1 ≤ x + y) (β : ℝ) (hβ : β ∈ Icc (2⁻¹ : ℝ) 1) :
     y - x + (2 ^ β - 1) * J y + L β x - 2 * J ((x + y) / 2) ≥ 0 := by
-  sorry
+  have h := prop_6_8_monotoneOn_beta x y hx hy ⟨le_rfl, by norm_num⟩ hβ hβ.1
+  have h0 := g_LJ_nonneg x y hx hy hxy
+  rw [g_LJ_eq] at h0
+  simp only at h
+  linarith
 
 end Auto.DIR

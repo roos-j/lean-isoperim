@@ -63,3 +63,11 @@ automation/raw.md
 
 # Scratch analysis files.
 automation/tmp/
+
+# Editor settings and certificate generators / temp files.
+.vscode/
+automation/cert/
+__pycache__/
+
+# Agent worktrees.
+.claude/worktrees/
