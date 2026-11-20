@@ -38,7 +38,18 @@ section Proof_Theorem_1_1
 $x\in[\frac14,\frac12]$ (here $\beta=\beta_0$). -/
 theorem b_eq_Q_ge_L (x : ℝ) (hx : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
     b β₀ x = Q β₀ x ∧ Q β₀ x ≥ L β₀ x := by
-  sorry
+  have hl : 0 < log 2 := log_pos one_lt_two
+  have h1 : (11 / 20 : ℝ) ≤ log₂ (3 / 2) := by
+    rw [logb, le_div_iff₀ hl]
+    have := log_le_log (by positivity) (by norm_num : (2 : ℝ) ^ 11 ≤ (3 / 2) ^ 20)
+    rw [log_pow, log_pow] at this; push_cast at this; linarith
+  have hβ : β₀ ∈ Icc (2⁻¹ : ℝ) (log₂ (3 / 2)) := ⟨by norm_num [β₀], by norm_num [β₀]; linarith⟩
+  refine ⟨?_, (lemma_5_9 β₀ hβ).2 x hx⟩
+  rw [b]
+  split_ifs with h h'
+  · rw [le_antisymm h hx.1]; linarith [(lemma_5_9_1_endpoints β₀).2]
+  · rfl
+  · exact absurd hx.2 h'
 
 /-- [DIR], §2.2, proof of Theorem 1.1: for $\beta=\beta_0$, (1.1) follows from (2.6). -/
 theorem eqn_1_1_β₀ (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) (hA : ｜A｜ ≤ 2⁻¹) :

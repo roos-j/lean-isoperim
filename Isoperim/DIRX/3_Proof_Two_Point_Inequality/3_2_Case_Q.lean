@@ -8,6 +8,7 @@ module
 public import Isoperim.DIR.«2_Envelope_Functions».Definitions
 public import Isoperim.DIR.«5_Auxiliary_Estimates».«5_3_Properties_L_Q»
 public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_2_Case_Q»
+public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_2_Case_Q_aux»
 public import Isoperim.DIRX.«2_Preliminaries».Definitions
 
 /-!
@@ -43,18 +44,29 @@ local notation "Q" => Auto.DIR.Q 2⁻¹
 $G_1[\max(L,Q)](x,y)\ge0$ for $0\le x\le y\le\frac12$. -/
 theorem caseQ_G₁_max (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y) (hy : y ≤ 2⁻¹) :
     G₁ (fun t ↦ max (L t) (Q t)) x y ≥ 0 := by
-  sorry
+  exact prop_6_2 2⁻¹ (Or.inl rfl) x y hx hxy hy
 
 /-- [DIRX], §3.2: this implies the claim, since $B_w=\max(L,Q)$ on $[0,\frac12]$ (by [DIR],
 Lemma 5.9, `Auto.DIR.lemma_5_9`). -/
 theorem BX_eq_max (w x : ℝ) (hx : x ∈ Icc (0 : ℝ) 2⁻¹) : BX w x = max (L x) (Q x) := by
-  sorry
+  have hβ := mem_Ico_of_caseQ (Or.inl rfl : (2⁻¹ : ℝ) = 2⁻¹ ∨ (2⁻¹ : ℝ) = β₀)
+  obtain ⟨h1, h2⟩ := lemma_5_9 2⁻¹ ⟨hβ.1, hβ.2.le⟩
+  unfold BX
+  split_ifs with ha hb
+  · exact (max_eq_left (h1 x ⟨hx.1, ha⟩)).symm
+  · exact (max_eq_right (h2 x ⟨(not_le.1 ha).le, hb⟩)).symm
+  · exact absurd hx.2 hb
 
 /-! ### §3.2 Case Q: $0\le x\le y\le\frac12$ -/
 
 /-- [DIRX], §3.2 (Case $Q$): $G[B_{w_1}](x,y)\ge0$ for $0\le x\le y\le\frac12$. -/
 theorem caseQ (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y) (hy : y ≤ 2⁻¹) :
     G (BX w₁) x y ≥ 0 := by
-  sorry
+  have e : G₁ (BX w₁) x y = G₁ (fun t ↦ max (L t) (Q t)) x y := by
+    simp only [Auto.DIR.G₁]
+    rw [BX_eq_max w₁ x ⟨hx, by linarith⟩, BX_eq_max w₁ y ⟨by linarith, hy⟩,
+      BX_eq_max w₁ ((x + y) / 2) ⟨by linarith, by linarith⟩]
+  rw [Auto.DIR.G]
+  exact le_max_of_le_left (by rw [e]; exact caseQ_G₁_max x y hx hxy hy)
 
 end Auto.DIRX

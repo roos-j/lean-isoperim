@@ -38,6 +38,8 @@ local notation "Q" => Auto.DIR.Q 2⁻¹
 $x\in(0,e^{-\sqrt3/2})$, then $L'''(x)>0$. -/
 theorem lemma_2_3 :
     StrictConcaveOn ℝ (Icc 0 1) L ∧ ∀ x ∈ Ioo 0 (exp (-√3 / 2)), iteratedDeriv 3 L x > 0 := by
-  sorry
+  have h := lemma_5_6 2⁻¹ ⟨le_rfl, by norm_num⟩
+  refine ⟨h.1, fun x hx ↦ (h.2.2.1 x ?_).1⟩
+  rwa [neg_div] at hx
 
 end Auto.DIRX

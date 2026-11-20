@@ -9,6 +9,7 @@ public import Isoperim.DIR.«1_Introduction».Definitions
 public import Isoperim.DIR.«2_Envelope_Functions».Definitions
 public import Isoperim.DIR.«5_Auxiliary_Estimates».«5_2_Two_Point_Inequalities»
 public import Isoperim.DIR.«5_Auxiliary_Estimates».«5_3_Properties_L_Q»
+public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_2_Case_Q_aux»
 
 /-!
 # [DIR] §6.2 Case Q: $0\le x\le y\le\frac12$
@@ -38,17 +39,28 @@ namespace Auto.DIR
 open Real Set Filter Topology
 
 /-- [DIR], §6.2 (cited from [BIM23, Lemma 2.2]): $G^1_\beta[L_\beta](x,y)\ge0$ for all
-$0\le x\le y\le\frac12$ (for $\beta\in[\frac12,1]$). -/
+$0\le x\le y\le\frac12$ (for $\beta\in[\frac12,1]$).
+
+**Discrepancy with the paper.** Paper: cited, no proof. Lean: proved following the proof of
+[BIM23, Lemma 2.2] (arXiv:2303.06738), see `6_2_Case_Q_aux.lean`. -/
 theorem caseQ_G₁_L (β : ℝ) (hβ : β ∈ Icc (2⁻¹ : ℝ) 1) (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y)
-    (hy : y ≤ 2⁻¹) : G₁ β (L β) x y ≥ 0 := by
-  sorry
+    (hy : y ≤ 2⁻¹) : G₁ β (L β) x y ≥ 0 :=
+  G₁_L_nonneg hβ hx hxy hy
 
 /-- [DIR], §6.2: by Lemma 5.2 and Lemma 5.9, Proposition 6.2 holds on the triangle I,
 $0\le x\le y\le\frac12$, $\frac{x+y}2\le\frac14$. -/
 theorem caseQ_I (β : ℝ) (hβ : β = 2⁻¹ ∨ β = β₀) (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y)
     (hy : y ≤ 2⁻¹) (hxy' : (x + y) / 2 ≤ 4⁻¹) :
     G₁ β (fun t ↦ max (L β t) (Q β t)) x y ≥ 0 := by
-  sorry
+  have hβr := mem_Ico_of_caseQ hβ
+  have hβ1 := mem_Icc_one_of_caseQ hβ
+  have hβ0 : 0 < β := by linarith [hβr.1]
+  have hLy : 0 ≤ L β y := L_nonneg ⟨by linarith, by linarith⟩
+  obtain ⟨c₁, c₂, c₃⟩ := lemma_5_2_chain (𝓛G₁ β) 0 2⁻¹ (𝓛G₁_mono hβ0) (L β) (Q β) x y hx hxy hy
+    ((G₁_nonneg_iff hLy).1 (caseQ_G₁_L β hβ1 x y hx hxy hy))
+    ((lemma_5_9 β ⟨hβr.1, hβr.2.le⟩).1 _ ⟨by linarith, hxy'⟩)
+  refine (G₁_nonneg_iff (B := fun t ↦ max (L β t) (Q β t)) (le_max_of_le_left hLy)).2 ?_
+  rw [← c₃]; exact c₂.trans c₁
 
 /-- [DIR], §6.2: it suffices to show (6.6), i.e. if $G^1_\beta[Q_\beta](x,y)\ge0$ for all
 $0\le x\le y\le\frac12$ with $\frac{x+y}2\ge\frac14$, then Proposition 6.2 holds for $\beta$. -/
@@ -56,16 +68,27 @@ theorem caseQ_reduction (β : ℝ) (hβ : β = 2⁻¹ ∨ β = β₀)
     (h : ∀ x y : ℝ, 0 ≤ x → x ≤ y → y ≤ 2⁻¹ → (x + y) / 2 ≥ 4⁻¹ → G₁ β (Q β) x y ≥ 0)
     (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y) (hy : y ≤ 2⁻¹) :
     G₁ β (fun t ↦ max (L β t) (Q β t)) x y ≥ 0 := by
-  sorry
+  rcases le_total ((x + y) / 2) 4⁻¹ with hm | hm
+  · exact caseQ_I β hβ x y hx hxy hy hm
+  have hβr := mem_Ico_of_caseQ hβ
+  have hβ0 : 0 < β := by linarith [hβr.1]
+  have hQy : 0 ≤ Q β y := (lemma_5_8 y ⟨by linarith, hy⟩ β hβr).1.1
+  obtain ⟨c₁, c₂, c₃⟩ := lemma_5_2_chain (𝓛G₁ β) 0 2⁻¹ (𝓛G₁_mono hβ0) (Q β) (L β) x y hx hxy hy
+    ((G₁_nonneg_iff hQy).1 (h x y hx hxy hy hm))
+    ((lemma_5_9 β ⟨hβr.1, hβr.2.le⟩).2 _ ⟨hm, by linarith⟩)
+  refine (G₁_nonneg_iff (B := fun t ↦ max (L β t) (Q β t)) (le_max_of_le_right hQy)).2 ?_
+  rw [max_comm (L β x), max_comm (L β y), max_comm (L β _), ← c₃]; exact c₂.trans c₁
 
 section Case_Q_II
 /-! ### §6.2.1 Near diagonal: $0\le y-x\le\frac14$, $\frac{x+y}2\ge\frac14$ -/
 
 /-- [DIR], §6.2.1: in the region II ($0\le y-x\le\frac14$, $\frac{x+y}2\ge\frac14$) we have
-$y\ge\frac14$. -/
-theorem caseQ_II_y_ge (x y : ℝ) (hxy : 0 ≤ y - x) (hxy' : y - x ≤ 4⁻¹)
-    (hm : (x + y) / 2 ≥ 4⁻¹) : y ≥ 4⁻¹ := by
-  sorry
+$y\ge\frac14$.
+
+**Unused hypothesis.** The paper assumes $y-x\le\frac14$; this is not needed for the claim and is
+omitted in the Lean statement. -/
+theorem caseQ_II_y_ge (x y : ℝ) (hxy : 0 ≤ y - x) (hm : (x + y) / 2 ≥ 4⁻¹) : y ≥ 4⁻¹ := by
+  linarith
 
 /-- The function ([DIR], §6.2.1)
 $$g_{Q,1,\beta}(h,y)=\beta Q_\beta(y)^{1-\frac1\beta}
@@ -81,7 +104,29 @@ $$G^1_\beta[Q_\beta](x,y)\ge h^{\frac1\beta}g_{Q,1,\beta}(h,y).$$ -/
 theorem caseQ_II_neardiag_bound (β : ℝ) (hβ : β = 2⁻¹ ∨ β = β₀) (h y : ℝ)
     (hh : h ∈ Icc (0 : ℝ) 4⁻¹) (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
     G₁ β (Q β) (y - h) y ≥ h ^ β⁻¹ * g_Q_1 β h y := by
-  sorry
+  have hβ1 := mem_Icc_one_of_caseQ hβ
+  have hβ0 : 0 < β := by linarith [hβ1.1]
+  have hβlt : β < 1 := by rcases hβ with rfl | rfl <;> norm_num [β₀]
+  have hQy := Q_pos (y := y) hβ1 ⟨by linarith [hy.1], by linarith [hy.2]⟩
+  rcases eq_or_lt_of_le hh.1 with h0 | hpos
+  · rw [← h0, sub_zero, zero_rpow (inv_ne_zero hβ0.ne'), zero_mul, G₁_diag β hβ0 _ _ hQy.le]
+  obtain ⟨E₁, hG, -, hE1⟩ := lemma_5_4 (Q β) β ⟨hβ0, hβlt⟩ (y - h) h hh.1
+    (by rwa [sub_add_cancel])
+  rw [sub_add_cancel] at hG hE1
+  rw [hG, show y - h + 2⁻¹ * h = y - h / 2 by ring]
+  unfold g_Q_1
+  have ht : 0 < h ^ β⁻¹ := rpow_pos_of_pos hpos _
+  rw [rpow_neg hpos.le]
+  have h2 : h ^ (2 / β) = (h ^ β⁻¹) ^ 2 := by
+    rw [← rpow_natCast, ← rpow_mul hpos.le]; congr 1; push_cast; ring
+  rw [h2] at hE1
+  set t := h ^ β⁻¹
+  have : t * (β * Q β y ^ (1 - β⁻¹) - (2 * Q β (y - h / 2) - Q β (y - h) - Q β y) * t⁻¹ -
+      2⁻¹ * β * (1 - β) * Q β y ^ (1 - 2 / β) * t) = β * Q β y ^ (1 - β⁻¹) * t -
+      (2 * Q β (y - h / 2) - Q β (y - h) - Q β y) - 2⁻¹ * β * (1 - β) * Q β y ^ (1 - 2 / β) *
+      t ^ 2 := by
+    field_simp
+  linarith
 
 /-- [DIR], §6.2.1:
 $2Q_\beta(y-\frac h2)-Q_\beta(y-h)-Q_\beta(y)=h^2(\alpha_0-2\alpha_1h+4\alpha_1y)$, and this is
@@ -90,7 +135,18 @@ theorem caseQ_II_second_difference (β h y : ℝ) :
     2 * Q β (y - h / 2) - Q β (y - h) - Q β y = h ^ 2 * (α₀ β - 2 * α₁ β * h + 4 * α₁ β * y) ∧
       ((β = 2⁻¹ ∨ β = β₀) → h ∈ Icc (0 : ℝ) 4⁻¹ → y ∈ Icc (4⁻¹ : ℝ) 2⁻¹ →
         h ^ 2 * (α₀ β - 2 * α₁ β * h + 4 * α₁ β * y) ≥ 0) := by
-  sorry
+  refine ⟨?_, fun hβ hh hy ↦ ?_⟩
+  · rw [Q_eq_affine, Q_eq_affine, Q_eq_affine, α₀, α₁, two_rpow_two_add, two_rpow_one_add]
+    ring
+  have hβ' : β = 2⁻¹ ∨ β = β₀ := hβ
+  have hs := two_rpow_gt_of_half_le (mem_Icc_one_of_caseQ hβ').1
+  have hα1 : 0 ≤ α₁ β := by
+    rw [α₁, two_rpow_one_add]
+    linarith [two_rpow_le_three_halves (mem_Ico_of_caseQ hβ').2.le]
+  have hα0 : 0 ≤ α₀ β := by rw [α₀, two_rpow_two_add]; linarith
+  have : 0 ≤ α₀ β - 2 * α₁ β * h + 4 * α₁ β * y := by
+    nlinarith [mul_nonneg hα1 (show (0 : ℝ) ≤ 4 * y - 2 * h by linarith [hh.2, hy.1])]
+  exact mul_nonneg (sq_nonneg h) this
 
 /-- [DIR], §6.2.1: for $h>0$,
 $$g_{Q,1,\beta}(h,y)=\beta Q_\beta(y)^{1-\frac1\beta}-(\alpha_0-2\alpha_1h+4\alpha_1y)
@@ -98,7 +154,9 @@ h^{2-\frac1\beta}-\tfrac12\beta(1-\beta)Q_\beta(y)^{1-\frac2\beta}h^{\frac1\beta
 theorem caseQ_II_g_Q_1_eq (β h y : ℝ) (hh : 0 < h) :
     g_Q_1 β h y = β * Q β y ^ (1 - β⁻¹) - (α₀ β - 2 * α₁ β * h + 4 * α₁ β * y) * h ^ (2 - β⁻¹)
       - 2⁻¹ * β * (1 - β) * Q β y ^ (1 - 2 / β) * h ^ β⁻¹ := by
-  sorry
+  unfold g_Q_1
+  rw [(caseQ_II_second_difference β h y).1, rpow_sub hh, rpow_two, rpow_neg hh.le]
+  ring
 
 /-- The lower bound ([DIR], §6.2.1)
 $$\underline{g_{Q,1,\beta}}(\underline h,\overline h,\underline y,\overline y)
@@ -113,13 +171,26 @@ noncomputable def g_Q_1_lo (β hl hu yl yu : ℝ) : ℝ :=
 $$g_{Q,1,\beta_0}(h,y)>0.001.$$ -/
 theorem eqn_6_7 (h y : ℝ) (hh : h ∈ Icc (0 : ℝ) 4⁻¹) (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
     g_Q_1 β₀ h y > 0.001 := by
-  sorry
+  obtain ⟨hβ1, hbi1, -, -, -⟩ := caseQ_β_facts (Or.inr rfl : β₀ = 2⁻¹ ∨ β₀ = β₀)
+  have hbi2 : β₀⁻¹ < 2 := by rw [β₀]; norm_num
+  have hc := eqn_6_7_cert h hh y hy
+  rcases eq_or_lt_of_le hh.1 with h0 | hpos
+  · rw [← h0] at hc ⊢
+    rw [zero_rpow (by linarith : (2 : ℝ) - β₀⁻¹ ≠ 0), zero_rpow (by linarith : β₀⁻¹ ≠ 0)] at hc
+    unfold g_Q_1
+    rw [zero_rpow (by linarith : -β₀⁻¹ ≠ 0), zero_rpow (by linarith : β₀⁻¹ ≠ 0)]
+    norm_num at hc ⊢; linarith
+  · rw [caseQ_II_g_Q_1_eq β₀ h y hpos]; norm_num at hc ⊢; linarith
 
 /-- [DIR], §6.2.1: (6.6) near the diagonal for $\beta=\beta_0$: for
 $0\le h\le\frac14\le y\le\frac12$, $G^1_{\beta_0}[Q_{\beta_0}](y-h,y)\ge0$. -/
 theorem caseQ_II_β₀ (h y : ℝ) (hh : h ∈ Icc (0 : ℝ) 4⁻¹)
     (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) : G₁ β₀ (Q β₀) (y - h) y ≥ 0 := by
-  sorry
+  have h1 := caseQ_II_neardiag_bound β₀ (Or.inr rfl) h y hh hy
+  have h2 := eqn_6_7 h y hh hy
+  have : 0 ≤ h ^ β₀⁻¹ * g_Q_1 β₀ h y :=
+    mul_nonneg (rpow_nonneg hh.1 _) (by linarith)
+  linarith
 
 /-- [DIR], §6.2.1: for $h>0$ (and $\alpha_i=\alpha_i(\frac12)$),
 $$g_{Q,1,\frac12}(h,y)=\tfrac12Q_{\frac12}(y)^{-1}-(\alpha_0+4\alpha_1y)+2\alpha_1h
@@ -127,7 +198,14 @@ $$g_{Q,1,\frac12}(h,y)=\tfrac12Q_{\frac12}(y)^{-1}-(\alpha_0+4\alpha_1y)+2\alpha
 theorem caseQ_II_g_Q_1_half_eq (h y : ℝ) (hh : 0 < h) :
     g_Q_1 2⁻¹ h y = 2⁻¹ * Q 2⁻¹ y ^ (-1 : ℤ) - (α₀ 2⁻¹ + 4 * α₁ 2⁻¹ * y)
       + 2 * α₁ 2⁻¹ * h - 8⁻¹ * Q 2⁻¹ y ^ (-3 : ℤ) * h ^ 2 := by
-  sorry
+  unfold g_Q_1
+  rw [(caseQ_II_second_difference 2⁻¹ h y).1, inv_inv,
+    show (1 : ℝ) - 2 = ((-1 : ℤ) : ℝ) by norm_num, show (-2 : ℝ) = ((-2 : ℤ) : ℝ) by norm_num,
+    show (1 : ℝ) - 2 / 2⁻¹ = ((-3 : ℤ) : ℝ) by norm_num, rpow_intCast, rpow_intCast,
+    rpow_intCast, rpow_two]
+  simp only [zpow_neg, zpow_ofNat]
+  have hh2 : h ^ 2 * (h ^ 2)⁻¹ = 1 := mul_inv_cancel₀ (by positivity)
+  linear_combination (-(α₀ 2⁻¹ - 2 * α₁ 2⁻¹ * h + 4 * α₁ 2⁻¹ * y)) * hh2
 
 /-- [DIR], §6.2.1: $\partial_h^2g_{Q,1,\frac12}(h,y)=-\frac14Q_{\frac12}(y)^{-3}<0$ for $h>0$ and
 $y\in[\frac14,\frac12]$. -/
@@ -135,7 +213,22 @@ theorem caseQ_II_g_Q_1_half_deriv2 (h y : ℝ) (hh : 0 < h)
     (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
     deriv (deriv (fun h ↦ g_Q_1 2⁻¹ h y)) h = -4⁻¹ * Q 2⁻¹ y ^ (-3 : ℤ) ∧
       -4⁻¹ * Q 2⁻¹ y ^ (-3 : ℤ) < 0 := by
-  sorry
+  have hQ := Q_pos (y := y) ⟨le_rfl, by norm_num⟩ ⟨by linarith [hy.1], by linarith [hy.2]⟩
+  set C := Q 2⁻¹ y ^ (-3 : ℤ) with hC
+  set q : ℝ → ℝ := fun u ↦ 2⁻¹ * Q 2⁻¹ y ^ (-1 : ℤ) - (α₀ 2⁻¹ + 4 * α₁ 2⁻¹ * y) +
+    2 * α₁ 2⁻¹ * u - 8⁻¹ * C * u ^ 2 with hq
+  have hev : (fun h ↦ g_Q_1 2⁻¹ h y) =ᶠ[𝓝 h] q := by
+    filter_upwards [lt_mem_nhds hh] with u hu using caseQ_II_g_Q_1_half_eq u y hu
+  have hq1 : ∀ u, HasDerivAt q (2 * α₁ 2⁻¹ - 4⁻¹ * C * u) u := fun u ↦
+    ((((hasDerivAt_id' u).const_mul (2 * α₁ 2⁻¹)).const_add _).sub
+      ((hasDerivAt_pow 2 u).const_mul (8⁻¹ * C))).congr_deriv (by push_cast; ring)
+  have hq2 : deriv q = fun u ↦ 2 * α₁ 2⁻¹ - 4⁻¹ * C * u := funext fun u ↦ (hq1 u).deriv
+  have hq3 : HasDerivAt (fun u ↦ 2 * α₁ 2⁻¹ - 4⁻¹ * C * u) (-4⁻¹ * C) h :=
+    ((hasDerivAt_id' h).const_mul (4⁻¹ * C)).const_sub _ |>.congr_deriv (by ring)
+  refine ⟨?_, ?_⟩
+  · rw [hev.deriv.deriv_eq, hq2, hq3.deriv]
+  · have : 0 < C := by rw [hC]; positivity
+    linarith
 
 /-- [DIR], §6.2.1: $h\mapsto g_{Q,1,\frac12}(h,y)$ is concave (on $(0,\frac14]$), so it suffices to
 evaluate at $h=0$ (meaning the limit $h\to0^+$) and $h=\frac14$: for $y\in[\frac14,\frac12]$
@@ -145,16 +238,49 @@ theorem caseQ_II_g_Q_1_half_concave (y : ℝ) (hy : y ∈ Icc (4⁻¹ : ℝ) 2�
     ConcaveOn ℝ (Ioc 0 4⁻¹) (fun h ↦ g_Q_1 2⁻¹ h y) ∧
       ∀ g₀ : ℝ, Tendsto (fun h ↦ g_Q_1 2⁻¹ h y) (𝓝[>] 0) (𝓝 g₀) →
         ∀ h ∈ Ioc (0 : ℝ) 4⁻¹, g_Q_1 2⁻¹ h y ≥ min g₀ (g_Q_1 2⁻¹ 4⁻¹ y) := by
-  sorry
+  have hQ := Q_pos (y := y) ⟨le_rfl, by norm_num⟩ ⟨by linarith [hy.1], by linarith [hy.2]⟩
+  set a := 2⁻¹ * Q 2⁻¹ y ^ (-1 : ℤ) - (α₀ 2⁻¹ + 4 * α₁ 2⁻¹ * y)
+  set b := 2 * α₁ 2⁻¹
+  set c := 8⁻¹ * Q 2⁻¹ y ^ (-3 : ℤ) with hc
+  have hc0 : 0 ≤ c := by rw [hc]; positivity
+  have heq : ∀ h, 0 < h → g_Q_1 2⁻¹ h y = a + b * h - c * h ^ 2 := fun h hh ↦ by
+    rw [caseQ_II_g_Q_1_half_eq h y hh]
+  refine ⟨(concaveOn_quadratic (a := a) (b := b) hc0 (convex_Ioc 0 4⁻¹)).congr
+    fun h hh ↦ (heq h hh.1).symm, fun g₀ hg₀ h hh ↦ ?_⟩
+  have hcont : Continuous (fun h : ℝ ↦ a + b * h - c * h ^ 2) := by fun_prop
+  have hlim : Tendsto (fun h ↦ g_Q_1 2⁻¹ h y) (𝓝[>] 0) (𝓝 a) := by
+    have h0 : Tendsto (fun h : ℝ ↦ a + b * h - c * h ^ 2) (𝓝[>] 0) (𝓝 (a + b * 0 - c * 0 ^ 2)) :=
+      (hcont.tendsto 0).mono_left nhdsWithin_le_nhds
+    rw [show a + b * 0 - c * 0 ^ 2 = a by ring] at h0
+    refine h0.congr' ?_
+    filter_upwards [self_mem_nhdsWithin] with u hu using (heq u hu).symm
+  rw [heq h hh.1, heq 4⁻¹ (by norm_num), tendsto_nhds_unique hg₀ hlim]
+  have := (concaveOn_quadratic (a := a) (b := b) hc0 (convex_Icc 0 4⁻¹)).min_le_of_mem_Icc
+    (left_mem_Icc.2 (by norm_num)) (right_mem_Icc.2 (by norm_num)) ⟨hh.1.le, hh.2⟩
+  rw [show a + b * 0 - c * 0 ^ 2 = a by ring] at this
+  exact this
 
 section Proof_Claim_1
 /-- [DIR], §6.2.1, proof of claim (1):
 $g_{Q,1,\frac12}(0,y)=\frac12Q_{\frac12}(y)^{-1}-(\alpha_0+4\alpha_1y)$, i.e.
-$g_{Q,1,\frac12}(h,y)\to\frac12Q_{\frac12}(y)^{-1}-(\alpha_0+4\alpha_1y)$ as $h\to0^+$. -/
-theorem caseQ_II_claim_1_limit (y : ℝ) (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
+$g_{Q,1,\frac12}(h,y)\to\frac12Q_{\frac12}(y)^{-1}-(\alpha_0+4\alpha_1y)$ as $h\to0^+$.
+
+**Unused hypothesis.** The paper assumes $y\in[\frac14,\frac12]$; this is not needed for the claim
+and is omitted in the Lean statement. -/
+theorem caseQ_II_claim_1_limit (y : ℝ) :
     Tendsto (fun h ↦ g_Q_1 2⁻¹ h y) (𝓝[>] 0)
       (𝓝 (2⁻¹ * Q 2⁻¹ y ^ (-1 : ℤ) - (α₀ 2⁻¹ + 4 * α₁ 2⁻¹ * y))) := by
-  sorry
+  set a := 2⁻¹ * Q 2⁻¹ y ^ (-1 : ℤ) - (α₀ 2⁻¹ + 4 * α₁ 2⁻¹ * y)
+  set b := 2 * α₁ 2⁻¹
+  set c := 8⁻¹ * Q 2⁻¹ y ^ (-3 : ℤ)
+  have heq : ∀ h, 0 < h → g_Q_1 2⁻¹ h y = a + b * h - c * h ^ 2 := fun h hh ↦ by
+    rw [caseQ_II_g_Q_1_half_eq h y hh]
+  have hcont : Continuous (fun h : ℝ ↦ a + b * h - c * h ^ 2) := by fun_prop
+  have h0 : Tendsto (fun h : ℝ ↦ a + b * h - c * h ^ 2) (𝓝[>] 0) (𝓝 (a + b * 0 - c * 0 ^ 2)) :=
+    (hcont.tendsto 0).mono_left nhdsWithin_le_nhds
+  rw [show a + b * 0 - c * 0 ^ 2 = a by ring] at h0
+  refine h0.congr' ?_
+  filter_upwards [self_mem_nhdsWithin] with u hu using (heq u hu).symm
 
 /-- [DIR], §6.2.1, proof of claim (1): $2Q_{\frac12}(y)>0$, and multiplying by it,
 $\frac12Q_{\frac12}(y)^{-1}-(\alpha_0+4\alpha_1y)\ge0$ is equivalent to
@@ -163,14 +289,26 @@ theorem caseQ_II_claim_1_iff (y : ℝ) (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
     2 * Q 2⁻¹ y > 0 ∧
       (2⁻¹ * Q 2⁻¹ y ^ (-1 : ℤ) - (α₀ 2⁻¹ + 4 * α₁ 2⁻¹ * y) ≥ 0 ↔
         1 - 2 * (α₀ 2⁻¹ + 4 * α₁ 2⁻¹ * y) * Q 2⁻¹ y ≥ 0) := by
-  sorry
+  have hQ := Q_pos (y := y) ⟨le_rfl, by norm_num⟩ ⟨by linarith [hy.1], by linarith [hy.2]⟩
+  refine ⟨by positivity, ?_⟩
+  rw [zpow_neg_one]
+  set K := α₀ 2⁻¹ + 4 * α₁ 2⁻¹ * y
+  have e : 2⁻¹ * (Q 2⁻¹ y)⁻¹ - K = (1 - 2 * K * Q 2⁻¹ y) / (2 * Q 2⁻¹ y) := by
+    generalize Q 2⁻¹ y = q at hQ ⊢
+    field_simp
+  rw [e]
+  constructor
+  · intro h
+    have := mul_nonneg h (by positivity : (0 : ℝ) ≤ 2 * Q 2⁻¹ y)
+    rwa [div_mul_cancel₀ _ (by positivity)] at this
+  · intro h; exact div_nonneg h (by positivity)
 
 /-- [DIR], §6.2.1, proof of claim (1): with $t=\frac12-y$,
 $1-2(\alpha_0+4\alpha_1y)Q_{\frac12}(y)=1-\frac13(1-4t^2)(1-4\alpha_1t)(3-4\alpha_1t)$. -/
 theorem caseQ_II_claim_1_subst (t : ℝ) :
     1 - 2 * (α₀ 2⁻¹ + 4 * α₁ 2⁻¹ * (2⁻¹ - t)) * Q 2⁻¹ (2⁻¹ - t) =
       1 - 3⁻¹ * (1 - 4 * t ^ 2) * (1 - 4 * α₁ 2⁻¹ * t) * (3 - 4 * α₁ 2⁻¹ * t) := by
-  sorry
+  rw [Q_eq_affine, α₀, α₁, two_rpow_two_add, two_rpow_one_add]; ring
 
 /-- [DIR], §6.2.1, proof of claim (1): $1-\frac13(1-4t^2)(1-4\alpha_1t)(3-4\alpha_1t)$ equals zero
 at $t=0$, the three factors do not change sign (are positive) on $[0,\frac14]$, and so it is
@@ -182,7 +320,20 @@ theorem caseQ_II_claim_1_mono :
         0 < 1 - 4 * t ^ 2 ∧ 0 < 1 - 4 * α₁ 2⁻¹ * t ∧ 0 < 3 - 4 * α₁ 2⁻¹ * t) ∧
       MonotoneOn (fun t ↦ 1 - 3⁻¹ * (1 - 4 * t ^ 2) * (1 - 4 * α₁ 2⁻¹ * t) *
         (3 - 4 * α₁ 2⁻¹ * t)) (Icc 0 4⁻¹) := by
-  sorry
+  have hα : 0 < α₁ 2⁻¹ ∧ α₁ 2⁻¹ < 0.2 := by
+    rw [α_half.2]; have := sqrt_two_mem; constructor <;> linarith [this.1, this.2]
+  have hpos : ∀ t ∈ Icc (0 : ℝ) 4⁻¹,
+      0 < 1 - 4 * t ^ 2 ∧ 0 < 1 - 4 * α₁ 2⁻¹ * t ∧ 0 < 3 - 4 * α₁ 2⁻¹ * t := fun t ht ↦
+    ⟨by nlinarith [ht.1, ht.2], by nlinarith [ht.1, ht.2], by nlinarith [ht.1, ht.2]⟩
+  refine ⟨by norm_num, hpos, fun a ha b hb hab ↦ ?_⟩
+  obtain ⟨pa1, pa2, pa3⟩ := hpos a ha
+  obtain ⟨pb1, pb2, pb3⟩ := hpos b hb
+  have f1 : 1 - 4 * b ^ 2 ≤ 1 - 4 * a ^ 2 := by nlinarith [ha.1, hb.1]
+  have f2 : 1 - 4 * α₁ 2⁻¹ * b ≤ 1 - 4 * α₁ 2⁻¹ * a := by nlinarith
+  have f3 : 3 - 4 * α₁ 2⁻¹ * b ≤ 3 - 4 * α₁ 2⁻¹ * a := by nlinarith
+  have := mul_le_mul (mul_le_mul f1 f2 pb2.le pa1.le) f3 pb3.le (mul_pos pa1 pa2).le
+  simp only
+  linarith
 
 end Proof_Claim_1
 
@@ -190,7 +341,16 @@ end Proof_Claim_1
 $g_{Q,1,\frac12}(0,y)$ is the continuous extension $\lim_{h\to0^+}g_{Q,1,\frac12}(h,y)$. -/
 theorem caseQ_II_claim_1 (y : ℝ) (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
     ∃ g₀ ≥ 0, Tendsto (fun h ↦ g_Q_1 2⁻¹ h y) (𝓝[>] 0) (𝓝 g₀) := by
-  sorry
+  refine ⟨_, (caseQ_II_claim_1_iff y hy).2.2 ?_, caseQ_II_claim_1_limit y⟩
+  have hs := caseQ_II_claim_1_subst (2⁻¹ - y)
+  rw [show (2⁻¹ : ℝ) - (2⁻¹ - y) = y by ring] at hs
+  rw [hs]
+  obtain ⟨h0, -, hmono⟩ := caseQ_II_claim_1_mono
+  have := hmono (show (0 : ℝ) ∈ Icc 0 4⁻¹ from ⟨le_rfl, by norm_num⟩)
+    (show 2⁻¹ - y ∈ Icc (0 : ℝ) 4⁻¹ from ⟨by linarith [hy.2], by linarith [hy.1]⟩)
+    (by linarith [hy.2])
+  simp only at this
+  linarith
 
 section Proof_Claim_2
 /-- **(6.8)** ([DIR], §6.2.1, proof of claim (2)) (🚗).
@@ -199,20 +359,87 @@ $$\underline{g_{Q,1,\frac12}}(\tfrac14,\tfrac14,\tfrac14,\tfrac38)>0.01\quad\tex
 theorem eqn_6_8 :
     g_Q_1_lo 2⁻¹ 4⁻¹ 4⁻¹ 4⁻¹ (3 / 8) > 0.01 ∧
       g_Q_1_lo 2⁻¹ 4⁻¹ 4⁻¹ (3 / 8) 2⁻¹ > 0.001 := by
-  sorry
+  obtain ⟨hs1, hs2⟩ := sqrt_two_mem
+  obtain ⟨hQ14, hQ38, hQ12⟩ := Q_half_values
+  obtain ⟨hα0, hα1⟩ := α_half
+  have e : ∀ yl yu : ℝ, g_Q_1_lo 2⁻¹ 4⁻¹ 4⁻¹ yl yu = 2⁻¹ * (Q 2⁻¹ yu)⁻¹ -
+      (α₀ 2⁻¹ - 2 * α₁ 2⁻¹ * 4⁻¹ + 4 * α₁ 2⁻¹ * yu) - 128⁻¹ * ((Q 2⁻¹ yl) ^ 3)⁻¹ := fun yl yu ↦ by
+    unfold g_Q_1_lo
+    rw [inv_inv, show (1 : ℝ) - 2 = ((-1 : ℤ) : ℝ) by norm_num, show (2 : ℝ) - 2 = 0 by norm_num,
+      show (1 : ℝ) - 2 / 2⁻¹ = ((-3 : ℤ) : ℝ) by norm_num, rpow_intCast, rpow_intCast, rpow_zero,
+      rpow_two]
+    simp only [zpow_neg, zpow_ofNat]
+    ring
+  rw [e, e, hQ14, hQ38, hQ12, hα0, hα1]
+  have hu : (0.4553 : ℝ) < 5 / 32 * (3 / 2 + √2) := by linarith
+  have i1 : (5 / 32 * (3 / 2 + √2))⁻¹ > 2.1961 := by
+    rw [gt_iff_lt, lt_inv_comm₀ (by norm_num) (by linarith)]; linarith
+  have i2 : ((√2 / 4) ^ 3)⁻¹ < 22.628 := by
+    rw [inv_lt_comm₀ (by positivity) (by norm_num)]
+    have : (0.3535525 : ℝ) ^ 3 < (√2 / 4) ^ 3 := by gcongr; linarith
+    norm_num at this ⊢; linarith
+  have i3 : ((5 / 32 * (3 / 2 + √2)) ^ 3)⁻¹ < 10.6 := by
+    rw [inv_lt_comm₀ (by positivity) (by norm_num)]
+    have : (0.4553 : ℝ) ^ 3 < (5 / 32 * (3 / 2 + √2)) ^ 3 := by gcongr
+    norm_num at this ⊢; linarith
+  constructor
+  · nlinarith
+  · norm_num; nlinarith
 
 end Proof_Claim_2
 
 /-- [DIR], §6.2.1, claim (2): $g_{Q,1,\frac12}(\frac14,y)>0$ for all $y\in[\frac14,\frac12]$. -/
 theorem caseQ_II_claim_2 (y : ℝ) (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
     g_Q_1 2⁻¹ 4⁻¹ y > 0 := by
-  sorry
+  have hβr : (2⁻¹ : ℝ) ∈ Ico (2⁻¹ : ℝ) (log₂ (3 / 2)) := mem_Ico_of_caseQ (Or.inl rfl)
+  have hmono := Q_monotoneOn hβr
+  have hpos : ∀ z ∈ Icc (4⁻¹ : ℝ) 2⁻¹, 0 < Q 2⁻¹ z := fun z hz ↦
+    Q_pos ⟨le_rfl, by norm_num⟩ ⟨by linarith [hz.1], by linarith [hz.2]⟩
+  have hα : 0 ≤ α₁ 2⁻¹ := by rw [α_half.2]; linarith [sqrt_two_mem.2]
+  have e : ∀ yl yu : ℝ, g_Q_1_lo 2⁻¹ 4⁻¹ 4⁻¹ yl yu = 2⁻¹ * (Q 2⁻¹ yu)⁻¹ -
+      (α₀ 2⁻¹ - 2 * α₁ 2⁻¹ * 4⁻¹ + 4 * α₁ 2⁻¹ * yu) - 128⁻¹ * ((Q 2⁻¹ yl) ^ 3)⁻¹ := fun yl yu ↦ by
+    unfold g_Q_1_lo
+    rw [inv_inv, show (1 : ℝ) - 2 = ((-1 : ℤ) : ℝ) by norm_num, show (2 : ℝ) - 2 = 0 by norm_num,
+      show (1 : ℝ) - 2 / 2⁻¹ = ((-3 : ℤ) : ℝ) by norm_num, rpow_intCast, rpow_intCast, rpow_zero,
+      rpow_two]
+    simp only [zpow_neg, zpow_ofNat]
+    ring
+  have key : ∀ yl yu, yl ∈ Icc (4⁻¹ : ℝ) 2⁻¹ → yu ∈ Icc (4⁻¹ : ℝ) 2⁻¹ → y ∈ Icc yl yu →
+      g_Q_1_lo 2⁻¹ 4⁻¹ 4⁻¹ yl yu ≤ g_Q_1 2⁻¹ 4⁻¹ y := fun yl yu hyl hyu hy' ↦ by
+    have hy0 : y ∈ Icc (0 : ℝ) 2⁻¹ := ⟨by linarith [hy.1], hy.2⟩
+    have h1 := hmono ⟨by linarith [hyl.1], hyl.2⟩ hy0 hy'.1
+    have h2 := hmono hy0 ⟨by linarith [hyu.1], hyu.2⟩ hy'.2
+    have p0 := hpos y hy
+    have pl := hpos yl hyl
+    rw [e, caseQ_II_g_Q_1_half_eq 4⁻¹ y (by norm_num)]
+    simp only [zpow_neg, zpow_ofNat, pow_one]
+    have i1 : (Q 2⁻¹ yu)⁻¹ ≤ (Q 2⁻¹ y)⁻¹ := inv_anti₀ p0 h2
+    have i2 : ((Q 2⁻¹ y) ^ 3)⁻¹ ≤ ((Q 2⁻¹ yl) ^ 3)⁻¹ := inv_anti₀ (by positivity) (by gcongr)
+    nlinarith [mul_le_mul_of_nonneg_left hy'.2 hα]
+  obtain ⟨h68a, h68b⟩ := eqn_6_8
+  rcases le_total y (3 / 8) with h | h
+  · have := key 4⁻¹ (3 / 8) ⟨le_rfl, by norm_num⟩ ⟨by norm_num, by norm_num⟩ ⟨hy.1, h⟩
+    linarith
+  · have := key (3 / 8) 2⁻¹ ⟨by norm_num, by norm_num⟩ ⟨by norm_num, le_rfl⟩ ⟨h, hy.2⟩
+    linarith
 
 /-- [DIR], §6.2.1 (conclusion): (6.6) near the diagonal, for $\beta\in\{\frac12,\beta_0\}$ and
 $0\le h\le\frac14\le y\le\frac12$: $G^1_\beta[Q_\beta](y-h,y)\ge0$. -/
 theorem caseQ_II (β : ℝ) (hβ : β = 2⁻¹ ∨ β = β₀) (h y : ℝ) (hh : h ∈ Icc (0 : ℝ) 4⁻¹)
     (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) : G₁ β (Q β) (y - h) y ≥ 0 := by
-  sorry
+  rcases hβ with rfl | rfl
+  · rcases eq_or_lt_of_le hh.1 with h0 | hpos
+    · rw [← h0, sub_zero]
+      exact (G₁_diag 2⁻¹ (by norm_num) _ _
+        (Q_pos ⟨le_rfl, by norm_num⟩ ⟨by linarith [hy.1], by linarith [hy.2]⟩).le).ge
+    have h1 := caseQ_II_neardiag_bound 2⁻¹ (Or.inl rfl) h y hh hy
+    obtain ⟨g₀, hg₀, hlim⟩ := caseQ_II_claim_1 y hy
+    have h2 := (caseQ_II_g_Q_1_half_concave y hy).2 g₀ hlim h ⟨hpos, hh.2⟩
+    have h3 := caseQ_II_claim_2 y hy
+    have : 0 ≤ g_Q_1 2⁻¹ h y := le_trans (le_min hg₀ h3.le) h2
+    have : 0 ≤ h ^ (2⁻¹ : ℝ)⁻¹ * g_Q_1 2⁻¹ h y := mul_nonneg (rpow_nonneg hh.1 _) this
+    linarith
+  · exact caseQ_II_β₀ h y hh hy
 
 end Case_Q_II
 
@@ -233,7 +460,20 @@ theorem caseQ_III_G_Q_diag (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) (y : �
     (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
     G_Q β y y = log (y ^ β⁻¹ + Q β y ^ β⁻¹) - β⁻¹ * log (2 * Q β (y / 2)) ∧
       (G_Q β y y ≥ 0 ↔ y ^ β⁻¹ + Q β y ^ β⁻¹ - (2 * Q β (y / 2)) ^ β⁻¹ ≥ 0) := by
-  sorry
+  have hβ' : β = 2⁻¹ ∨ β = β₀ := hβ.symm
+  have hβ1 := mem_Icc_one_of_caseQ hβ'
+  have hQ0 : Q β 0 = 0 := by simp [Q]
+  have he : G_Q β y y = log (y ^ β⁻¹ + Q β y ^ β⁻¹) - β⁻¹ * log (2 * Q β (y / 2)) := by
+    rw [G_Q, show y - y / 2 = y / 2 by ring, sub_self, hQ0, sub_zero]
+  refine ⟨he, ?_⟩
+  have hy0 : 0 < y := by linarith [hy.1]
+  have hA : 0 < y ^ β⁻¹ + Q β y ^ β⁻¹ :=
+    add_pos_of_pos_of_nonneg (rpow_pos_of_pos hy0 _)
+      (rpow_nonneg (Q_pos hβ1 ⟨hy0, by linarith [hy.2]⟩).le _)
+  have hB : 0 < 2 * Q β (y / 2) :=
+    mul_pos two_pos (Q_pos hβ1 ⟨by linarith, by linarith [hy.2]⟩)
+  rw [he, ← log_rpow hB, ge_iff_le, sub_nonneg, log_le_log_iff (rpow_pos_of_pos hB _) hA, ge_iff_le,
+    sub_nonneg]
 
 /-- The function $R_\beta(y)=y^{-1}Q_\beta(y)$ ([DIR], §6.2.2). -/
 noncomputable def R (β y : ℝ) : ℝ := y⁻¹ * Q β y
@@ -242,7 +482,7 @@ noncomputable def R (β y : ℝ) : ℝ := y⁻¹ * Q β y
 for $y\ne0$. -/
 theorem R_eq (β y : ℝ) (hy : y ≠ 0) :
     R β y = 2 / 3 * (1 - y) * (2 ^ (β + 2) - 3 + 4 * (3 - 2 ^ (β + 1)) * y) := by
-  sorry
+  rw [R, inv_mul_Q_eq hy, Rp]
 
 /-- The function $f_\beta(y)=1+R_\beta(y)^{\frac1\beta}-R_\beta(\frac y2)^{\frac1\beta}$
 ([DIR], §6.2.2; denoted $f_\beta$ in the paper). -/
@@ -255,11 +495,32 @@ to $f_\beta(y)\ge0$. -/
 theorem caseQ_III_iff_f_QIII (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) (y : ℝ)
     (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
     y ^ β⁻¹ + Q β y ^ β⁻¹ - (2 * Q β (y / 2)) ^ β⁻¹ ≥ 0 ↔ f_QIII β y ≥ 0 := by
-  sorry
+  have hβ' : β = 2⁻¹ ∨ β = β₀ := hβ.symm
+  have hy0 : 0 < y := by linarith [hy.1]
+  have hR : ∀ z ∈ Ioo (0 : ℝ) 1, 0 < R β z := fun z hz ↦ by
+    rw [R, inv_mul_Q_eq hz.1.ne']; exact (Rp_signs hβ').1 z hz
+  have h1 : Q β y = y * R β y := by rw [R]; field_simp
+  have h2 : 2 * Q β (y / 2) = y * R β (y / 2) := by rw [R]; field_simp
+  have hR1 := hR y ⟨hy0, by linarith [hy.2]⟩
+  have hR2 := hR (y / 2) ⟨by linarith, by linarith [hy.2]⟩
+  have e : y ^ β⁻¹ + Q β y ^ β⁻¹ - (2 * Q β (y / 2)) ^ β⁻¹ = y ^ β⁻¹ * f_QIII β y := by
+    rw [h1, h2, mul_rpow hy0.le hR1.le, mul_rpow hy0.le hR2.le, f_QIII]; ring
+  have hyb : 0 < y ^ β⁻¹ := rpow_pos_of_pos hy0 _
+  rw [e]
+  constructor
+  · intro h; exact nonneg_of_mul_nonneg_right (by linarith) hyb
+  · intro h; exact mul_nonneg hyb.le h
 
 /-- [DIR], §6.2.2: $f_\beta(\frac12)=0$ (for $\beta\in\{\beta_0,\frac12\}$). -/
 theorem f_QIII_half (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) : f_QIII β 2⁻¹ = 0 := by
-  sorry
+  have hβ' : β = 2⁻¹ ∨ β = β₀ := hβ.symm
+  have hβ0 : 0 < β := by linarith [(mem_Ico_of_caseQ hβ').1]
+  have e1 : R β 2⁻¹ = 1 := by
+    rw [R, inv_mul_Q_eq (by norm_num), Rp, two_rpow_add_two, two_rpow_add_one']; ring
+  have e2 : R β (2⁻¹ / 2) = 2 ^ β := by
+    rw [R, inv_mul_Q_eq (by norm_num), Rp, two_rpow_add_two, two_rpow_add_one']; ring
+  rw [f_QIII, e1, e2, one_rpow, rpow_rpow_inv zero_le_two hβ0.ne']
+  norm_num
 
 /-- [DIR], §6.2.2: for $y\in[\frac14,\frac12]$ and $\beta\in\{\beta_0,\frac12\}$,
 $$f_\beta'(y)=\tfrac1\beta R_\beta(y)^{\frac1\beta-1}R_\beta'(y)
@@ -268,13 +529,34 @@ theorem deriv_f_QIII (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) (y : ℝ)
     (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
     deriv (f_QIII β) y = β⁻¹ * R β y ^ (β⁻¹ - 1) * deriv (R β) y
       - (2 * β)⁻¹ * R β (y / 2) ^ (β⁻¹ - 1) * deriv (R β) (y / 2) := by
-  sorry
+  have hβ' : β = 2⁻¹ ∨ β = β₀ := hβ.symm
+  have hy0 : 0 < y := by linarith [hy.1]
+  have hR : ∀ z ∈ Ioo (0 : ℝ) 1, 0 < R β z := fun z hz ↦ by
+    rw [R, inv_mul_Q_eq hz.1.ne']; exact (Rp_signs hβ').1 z hz
+  have hRd : ∀ z, z ≠ 0 → HasDerivAt (R β) (Rp1 β z) z := fun z hz ↦ hasDerivAt_invQ hz
+  have h1 := (hRd y hy0.ne').rpow_const (p := β⁻¹)
+    (Or.inl (hR y ⟨hy0, by linarith [hy.2]⟩).ne')
+  have h2 := ((hRd (y / 2) (by positivity)).comp y ((hasDerivAt_id' y).div_const 2)).rpow_const
+    (p := β⁻¹) (Or.inl (hR (y / 2) ⟨by positivity, by linarith [hy.2]⟩).ne')
+  have hf := (h1.const_add 1).sub h2
+  rw [show f_QIII β = ((fun x ↦ 1 + R β x ^ β⁻¹) - fun y ↦ (R β ∘ fun x ↦ x / 2) y ^ β⁻¹)
+    from rfl, hf.deriv, (hRd y hy0.ne').deriv, (hRd (y / 2) (by positivity)).deriv]
+  simp only [Function.comp_apply]
+  have hβ0 : β ≠ 0 := by linarith [(mem_Ico_of_caseQ hβ').1]
+  field_simp
 
 /-- [DIR], §6.2.2: $f_\beta'(y)\le0$ is equivalent to $\beta yf_\beta'(y)\le0$ (for $y>0$ and
 $\beta\in\{\beta_0,\frac12\}$). -/
 theorem deriv_f_QIII_nonpos_iff (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) (y : ℝ) (hy : 0 < y) :
     deriv (f_QIII β) y ≤ 0 ↔ β * y * deriv (f_QIII β) y ≤ 0 := by
-  sorry
+  have hβ0 : 0 < β := by linarith [(mem_Ico_of_caseQ hβ.symm).1]
+  have hp : 0 < β * y := mul_pos hβ0 hy
+  constructor
+  · intro h; exact mul_nonpos_of_nonneg_of_nonpos hp.le h
+  · intro h
+    by_contra h'
+    have := mul_pos hp (not_le.1 h')
+    linarith
 
 /-- The function $f_{\beta,0}(y)=yR_\beta(y)^{\frac1\beta-1}R_\beta'(y)$ ([DIR], §6.2.2; denoted
 $f_{\beta,0}$ in the paper). -/
@@ -285,7 +567,9 @@ $y\in[\frac14,\frac12]$ and $\beta\in\{\beta_0,\frac12\}$. -/
 theorem f_QIII_deriv_eq_sub (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) (y : ℝ)
     (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
     β * y * deriv (f_QIII β) y = f_QIII_0 β y - f_QIII_0 β (y / 2) := by
-  sorry
+  have hβ0 : β ≠ 0 := by linarith [(mem_Ico_of_caseQ hβ.symm).1]
+  rw [deriv_f_QIII β hβ y hy, f_QIII_0, f_QIII_0]
+  field_simp
 
 /-- [DIR], §6.2.2: it suffices to show $f_{\beta,0}'\le0$. (Since $y/2\in[\frac18,\frac14]$, this
 is needed on $[\frac18,\frac12]$: if $f_{\beta,0}'\le0$ on $[\frac18,\frac12]$, then
@@ -297,7 +581,25 @@ paper). -/
 theorem caseQ_III_suffices_f_QIII_0 (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹)
     (h : ∀ y ∈ Icc (8⁻¹ : ℝ) 2⁻¹, deriv (f_QIII_0 β) y ≤ 0) :
     ∀ y ∈ Icc (4⁻¹ : ℝ) 2⁻¹, deriv (f_QIII β) y ≤ 0 := by
-  sorry
+  have hβ' : β = 2⁻¹ ∨ β = β₀ := hβ.symm
+  have hdiff : ∀ z ∈ Ioo (0 : ℝ) 1, DifferentiableAt ℝ (f_QIII_0 β) z := fun z hz ↦ by
+    refine (differentiableAt_f0p (c := β⁻¹ - 1) ((Rp_signs hβ').1 z hz)).congr_of_eventuallyEq ?_
+    filter_upwards [isOpen_ne.mem_nhds hz.1.ne'] with w hw
+    have hd : deriv (R β) w = Rp1 β w := (hasDerivAt_invQ hw).deriv
+    rw [f_QIII_0, hd, R, inv_mul_Q_eq hw]
+  have hanti : AntitoneOn (f_QIII_0 β) (Icc 8⁻¹ 2⁻¹) :=
+    antitoneOn_of_deriv_nonpos (convex_Icc _ _)
+      (fun z hz ↦ (hdiff z ⟨by linarith [hz.1], by linarith [hz.2]⟩).continuousAt
+        |>.continuousWithinAt)
+      (fun z hz ↦ by
+        rw [interior_Icc] at hz
+        exact (hdiff z ⟨by linarith [hz.1], by linarith [hz.2]⟩).differentiableWithinAt)
+      fun z hz ↦ by rw [interior_Icc] at hz; exact h z ⟨hz.1.le, hz.2.le⟩
+  intro y hy
+  have h1 := hanti (show y / 2 ∈ Icc (8⁻¹ : ℝ) 2⁻¹ from ⟨by linarith [hy.1], by linarith [hy.2]⟩)
+    (show y ∈ Icc (8⁻¹ : ℝ) 2⁻¹ from ⟨by linarith [hy.1], hy.2⟩) (by linarith [hy.1])
+  rw [deriv_f_QIII_nonpos_iff β hβ y (by linarith [hy.1]), f_QIII_deriv_eq_sub β hβ y hy]
+  linarith
 
 /-- The function $f_{\beta,1}(y)=R_\beta(y)^{\frac1\beta-1}$ ([DIR], §6.2.2; denoted
 $f_{\beta,1}$ in the paper). -/
@@ -309,14 +611,22 @@ noncomputable def f_QIII_2 (β y : ℝ) : ℝ := y * deriv (R β) y
 
 /-- [DIR], §6.2.2: $f_{\beta,0}(y)=f_{\beta,1}(y)f_{\beta,2}(y)$. -/
 theorem f_QIII_0_eq_mul (β y : ℝ) : f_QIII_0 β y = f_QIII_1 β y * f_QIII_2 β y := by
-  sorry
+  rw [f_QIII_0, f_QIII_1, f_QIII_2]; ring
 
 /-- [DIR], §6.2.2: $R_\beta\ge0$ and $R_\beta'\le0$ on $[\frac14,\frac12]$, hence
 $f_{\beta,1}\ge0$ and $f_{\beta,2}\le0$ on this interval (for $\beta\in\{\beta_0,\frac12\}$). -/
 theorem f_QIII_1_nonneg_f_QIII_2_nonpos (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) (y : ℝ)
     (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
     R β y ≥ 0 ∧ deriv (R β) y ≤ 0 ∧ f_QIII_1 β y ≥ 0 ∧ f_QIII_2 β y ≤ 0 := by
-  sorry
+  have hβ' : β = 2⁻¹ ∨ β = β₀ := hβ.symm
+  have hy0 : 0 < y := by linarith [hy.1]
+  have hR : R β y = Rp β y := by rw [R, inv_mul_Q_eq hy0.ne']
+  have hd : deriv (R β) y = Rp1 β y := (hasDerivAt_invQ hy0.ne').deriv
+  have h1 := (Rp_signs hβ').1 y ⟨hy0, by linarith [hy.2]⟩
+  have h2 := (Rp_signs hβ').2.1 y (by linarith [hy.1])
+  refine ⟨by rw [hR]; exact h1.le, by rw [hd]; exact h2, ?_, ?_⟩
+  · rw [f_QIII_1, hR]; exact rpow_nonneg h1.le _
+  · rw [f_QIII_2, hd]; exact mul_nonpos_of_nonneg_of_nonpos hy0.le h2
 
 /-- [DIR], §6.2.2: for $y\in[\frac14,\frac12]$ and $\beta\in\{\beta_0,\frac12\}$,
 $$f_{\beta,1}'=(\tfrac1\beta-1)R_\beta^{\frac1\beta-2}R_\beta',\quad
@@ -333,14 +643,40 @@ theorem derivs_f_QIII_1 (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) (y : ℝ)
     iteratedDeriv 3 (f_QIII_1 β) y =
       (β⁻¹ - 1) * (β⁻¹ - 2) * ((β⁻¹ - 3) * R β y ^ (β⁻¹ - 4) * (deriv (R β) y) ^ 3
         + 3 * R β y ^ (β⁻¹ - 3) * deriv (R β) y * deriv (deriv (R β)) y) := by
-  sorry
+  have hβ' : β = 2⁻¹ ∨ β = β₀ := hβ.symm
+  have hy0 : 0 < y := by linarith [hy.1]
+  have hyU : y ∈ Ioo (0 : ℝ) 1 := ⟨hy0, by linarith [hy.2]⟩
+  have hRy : R β y = Rp β y := inv_mul_Q_eq hy0.ne'
+  have hR1 : deriv (R β) y = Rp1 β y := (hasDerivAt_invQ hy0.ne').deriv
+  have hR2 : deriv (deriv (R β)) y = Rp2 β := (deriv2_invQ_eventuallyEq hy0.ne').eq_of_nhds
+  obtain ⟨-, d1, d2, d3⟩ := derivs_f1 hβ' (β⁻¹ - 1)
+  have h1 : deriv (f_QIII_1 β) y = G1 β (β⁻¹ - 1) y := d1 hyU
+  have h2 : deriv (deriv (f_QIII_1 β)) y = G2 β (β⁻¹ - 1) y := d2 hyU
+  have h3 : iteratedDeriv 3 (f_QIII_1 β) y = G3 β (β⁻¹ - 1) y := by
+    simp only [iteratedDeriv_succ, iteratedDeriv_zero]; exact d3 hyU
+  obtain ⟨e2, e21, e22, e23⟩ := derivs_f2 β
+  have k0 : f_QIII_2 β y = F2 β y := e2 hyU
+  have k1 : deriv (f_QIII_2 β) y = F2d β y := e21 hyU
+  have k2 : deriv (deriv (f_QIII_2 β)) y = 2 * Rp2 β := e22 hyU
+  have k3 : iteratedDeriv 3 (f_QIII_2 β) y = 0 := by
+    simp only [iteratedDeriv_succ, iteratedDeriv_zero]; exact e23 hyU
+  rw [h1, h2, h3, hRy, hR1, hR2, G1, G2, G3, show β⁻¹ - 1 - 1 = β⁻¹ - 2 by ring,
+    show β⁻¹ - 1 - 2 = β⁻¹ - 3 by ring, show β⁻¹ - 1 - 3 = β⁻¹ - 4 by ring]
+  refine ⟨rfl, by ring, by ring⟩
 
 /-- [DIR], §6.2.2: for $\beta\in\{\beta_0,\frac12\}$: $R_\beta''\le0$, $R_\beta'''=0$ (on
 $(0,\infty)$), and $\frac1\beta>1$, $\frac1\beta\le2$, $\frac1\beta<3$. -/
 theorem R_derivs_one_div_β (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) :
     (∀ y > 0, deriv (deriv (R β)) y ≤ 0 ∧ iteratedDeriv 3 (R β) y = 0) ∧
       β⁻¹ > 1 ∧ β⁻¹ ≤ 2 ∧ β⁻¹ < 3 := by
-  sorry
+  have hβ' : β = 2⁻¹ ∨ β = β₀ := hβ.symm
+  obtain ⟨-, hb1, hb2, -, -⟩ := caseQ_β_facts hβ'
+  refine ⟨fun y hy ↦ ⟨?_, ?_⟩, hb1, hb2, by linarith⟩
+  · have h : deriv (deriv (R β)) =ᶠ[𝓝 y] fun _ ↦ Rp2 β := deriv2_invQ_eventuallyEq hy.ne'
+    rw [h.eq_of_nhds]; exact (Rp_signs hβ').2.2
+  · have h : deriv (deriv (R β)) =ᶠ[𝓝 y] fun _ ↦ Rp2 β := deriv2_invQ_eventuallyEq hy.ne'
+    simp only [iteratedDeriv_succ, iteratedDeriv_zero]
+    rw [h.deriv_eq, deriv_const]
 
 /-- [DIR], §6.2.2: $f_{\beta,1}'\le0$, $f_{\beta,1}''\le0$ and $f_{\beta,1}'''\le0$ on
 $[\frac14,\frac12]$ (for $\beta\in\{\beta_0,\frac12\}$). -/
@@ -348,7 +684,25 @@ theorem derivs_f_QIII_1_nonpos (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) (y 
     (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
     deriv (f_QIII_1 β) y ≤ 0 ∧ deriv (deriv (f_QIII_1 β)) y ≤ 0 ∧
       iteratedDeriv 3 (f_QIII_1 β) y ≤ 0 := by
-  sorry
+  have hβ' : β = 2⁻¹ ∨ β = β₀ := hβ.symm
+  have hy0 : 0 < y := by linarith [hy.1]
+  have hyU : y ∈ Ioo (0 : ℝ) 1 := ⟨hy0, by linarith [hy.2]⟩
+  have hRy : R β y = Rp β y := inv_mul_Q_eq hy0.ne'
+  have hR1 : deriv (R β) y = Rp1 β y := (hasDerivAt_invQ hy0.ne').deriv
+  have hR2 : deriv (deriv (R β)) y = Rp2 β := (deriv2_invQ_eventuallyEq hy0.ne').eq_of_nhds
+  obtain ⟨-, d1, d2, d3⟩ := derivs_f1 hβ' (β⁻¹ - 1)
+  have h1 : deriv (f_QIII_1 β) y = G1 β (β⁻¹ - 1) y := d1 hyU
+  have h2 : deriv (deriv (f_QIII_1 β)) y = G2 β (β⁻¹ - 1) y := d2 hyU
+  have h3 : iteratedDeriv 3 (f_QIII_1 β) y = G3 β (β⁻¹ - 1) y := by
+    simp only [iteratedDeriv_succ, iteratedDeriv_zero]; exact d3 hyU
+  obtain ⟨e2, e21, e22, e23⟩ := derivs_f2 β
+  have k0 : f_QIII_2 β y = F2 β y := e2 hyU
+  have k1 : deriv (f_QIII_2 β) y = F2d β y := e21 hyU
+  have k2 : deriv (deriv (f_QIII_2 β)) y = 2 * Rp2 β := e22 hyU
+  have k3 : iteratedDeriv 3 (f_QIII_2 β) y = 0 := by
+    simp only [iteratedDeriv_succ, iteratedDeriv_zero]; exact e23 hyU
+  obtain ⟨g1, g2, g3, -⟩ := D3_nonneg hβ' ⟨by linarith [hy.1], hy.2⟩
+  rw [h1, h2, h3]; exact ⟨g1, g2, g3⟩
 
 /-- [DIR], §6.2.2: for $y\in[\frac14,\frac12]$ and $\beta\in\{\beta_0,\frac12\}$:
 $f_{\beta,2}'(y)=R_\beta'(y)+yR_\beta''(y)$,
@@ -358,14 +712,51 @@ theorem derivs_f_QIII_2 (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) (y : ℝ)
     deriv (f_QIII_2 β) y = deriv (R β) y + y * deriv (deriv (R β)) y ∧
       deriv (deriv (f_QIII_2 β)) y = 2 * deriv (deriv (R β)) y + y * iteratedDeriv 3 (R β) y ∧
       2 * deriv (deriv (R β)) y + y * iteratedDeriv 3 (R β) y = 2 * deriv (deriv (R β)) y := by
-  sorry
+  have hβ' : β = 2⁻¹ ∨ β = β₀ := hβ.symm
+  have hy0 : 0 < y := by linarith [hy.1]
+  have hyU : y ∈ Ioo (0 : ℝ) 1 := ⟨hy0, by linarith [hy.2]⟩
+  have hRy : R β y = Rp β y := inv_mul_Q_eq hy0.ne'
+  have hR1 : deriv (R β) y = Rp1 β y := (hasDerivAt_invQ hy0.ne').deriv
+  have hR2 : deriv (deriv (R β)) y = Rp2 β := (deriv2_invQ_eventuallyEq hy0.ne').eq_of_nhds
+  obtain ⟨-, d1, d2, d3⟩ := derivs_f1 hβ' (β⁻¹ - 1)
+  have h1 : deriv (f_QIII_1 β) y = G1 β (β⁻¹ - 1) y := d1 hyU
+  have h2 : deriv (deriv (f_QIII_1 β)) y = G2 β (β⁻¹ - 1) y := d2 hyU
+  have h3 : iteratedDeriv 3 (f_QIII_1 β) y = G3 β (β⁻¹ - 1) y := by
+    simp only [iteratedDeriv_succ, iteratedDeriv_zero]; exact d3 hyU
+  obtain ⟨e2, e21, e22, e23⟩ := derivs_f2 β
+  have k0 : f_QIII_2 β y = F2 β y := e2 hyU
+  have k1 : deriv (f_QIII_2 β) y = F2d β y := e21 hyU
+  have k2 : deriv (deriv (f_QIII_2 β)) y = 2 * Rp2 β := e22 hyU
+  have k3 : iteratedDeriv 3 (f_QIII_2 β) y = 0 := by
+    simp only [iteratedDeriv_succ, iteratedDeriv_zero]; exact e23 hyU
+  have hR3 : iteratedDeriv 3 (R β) y = 0 := ((R_derivs_one_div_β β hβ).1 y hy0).2
+  rw [k1, k2, hR1, hR2, hR3, F2d]
+  exact ⟨rfl, by ring, by ring⟩
 
 /-- [DIR], §6.2.2: $f_{\beta,2}'\le0$ and $f_{\beta,2}''\le0$ on $[\frac14,\frac12]$ (for
 $\beta\in\{\beta_0,\frac12\}$). -/
 theorem derivs_f_QIII_2_nonpos (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) (y : ℝ)
     (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
     deriv (f_QIII_2 β) y ≤ 0 ∧ deriv (deriv (f_QIII_2 β)) y ≤ 0 := by
-  sorry
+  have hβ' : β = 2⁻¹ ∨ β = β₀ := hβ.symm
+  have hy0 : 0 < y := by linarith [hy.1]
+  have hyU : y ∈ Ioo (0 : ℝ) 1 := ⟨hy0, by linarith [hy.2]⟩
+  have hRy : R β y = Rp β y := inv_mul_Q_eq hy0.ne'
+  have hR1 : deriv (R β) y = Rp1 β y := (hasDerivAt_invQ hy0.ne').deriv
+  have hR2 : deriv (deriv (R β)) y = Rp2 β := (deriv2_invQ_eventuallyEq hy0.ne').eq_of_nhds
+  obtain ⟨-, d1, d2, d3⟩ := derivs_f1 hβ' (β⁻¹ - 1)
+  have h1 : deriv (f_QIII_1 β) y = G1 β (β⁻¹ - 1) y := d1 hyU
+  have h2 : deriv (deriv (f_QIII_1 β)) y = G2 β (β⁻¹ - 1) y := d2 hyU
+  have h3 : iteratedDeriv 3 (f_QIII_1 β) y = G3 β (β⁻¹ - 1) y := by
+    simp only [iteratedDeriv_succ, iteratedDeriv_zero]; exact d3 hyU
+  obtain ⟨e2, e21, e22, e23⟩ := derivs_f2 β
+  have k0 : f_QIII_2 β y = F2 β y := e2 hyU
+  have k1 : deriv (f_QIII_2 β) y = F2d β y := e21 hyU
+  have k2 : deriv (deriv (f_QIII_2 β)) y = 2 * Rp2 β := e22 hyU
+  have k3 : iteratedDeriv 3 (f_QIII_2 β) y = 0 := by
+    simp only [iteratedDeriv_succ, iteratedDeriv_zero]; exact e23 hyU
+  obtain ⟨-, -, -, -, f2d, -⟩ := D3_nonneg hβ' ⟨by linarith [hy.1], hy.2⟩
+  rw [k1, k2]; exact ⟨f2d, by linarith [(Rp_signs hβ').2.2]⟩
 
 /-- [DIR], §6.2.2: for $y\in[\frac14,\frac12]$ and $\beta\in\{\beta_0,\frac12\}$:
 $f_{\beta,2}'''=0$ and
@@ -378,33 +769,105 @@ theorem iteratedDeriv_three_f_QIII_0 (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻�
         iteratedDeriv 3 (f_QIII_1 β) y * f_QIII_2 β y
           + 3 * deriv (deriv (f_QIII_1 β)) y * deriv (f_QIII_2 β) y
           + 3 * deriv (f_QIII_1 β) y * deriv (deriv (f_QIII_2 β)) y := by
-  sorry
+  have hβ' : β = 2⁻¹ ∨ β = β₀ := hβ.symm
+  have hy0 : 0 < y := by linarith [hy.1]
+  have hyU : y ∈ Ioo (0 : ℝ) 1 := ⟨hy0, by linarith [hy.2]⟩
+  have hRy : R β y = Rp β y := inv_mul_Q_eq hy0.ne'
+  have hR1 : deriv (R β) y = Rp1 β y := (hasDerivAt_invQ hy0.ne').deriv
+  have hR2 : deriv (deriv (R β)) y = Rp2 β := (deriv2_invQ_eventuallyEq hy0.ne').eq_of_nhds
+  obtain ⟨-, d1, d2, d3⟩ := derivs_f1 hβ' (β⁻¹ - 1)
+  have h1 : deriv (f_QIII_1 β) y = G1 β (β⁻¹ - 1) y := d1 hyU
+  have h2 : deriv (deriv (f_QIII_1 β)) y = G2 β (β⁻¹ - 1) y := d2 hyU
+  have h3 : iteratedDeriv 3 (f_QIII_1 β) y = G3 β (β⁻¹ - 1) y := by
+    simp only [iteratedDeriv_succ, iteratedDeriv_zero]; exact d3 hyU
+  obtain ⟨e2, e21, e22, e23⟩ := derivs_f2 β
+  have k0 : f_QIII_2 β y = F2 β y := e2 hyU
+  have k1 : deriv (f_QIII_2 β) y = F2d β y := e21 hyU
+  have k2 : deriv (deriv (f_QIII_2 β)) y = 2 * Rp2 β := e22 hyU
+  have k3 : iteratedDeriv 3 (f_QIII_2 β) y = 0 := by
+    simp only [iteratedDeriv_succ, iteratedDeriv_zero]; exact e23 hyU
+  obtain ⟨-, -, d03⟩ := derivs_f0 hβ' (β⁻¹ - 1)
+  have h03 : iteratedDeriv 3 (f_QIII_0 β) y = D3 β (β⁻¹ - 1) y := by
+    simp only [iteratedDeriv_succ, iteratedDeriv_zero]; exact d03 hyU
+  rw [k3, h03, h1, h2, h3, k0, k1, k2, D3]
+  exact ⟨rfl, rfl⟩
 
 /-- [DIR], §6.2.2: $f_{\beta,0}'''\ge0$ on $[\frac14,\frac12]$ (for $\beta\in\{\beta_0,\frac12\}$).
 -/
 theorem iteratedDeriv_three_f_QIII_0_nonneg (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) (y : ℝ)
     (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) : iteratedDeriv 3 (f_QIII_0 β) y ≥ 0 := by
-  sorry
+  have hβ' : β = 2⁻¹ ∨ β = β₀ := hβ.symm
+  have hy0 : 0 < y := by linarith [hy.1]
+  have hyU : y ∈ Ioo (0 : ℝ) 1 := ⟨hy0, by linarith [hy.2]⟩
+  have hRy : R β y = Rp β y := inv_mul_Q_eq hy0.ne'
+  have hR1 : deriv (R β) y = Rp1 β y := (hasDerivAt_invQ hy0.ne').deriv
+  have hR2 : deriv (deriv (R β)) y = Rp2 β := (deriv2_invQ_eventuallyEq hy0.ne').eq_of_nhds
+  obtain ⟨-, d1, d2, d3⟩ := derivs_f1 hβ' (β⁻¹ - 1)
+  have h1 : deriv (f_QIII_1 β) y = G1 β (β⁻¹ - 1) y := d1 hyU
+  have h2 : deriv (deriv (f_QIII_1 β)) y = G2 β (β⁻¹ - 1) y := d2 hyU
+  have h3 : iteratedDeriv 3 (f_QIII_1 β) y = G3 β (β⁻¹ - 1) y := by
+    simp only [iteratedDeriv_succ, iteratedDeriv_zero]; exact d3 hyU
+  obtain ⟨e2, e21, e22, e23⟩ := derivs_f2 β
+  have k0 : f_QIII_2 β y = F2 β y := e2 hyU
+  have k1 : deriv (f_QIII_2 β) y = F2d β y := e21 hyU
+  have k2 : deriv (deriv (f_QIII_2 β)) y = 2 * Rp2 β := e22 hyU
+  have k3 : iteratedDeriv 3 (f_QIII_2 β) y = 0 := by
+    simp only [iteratedDeriv_succ, iteratedDeriv_zero]; exact e23 hyU
+  obtain ⟨-, -, d03⟩ := derivs_f0 hβ' (β⁻¹ - 1)
+  have h03 : iteratedDeriv 3 (f_QIII_0 β) y = D3 β (β⁻¹ - 1) y := by
+    simp only [iteratedDeriv_succ, iteratedDeriv_zero]; exact d03 hyU
+  rw [h03]; exact (D3_nonneg hβ' ⟨by linarith [hy.1], hy.2⟩).2.2.2.2.2
 
 /-- **(6.9)** ([DIR], §6.2.2). For $\beta\in\{\beta_0,\frac12\}$: $f_{\beta,0}''(\frac14)>3.2$. -/
 theorem eqn_6_9 (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) :
     deriv (deriv (f_QIII_0 β)) 4⁻¹ > 3.2 := by
-  sorry
+  have hβ' : β = 2⁻¹ ∨ β = β₀ := hβ.symm
+  have h : deriv (deriv (f_QIII_0 β)) 4⁻¹ = D2 β (β⁻¹ - 1) 4⁻¹ :=
+    (derivs_f0 hβ' (β⁻¹ - 1)).2.1 (by norm_num : (4⁻¹ : ℝ) ∈ Ioo 0 1)
+  rw [h]
+  rcases hβ with rfl | rfl
+  · have := D2_quarter_b0; norm_num at this ⊢; linarith
+  · have := D2_quarter_h; norm_num at this ⊢; linarith
 
 /-- [DIR], §6.2.2: (6.9) implies $f_{\beta,0}''>0$ (on $[\frac14,\frac12]$, for
 $\beta\in\{\beta_0,\frac12\}$). -/
 theorem deriv2_f_QIII_0_pos (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) (y : ℝ)
     (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) : deriv (deriv (f_QIII_0 β)) y > 0 := by
-  sorry
+  have hβ' : β = 2⁻¹ ∨ β = β₀ := hβ.symm
+  have hd := (derivs_f0 hβ' (β⁻¹ - 1)).2.1
+  have h : deriv (deriv (f_QIII_0 β)) y = D2 β (β⁻¹ - 1) y :=
+    hd ⟨by linarith [hy.1], by linarith [hy.2]⟩
+  have h4 : deriv (deriv (f_QIII_0 β)) 4⁻¹ = D2 β (β⁻¹ - 1) 4⁻¹ := hd (by norm_num)
+  have h9 := eqn_6_9 β hβ
+  have hm := D2_monotoneOn hβ' (show (4⁻¹ : ℝ) ∈ Icc 8⁻¹ 2⁻¹ by norm_num)
+    (show y ∈ Icc (8⁻¹ : ℝ) 2⁻¹ from ⟨by linarith [hy.1], hy.2⟩) hy.1
+  rw [h]; rw [h4] at h9; linarith
 
 /-- **(6.10)** ([DIR], §6.2.2). For $\beta\in\{\beta_0,\frac12\}$: $f_{\beta,0}'(\frac12)<-0.6$. -/
 theorem eqn_6_10 (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) : deriv (f_QIII_0 β) 2⁻¹ < -0.6 := by
-  sorry
+  have hβ' : β = 2⁻¹ ∨ β = β₀ := hβ.symm
+  have h : deriv (f_QIII_0 β) 2⁻¹ = D1 β (β⁻¹ - 1) 2⁻¹ :=
+    (derivs_f0 hβ' (β⁻¹ - 1)).1 (by norm_num : (2⁻¹ : ℝ) ∈ Ioo 0 1)
+  rw [h]
+  rcases hβ with rfl | rfl
+  · have := D1_half_b0; norm_num at this ⊢; linarith
+  · have := D1_half_h; norm_num at this ⊢; linarith
 
 /-- [DIR], §6.2.2: $f_{\beta,0}'<0$ on $[\frac14,\frac12]$ (for $\beta\in\{\beta_0,\frac12\}$). -/
 theorem deriv_f_QIII_0_neg (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) (y : ℝ)
     (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) : deriv (f_QIII_0 β) y < 0 := by
-  sorry
+  have hβ' : β = 2⁻¹ ∨ β = β₀ := hβ.symm
+  have hd1 : EqOn (deriv (f_QIII_0 β)) (D1 β (β⁻¹ - 1)) (Ioo 0 1) := (derivs_f0 hβ' _).1
+  have hd2 : EqOn (deriv (deriv (f_QIII_0 β))) (D2 β (β⁻¹ - 1)) (Ioo 0 1) :=
+    (derivs_f0 hβ' _).2.1
+  have hm := D1_monotoneOn hβ' (a := 4⁻¹) (by norm_num) fun z hz ↦ by
+    have := deriv2_f_QIII_0_pos β hβ z hz
+    rw [hd2 ⟨by linarith [hz.1], by linarith [hz.2]⟩] at this; exact this.le
+  have h := hm hy (show (2⁻¹ : ℝ) ∈ Icc 4⁻¹ 2⁻¹ by norm_num) hy.2
+  have h10 := eqn_6_10 β hβ
+  rw [hd1 (by norm_num : (2⁻¹ : ℝ) ∈ Ioo 0 1)] at h10
+  rw [hd1 ⟨by linarith [hy.1], by linarith [hy.2]⟩]
+  linarith
 
 /-- [DIR], §6.2.2 (not stated in the paper; needed by `Auto.DIR.caseQ_III_suffices_f_QIII_0`,
 see the discrepancy noted there): $f_{\beta,0}'<0$ on $[\frac18,\frac12]$ (for
@@ -412,18 +875,41 @@ $\beta\in\{\beta_0,\frac12\}$). It follows as in the paper from $f_{\beta,0}'''\
 $[\frac18,\frac12]$, $f_{\beta,0}''(\frac18)>0$ and (6.10). -/
 theorem deriv_f_QIII_0_neg_Icc_eighth (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) (y : ℝ)
     (hy : y ∈ Icc (8⁻¹ : ℝ) 2⁻¹) : deriv (f_QIII_0 β) y < 0 := by
-  sorry
+  have hβ' : β = 2⁻¹ ∨ β = β₀ := hβ.symm
+  have hd1 : EqOn (deriv (f_QIII_0 β)) (D1 β (β⁻¹ - 1)) (Ioo 0 1) := (derivs_f0 hβ' _).1
+  have h8 : 0 < D2 β (β⁻¹ - 1) 8⁻¹ := by
+    rcases hβ with rfl | rfl
+    · exact D2_eighth_b0
+    · exact D2_eighth_h
+  have hm := D1_monotoneOn hβ' (a := 8⁻¹) le_rfl fun z hz ↦
+    h8.le.trans (D2_monotoneOn hβ' (show (8⁻¹ : ℝ) ∈ Icc 8⁻¹ 2⁻¹ by norm_num) hz hz.1)
+  have h := hm hy (show (2⁻¹ : ℝ) ∈ Icc 8⁻¹ 2⁻¹ by norm_num) hy.2
+  have h10 := eqn_6_10 β hβ
+  rw [hd1 (by norm_num : (2⁻¹ : ℝ) ∈ Ioo 0 1)] at h10
+  rw [hd1 ⟨by linarith [hy.1], by linarith [hy.2]⟩]
+  linarith
 
 /-- [DIR], §6.2.2 (claim): $f_\beta'\le0$ on $[\frac14,\frac12]$ (for
 $\beta\in\{\beta_0,\frac12\}$). -/
 theorem deriv_f_QIII_nonpos (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) (y : ℝ)
     (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) : deriv (f_QIII β) y ≤ 0 := by
-  sorry
+  exact caseQ_III_suffices_f_QIII_0 β hβ
+    (fun z hz ↦ (deriv_f_QIII_0_neg_Icc_eighth β hβ z hz).le) y hy
 
 /-- [DIR], §6.2.2: $f_\beta\ge0$ on $[\frac14,\frac12]$ (for $\beta\in\{\beta_0,\frac12\}$). -/
 theorem f_QIII_nonneg (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) (y : ℝ)
     (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) : f_QIII β y ≥ 0 := by
-  sorry
+  have hβ' : β = 2⁻¹ ∨ β = β₀ := hβ.symm
+  have hdiff : ∀ z ∈ Icc (4⁻¹ : ℝ) 2⁻¹, DifferentiableAt ℝ (f_QIII β) z := fun z hz ↦
+    differentiableAt_fQIII hβ' ⟨by linarith [hz.1], by linarith [hz.2]⟩
+  have hanti : AntitoneOn (f_QIII β) (Icc 4⁻¹ 2⁻¹) :=
+    antitoneOn_of_deriv_nonpos (convex_Icc _ _)
+      (fun z hz ↦ (hdiff z hz).continuousAt.continuousWithinAt)
+      (fun z hz ↦ (hdiff z (interior_subset hz)).differentiableWithinAt)
+      fun z hz ↦ deriv_f_QIII_nonpos β hβ z (interior_subset hz)
+  have := hanti hy (show (2⁻¹ : ℝ) ∈ Icc 4⁻¹ 2⁻¹ by norm_num) hy.2
+  rw [f_QIII_half β hβ] at this
+  exact this
 
 section Proof_Lemma_6_4
 /-- [DIR], proof of Lemma 6.4: $2Q_\beta(y-\frac h2)-Q_\beta(y-h)>0$ (by strict concavity of
@@ -431,7 +917,7 @@ $Q_\beta$) for $h,y\in[\frac14,\frac12]$ and $\beta\in\{\beta_0,\frac12\}$. -/
 theorem lemma_6_4_denom_pos (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) (h y : ℝ)
     (hh : h ∈ Icc (4⁻¹ : ℝ) 2⁻¹) (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
     2 * Q β (y - h / 2) - Q β (y - h) > 0 := by
-  sorry
+  exact denomQ_pos hβ.symm hh.2 hy
 
 /-- [DIR], proof of Lemma 6.4: for $h,y\in[\frac14,\frac12]$ and $\beta\in\{\beta_0,\frac12\}$,
 $$\beta\partial_hG_{Q,\beta}(h,y)=\frac{h^{\frac1\beta-1}}{h^{\frac1\beta}+Q_\beta(y)^{\frac1\beta}}
@@ -442,7 +928,11 @@ theorem lemma_6_4_deriv (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) (h y : ℝ
       h ^ (β⁻¹ - 1) / (h ^ β⁻¹ + Q β y ^ β⁻¹)
         - (deriv (Q β) (y - h) - deriv (Q β) (y - h / 2))
           / (2 * Q β (y - h / 2) - Q β (y - h)) := by
-  sorry
+  have hβ' : β = 2⁻¹ ∨ β = β₀ := hβ.symm
+  have hβ0 : β ≠ 0 := by linarith [(mem_Ico_of_caseQ hβ').1]
+  have hd : HasDerivAt (fun h ↦ G_Q β h y) _ h := hasDerivAt_GQl hβ' (by linarith [hh.1]) hh.2 hy
+  rw [hd.deriv, deriv_Q_eq]
+  field_simp
 
 /-- **(6.11)** ([DIR], proof of Lemma 6.4). Multiplying $\beta\partial_hG_{Q,\beta}(h,y)$ by the
 common denominator $(h^{\frac1\beta}+Q_\beta(y)^{\frac1\beta})(2Q_\beta(y-\frac h2)-Q_\beta(y-h))$
@@ -456,7 +946,15 @@ theorem eqn_6_11 (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) (h y : ℝ)
         (2 * Q β (y - h / 2) - Q β (y - h))) =
       h ^ (β⁻¹ - 1) * (2 * Q β (y - h / 2) - Q β (y - h))
         - (deriv (Q β) (y - h) - deriv (Q β) (y - h / 2)) * (h ^ β⁻¹ + Q β y ^ β⁻¹) := by
-  sorry
+  have hβ' : β = 2⁻¹ ∨ β = β₀ := hβ.symm
+  have hQ := Q_pos (y := y) (mem_Icc_one_of_caseQ hβ') ⟨by linarith [hy.1], by linarith [hy.2]⟩
+  have hN : 0 < h ^ β⁻¹ + Q β y ^ β⁻¹ :=
+    add_pos_of_pos_of_nonneg (rpow_pos_of_pos (by linarith [hh.1]) _) (rpow_nonneg hQ.le _)
+  have hD := lemma_6_4_denom_pos β hβ h y hh hy
+  rw [lemma_6_4_deriv β hβ h y hh hy]
+  generalize h ^ β⁻¹ + Q β y ^ β⁻¹ = N at hN ⊢
+  generalize 2 * Q β (y - h / 2) - Q β (y - h) = D at hD ⊢
+  field_simp
 
 /-- [DIR], proof of Lemma 6.4:
 $2Q_\beta(y-\frac h2)-Q_\beta(y-h)=-2\alpha_1h^3+(\alpha_0+4\alpha_1y)h^2+Q_\beta(y)$ and
@@ -466,7 +964,10 @@ theorem lemma_6_4_poly (β h y : ℝ) :
         -2 * α₁ β * h ^ 3 + (α₀ β + 4 * α₁ β * y) * h ^ 2 + Q β y ∧
       deriv (Q β) (y - h) - deriv (Q β) (y - h / 2) =
         -6 * α₁ β * h ^ 2 + (2 * α₀ β + 8 * α₁ β * y) * h := by
-  sorry
+  refine ⟨?_, ?_⟩
+  · rw [Q_eq_affine, Q_eq_affine, Q_eq_affine, α₀, α₁, two_rpow_two_add, two_rpow_one_add]; ring
+  · rw [deriv_Q_eq, Q1f_eq_affine, Q1f_eq_affine, α₀, α₁, two_rpow_two_add, two_rpow_one_add]
+    ring
 
 /-- The fractional polynomial ([DIR], proof of Lemma 6.4)
 $$p_{y,\beta}(h)=4\alpha_1h^3-(\alpha_0+4\alpha_1y)h^2+6\alpha_1Q_\beta(y)^{\frac1\beta}
@@ -481,7 +982,16 @@ theorem eqn_6_11_eq_p_Q (β h y : ℝ) (hh : 0 < h) :
     h ^ (β⁻¹ - 1) * (2 * Q β (y - h / 2) - Q β (y - h))
         - (deriv (Q β) (y - h) - deriv (Q β) (y - h / 2)) * (h ^ β⁻¹ + Q β y ^ β⁻¹) =
       h ^ (β⁻¹ - 1) * p_Q β y h := by
-  sorry
+  rw [(lemma_6_4_poly β h y).1, (lemma_6_4_poly β h y).2, p_Q]
+  have e1 : h ^ β⁻¹ = h ^ (β⁻¹ - 1) * h := by rw [← rpow_add_one hh.ne']; ring_nf
+  have e2 : h ^ (3 - β⁻¹) = h ^ 2 * (h ^ (β⁻¹ - 1))⁻¹ := by
+    rw [show (3 : ℝ) - β⁻¹ = 2 - (β⁻¹ - 1) by ring, rpow_sub hh, rpow_two, div_eq_mul_inv]
+  have e3 : h ^ (2 - β⁻¹) = h * (h ^ (β⁻¹ - 1))⁻¹ := by
+    rw [show (2 : ℝ) - β⁻¹ = 1 - (β⁻¹ - 1) by ring, rpow_sub hh, rpow_one, div_eq_mul_inv]
+  have hu : 0 < h ^ (β⁻¹ - 1) := rpow_pos_of_pos hh _
+  rw [e1, e2, e3]
+  field_simp
+  ring
 
 /-- [DIR], proof of Lemma 6.4: it suffices to show that $p_{y,\beta}$ is strictly decreasing (on
 $[\frac14,\frac12]$), and thus has at most one zero: then $h\mapsto\partial_hG_{Q,\beta}(h,y)$
@@ -490,7 +1000,15 @@ theorem lemma_6_4_of_strictAntiOn (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) 
     (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) (hp : StrictAntiOn (p_Q β y) (Icc 4⁻¹ 2⁻¹)) :
     {h ∈ Icc (4⁻¹ : ℝ) 2⁻¹ | p_Q β y h = 0}.Subsingleton ∧
       {h ∈ Icc (4⁻¹ : ℝ) 2⁻¹ | deriv (fun h ↦ G_Q β h y) h = 0}.Subsingleton := by
-  sorry
+  have key : ∀ h ∈ Icc (4⁻¹ : ℝ) 2⁻¹, deriv (fun h ↦ G_Q β h y) h = 0 → p_Q β y h = 0 :=
+    fun h hh hd ↦ by
+      have := eqn_6_11 β hβ h y hh hy
+      rw [hd, eqn_6_11_eq_p_Q β h y (by linarith [hh.1])] at this
+      have hu : h ^ (β⁻¹ - 1) ≠ 0 := (rpow_pos_of_pos (by linarith [hh.1]) _).ne'
+      simp only [mul_zero, zero_mul] at this
+      exact (mul_eq_zero.1 this.symm).resolve_left hu
+  refine ⟨fun a ha b hb ↦ hp.injOn ha.1 hb.1 (ha.2.trans hb.2.symm), fun a ha b hb ↦ ?_⟩
+  exact hp.injOn ha.1 hb.1 ((key a ha.1 ha.2).trans (key b hb.1 hb.2).symm)
 
 /-- The function $g_{Q,2,\beta}(h,y)=-\partial_hp_{y,\beta}(h)$ ([DIR], proof of Lemma 6.4). -/
 noncomputable def g_Q_2 (β h y : ℝ) : ℝ := -deriv (p_Q β y) h
@@ -500,29 +1018,64 @@ $(h,y)\in[\frac14,\frac12]^2$: $$g_{Q,2,\beta}(h,y)>0.01.$$ -/
 theorem eqn_6_12 (β : ℝ) (hβ : β = 2⁻¹ ∨ β = β₀) (h y : ℝ)
     (hh : h ∈ Icc (4⁻¹ : ℝ) 2⁻¹) (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
     g_Q_2 β h y > 0.01 := by
-  sorry
+  have hd : HasDerivAt (p_Q β y) (-gQ2l β h y) h := hasDerivAt_pQl β y (by linarith [hh.1])
+  rw [g_Q_2, hd.deriv, neg_neg]
+  rcases hβ with rfl | rfl
+  · have := eqn_6_12_cert_h h hh y hy; norm_num at this ⊢; linarith
+  · have := eqn_6_12_cert_b0 h hh y hy; norm_num at this ⊢; linarith
 
 end Proof_Lemma_6_4
 
 /-- [DIR], §6.2.2: on the triangle III ($x=y-h\ge0$, $h\ge\frac14$, $y\le\frac12$,
 $\frac{x+y}2\ge\frac14$), (6.6) is equivalent to $G_{Q,\beta}(h,y)\ge0$ (for
-$\beta\in\{\frac12,\beta_0\}$). -/
+$\beta\in\{\frac12,\beta_0\}$).
+
+**Unused hypothesis.** The paper assumes $\frac{x+y}2\ge\frac14$; this is not needed for the claim
+and is omitted in the Lean statement. -/
 theorem caseQ_III_iff_G_Q (β : ℝ) (hβ : β = 2⁻¹ ∨ β = β₀) (h y : ℝ) (hx : 0 ≤ y - h)
-    (hh : 4⁻¹ ≤ h) (hy : y ≤ 2⁻¹) (hm : y - h / 2 ≥ 4⁻¹) :
+    (hh : 4⁻¹ ≤ h) (hy : y ≤ 2⁻¹) :
     G₁ β (Q β) (y - h) y ≥ 0 ↔ G_Q β h y ≥ 0 := by
-  sorry
+  exact G₁_Q_nonneg_iff hβ (by linarith) (by linarith) ⟨by linarith, hy⟩
 
 /-- **Lemma 6.4** ([DIR]). For $\beta\in\{\beta_0,\frac12\}$ and $y\in[\frac14,\frac12]$, the
 function $h\mapsto\partial_hG_{Q,\beta}(h,y)$ vanishes at most once on the interval
 $[\frac14,\frac12]$. Also, $\partial_hG_{Q,\beta}(\frac14,y)>0$.
 
 **Discrepancy with the paper.** Statement as in the paper; the paper's proof does not show the
-second claim. -/
+second claim. Lean: the second claim is proved from (6.11) and the additional computer-assisted
+check $p_{y,\beta}(\frac14)>\frac1{200}$ for $y\in[\frac14,\frac12]$ (16 intervals,
+`Auto.DIR.pQ_quarter_cert_b0`, `Auto.DIR.pQ_quarter_cert_h`). -/
 theorem lemma_6_4 (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) (y : ℝ)
     (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
     {h ∈ Icc (4⁻¹ : ℝ) 2⁻¹ | deriv (fun h ↦ G_Q β h y) h = 0}.Subsingleton ∧
       deriv (fun h ↦ G_Q β h y) 4⁻¹ > 0 := by
-  sorry
+  have hβ' : β = 2⁻¹ ∨ β = β₀ := hβ.symm
+  have hβ0 : 0 < β := by linarith [(mem_Ico_of_caseQ hβ').1]
+  refine ⟨lemma_6_4_of_strictAntiOn β hβ y hy ?_ |>.2, ?_⟩
+  · refine strictAntiOn_of_deriv_neg (convex_Icc _ _)
+      (fun z hz ↦ (hasDerivAt_pQl β y (by linarith [hz.1])).continuousAt.continuousWithinAt)
+      fun z hz ↦ ?_
+    rw [interior_Icc] at hz
+    have := eqn_6_12 β hβ' z y ⟨hz.1.le, hz.2.le⟩ hy
+    rw [g_Q_2] at this; linarith
+  · have h11 := eqn_6_11 β hβ 4⁻¹ y (by norm_num) hy
+    rw [eqn_6_11_eq_p_Q β 4⁻¹ y (by norm_num)] at h11
+    have hp : (1 / 200 : ℝ) < p_Q β y 4⁻¹ := by
+      rcases hβ with rfl | rfl
+      · exact pQ_quarter_cert_b0 y hy
+      · exact pQ_quarter_cert_h y hy
+    have hQ := Q_pos (y := y) (mem_Icc_one_of_caseQ hβ') ⟨by linarith [hy.1], by linarith [hy.2]⟩
+    have hN : 0 < (4⁻¹ : ℝ) ^ β⁻¹ + Q β y ^ β⁻¹ :=
+      add_pos_of_pos_of_nonneg (rpow_pos_of_pos (by norm_num) _) (rpow_nonneg hQ.le _)
+    have hD := lemma_6_4_denom_pos β hβ 4⁻¹ y (by norm_num) hy
+    have hR : 0 < (4⁻¹ : ℝ) ^ (β⁻¹ - 1) * p_Q β y 4⁻¹ :=
+      mul_pos (rpow_pos_of_pos (by norm_num) _) (by linarith)
+    by_contra hneg
+    have : β * deriv (fun h ↦ G_Q β h y) 4⁻¹ * ((4⁻¹ ^ β⁻¹ + Q β y ^ β⁻¹) *
+        (2 * Q β (y - 4⁻¹ / 2) - Q β (y - 4⁻¹))) ≤ 0 :=
+      mul_nonpos_of_nonpos_of_nonneg (mul_nonpos_of_nonneg_of_nonpos hβ0.le (not_lt.1 hneg))
+        (mul_pos hN hD).le
+    linarith
 
 /-- [DIR], §6.2.2: Lemma 6.4 implies that $h\mapsto G_{Q,\beta}(h,y)$ achieves its minimum on
 $[\frac14,y]$ at $h=\frac14$ or at $h=y$ (for $\beta\in\{\beta_0,\frac12\}$,
@@ -530,13 +1083,52 @@ $y\in[\frac14,\frac12]$). -/
 theorem caseQ_III_min (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) (y : ℝ)
     (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
     ∀ h ∈ Icc 4⁻¹ y, G_Q β h y ≥ min (G_Q β 4⁻¹ y) (G_Q β y y) := by
-  sorry
+  have hβ' : β = 2⁻¹ ∨ β = β₀ := hβ.symm
+  set φ := fun h ↦ G_Q β h y with hφ
+  have hd : ∀ z ∈ Icc (4⁻¹ : ℝ) 2⁻¹, DifferentiableAt ℝ φ z := fun z hz ↦
+    (hasDerivAt_GQl hβ' (by linarith [hz.1]) hz.2 hy).differentiableAt
+  have hc : ContinuousOn φ (Icc 4⁻¹ y) := fun z hz ↦
+    (hd z ⟨hz.1, hz.2.trans hy.2⟩).continuousAt.continuousWithinAt
+  obtain ⟨hsub, hpos⟩ := lemma_6_4 β hβ y hy
+  intro h hh
+  by_contra hlt
+  rw [not_le, lt_min_iff] at hlt
+  obtain ⟨m, hm, hmin⟩ := isCompact_Icc.exists_isMinOn (nonempty_Icc.2 hy.1) hc
+  have hm1 : φ m < φ 4⁻¹ := lt_of_le_of_lt (hmin hh) hlt.1
+  have hm2 : φ m < φ y := lt_of_le_of_lt (hmin hh) hlt.2
+  have hmI : m ∈ Ioo 4⁻¹ y :=
+    ⟨lt_of_le_of_ne hm.1 fun e ↦ by rw [← e] at hm1; exact lt_irrefl _ hm1,
+      lt_of_le_of_ne hm.2 fun e ↦ by rw [e] at hm2; exact lt_irrefl _ hm2⟩
+  have hdm : deriv φ m = 0 :=
+    (hmin.isLocalMin (Icc_mem_nhds hmI.1 hmI.2)).deriv_eq_zero
+  have hslope := hasDerivAt_iff_tendsto_slope.1 (hd 4⁻¹ (by norm_num)).hasDerivAt
+  have hev := (hslope.mono_left (nhdsGT_le_nhdsNE _)).eventually (lt_mem_nhds hpos)
+  obtain ⟨x₁, hx₁, hx₁m⟩ := (hev.and (Ioo_mem_nhdsGT hmI.1)).exists
+  have hφx₁ : φ 4⁻¹ < φ x₁ := by
+    rw [slope_def_field] at hx₁
+    have : 0 < x₁ - 4⁻¹ := by linarith [hx₁m.1]
+    have := (div_pos_iff_of_pos_right this).1 hx₁
+    linarith
+  obtain ⟨M, hM, hmax⟩ := isCompact_Icc.exists_isMaxOn (nonempty_Icc.2 hmI.1.le)
+    (hc.mono (Icc_subset_Icc le_rfl hmI.2.le))
+  have hM1 : φ 4⁻¹ < φ M := hφx₁.trans_le (hmax ⟨hx₁m.1.le, hx₁m.2.le⟩)
+  have hM2 : φ m < φ M := hm1.trans hM1
+  have hMI : M ∈ Ioo 4⁻¹ m :=
+    ⟨lt_of_le_of_ne hM.1 fun e ↦ by rw [← e] at hM1; exact lt_irrefl _ hM1,
+      lt_of_le_of_ne hM.2 fun e ↦ by rw [e] at hM2; exact lt_irrefl _ hM2⟩
+  have hdM : deriv φ M = 0 :=
+    (hmax.isLocalMax (Icc_mem_nhds hMI.1 hMI.2)).deriv_eq_zero
+  have := hsub ⟨⟨hMI.1.le, by linarith [hMI.2, hmI.2, hy.2]⟩, hdM⟩
+    ⟨⟨hmI.1.le, by linarith [hmI.2, hy.2]⟩, hdm⟩
+  linarith [hMI.2]
 
 /-- [DIR], §6.2.2: by the near diagonal case, $G_{Q,\beta}(\frac14,y)\ge0$ for
 $\beta\in\{\beta_0,\frac12\}$ and $y\in[\frac14,\frac12]$. -/
 theorem caseQ_III_G_Q_quarter (β : ℝ) (hβ : β = β₀ ∨ β = 2⁻¹) (y : ℝ)
     (hy : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹) : G_Q β 4⁻¹ y ≥ 0 := by
-  sorry
+  have hβ' : β = 2⁻¹ ∨ β = β₀ := hβ.symm
+  exact (G₁_Q_nonneg_iff hβ' (by norm_num) (by norm_num) hy).1
+    (caseQ_II β hβ' 4⁻¹ y ⟨by norm_num, le_rfl⟩ hy)
 
 end Case_Q_III
 
@@ -544,13 +1136,23 @@ end Case_Q_III
 $\frac{x+y}2\ge\frac14$: $$G^1_\beta[Q_\beta](x,y)\ge0.$$ -/
 theorem eqn_6_6 (β : ℝ) (hβ : β = 2⁻¹ ∨ β = β₀) (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y)
     (hy : y ≤ 2⁻¹) (hxy' : (x + y) / 2 ≥ 4⁻¹) : G₁ β (Q β) x y ≥ 0 := by
-  sorry
+  have hy4 : y ∈ Icc (4⁻¹ : ℝ) 2⁻¹ := ⟨by linarith, hy⟩
+  have hx' : x = y - (y - x) := by ring
+  rcases le_total (y - x) 4⁻¹ with h | h
+  · rw [hx']; exact caseQ_II β hβ (y - x) y ⟨by linarith, h⟩ hy4
+  · rw [hx']
+    refine (caseQ_III_iff_G_Q β hβ (y - x) y (by linarith) h hy).2 ?_
+    have hmin := caseQ_III_min β hβ.symm y hy4 (y - x) ⟨h, by linarith⟩
+    have h1 := caseQ_III_G_Q_quarter β hβ.symm y hy4
+    have h2 := (caseQ_III_G_Q_diag β hβ.symm y hy4).2.2
+      ((caseQ_III_iff_f_QIII β hβ.symm y hy4).2 (f_QIII_nonneg β hβ.symm y hy4))
+    exact le_trans (le_min h1 h2) hmin
 
 /-- **Proposition 6.2** ([DIR], §6.2). For $\beta\in\{\frac12,\beta_0\}$ and
 $0\le x\le y\le\frac12$:
 $$G^1_\beta[\max(L_\beta,Q_\beta)](x,y)\ge0.$$ -/
 theorem prop_6_2 (β : ℝ) (hβ : β = 2⁻¹ ∨ β = β₀) (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y)
     (hy : y ≤ 2⁻¹) : G₁ β (fun t ↦ max (L β t) (Q β t)) x y ≥ 0 := by
-  sorry
+  exact caseQ_reduction β hβ (fun x y hx hxy hy hm ↦ eqn_6_6 β hβ x y hx hxy hy hm) x y hx hxy hy
 
 end Auto.DIR

@@ -9,6 +9,8 @@ public import Isoperim.DIR.«2_Envelope_Functions».Definitions
 public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_5_Case_QJQ»
 public import Isoperim.DIRX.«2_Preliminaries».«2_2_Properties_J»
 public import Isoperim.DIRX.«2_Preliminaries».Definitions
+public import Isoperim.DIRX.«3_Proof_Two_Point_Inequality».«3_3_Case_LJQ_aux»
+public import Isoperim.DIRX.«3_Proof_Two_Point_Inequality».«3_5_Case_QJQ_aux_3»
 
 /-!
 # [DIRX] §3.5 Case QJQ
@@ -52,7 +54,11 @@ $G_1[B_{w_1}](x,y)=\sqrt{(y-x)^2+\mathrm{J}(y)^2}+Q(x)-2Q(\frac{x+y}2)$. -/
 theorem caseQJQ_of_eqn_3_9 (x y : ℝ) (hx : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹) (hy : 2⁻¹ ≤ y)
     (hxy : x + y ≤ 1) (h : (y - x) ^ 2 + J y ^ 2 - (2 * Q ((x + y) / 2) - Q x) ^ 2 ≥ 0) :
     G₁ (BX w₁) x y ≥ 0 := by
-  sorry
+  rw [G₁_half_eq, BX_eq_Q hx, BX_eq_Q (t := (x + y) / 2) ⟨by linarith [hx.1], by linarith⟩,
+    BX_eq_JX ⟨hy, by linarith [hx.1]⟩]
+  have := le_sqrt_of_sq (A := (y - x) ^ 2 + J y ^ 2) (R := 2 * Q ((x + y) / 2) - Q x)
+    (Or.inr (by linarith))
+  linarith
 
 /-- **(3.10)** ([DIRX], §3.5).
 $$h_{QJQ,1}(x,y)=y-x+\mathrm{J}(y)\mathrm{J}'(y)-(2Q(\tfrac{x+y}2)-Q(x))Q'(\tfrac{x+y}2).$$ -/
@@ -64,41 +70,96 @@ $h_{QJQ,1}(x,y)$ (for $y\in[\frac12,\frac34]$). -/
 theorem eqn_3_9_deriv (x y : ℝ) (hy : y ∈ Icc (2⁻¹ : ℝ) (3 / 4)) :
     deriv (fun t ↦ (t - x) ^ 2 + J t ^ 2 - (2 * Q ((x + t) / 2) - Q x) ^ 2) y =
       2 * h_QJQ₁ x y := by
-  sorry
+  have hw := one_sub_w₁_lt_half
+  have hyU : y ∈ Ioo (1 - w₁) 1 := ⟨by linarith [hy.1], by linarith [hy.2]⟩
+  have hj := (JX_diff hyU).1.hasDerivAt
+  have hq := (hasDerivAt_Q 2⁻¹ ((x + y) / 2)).comp y (((hasDerivAt_id' y).const_add x).div_const 2)
+  have H := ((((hasDerivAt_id' y).sub_const x).pow 2).add (hj.pow 2)).sub
+    (((hq.const_mul 2).sub_const (Q x)).pow 2)
+  have key : HasDerivAt (fun t ↦ (t - x) ^ 2 + J t ^ 2 - (2 * Q ((x + t) / 2) - Q x) ^ 2) _ y :=
+    H
+  rw [key.deriv, h_QJQ₁, deriv_Q_eq]
+  simp only [Function.comp_apply]
+  push_cast; ring
 
 /-- **(3.11)** ([DIRX], §3.5) (🚗). Dyadic partitioning shows that $h_{QJQ,1}>10^{-5}$ on
-$[\frac14,\frac12]\times[\frac12,\frac{33}{64}]$. -/
+$[\frac14,\frac12]\times[\frac12,\frac{33}{64}]$.
+
+**Discrepancy with the paper.** Statement as in the paper. With the paper's tight lower bound
+$\underline{h_{QJQ,1}}$ and partition `h_QJQ_1` (451 rectangles) the margin $10^{-5}$ is missed on
+$[\frac14,\frac{33}{128}]\times[\frac{259}{512},\frac{1037}{2048}]$ (bound $\approx8.5\cdot10^{-6}$).
+Lean: that rectangle is split into its four dyadic children (454 rectangles,
+`3_5_Case_QJQ_aux.lean`). -/
 theorem eqn_3_11 (x y : ℝ) (hx : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹)
     (hy : y ∈ Icc (2⁻¹ : ℝ) (33 / 64)) : h_QJQ₁ x y > (10 : ℝ) ^ (-5 : ℤ) := by
-  sorry
+  have h := eqn311_cert x hx y hy
+  rw [h_QJQ₁]; norm_num at h ⊢; linarith
 
 /-- [DIRX], §3.5: (3.9) for $y=\frac12$ reads (using $\mathrm{J}(\frac12)=\frac12$)
 $(\frac12-x)^2+\frac14-(2Q(\frac x2+\frac14)-Q(x))^2\ge0$ for $x\in[\frac14,\frac12]$; this
 inequality was shown in [DIR], §6.5. -/
 theorem eqn_3_9_half (x : ℝ) (hx : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
     (2⁻¹ - x) ^ 2 + 4⁻¹ - (2 * Q (x / 2 + 4⁻¹) - Q x) ^ 2 ≥ 0 := by
-  sorry
+  exact G_QJQ_y_half_nonneg 2⁻¹ (by simp) x hx
 
 /-- [DIRX], §3.5: by (3.11) and the case $y=\frac12$, (3.9) holds for
 $(x,y)\in[\frac14,\frac12]\times[\frac12,\frac{33}{64}]$. -/
 theorem eqn_3_9_low (x y : ℝ) (hx : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹)
     (hy : y ∈ Icc (2⁻¹ : ℝ) (33 / 64)) :
     (y - x) ^ 2 + J y ^ 2 - (2 * Q ((x + y) / 2) - Q x) ^ 2 ≥ 0 := by
-  sorry
+  have hw := one_sub_w₁_lt_half
+  set F := fun t ↦ (t - x) ^ 2 + J t ^ 2 - (2 * Q ((x + t) / 2) - Q x) ^ 2 with hF
+  have hsub : ∀ t ∈ Icc (2⁻¹ : ℝ) (33 / 64), t ∈ Ioo (1 - w₁) 1 := fun t ht ↦
+    ⟨by linarith [ht.1], by linarith [ht.2]⟩
+  have hdiff : ∀ t ∈ Icc (2⁻¹ : ℝ) (33 / 64), DifferentiableAt ℝ F t := fun t ht ↦ by
+    have hj := (JX_diff (hsub t ht)).1
+    have hq : DifferentiableAt ℝ (fun t ↦ Q ((x + t) / 2)) t := by
+      have := (hasDerivAt_Q 2⁻¹ ((x + t) / 2)).comp t
+        (((hasDerivAt_id' t).const_add x).div_const 2)
+      exact this.differentiableAt
+    exact ((((differentiableAt_id.sub_const x).pow 2).add (hj.pow 2)).sub
+      (((hq.const_mul 2).sub_const (Q x)).pow 2))
+  have hmono : MonotoneOn F (Icc 2⁻¹ (33 / 64)) := by
+    refine monotoneOn_of_deriv_nonneg (convex_Icc _ _)
+      (fun t ht ↦ (hdiff t ht).continuousAt.continuousWithinAt)
+      (fun t ht ↦ (hdiff t (interior_subset ht)).differentiableWithinAt) fun t ht ↦ ?_
+    have ht := interior_subset ht
+    rw [hF, eqn_3_9_deriv x t ⟨ht.1, by linarith [ht.2]⟩]
+    have := eqn_3_11 x t hx ht
+    have : (0 : ℝ) < (10 : ℝ) ^ (-5 : ℤ) := by positivity
+    linarith
+  have h1 := hmono ⟨le_rfl, by norm_num⟩ hy hy.1
+  have h0 := eqn_3_9_half x hx
+  have hJ : J 2⁻¹ = 2⁻¹ := (JXw_half_one w₁ ⟨by norm_num [w₁], by norm_num [w₁]⟩).1
+  simp only [hF, hJ, show (x + 2⁻¹) / 2 = x / 2 + 4⁻¹ by ring] at h1
+  norm_num at h0 h1 ⊢
+  linarith
 
 /-- **(3.12)** ([DIRX], §3.5) (🚗). By dyadic partitioning, LHS of (3.9) $>10^{-7}$ on
-$[\frac14,\frac12]\times[\frac{33}{64},\frac34]$. -/
+$[\frac14,\frac12]\times[\frac{33}{64},\frac34]$.
+
+**Discrepancy with the paper.** Statement as in the paper. The paper's tight lower bound
+$\underline{h_{QJQ,2}}$ bounds $Q(\frac{x+y}2)$ by $Q(\frac{\underline x+\overline y}2)$, which needs $Q$
+increasing; this fails where $\frac{x+y}2>t_*\approx0.528$ (161 of the 4498 rectangles of `h_QJQ_2`).
+Lean: corrected bound `Auto.DIRX.hQJQ2lo` (tangent bound `Auto.DIRX.Qmx` of the concave $Q$; equal to
+the paper's bound where its argument is valid) and the partition `h_QJQ_2` refined dyadically to
+4540 rectangles (`3_5_Case_QJQ_aux*.lean`). -/
 theorem eqn_3_12 (x y : ℝ) (hx : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹)
     (hy : y ∈ Icc (33 / 64 : ℝ) (3 / 4)) :
     (y - x) ^ 2 + J y ^ 2 - (2 * Q ((x + y) / 2) - Q x) ^ 2 > (10 : ℝ) ^ (-7 : ℤ) := by
-  sorry
+  have h := eqn312_cert x hx y hy
+  norm_num at h ⊢; linarith
 
 /-- **(3.9)** ([DIRX], §3.5). For all $(x,y)\in[\frac14,\frac12]\times[\frac12,\frac34]$,
 $$(y-x)^2+\mathrm{J}(y)^2-(2Q(\tfrac{x+y}2)-Q(x))^2\ge0.$$ -/
 theorem eqn_3_9 (x y : ℝ) (hx : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹)
     (hy : y ∈ Icc (2⁻¹ : ℝ) (3 / 4)) :
     (y - x) ^ 2 + J y ^ 2 - (2 * Q ((x + y) / 2) - Q x) ^ 2 ≥ 0 := by
-  sorry
+  rcases le_total y (33 / 64) with h | h
+  · exact eqn_3_9_low x y hx ⟨hy.1, h⟩
+  · have := eqn_3_12 x y hx ⟨h, hy.2⟩
+    have : (0 : ℝ) < (10 : ℝ) ^ (-7 : ℤ) := by positivity
+    linarith
 
 /-! ### §3.5 Case QJQ: $\frac14\le x\le\frac12\le y$, $x+y\le1$ -/
 
@@ -106,6 +167,8 @@ theorem eqn_3_9 (x y : ℝ) (hx : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹)
 $x+y\le1$. -/
 theorem caseQJQ (x y : ℝ) (hx : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹) (hy : 2⁻¹ ≤ y)
     (hxy : x + y ≤ 1) : G (BX w₁) x y ≥ 0 := by
-  sorry
+  rw [Auto.DIR.G]
+  exact le_max_of_le_left (caseQJQ_of_eqn_3_9 x y hx hy hxy
+    (eqn_3_9 x y hx ⟨hy, by linarith [hx.1]⟩))
 
 end Auto.DIRX

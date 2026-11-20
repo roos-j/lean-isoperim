@@ -501,4 +501,186 @@ theorem two_rpow_le_two_of_le_one {β : ℝ} (hβ : β ≤ 1) : (2 : ℝ) ^ β �
   have := rpow_le_rpow_of_exponent_le one_le_two hβ
   simpa using this
 
+/-! ### Lemma 5.9: values at $\frac14$ and $\frac12$, the limit at $0$, $\beta$-derivatives -/
+
+/-- $\log4=2\log2$. -/
+theorem log_four_eq : log 4 = 2 * log 2 := by
+  rw [show (4 : ℝ) = 2 ^ 2 by norm_num, log_pow]; norm_num
+
+/-- $L_\beta'(\frac14)=2^\beta(1-\beta/\log4)$ (with $L_\beta'$ written as `L1f`). -/
+theorem L1f_at_quarter (β : ℝ) : L1f β 4⁻¹ = 2 ^ β * (1 - β / log 4) := by
+  have hl : 0 < log 2 := log_pos one_lt_two
+  rw [L1f, inv_inv, log_four_eq, mul_rpow zero_le_two hl.le,
+    rpow_eq_rpow_mul_zpow two_pos (-1 + β) β (-1) (by push_cast; ring),
+    rpow_eq_rpow_mul_zpow hl (-1 + β) β (-1) (by push_cast; ring), rpow_neg hl.le]
+  have ht : 0 < log 2 ^ β := rpow_pos_of_pos hl β
+  simp only [zpow_neg, zpow_one]
+  field_simp
+  ring
+
+/-- $L_\beta''(\frac14)=-2^\beta\beta(1-\beta+\log4)/(\log2)^2$ (with $L_\beta''$ written as
+`L2f`). -/
+theorem L2f_at_quarter (β : ℝ) :
+    L2f β 4⁻¹ = -(2 ^ β * β * (1 - β + log 4)) / (log 2) ^ 2 := by
+  have hl : 0 < log 2 := log_pos one_lt_two
+  rw [L2f, inv_inv, log_four_eq, mul_rpow zero_le_two hl.le,
+    rpow_eq_rpow_mul_zpow two_pos (-2 + β) β (-2) (by push_cast; ring),
+    rpow_eq_rpow_mul_zpow hl (-2 + β) β (-2) (by push_cast; ring), rpow_neg hl.le]
+  have ht : 0 < log 2 ^ β := rpow_pos_of_pos hl β
+  simp only [zpow_neg]
+  field_simp
+  ring
+
+/-- $L_\beta''(\frac12)=-2\beta(1-\beta+\log2)/(\log2)^2$ (with $L_\beta''$ written as `L2f`). -/
+theorem L2f_at_half (β : ℝ) : L2f β 2⁻¹ = -(2 * β * (1 - β + log 2)) / (log 2) ^ 2 := by
+  have hl : 0 < log 2 := log_pos one_lt_two
+  rw [L2f, inv_inv, rpow_eq_rpow_mul_zpow hl (-2 + β) β (-2) (by push_cast; ring),
+    rpow_neg hl.le]
+  have ht : 0 < log 2 ^ β := rpow_pos_of_pos hl β
+  simp only [zpow_neg]
+  field_simp
+
+/-- $L_\beta'(\frac14)-Q_\beta'(\frac14)=2^\beta(\frac43-\beta/\log4)-\frac32$. -/
+theorem deriv_L_sub_Q_quarter (β : ℝ) :
+    deriv (L β) 4⁻¹ - deriv (Q β) 4⁻¹ = 2 ^ β * (4 / 3 - β / log 4) - 3 / 2 := by
+  rw [deriv_L_eq (by norm_num), L1f_at_quarter, deriv_Q_eq, Q1f_eq_affine]
+  ring
+
+/-- $L_\beta''(\frac12)-Q_\beta''(\frac12)=(\log2)^{-2}(2\beta(\beta-1-\log2)+4(\log2)^2)$. -/
+theorem deriv2_L_sub_Q_half (β : ℝ) :
+    deriv (deriv (L β)) 2⁻¹ - deriv (deriv (Q β)) 2⁻¹ =
+      (log 2) ^ (-2 : ℤ) * (2 * β * (β - 1 - log 2) + 4 * (log 2) ^ 2) := by
+  have hl : 0 < log 2 := log_pos one_lt_two
+  rw [deriv2_L_eq (by norm_num), L2f_at_half, deriv2_Q_eq, Q2f_eq_affine]
+  simp only [zpow_neg]
+  field_simp
+  ring
+
+/-- $L_\beta''(\frac14)-Q_\beta''(\frac14)=8(2^\beta-1)+(\log2)^{-2}2^\beta\beta(\beta-1-\log4)$. -/
+theorem deriv2_L_sub_Q_quarter (β : ℝ) :
+    deriv (deriv (L β)) 4⁻¹ - deriv (deriv (Q β)) 4⁻¹ =
+      8 * (2 ^ β - 1) + (log 2) ^ (-2 : ℤ) * (2 ^ β * β * (β - 1 - log 4)) := by
+  have hl : 0 < log 2 := log_pos one_lt_two
+  rw [deriv2_L_eq (by norm_num), L2f_at_quarter, deriv2_Q_eq, Q2f_eq_affine]
+  simp only [zpow_neg]
+  field_simp
+  ring
+
+/-- The $\beta$-derivative of $2^\beta(\frac43-\beta/\log4)-\frac32$ is
+$(\log64)^{-1}2^\beta(-3-\beta\log8+8(\log2)^2)$. -/
+theorem hasDerivAt_quarter_diff (β : ℝ) :
+    HasDerivAt (fun β' : ℝ ↦ 2 ^ β' * (4 / 3 - β' / log 4) - 3 / 2)
+      ((log 64)⁻¹ * 2 ^ β * (-3 - β * log 8 + 8 * (log 2) ^ 2)) β := by
+  have hl : 0 < log 2 := log_pos one_lt_two
+  have h := (((hasDerivAt_id' β).const_rpow two_pos).mul
+    (((hasDerivAt_id' β).div_const (log 4)).const_sub (4 / 3))).sub_const (3 / 2)
+  refine h.congr_deriv ?_
+  rw [log_four_eq, show (64 : ℝ) = 2 ^ 6 by norm_num, show (8 : ℝ) = 2 ^ 3 by norm_num, log_pow,
+    log_pow]
+  field_simp
+  ring
+
+/-- The $\beta$-derivative of $(\log2)^{-2}(2\beta(\beta-1-\log2)+4(\log2)^2)$ is
+$2(\log2)^{-2}(2\beta-1-\log2)$. -/
+theorem hasDerivAt_half_diff2 (β : ℝ) :
+    HasDerivAt (fun β' : ℝ ↦ (log 2) ^ (-2 : ℤ) * (2 * β' * (β' - 1 - log 2) + 4 * (log 2) ^ 2))
+      (2 * (log 2) ^ (-2 : ℤ) * (2 * β - 1 - log 2)) β := by
+  have h := ((((hasDerivAt_id' β).const_mul 2).mul ((hasDerivAt_id' β).sub_const
+    (1 + log 2))).add_const (4 * (log 2) ^ 2)).const_mul ((log 2) ^ (-2 : ℤ))
+  refine (h.congr_of_eventuallyEq (Eventually.of_forall fun b ↦ ?_)).congr_deriv ?_
+  · simp only [Pi.mul_apply]; ring
+  · ring
+
+/-- The $\beta$-derivative of $8(2^\beta-1)+(\log2)^{-2}2^\beta\beta(\beta-1-\log4)$ is
+$\frac{2^\beta}{(\log2)^2}(\beta^2\log2+2\beta-\beta\log2(1+\log4)-1-\log4+8(\log2)^3)$. -/
+theorem hasDerivAt_quarter_diff2 (β : ℝ) :
+    HasDerivAt (fun β' : ℝ ↦ 8 * (2 ^ β' - 1) +
+        (log 2) ^ (-2 : ℤ) * (2 ^ β' * β' * (β' - 1 - log 4)))
+      (2 ^ β / (log 2) ^ 2 * (β ^ 2 * log 2 + 2 * β - β * log 2 * (1 + log 4) - 1 - log 4 +
+        8 * (log 2) ^ 3)) β := by
+  have hl : 0 < log 2 := log_pos one_lt_two
+  have he := (hasDerivAt_id' β).const_rpow two_pos
+  have h := ((he.sub_const 1).const_mul 8).add
+    (((he.mul (hasDerivAt_id' β)).mul ((hasDerivAt_id' β).sub_const (1 + log 4))).const_mul
+      ((log 2) ^ (-2 : ℤ)))
+  refine (h.congr_of_eventuallyEq (Eventually.of_forall fun b ↦ ?_)).congr_deriv ?_
+  · simp only [Pi.add_apply, Pi.mul_apply]; ring
+  · rw [log_four_eq]
+    simp only [zpow_neg, Pi.mul_apply]
+    field_simp
+    ring
+
+/-- $L_\beta'(x)\to\infty$ as $x\to0^+$, for $\beta\in[\frac12,1]$. -/
+theorem tendsto_deriv_L_zero {β : ℝ} (hβ : β ∈ Icc (2⁻¹ : ℝ) 1) :
+    Tendsto (deriv (L β)) (𝓝[>] 0) atTop := by
+  have hl : 0 < log 2 := log_pos one_lt_two
+  have hc : 0 < log 2 ^ (-β) := rpow_pos_of_pos hl _
+  have hu : Tendsto (fun x : ℝ ↦ log x⁻¹) (𝓝[>] 0) atTop := by
+    have : (fun x : ℝ ↦ log x⁻¹) = Neg.neg ∘ log := funext fun x ↦ by simp [log_inv]
+    rw [this]
+    exact tendsto_neg_atBot_atTop.comp tendsto_log_nhdsGT_zero
+  have hlow : Tendsto (fun x : ℝ ↦ log 2 ^ (-β) / 2 * (log x⁻¹) ^ (2⁻¹ : ℝ)) (𝓝[>] 0) atTop :=
+    ((tendsto_rpow_atTop (by norm_num)).comp hu).const_mul_atTop (by positivity)
+  refine tendsto_atTop_mono' _ ?_ hlow
+  filter_upwards [hu.eventually_ge_atTop 2, Ioo_mem_nhdsGT one_pos] with x hx2 hx
+  rw [deriv_L_eq hx, L1f]
+  set u := log x⁻¹
+  have hu0 : 0 < u := by linarith
+  have hA : 0 < u ^ β := rpow_pos_of_pos hu0 β
+  have hB : u ^ (2⁻¹ : ℝ) ≤ u ^ β := rpow_le_rpow_of_exponent_le (by linarith) hβ.1
+  rw [rpow_eq_rpow_mul_zpow hu0 (-1 + β) β (-1) (by push_cast; ring), zpow_neg, zpow_one]
+  have hβu : β / u ≤ 2⁻¹ := by rw [div_le_iff₀ hu0]; linarith [hβ.2]
+  have key : u ^ β / 2 ≤ u ^ β * u⁻¹ * (-β + u) := by
+    rw [show u ^ β * u⁻¹ * (-β + u) = u ^ β * (1 - β / u) by field_simp; ring]
+    nlinarith
+  calc log 2 ^ (-β) / 2 * u ^ (2⁻¹ : ℝ) = log 2 ^ (-β) * (u ^ (2⁻¹ : ℝ) / 2) := by ring
+    _ ≤ log 2 ^ (-β) * (u ^ β / 2) := by gcongr
+    _ ≤ log 2 ^ (-β) * (u ^ β * u⁻¹ * (-β + u)) := by gcongr
+    _ = log 2 ^ (-β) * (u ^ β * u⁻¹) * (-β + u) := by ring
+
+/-- $L_\beta'-Q_\beta'$ has derivative $L_\beta''-Q_\beta''$ (as `L2f`, `Q2f`) on $(0,1)$. -/
+theorem hasDerivAt_deriv_L_sub_Q {β x : ℝ} (hx : x ∈ Ioo (0 : ℝ) 1) :
+    HasDerivAt (fun y ↦ deriv (L β) y - deriv (Q β) y) (L2f β x - Q2f β x) x := by
+  rw [deriv_Q_eq]; exact (hasDerivAt_deriv_L hx).sub (hasDerivAt_Q1f β x)
+
+/-- $L_\beta''-Q_\beta''$ has derivative $L_\beta'''-Q_\beta'''$ (as `L3f`) on $(0,1)$. -/
+theorem hasDerivAt_deriv2_L_sub_Q {β x : ℝ} (hx : x ∈ Ioo (0 : ℝ) 1) :
+    HasDerivAt (fun y ↦ deriv (deriv (L β)) y - deriv (deriv (Q β)) y)
+      (L3f β x + 16 * (3 - 2 ^ (1 + β))) x := by
+  rw [deriv2_Q_eq]
+  exact ((hasDerivAt_deriv2_L hx).sub (hasDerivAt_Q2f β x)).congr_deriv (by ring)
+
+/-- $\log_2\frac32\in[\frac12,\frac{117}{200}]$. -/
+theorem logb_three_halves_mem : log₂ (3 / 2) ∈ Icc (2⁻¹ : ℝ) (117 / 200) := by
+  have hl : 0 < log 2 := log_pos one_lt_two
+  constructor
+  · rw [logb, le_div_iff₀ hl]
+    have : log 2 ≤ log ((3 / 2 : ℝ) ^ 2) := log_le_log two_pos (by norm_num)
+    rw [log_pow] at this; push_cast at this; linarith
+  · rw [logb, div_le_iff₀ hl]
+    have : log ((3 / 2 : ℝ) ^ 200) ≤ log (2 ^ 117) := log_le_log (by positivity) (by norm_num)
+    rw [log_pow, log_pow] at this; push_cast at this; linarith
+
+/-- For $\beta\le\log_2\frac32$, $2^\beta\le\frac32$. -/
+theorem two_rpow_le_three_halves {β : ℝ} (hβ : β ≤ log₂ (3 / 2)) : (2 : ℝ) ^ β ≤ 3 / 2 :=
+  (rpow_le_rpow_of_exponent_le one_le_two hβ).trans_eq (rpow_logb two_pos (by norm_num)
+    (by norm_num))
+
+/-- If $f$ is convex on $(0,q]$, $f(q)<0$, $a\in(0,q]$ and $f(a)\le0$, then $f<0$ on $(a,q)$. -/
+theorem convexOn_neg_of_nonpos {f : ℝ → ℝ} {q a y : ℝ} (hf : ConvexOn ℝ (Ioc 0 q) f)
+    (hq : 0 < q) (hfq : f q < 0) (ha : a ∈ Ioc 0 q) (hfa : f a ≤ 0) (hy : y ∈ Ioo a q) :
+    f y < 0 := by
+  have hqa : 0 < q - a := by linarith [hy.1, hy.2]
+  set θ := (q - y) / (q - a) with hθ
+  have hθ0 : 0 ≤ θ := div_nonneg (by linarith [hy.2]) hqa.le
+  have h1θ : 0 < 1 - θ := by
+    rw [show 1 - θ = (y - a) / (q - a) by rw [hθ]; field_simp; ring]
+    exact div_pos (by linarith [hy.1]) hqa
+  have hcomb : θ • a + (1 - θ) • q = y := by
+    simp only [smul_eq_mul, hθ]; field_simp; ring
+  have h := hf.2 ha ⟨hq, le_rfl⟩ hθ0 h1θ.le (by ring)
+  rw [hcomb] at h
+  simp only [smul_eq_mul] at h
+  nlinarith [mul_nonpos_of_nonneg_of_nonpos hθ0 hfa, mul_neg_of_pos_of_neg h1θ hfq]
+
 end Auto.DIR

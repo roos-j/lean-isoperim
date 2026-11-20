@@ -64,7 +64,7 @@ automation/raw.md
 # Scratch analysis files.
 automation/tmp/
 
-# Editor settings and certificate generators / temp files.
+# Editor settings, certificate generators and temp files.
 .vscode/
 automation/cert/
 __pycache__/

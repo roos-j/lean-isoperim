@@ -8,6 +8,7 @@ module
 public import Isoperim.DIR.«3_Variants_Bobkov_Inequality».«3_0_Variants_Bobkov_Inequality»
 public import Isoperim.DIR.«5_Auxiliary_Estimates».«5_4_Lower_Bounds_Gaussian_Isoperimetric_Profile»
 public import Isoperim.DIRX.«2_Preliminaries».Definitions
+public import Isoperim.DIRX.«2_Preliminaries».«2_2_Properties_J_aux»
 
 /-!
 # [DIRX] §2.2 Properties of the function J
@@ -56,16 +57,57 @@ theorem JX_contDiff :
 /-- [DIRX], §2.2: $\mathrm{J}\cdot\mathrm{J}''=-\gamma$ (on $(1-w_1,1)\supset[\frac12,1)$, where
 $\mathrm{J}$ is smooth). -/
 theorem JX_mul_deriv2 : ∀ x ∈ Ioo (1 - w₁) 1, J x * deriv (deriv J) x = -γ := by
-  sorry
+  have hJ : J = fun x ↦ κX * gJw w₁ x := funext JX_eq
+  have hD : deriv J = fun x ↦ κX * deriv (gJw w₁) x := by rw [hJ]; exact deriv_const_mul_field' _
+  have hD2 : deriv (deriv J) = fun x ↦ κX * deriv (deriv (gJw w₁)) x := by
+    rw [hD]; exact deriv_const_mul_field' _
+  intro x hx
+  have h := gJw_deriv2_mul w₁_pos hx
+  rw [hD2, JX_eq, γX_eq_κX]
+  linear_combination κX ^ 2 * h
 
 /-- [DIRX], §2.2: $\gamma\in[1.945,1.946]$. -/
 theorem γX_mem : γ ∈ Icc (1.945 : ℝ) 1.946 := by
-  sorry
+  obtain ⟨h1, h2⟩ := gJw_w₁_half_mem
+  rw [γX_eq]
+  set g := gJw w₁ 2⁻¹
+  have hg : 0 < g := by linarith
+  constructor
+  · have := inv_anti₀ (by positivity) (show 2 * g ^ 2 ≤ 2 * 0.507 ^ 2 by nlinarith)
+    norm_num at this ⊢; linarith
+  · have := inv_anti₀ (by norm_num) (show 2 * 0.5069 ^ 2 ≤ 2 * g ^ 2 by nlinarith)
+    norm_num at this ⊢; linarith
 
 /-- [DIRX], §2.2: in particular, $\mathrm{J}$ is concave (on $[\frac12,1]$), and
 $\mathrm{J}\ge0$ there. -/
 theorem JX_concave : ConcaveOn ℝ (Icc 2⁻¹ 1) J ∧ ∀ x ∈ Icc (2⁻¹ : ℝ) 1, 0 ≤ J x := by
-  sorry
+  have hJ : J = fun x ↦ κX * gJw w₁ x := funext JX_eq
+  have hD : deriv J = fun x ↦ κX * deriv (gJw w₁) x := by rw [hJ]; exact deriv_const_mul_field' _
+  have hD2 : deriv (deriv J) = fun x ↦ κX * deriv (deriv (gJw w₁)) x := by
+    rw [hD]; exact deriv_const_mul_field' _
+  have hw : (1 : ℝ) - w₁ < 2⁻¹ := by norm_num [w₁]
+  have hsub : Ioo (2⁻¹ : ℝ) 1 ⊆ Ioo (1 - w₁) 1 := Ioo_subset_Ioo_left hw.le
+  have hd1 : ∀ x ∈ Ioo (1 - w₁) 1, HasDerivAt J (κX * deriv (gJw w₁) x) x := fun x hx ↦ by
+    rw [hJ, (hasDerivAt_gJw w₁_pos hx).deriv]; exact (hasDerivAt_gJw w₁_pos hx).const_mul κX
+  have hd2 : ∀ x ∈ Ioo (1 - w₁) 1, HasDerivAt (deriv J) (κX * deriv (deriv (gJw w₁)) x) x :=
+    fun x hx ↦ by
+      rw [hD, (hasDerivAt_deriv_gJw w₁_pos hx).deriv]
+      exact (hasDerivAt_deriv_gJw w₁_pos hx).const_mul κX
+  refine ⟨concaveOn_of_deriv2_nonpos (convex_Icc _ _)
+    (JX_contDiff.2.mono (Icc_subset_Icc hw.le le_rfl))
+    (fun x hx ↦ ?_) (fun x hx ↦ ?_) (fun x hx ↦ ?_), fun x hx ↦ ?_⟩ <;>
+    try rw [interior_Icc] at hx
+  · exact (hd1 x (hsub hx)).differentiableAt.differentiableWithinAt
+  · exact (hd2 x (hsub hx)).differentiableAt.differentiableWithinAt
+  · have h := JX_mul_deriv2 x (hsub hx)
+    have hp : 0 < J x := by rw [JX_eq]; exact mul_pos κX_pos (gJw_pos w₁_pos (hsub hx))
+    have hγ : 0 < γ := by linarith [γX_mem.1]
+    change deriv (deriv J) x ≤ 0
+    nlinarith
+  · rw [JX_eq]
+    have := gProf_nonneg (w₁⁻¹ * (1 - x))
+    have := w₁_pos
+    exact mul_nonneg κX_pos.le (by unfold gJw; positivity)
 
 section Proof_Eqn_2_6
 /-- [DIRX], proof of (2.6) (cited from [DIR], Proposition 5.11, `Auto.DIR.prop_5_11`): for
@@ -106,10 +148,48 @@ theorem eqn_2_6 (x : ℝ) (hx : x ∈ Ioc (0 : ℝ) 64⁻¹) : J (1 - x) > x * �
 strictly decreasing (on $(1-w_1,1)\supset[\frac12,1)$). -/
 theorem deriv_JX : deriv J x₁ = 0 ∧ (∀ x ∈ Ioo (1 - w₁) 1, deriv (deriv J) x < 0) ∧
     StrictAntiOn (deriv J) (Ioo (1 - w₁) 1) := by
-  sorry
+  have hJ : J = fun x ↦ κX * gJw w₁ x := funext JX_eq
+  have hD : deriv J = fun x ↦ κX * deriv (gJw w₁) x := by rw [hJ]; exact deriv_const_mul_field' _
+  have hD2 : deriv (deriv J) = fun x ↦ κX * deriv (deriv (gJw w₁)) x := by
+    rw [hD]; exact deriv_const_mul_field' _
+  have hd2 : ∀ x ∈ Ioo (1 - w₁) 1, HasDerivAt (deriv J) (κX * deriv (deriv (gJw w₁)) x) x :=
+    fun x hx ↦ by
+      rw [hD, (hasDerivAt_deriv_gJw w₁_pos hx).deriv]
+      exact (hasDerivAt_deriv_gJw w₁_pos hx).const_mul κX
+  have hneg : ∀ x ∈ Ioo (1 - w₁) 1, deriv (deriv J) x < 0 := fun x hx ↦ by
+    have h := JX_mul_deriv2 x hx
+    have hp : 0 < J x := by rw [JX_eq]; exact mul_pos κX_pos (gJw_pos w₁_pos hx)
+    have hγ : 0 < γ := by linarith [γX_mem.1]
+    nlinarith
+  refine ⟨?_, hneg, strictAntiOn_of_deriv_neg (convex_Ioo _ _)
+    (fun x hx ↦ (hd2 x hx).continuousAt.continuousWithinAt) fun x hx ↦ ?_⟩
+  · rw [hD, x₁]; simp only [(deriv_gJw_sign w₁_pos).1, mul_zero]
+  · rw [interior_Ioo] at hx; exact hneg x hx
 
 /-- [DIRX], §2.2: $\mathrm{J}$ is increasing on $[\frac12,x_1]$ and decreasing on $[x_1,1]$. -/
 theorem JX_mono : MonotoneOn J (Icc 2⁻¹ x₁) ∧ AntitoneOn J (Icc x₁ 1) := by
-  sorry
+  have hJ : J = fun x ↦ κX * gJw w₁ x := funext JX_eq
+  have hD : deriv J = fun x ↦ κX * deriv (gJw w₁) x := by rw [hJ]; exact deriv_const_mul_field' _
+  have hD2 : deriv (deriv J) = fun x ↦ κX * deriv (deriv (gJw w₁)) x := by
+    rw [hD]; exact deriv_const_mul_field' _
+  have hw : (1 : ℝ) - w₁ < 2⁻¹ := by norm_num [w₁]
+  have hx₁ : x₁ = 1 - w₁ / 2 := rfl
+  have hx₁1 : x₁ < 1 := by rw [hx₁]; norm_num [w₁]
+  have hx₁2 : 2⁻¹ < x₁ := by rw [hx₁]; norm_num [w₁]
+  have hd1 : ∀ x ∈ Ioo (1 - w₁) 1, HasDerivAt J (κX * deriv (gJw w₁) x) x := fun x hx ↦ by
+    rw [hJ, (hasDerivAt_gJw w₁_pos hx).deriv]; exact (hasDerivAt_gJw w₁_pos hx).const_mul κX
+  have hc := JX_contDiff.2
+  obtain ⟨-, hpos, hneg⟩ := deriv_gJw_sign w₁_pos
+  refine ⟨monotoneOn_of_deriv_nonneg (convex_Icc _ _)
+      (hc.mono (Icc_subset_Icc hw.le hx₁1.le)) (fun x hx ↦ ?_) fun x hx ↦ ?_,
+    antitoneOn_of_deriv_nonpos (convex_Icc _ _)
+      (hc.mono (Icc_subset_Icc (by linarith) le_rfl)) (fun x hx ↦ ?_) fun x hx ↦ ?_⟩ <;>
+    rw [interior_Icc] at hx
+  · exact (hd1 x ⟨by linarith [hx.1], by linarith [hx.2]⟩).differentiableAt.differentiableWithinAt
+  · rw [hD]; exact mul_nonneg κX_pos.le (hpos x ⟨by linarith [hx.1], by rw [← hx₁]; exact hx.2⟩).le
+  · exact (hd1 x ⟨by linarith [hx.1], hx.2⟩).differentiableAt.differentiableWithinAt
+  · rw [hD]
+    exact mul_nonpos_of_nonneg_of_nonpos κX_pos.le
+      (hneg x ⟨by rw [← hx₁]; exact hx.1, hx.2⟩).le
 
 end Auto.DIRX

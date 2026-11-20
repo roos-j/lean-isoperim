@@ -45,7 +45,8 @@ theorem lemma_5_2_chain (𝓛 : ℝ → ℝ → ℝ → ℝ → ℝ) (a b : ℝ)
     𝓛 x y (max (B₁ x) (B₂ x)) (max (B₁ y) (B₂ y)) ≥ 𝓛 x y (B₁ x) (B₁ y) ∧
       𝓛 x y (B₁ x) (B₁ y) ≥ B₁ ((x + y) / 2) ∧
       B₁ ((x + y) / 2) = max (B₁ ((x + y) / 2)) (B₂ ((x + y) / 2)) := by
-  sorry
+  exact ⟨h𝓛 x y hx hxy hy _ _ _ _ (le_max_left _ _) (le_max_left _ _), h₁,
+    (max_eq_left hB).symm⟩
 
 end Proof_Lemma_5_2
 
@@ -64,12 +65,21 @@ theorem lemma_5_2 (𝓛 : ℝ → ℝ → ℝ → ℝ → ℝ) (a b : ℝ) (h�
     ∀ x y, a ≤ x → x ≤ y → y ≤ b →
       𝓛 x y (max (B₁ x) (B₂ x)) (max (B₁ y) (B₂ y)) ≥
         max (B₁ ((x + y) / 2)) (B₂ ((x + y) / 2)) := by
-  sorry
+  intro x y hx hxy hy
+  rcases le_or_gt (B₂ ((x + y) / 2)) (B₁ ((x + y) / 2)) with hB | hB
+  · obtain ⟨c₁, c₂, c₃⟩ :=
+      lemma_5_2_chain 𝓛 a b h𝓛 B₁ B₂ x y hx hxy hy (h₁ x y hx hxy hy hB) hB
+    rw [← c₃]; exact c₂.trans c₁
+  · obtain ⟨c₁, c₂, c₃⟩ :=
+      lemma_5_2_chain 𝓛 a b h𝓛 B₂ B₁ x y hx hxy hy (h₂ x y hx hxy hy hB) hB.le
+    rw [max_comm (B₁ x), max_comm (B₁ y), max_comm (B₁ _), ← c₃]; exact c₂.trans c₁
 
 /-- [DIR], §5.2: on the diagonal we have $G^1_\beta[B](x,x)=0$ (for $B(x)\ge0$, $\beta>0$). -/
 theorem G₁_diag (β : ℝ) (hβ : 0 < β) (B : ℝ → ℝ) (x : ℝ) (hB : 0 ≤ B x) :
     G₁ β B x x = 0 := by
-  sorry
+  rw [G₁, sub_self, zero_rpow (inv_ne_zero hβ.ne'), zero_add, rpow_inv_rpow hB hβ.ne',
+    add_self_div_two]
+  ring
 
 section Proof_Lemma_5_4
 /-- [DIR], proof of Lemma 5.4: it follows from Taylor's theorem that for $a\ge0$,

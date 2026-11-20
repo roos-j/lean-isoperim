@@ -9,6 +9,7 @@ public import Isoperim.DIR.«2_Envelope_Functions».Definitions
 public import Isoperim.DIR.«3_Variants_Bobkov_Inequality».«3_0_Variants_Bobkov_Inequality»
 public import Isoperim.DIRX.«2_Preliminaries».«2_2_Properties_J»
 public import Isoperim.DIRX.«2_Preliminaries».Definitions
+public import Isoperim.DIRX.«3_Proof_Two_Point_Inequality».«3_1_Case_J_aux»
 
 /-!
 # [DIRX] §3 Proof of the two-point inequality, §3.1 Case J
@@ -51,7 +52,10 @@ $G_1[B_{w_1}](x,y)=\sqrt{(y-x)^2+\mathrm{J}(y)^2}+\mathrm{J}(x)-2\mathrm{J}(\fra
 it suffices to show (3.1)). -/
 theorem caseJ_G₁_eq (x y : ℝ) (hx : 2⁻¹ ≤ x) (hxy : x ≤ y) (hy : y ≤ 1) :
     G₁ (BX w₁) x y = √((y - x) ^ 2 + J y ^ 2) + J x - 2 * J ((x + y) / 2) := by
-  sorry
+  have hs : ∀ a : ℝ, a ^ (2⁻¹ : ℝ) = √a := fun a ↦ by rw [sqrt_eq_rpow]; norm_num
+  simp only [Auto.DIR.G₁, inv_inv, rpow_two, hs]
+  rw [BX_eq_JX ⟨by linarith, hy⟩, BX_eq_JX ⟨hx, by linarith⟩,
+    BX_eq_JX ⟨by linarith, by linarith⟩]
 
 /-- $c_*=\min(c-\frac12,1-c)$ ([DIRX], §3.1). -/
 noncomputable def cStar (c : ℝ) : ℝ := min (c - 2⁻¹) (1 - c)
@@ -60,14 +64,25 @@ noncomputable def cStar (c : ℝ) : ℝ := min (c - 2⁻¹) (1 - c)
 $2\mathrm{J}(c)-\mathrm{J}(c-u)$ is non-negative (for $c\in[\frac12,1]$, $0\le u\le c_*$). -/
 theorem caseJ_rhs_nonneg (c u : ℝ) (hc : c ∈ Icc (2⁻¹ : ℝ) 1) (hu : u ∈ Icc 0 (cStar c)) :
     2 * J c - J (c - u) ≥ 0 := by
-  sorry
+  have hcs1 : u ≤ c - 2⁻¹ := hu.2.trans (min_le_left _ _)
+  have hcs2 : u ≤ 1 - c := hu.2.trans (min_le_right _ _)
+  obtain ⟨hconc, hnn⟩ := JX_concave
+  have h := hconc.2 (show c - u ∈ Icc (2⁻¹ : ℝ) 1 from ⟨by linarith, by linarith [hc.2, hu.1]⟩)
+    (show c + u ∈ Icc (2⁻¹ : ℝ) 1 from ⟨by linarith [hc.1, hu.1], by linarith⟩)
+    (by norm_num : (0 : ℝ) ≤ 2⁻¹) (by norm_num : (0 : ℝ) ≤ 2⁻¹) (by norm_num)
+  simp only [smul_eq_mul] at h
+  rw [show 2⁻¹ * (c - u) + 2⁻¹ * (c + u) = c by ring] at h
+  have := hnn (c + u) ⟨by linarith [hc.1, hu.1], by linarith⟩
+  linarith
 
 /-- [DIRX], §3.1: we may equivalently show
 $4u^2+\mathrm{J}(c+u)^2\ge4\mathrm{J}(c)^2+\mathrm{J}(c-u)^2-4\mathrm{J}(c)\mathrm{J}(c-u)$. -/
 theorem caseJ_sq_iff (c u : ℝ) (hc : c ∈ Icc (2⁻¹ : ℝ) 1) (hu : u ∈ Icc 0 (cStar c)) :
     √(4 * u ^ 2 + J (c + u) ^ 2) ≥ 2 * J c - J (c - u) ↔
       4 * u ^ 2 + J (c + u) ^ 2 ≥ 4 * J c ^ 2 + J (c - u) ^ 2 - 4 * J c * J (c - u) := by
-  sorry
+  have hR := caseJ_rhs_nonneg c u hc hu
+  rw [ge_iff_le, Real.le_sqrt hR (by positivity), ge_iff_le]
+  constructor <;> intro h <;> nlinarith
 
 /-- ([DIRX], §3.1).
 $F_c(u)=\mathrm{J}(c+u)^2-\mathrm{J}(c-u)^2+4u^2-4\mathrm{J}(c)^2+4\mathrm{J}(c)\mathrm{J}(c-u)$.
@@ -83,7 +98,12 @@ theorem FX_deriv (c u : ℝ) (hc : c ∈ Icc (2⁻¹ : ℝ) 1) (hu : u ∈ Icc 0
     (hcu : c + u < 1) :
     deriv (FX c) u = 2 * J (c + u) * deriv J (c + u) + 2 * J (c - u) * deriv J (c - u) + 8 * u -
       4 * J c * deriv J (c - u) := by
-  sorry
+  have hcs1 : u ≤ c - 2⁻¹ := hu.2.trans (min_le_left _ _)
+  have hcs2 : u ≤ 1 - c := hu.2.trans (min_le_right _ _)
+  have h := hasDerivAt_FXl (c := c) (v := u)
+    ⟨by linarith [one_sub_w₁_lt_half, hc.1, hu.1], hcu⟩
+    ⟨by linarith [one_sub_w₁_lt_half], by linarith [hu.1]⟩
+  exact h.deriv
 
 /-- [DIRX], §3.1: we compute, using $\mathrm{J}\cdot\mathrm{J}''=-\gamma$,
 $$F_c''(u)=2(\mathrm{J}'(c+u)^2-\mathrm{J}'(c-u)^2)+8-4\gamma\frac{\mathrm{J}(c)}{\mathrm{J}(c-u)}$$
@@ -92,33 +112,65 @@ theorem FX_deriv2 (c u : ℝ) (hc : c ∈ Icc (2⁻¹ : ℝ) 1) (hu : u ∈ Icc 
     (hcu : c + u < 1) :
     deriv (deriv (FX c)) u =
       2 * (deriv J (c + u) ^ 2 - deriv J (c - u) ^ 2) + 8 - 4 * γ * (J c / J (c - u)) := by
-  sorry
+  have hcs1 : u ≤ c - 2⁻¹ := hu.2.trans (min_le_left _ _)
+  have hcs2 : u ≤ 1 - c := hu.2.trans (min_le_right _ _)
+  have hw := one_sub_w₁_lt_half
+  have hU : ∀ᶠ v in nhds u, c + v ∈ Ioo (1 - w₁) 1 ∧ c - v ∈ Ioo (1 - w₁) 1 := by
+    have o : IsOpen {v : ℝ | c + v ∈ Ioo (1 - w₁) 1 ∧ c - v ∈ Ioo (1 - w₁) 1} :=
+      (isOpen_Ioo.preimage (by fun_prop)).inter (isOpen_Ioo.preimage (by fun_prop))
+    exact o.mem_nhds ⟨⟨by linarith [hc.1, hu.1], hcu⟩, ⟨by linarith, by linarith [hu.1]⟩⟩
+  have hev : deriv (FX c) =ᶠ[nhds u] FXd c := by
+    filter_upwards [hU] with v hv using (hasDerivAt_FXl hv.1 hv.2).deriv
+  rw [hev.deriv_eq, (hasDerivAt_FXd hU.self_of_nhds.1 hU.self_of_nhds.2).deriv, FXdd]
 
 /-- [DIRX], §3.1: $F_c(0)=F_c'(0)=0$ (for $c\in[\frac12,1)$). -/
 theorem FX_zero (c : ℝ) (hc : c ∈ Ico (2⁻¹ : ℝ) 1) :
     FX c 0 = 0 ∧ deriv (FX c) 0 = 0 := by
-  sorry
+  refine ⟨by simp only [FX, add_zero, sub_zero]; ring, ?_⟩
+  have h0 : (0 : ℝ) ∈ Icc 0 (cStar c) := ⟨le_rfl, le_min (by linarith [hc.1]) (by linarith [hc.2])⟩
+  rw [FX_deriv c 0 ⟨hc.1, hc.2.le⟩ h0 (by simpa using hc.2)]
+  simp only [add_zero, sub_zero]; ring
 
 section Case_I
 /-! ### Case I: $x=c-u\ge x_1$ -/
 
 /-- [DIRX], §3.1, Case I: $\gamma\le2$. -/
 theorem γX_le_two : γ ≤ 2 := by
-  sorry
+  linarith [γX_mem.2]
 
 /-- [DIRX], §3.1, Case I: if $x=c-u\ge x_1$ then, since $\mathrm{J}$ is decreasing on $[x_1,1]$
 and $\gamma\le2$, $F_c''(u)\ge2(\mathrm{J}'(y)^2-\mathrm{J}'(x)^2)$ with $y=c+u$. -/
 theorem caseJ_I_lower (c u : ℝ) (hc : c ∈ Icc (2⁻¹ : ℝ) 1) (hu : u ∈ Icc 0 (cStar c))
     (hcu : c + u < 1) (hx : c - u ≥ x₁) :
     deriv (deriv (FX c)) u ≥ 2 * (deriv J (c + u) ^ 2 - deriv J (c - u) ^ 2) := by
-  sorry
+  have hcs1 : u ≤ c - 2⁻¹ := hu.2.trans (min_le_left _ _)
+  have hcs2 : u ≤ 1 - c := hu.2.trans (min_le_right _ _)
+  rw [FX_deriv2 c u hc hu hcu]
+  have hxw : c - u ∈ Ioo (1 - w₁) 1 := ⟨by linarith [one_sub_w₁_lt_half], by linarith [hu.1]⟩
+  have hp := JX_pos hxw
+  have hJ : J c ≤ J (c - u) := (JX_mono.2 ⟨hx, by linarith [hu.1]⟩
+    ⟨by linarith [hu.1], hc.2⟩ (by linarith [hu.1]))
+  have hr : J c / J (c - u) ≤ 1 := (div_le_one hp).2 hJ
+  have hr0 : 0 ≤ J c / J (c - u) :=
+    div_nonneg (JX_concave.2 c hc) hp.le
+  have hγ := γX_pos
+  nlinarith [γX_le_two, mul_le_mul_of_nonneg_left hr hγ.le]
 
 /-- [DIRX], §3.1, Case I: since $(\mathrm{J}')^2$ is convex ([DIR], Lemma 3.2), with $x=c-u$,
 $y=c+u$: $\mathrm{J}'(y)^2-\mathrm{J}'(x)^2\ge2u((\mathrm{J}')^2)'(x)$. -/
 theorem caseJ_I_convex (c u : ℝ) (hc : c ∈ Icc (2⁻¹ : ℝ) 1) (hu : u ∈ Icc 0 (cStar c))
     (hcu : c + u < 1) :
     deriv J (c + u) ^ 2 - deriv J (c - u) ^ 2 ≥ 2 * u * deriv (fun t ↦ deriv J t ^ 2) (c - u) := by
-  sorry
+  have hcs1 : u ≤ c - 2⁻¹ := hu.2.trans (min_le_left _ _)
+  have hcs2 : u ≤ 1 - c := hu.2.trans (min_le_right _ _)
+  have hw := one_sub_w₁_lt_half
+  have hx : c - u ∈ Ioo (1 - w₁) 1 := ⟨by linarith, by linarith [hu.1]⟩
+  have hy : c + u ∈ Ioo (1 - w₁) 1 := ⟨by linarith [hc.1, hu.1], hcu⟩
+  rcases eq_or_lt_of_le hu.1 with h0 | hpos
+  · rw [← h0]; simp
+  have := convexOn_sq_deriv_JX.deriv_le_slope hx hy (by linarith) ((JX_diff hx).2.pow 2)
+  rw [slope_def_field, show c + u - (c - u) = 2 * u by ring, le_div_iff₀ (by linarith)] at this
+  linarith
 
 /-- [DIRX], §3.1, Case I: $((\mathrm{J}')^2)'=2\mathrm{J}'\cdot\mathrm{J}''
 =-2\gamma\mathrm{J}'/\mathrm{J}\ge0$ on $[x_1,1)$, since $\mathrm{J}'\le0$ there. -/
@@ -126,12 +178,25 @@ theorem caseJ_I_sq_deriv (t : ℝ) (ht : t ∈ Ico x₁ 1) :
     deriv (fun s ↦ deriv J s ^ 2) t = 2 * deriv J t * deriv (deriv J) t ∧
       2 * deriv J t * deriv (deriv J) t = -2 * γ * deriv J t / J t ∧
       -2 * γ * deriv J t / J t ≥ 0 ∧ deriv J t ≤ 0 := by
-  sorry
+  have ht' : t ∈ Ioo (1 - w₁) 1 :=
+    ⟨by linarith [one_sub_w₁_lt_half, x₁_mem.1, ht.1], ht.2⟩
+  have hp := JX_pos ht'
+  have hd := deriv_JX_nonpos ht
+  refine ⟨?_, ?_, ?_, hd⟩
+  · rw [((JX_diff ht').2.hasDerivAt.fun_pow 2).deriv]; push_cast; ring
+  · rw [deriv2_JX ht']; field_simp
+  · have : 0 ≤ -2 * γ * deriv J t := by nlinarith [γX_pos]
+    exact div_nonneg this hp.le
 
 /-- [DIRX], §3.1, Case I: this shows $F_c''(u)\ge0$ when $x=c-u\ge x_1$. -/
 theorem caseJ_I (c u : ℝ) (hc : c ∈ Icc (2⁻¹ : ℝ) 1) (hu : u ∈ Icc 0 (cStar c))
     (hcu : c + u < 1) (hx : c - u ≥ x₁) : deriv (deriv (FX c)) u ≥ 0 := by
-  sorry
+  have h1 := caseJ_I_lower c u hc hu hcu hx
+  have h2 := caseJ_I_convex c u hc hu hcu
+  have h3 := (caseJ_I_sq_deriv (c - u) ⟨hx, by linarith [hu.1]⟩)
+  rw [h3.1, h3.2.1] at h2
+  have := mul_nonneg (mul_nonneg (by norm_num : (0 : ℝ) ≤ 2) hu.1) h3.2.2.1
+  linarith
 
 end Case_I
 
@@ -149,13 +214,71 @@ theorem caseJ_II (c u : ℝ) (hc : c ∈ Icc (2⁻¹ : ℝ) 1) (hu : u ∈ Icc 0
       2 * deriv J (c + u) ^ 2 - 2 * deriv J (c - u) ^ 2 + 8 -
           4 * γ * J ((c - u + (c + u)) / 2) / J (c - u) ≥
         -2 * deriv J 2⁻¹ ^ 2 + 8 - 4 * γ * J x₁ / J 2⁻¹ := by
-  sorry
+  have hcs1 : u ≤ c - 2⁻¹ := hu.2.trans (min_le_left _ _)
+  have hcs2 : u ≤ 1 - c := hu.2.trans (min_le_right _ _)
+  have hw := one_sub_w₁_lt_half
+  refine ⟨by rw [FX_deriv2 c u hc hu hcu, show (c - u + (c + u)) / 2 = c by ring]; ring, ?_⟩
+  rw [show (c - u + (c + u)) / 2 = c by ring]
+  have hxw : c - u ∈ Ioo (1 - w₁) 1 := ⟨by linarith [hx.1], by linarith [hu.1]⟩
+  have hp := JX_pos hxw
+  have hh : (2⁻¹ : ℝ) ∈ Ioo (1 - w₁) 1 := ⟨hw, by norm_num⟩
+  have hp2 := JX_pos hh
+  obtain ⟨hm, ha⟩ := JX_mono
+  obtain ⟨-, -, hanti⟩ := deriv_JX
+  have hd1 : 0 ≤ deriv J (c - u) := deriv_JX_nonneg ⟨hxw.1, hx.2⟩
+  have hd2 : deriv J (c - u) ≤ deriv J 2⁻¹ := hanti.antitoneOn hh hxw hx.1
+  have hsq : deriv J (c - u) ^ 2 ≤ deriv J 2⁻¹ ^ 2 := pow_le_pow_left₀ hd1 hd2 2
+  have hJc : J c ≤ J x₁ := by
+    rcases le_total c x₁ with h | h
+    · exact hm ⟨hc.1, h⟩ ⟨x₁_mem.1.le, le_rfl⟩ h
+    · exact ha ⟨le_rfl, x₁_mem.2.le⟩ ⟨h, hc.2⟩ h
+  have hJx : J 2⁻¹ ≤ J (c - u) := hm ⟨le_rfl, x₁_mem.1.le⟩ hx (by linarith [hx.1])
+  have hγ := γX_pos
+  have hJc0 : 0 ≤ J c := JX_concave.2 c hc
+  have hq : γ * J c / J (c - u) ≤ γ * J x₁ / J 2⁻¹ := by
+    rw [div_le_div_iff₀ hp hp2]
+    nlinarith [mul_le_mul hJc hJx hp2.le (hJc0.trans hJc), mul_le_mul_of_nonneg_left
+      (mul_le_mul hJc hJx hp2.le (hJc0.trans hJc)) hγ.le]
+  have e1 : 4 * γ * J c / J (c - u) = 4 * (γ * J c / J (c - u)) := by ring
+  have e2 : 4 * γ * J x₁ / J 2⁻¹ = 4 * (γ * J x₁ / J 2⁻¹) := by ring
+  rw [e1, e2]
+  nlinarith [sq_nonneg (deriv J (c + u))]
 
 /-- [DIRX], §3.1, Case II:
 $-2\mathrm{J}'(\frac12)^2+8-4\gamma\mathrm{J}(x_1)/\mathrm{J}(\frac12)\in[0.08,0.09]$. -/
 theorem caseJ_II_eval :
     -2 * deriv J 2⁻¹ ^ 2 + 8 - 4 * γ * J x₁ / J 2⁻¹ ∈ Icc (0.08 : ℝ) 0.09 := by
-  sorry
+  obtain ⟨g1, g2⟩ := gJw_w₁_half_fine
+  obtain ⟨i1, i2⟩ := gInv_16_29
+  obtain ⟨p1, p2⟩ := sqrt_pi_bounds_fine
+  have hJh : J 2⁻¹ = 2⁻¹ := (JXw_half_one w₁ ⟨by norm_num [w₁], by norm_num [w₁]⟩).1
+  rw [deriv_JX_half_eq, JX_x₁_eq, γX_eq, hJh]
+  set g := gJw w₁ 2⁻¹
+  set q := gInv (16 / 29)
+  have hg : 0 < g := by linarith
+  have hs2 : √2 ^ 2 = 2 := sq_sqrt (by norm_num)
+  have e : -2 * (q / (√2 * g)) ^ 2 + 8 - 4 * (2 * g ^ 2)⁻¹ * (w₁ / (2 * g * √π)) / 2⁻¹ =
+      8 - q ^ 2 / g ^ 2 - 2 * w₁ / (g ^ 3 * √π) := by
+    field_simp; rw [hs2]; ring
+  rw [e]
+  have hw1 : w₁ = 29 / 32 := rfl
+  have t1l : (0.1291 : ℝ) ^ 2 / 0.506997 ^ 2 ≤ q ^ 2 / g ^ 2 :=
+    div_le_div₀ (by positivity) (pow_le_pow_left₀ (by norm_num) i1 2) (pow_pos hg 2)
+      (pow_le_pow_left₀ hg.le g2 2)
+  have t1u : q ^ 2 / g ^ 2 ≤ (0.1312 : ℝ) ^ 2 / 0.50699 ^ 2 :=
+    div_le_div₀ (by positivity) (pow_le_pow_left₀ (by linarith) i2 2) (by positivity)
+      (pow_le_pow_left₀ (by norm_num) g1 2)
+  have k1 : (0.50699 : ℝ) ^ 3 * 1.77245385090 ≤ g ^ 3 * √π :=
+    mul_le_mul (pow_le_pow_left₀ (by norm_num) g1 3) p1.le (by norm_num) (pow_nonneg hg.le 3)
+  have k2 : g ^ 3 * √π ≤ (0.506997 : ℝ) ^ 3 * 1.77245385091 :=
+    mul_le_mul (pow_le_pow_left₀ hg.le g2 3) p2.le (by positivity) (by positivity)
+  have t2u : 2 * w₁ / (g ^ 3 * √π) ≤ 2 * w₁ / ((0.50699 : ℝ) ^ 3 * 1.77245385090) :=
+    div_le_div_of_nonneg_left (by norm_num [w₁]) (by positivity) k1
+  have t2l : 2 * w₁ / ((0.506997 : ℝ) ^ 3 * 1.77245385091) ≤ 2 * w₁ / (g ^ 3 * √π) :=
+    div_le_div_of_nonneg_left (by norm_num [w₁]) (by positivity) k2
+  rw [hw1] at t2u t2l ⊢
+  norm_num at t1l t1u t2u t2l ⊢
+  constructor <;> linarith
 
 end Case_II
 
@@ -164,26 +287,96 @@ with $c+u<1$; at $c+u=1$ the derivative $\mathrm{J}'(1)$ is infinite and $F_c''$
 defined). -/
 theorem eqn_3_2 (c u : ℝ) (hc : c ∈ Icc (2⁻¹ : ℝ) 1) (hu : u ∈ Icc 0 (cStar c))
     (hcu : c + u < 1) : deriv (deriv (FX c)) u ≥ 0 := by
-  sorry
+  have hcs1 : u ≤ c - 2⁻¹ := hu.2.trans (min_le_left _ _)
+  have hcs2 : u ≤ 1 - c := hu.2.trans (min_le_right _ _)
+  rcases le_total x₁ (c - u) with h | h
+  · exact caseJ_I c u hc hu hcu h
+  · obtain ⟨h1, h2⟩ := caseJ_II c u hc hu hcu ⟨by linarith, h⟩
+    have := caseJ_II_eval.1
+    rw [h1]; linarith
 
 /-- [DIRX], §3.1: (3.2) together with $F_c(0)=F_c'(0)=0$ implies $F_c(u)\ge0$ for
 $u\in[0,c_*]$ (and $c\in[\frac12,1]$). -/
 theorem FX_nonneg (c u : ℝ) (hc : c ∈ Icc (2⁻¹ : ℝ) 1) (hu : u ∈ Icc 0 (cStar c)) :
     FX c u ≥ 0 := by
-  sorry
+  have hcs1 : u ≤ c - 2⁻¹ := hu.2.trans (min_le_left _ _)
+  have hcs2 : u ≤ 1 - c := hu.2.trans (min_le_right _ _)
+  have hw := one_sub_w₁_lt_half
+  rcases eq_or_lt_of_le hc.2 with hc1 | hc1
+  · have : u = 0 := le_antisymm (by linarith) hu.1
+    subst this; rw [hc1]; simp only [FX, add_zero, sub_zero]; ring_nf; norm_num
+  set cs := cStar c
+  have hU : ∀ v ∈ Ico (0 : ℝ) cs, c + v ∈ Ioo (1 - w₁) 1 ∧ c - v ∈ Ioo (1 - w₁) 1 := by
+    intro v hv
+    have := hv.2.trans_le (min_le_right (c - 2⁻¹) (1 - c))
+    have := hv.2.le.trans (min_le_left (c - 2⁻¹) (1 - c))
+    exact ⟨⟨by linarith [hc.1, hv.1], by linarith⟩, ⟨by linarith, by linarith [hv.1]⟩⟩
+  have hF1 : ∀ v ∈ Ico (0 : ℝ) cs, HasDerivAt (FX c) (FXd c v) v := fun v hv ↦
+    hasDerivAt_FXl (hU v hv).1 (hU v hv).2
+  have hF2 : ∀ v ∈ Ico (0 : ℝ) cs, HasDerivAt (deriv (FX c)) (FXdd c v) v := fun v hv ↦ by
+    have o : IsOpen {w : ℝ | c + w ∈ Ioo (1 - w₁) 1 ∧ c - w ∈ Ioo (1 - w₁) 1} :=
+      (isOpen_Ioo.preimage (by fun_prop)).inter (isOpen_Ioo.preimage (by fun_prop))
+    refine (hasDerivAt_FXd (hU v hv).1 (hU v hv).2).congr_of_eventuallyEq ?_
+    filter_upwards [o.mem_nhds (hU v hv)] with w hw using (hasDerivAt_FXl hw.1 hw.2).deriv
+  have hd0 := (FX_zero c ⟨hc.1, hc1⟩).2
+  have hmono1 : MonotoneOn (deriv (FX c)) (Ico 0 cs) :=
+    monotoneOn_of_deriv_nonneg (convex_Ico _ _)
+      (fun v hv ↦ (hF2 v hv).continuousAt.continuousWithinAt)
+      (fun v hv ↦ (hF2 v (interior_subset hv)).differentiableAt.differentiableWithinAt)
+      fun v hv ↦ by
+        have hv' := interior_subset hv
+        rw [(hF2 v hv').deriv, ← (hasDerivAt_FXd (hU v hv').1 (hU v hv').2).deriv]
+        have hdd : deriv (deriv (FX c)) v = deriv (FXd c) v := by
+          rw [(hF2 v hv').deriv, (hasDerivAt_FXd (hU v hv').1 (hU v hv').2).deriv]
+        rw [← hdd]
+        exact eqn_3_2 c v hc ⟨hv'.1, hv'.2.le⟩ (hU v hv').1.2
+  have hcont : ContinuousOn (FX c) (Icc 0 cs) := by
+    have hJc := JX_contDiff.2
+    have m1 : MapsTo (fun v ↦ c + v) (Icc 0 cs) (Icc (1 - w₁) 1) := fun v hv ↦ by
+      have := hv.2.trans (min_le_right (c - 2⁻¹) (1 - c))
+      exact ⟨by linarith [hv.1, hc.1], by simp only; linarith⟩
+    have m2 : MapsTo (fun v ↦ c - v) (Icc 0 cs) (Icc (1 - w₁) 1) := fun v hv ↦ by
+      have := hv.2.trans (min_le_left (c - 2⁻¹) (1 - c))
+      exact ⟨by simp only; linarith, by simp only; linarith [hv.1, hc.2]⟩
+    have c1 : ContinuousOn (fun v ↦ J (c + v)) (Icc 0 cs) :=
+      hJc.comp (continuousOn_const.add continuousOn_id) m1
+    have c2 : ContinuousOn (fun v ↦ J (c - v)) (Icc 0 cs) :=
+      hJc.comp (continuousOn_const.sub continuousOn_id) m2
+    have h4 : ContinuousOn (fun v : ℝ ↦ 4 * v ^ 2) (Icc 0 cs) := by fun_prop
+    exact ((((c1.pow 2).sub (c2.pow 2)).add h4).sub continuousOn_const).add
+      (continuousOn_const.mul c2)
+  have hmono : MonotoneOn (FX c) (Icc 0 cs) :=
+    monotoneOn_of_deriv_nonneg (convex_Icc _ _) hcont
+      (fun v hv ↦ by
+        rw [interior_Icc] at hv
+        exact (hF1 v ⟨hv.1.le, hv.2⟩).differentiableAt.differentiableWithinAt)
+      fun v hv ↦ by
+        rw [interior_Icc] at hv
+        have := hmono1 ⟨le_rfl, by linarith [hv.1, hv.2]⟩ ⟨hv.1.le, hv.2⟩ hv.1.le
+        rw [hd0] at this; exact this
+  have := hmono ⟨le_rfl, hu.1.trans hu.2⟩ hu hu.1
+  rw [(FX_zero c ⟨hc.1, hc1⟩).1] at this
+  exact this
 
 /-- [DIRX], §3.1: with $c=\frac{x+y}2$, $u=\frac{y-x}2$, it suffices to show
 $\sqrt{4u^2+\mathrm{J}(c+u)^2}\ge2\mathrm{J}(c)-\mathrm{J}(c-u)$ for all $0\le u\le c_*$ and
 $c\in[\frac12,1]$. -/
 theorem caseJ_cu (c u : ℝ) (hc : c ∈ Icc (2⁻¹ : ℝ) 1) (hu : u ∈ Icc 0 (cStar c)) :
     √(4 * u ^ 2 + J (c + u) ^ 2) ≥ 2 * J c - J (c - u) := by
-  sorry
+  rw [caseJ_sq_iff c u hc hu]
+  have := FX_nonneg c u hc hu
+  unfold FX at this
+  linarith
 
 /-- **(3.1)** ([DIRX], §3.1). For $\frac12\le x\le y\le1$,
 $$\sqrt{(y-x)^2+\mathrm{J}(y)^2}+\mathrm{J}(x)\ge2\mathrm{J}(\tfrac{x+y}2).$$ -/
 theorem eqn_3_1 (x y : ℝ) (hx : 2⁻¹ ≤ x) (hxy : x ≤ y) (hy : y ≤ 1) :
     √((y - x) ^ 2 + J y ^ 2) + J x ≥ 2 * J ((x + y) / 2) := by
-  sorry
+  have h := caseJ_cu ((x + y) / 2) ((y - x) / 2) ⟨by linarith, by linarith⟩
+    ⟨by linarith, le_min (by linarith) (by linarith)⟩
+  rw [show (x + y) / 2 + (y - x) / 2 = y by ring, show (x + y) / 2 - (y - x) / 2 = x by ring,
+    show 4 * ((y - x) / 2) ^ 2 = (y - x) ^ 2 by ring] at h
+  linarith
 
 /-! ### §3 Proof of the two-point inequality -/
 
@@ -192,6 +385,8 @@ theorem eqn_3_1 (x y : ℝ) (hx : 2⁻¹ ≤ x) (hxy : x ≤ y) (hy : y ≤ 1) :
 /-- [DIRX], §3.1 (Case $J$): $G[B_{w_1}](x,y)\ge0$ for $\frac12\le x\le y\le1$. -/
 theorem caseJ (x y : ℝ) (hx : 2⁻¹ ≤ x) (hxy : x ≤ y) (hy : y ≤ 1) :
     G (BX w₁) x y ≥ 0 := by
-  sorry
+  have h := eqn_3_1 x y hx hxy hy
+  rw [Auto.DIR.G]
+  exact le_max_of_le_left (by rw [caseJ_G₁_eq x y hx hxy hy]; linarith)
 
 end Auto.DIRX

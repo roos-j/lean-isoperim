@@ -636,12 +636,41 @@ $(0,\frac14]$), so $L_\beta'-Q_\beta'$ is strictly convex there. -/
 theorem lemma_5_9_1_convex :
     (∀ x ∈ Ioc (0 : ℝ) 4⁻¹, iteratedDeriv 3 (L β) x - iteratedDeriv 3 (Q β) x > 0) ∧
     StrictConvexOn ℝ (Ioc 0 4⁻¹) (fun x ↦ deriv (L β) x - deriv (Q β) x) := by
-  sorry
+  have hβ1 : β ≤ 1 := hβ.2.trans logb_three_halves_mem.2 |>.trans (by norm_num)
+  have h2β := two_rpow_le_three_halves hβ.2
+  have hα : 0 ≤ 16 * (3 - (2 : ℝ) ^ (1 + β)) := by rw [two_rpow_one_add]; linarith
+  have hx4 : ∀ x ∈ Ioc (0 : ℝ) 4⁻¹, x ∈ Ioo 0 (exp (-(√3 / 2))) := fun x hx ↦
+    ⟨hx.1, hx.2.trans_lt (rem_5_7.2.trans rem_5_7.1)⟩
+  have hL3' : ∀ x ∈ Ioc (0 : ℝ) 4⁻¹, iteratedDeriv 3 (L β) x > 0 := fun x hx ↦
+    ((lemma_5_6 β ⟨hβ.1, hβ1⟩).2.2.1 x (hx4 x hx)).1
+  have hL3 : ∀ x ∈ Ioc (0 : ℝ) 4⁻¹, 0 < L3f β x := fun x hx ↦ by
+    have h := hL3' x hx
+    rw [eqn_5_4 β x ⟨hx.1, hx.2.trans_lt (by norm_num)⟩] at h
+    unfold L3f; exact h
+  refine ⟨fun x hx ↦ ?_, ?_⟩
+  · rw [eqn_5_8, α₁]
+    linarith [hL3' x hx]
+  · refine strictConvexOn_of_deriv2_pos (convex_Ioc 0 4⁻¹) (fun x hx ↦
+      (hasDerivAt_deriv_L_sub_Q ⟨hx.1, hx.2.trans_lt (by norm_num)⟩).continuousAt
+        |>.continuousWithinAt) fun x hx ↦ ?_
+    rw [interior_Ioc] at hx
+    have hx1 : x ∈ Ioo (0 : ℝ) 1 := ⟨hx.1, hx.2.trans (by norm_num)⟩
+    have hev : deriv (fun y ↦ deriv (L β) y - deriv (Q β) y) =ᶠ[𝓝 x]
+        fun y ↦ deriv (deriv (L β)) y - deriv (deriv (Q β)) y := by
+      filter_upwards [Ioo_mem_nhds hx1.1 hx1.2] with y hy
+      rw [(hasDerivAt_deriv_L_sub_Q hy).deriv, deriv2_L_eq hy, deriv2_Q_eq]
+    change 0 < deriv (deriv fun y ↦ deriv (L β) y - deriv (Q β) y) x
+    rw [hev.deriv_eq, (hasDerivAt_deriv2_L_sub_Q hx1).deriv]
+    linarith [hL3 x ⟨hx.1, hx.2.le⟩]
 
 /-- [DIR], proof of Lemma 5.9 (1): $Q_\beta'(0)>0$ and $L'_\beta(x)\to\infty$ as $x\to0^+$. -/
 theorem lemma_5_9_1_endpoint :
     deriv (Q β) 0 > 0 ∧ Tendsto (deriv (L β)) (𝓝[>] 0) atTop := by
-  sorry
+  have hβ1 : β ≤ 1 := hβ.2.trans logb_three_halves_mem.2 |>.trans (by norm_num)
+  refine ⟨?_, tendsto_deriv_L_zero ⟨hβ.1, hβ1⟩⟩
+  rw [deriv_Q_eq, Q1f, two_rpow_two_add]
+  have := two_rpow_gt_of_half_le hβ.1
+  norm_num; linarith
 
 omit hβ in
 /-- [DIR], proof of Lemma 5.9 (1): the last inequality follows from evaluating
@@ -656,20 +685,82 @@ theorem lemma_5_9_1_quarter_steps :
     (∀ β ∈ Icc (2⁻¹ : ℝ) 1, -3 - β * log 8 + 8 * (log 2) ^ 2 ≤ -3 - 2⁻¹ * log 8 + 8 *
         (log 2) ^ 2) ∧
     -3 - 2⁻¹ * log 8 + 8 * (log 2) ^ 2 < (-0.06 : ℝ) := by
-  sorry
+  have hl1 := log_two_gt_d9
+  have hl2 := log_two_lt_d9
+  have hl : 0 < log 2 := by linarith
+  have h8 : log 8 = 3 * log 2 := by
+    rw [show (8 : ℝ) = 2 ^ 3 by norm_num, log_pow]; norm_num
+  refine ⟨?_, fun β ↦ ?_, fun β hβ ↦ ?_, ?_⟩
+  · rw [deriv_L_sub_Q_quarter, log_four_eq, show (2 : ℝ) ^ (2⁻¹ : ℝ) = √2 by
+      rw [sqrt_eq_rpow]; norm_num]
+    have hs1 : √2 < 1.41422 := by rw [sqrt_lt' (by norm_num)]; norm_num
+    have hs0 : 0 < √2 := by positivity
+    have ht : 2⁻¹ / (2 * log 2) > 0.3606 := by
+      rw [gt_iff_lt, lt_div_iff₀ (by positivity)]; nlinarith
+    nlinarith
+  · rw [show (fun β' ↦ deriv (L β') 4⁻¹ - deriv (Q β') 4⁻¹) =
+      fun β' : ℝ ↦ 2 ^ β' * (4 / 3 - β' / log 4) - 3 / 2 from funext deriv_L_sub_Q_quarter]
+    exact (hasDerivAt_quarter_diff β).deriv
+  · rw [h8]; nlinarith [hβ.1]
+  · rw [h8]; nlinarith
 
 /-- [DIR], proof of Lemma 5.9 (1):
 $L_\beta'(\frac14)-Q_\beta'(\frac14)=2^\beta(\frac43-\frac\beta{\log4})-\frac32<0$. -/
 theorem lemma_5_9_1_quarter :
     deriv (L β) 4⁻¹ - deriv (Q β) 4⁻¹ = 2 ^ β * (4 / 3 - β / log 4) - 3 / 2 ∧
       2 ^ β * (4 / 3 - β / log 4) - 3 / 2 < 0 := by
-  sorry
+  have hβ1 : β ≤ 1 := hβ.2.trans logb_three_halves_mem.2 |>.trans (by norm_num)
+  obtain ⟨hhalf, hderiv, hmono, hneg⟩ := lemma_5_9_1_quarter_steps
+  refine ⟨deriv_L_sub_Q_quarter β, ?_⟩
+  have hl64 : 0 < (log 64)⁻¹ := inv_pos.2 (log_pos (by norm_num))
+  have hanti : AntitoneOn (fun β' : ℝ ↦ 2 ^ β' * (4 / 3 - β' / log 4) - 3 / 2) (Icc 2⁻¹ 1) := by
+    refine antitoneOn_of_deriv_nonpos (convex_Icc _ _)
+      (fun b _ ↦ (hasDerivAt_quarter_diff b).continuousAt.continuousWithinAt)
+      (fun b _ ↦ (hasDerivAt_quarter_diff b).differentiableAt.differentiableWithinAt)
+      fun b hb ↦ ?_
+    rw [interior_Icc] at hb
+    rw [(hasDerivAt_quarter_diff b).deriv]
+    have := hmono b ⟨hb.1.le, hb.2.le⟩
+    have h2b : 0 < (2 : ℝ) ^ b := rpow_pos_of_pos two_pos b
+    have : (log 64)⁻¹ * 2 ^ b > 0 := mul_pos hl64 h2b
+    nlinarith
+  have h := hanti ⟨le_rfl, by norm_num⟩ ⟨hβ.1, hβ1⟩ hβ.1
+  simp only at h
+  rw [deriv_L_sub_Q_quarter] at hhalf
+  linarith
 
 /-- [DIR], proof of Lemma 5.9 (1): therefore $L_\beta'-Q_\beta'$ has a unique zero $\tilde x$ on
 $[0,\frac14]$ (on $(0,\frac14]$, as $L_\beta'(0)$ is undefined). -/
 theorem lemma_5_9_1_unique_zero :
     ∃! xtilde ∈ Ioc (0 : ℝ) 4⁻¹, deriv (L β) xtilde - deriv (Q β) xtilde = 0 := by
-  sorry
+  set f : ℝ → ℝ := fun y ↦ deriv (L β) y - deriv (Q β) y with hf
+  have hconv := (lemma_5_9_1_convex β hβ).2.convexOn
+  have hq : f 4⁻¹ < 0 := by
+    change deriv (L β) 4⁻¹ - deriv (Q β) 4⁻¹ < 0
+    rw [(lemma_5_9_1_quarter β hβ).1]; exact (lemma_5_9_1_quarter β hβ).2
+  have hQc : Tendsto (fun y ↦ -deriv (Q β) y) (𝓝[>] 0) (𝓝 (-deriv (Q β) 0)) := by
+    rw [deriv_Q_eq]
+    exact (((by unfold Q1f; fun_prop : Continuous (Q1f β)).neg.tendsto 0).mono_left
+      nhdsWithin_le_nhds)
+  have hlim : Tendsto f (𝓝[>] 0) atTop := by
+    simpa [hf, sub_eq_add_neg] using (lemma_5_9_1_endpoint β hβ).2.atTop_add hQc
+  obtain ⟨ε, hfε, hε⟩ := ((hlim.eventually_gt_atTop 0).and
+    (Ioo_mem_nhdsGT (by norm_num : (0 : ℝ) < 4⁻¹))).exists
+  have hcont : ContinuousOn f (Icc ε 4⁻¹) := fun y hy ↦
+    (hasDerivAt_deriv_L_sub_Q ⟨hε.1.trans_le hy.1, hy.2.trans_lt (by norm_num)⟩).continuousAt
+      |>.continuousWithinAt
+  obtain ⟨c, hc, hfc⟩ := intermediate_value_Icc' hε.2.le hcont ⟨hq.le, hfε.le⟩
+  refine ⟨c, ⟨⟨hε.1.trans_le hc.1, hc.2⟩, hfc⟩, fun y ⟨hy, hfy⟩ ↦ ?_⟩
+  have key : ∀ a b, a ∈ Ioc (0 : ℝ) 4⁻¹ → b ∈ Ioc (0 : ℝ) 4⁻¹ → f a = 0 → f b = 0 → ¬ a < b := by
+    intro a b ha hb hfa hfb hab
+    rcases eq_or_lt_of_le hb.2 with h | h
+    · rw [h] at hfb; linarith
+    · have := convexOn_neg_of_nonpos hconv (by norm_num) hq ha hfa.le ⟨hab, h⟩; linarith
+  have hc' : c ∈ Ioc (0 : ℝ) 4⁻¹ := ⟨hε.1.trans_le hc.1, hc.2⟩
+  rcases lt_trichotomy y c with h | h | h
+  · exact absurd h (key y c hy hc' hfy hfc)
+  · exact h
+  · exact absurd h (key c y hc' hy hfc hfy)
 
 /-- [DIR], proof of Lemma 5.9 (1): thus $L_\beta-Q_\beta$ has a unique local extreme on this
 interval, which is a maximum since $L_\beta'-Q_\beta'$ is increasing on $[0,\tilde x]$ and
@@ -681,14 +772,59 @@ theorem lemma_5_9_1_max :
     ∃ xtilde ∈ Ioc (0 : ℝ) 4⁻¹, deriv (L β) xtilde - deriv (Q β) xtilde = 0 ∧
       MonotoneOn (fun x ↦ L β x - Q β x) (Icc 0 xtilde) ∧
       AntitoneOn (fun x ↦ L β x - Q β x) (Icc xtilde 4⁻¹) := by
-  sorry
+  have hβ1 : β ≤ 1 := hβ.2.trans logb_three_halves_mem.2 |>.trans (by norm_num)
+  have hβ0 : 0 < β := by linarith [hβ.1]
+  set f : ℝ → ℝ := fun y ↦ deriv (L β) y - deriv (Q β) y with hf
+  have hconv := (lemma_5_9_1_convex β hβ).2.convexOn
+  have hq : f 4⁻¹ < 0 := by
+    change deriv (L β) 4⁻¹ - deriv (Q β) 4⁻¹ < 0
+    rw [(lemma_5_9_1_quarter β hβ).1]; exact (lemma_5_9_1_quarter β hβ).2
+  obtain ⟨xt, ⟨hxt, hfxt⟩, -⟩ := lemma_5_9_1_unique_zero β hβ
+  have hxtq : xt < 4⁻¹ := lt_of_le_of_ne hxt.2 fun h ↦ by
+    have : f xt = 0 := hfxt
+    rw [h] at this; linarith
+  have hpos : ∀ y ∈ Ioo 0 xt, 0 ≤ f y := fun y hy ↦ by
+    by_contra h
+    have := convexOn_neg_of_nonpos hconv (by norm_num) hq ⟨hy.1, hy.2.le.trans hxt.2⟩
+      (not_le.1 h).le
+      ⟨hy.2, hxtq⟩
+    have : f xt = 0 := hfxt
+    linarith
+  have hneg : ∀ y ∈ Ioo xt 4⁻¹, f y ≤ 0 := fun y hy ↦
+    (convexOn_neg_of_nonpos hconv (by norm_num) hq hxt hfxt.le hy).le
+  have hg : ∀ y ∈ Ioo (0 : ℝ) 1, HasDerivAt (fun x ↦ L β x - Q β x) (f y) y := fun y hy ↦ by
+    convert (hasDerivAt_L hy).sub (hasDerivAt_Q β y) using 1
+    simp only [hf]; rw [deriv_L_eq hy, deriv_Q_eq]
+  have hgc : ContinuousOn (fun x ↦ L β x - Q β x) (Icc 0 1) :=
+    (continuousOn_L hβ0 hβ1).sub (continuous_Q β).continuousOn
+  refine ⟨xt, hxt, hfxt, ?_, ?_⟩
+  · refine monotoneOn_of_deriv_nonneg (convex_Icc 0 xt)
+      (hgc.mono (Icc_subset_Icc le_rfl (hxt.2.trans (by norm_num))))
+      (fun y hy ↦ ?_) fun y hy ↦ ?_ <;> rw [interior_Icc] at hy
+    · exact (hg y ⟨hy.1, hy.2.trans (hxtq.trans (by norm_num))⟩).differentiableAt
+        |>.differentiableWithinAt
+    · rw [(hg y ⟨hy.1, hy.2.trans (hxtq.trans (by norm_num))⟩).deriv]; exact hpos y hy
+  · refine antitoneOn_of_deriv_nonpos (convex_Icc xt 4⁻¹)
+      (hgc.mono (Icc_subset_Icc hxt.1.le (by norm_num)))
+      (fun y hy ↦ ?_) fun y hy ↦ ?_ <;> rw [interior_Icc] at hy
+    · exact (hg y ⟨hxt.1.trans hy.1, hy.2.trans (by norm_num)⟩).differentiableAt
+        |>.differentiableWithinAt
+    · rw [(hg y ⟨hxt.1.trans hy.1, hy.2.trans (by norm_num)⟩).deriv]; exact hneg y hy
 
+omit hβ in
 /-- [DIR], proof of Lemma 5.9 (1): together with
 $L_\beta(0)-Q_\beta(0)=L_\beta(\frac14)-Q_\beta(\frac14)=0$ this shows $L_\beta-Q_\beta\ge0$ on
-$[0,\frac14]$. -/
+$[0,\frac14]$.
+
+**Unused hypothesis.** The paper assumes $\beta\in[\frac12,\log_2\frac32]$; this is not needed for
+the claim and is omitted in the Lean statement. -/
 theorem lemma_5_9_1_endpoints :
     L β 0 - Q β 0 = 0 ∧ L β 4⁻¹ - Q β 4⁻¹ = 0 := by
-  sorry
+  have hL4 : L β 4⁻¹ = 4⁻¹ * 2 ^ β := by
+    rw [L, inv_inv, show (4 : ℝ) = 2 ^ 2 by norm_num, logb_pow, logb_self_eq_one one_lt_two]
+    norm_num
+  refine ⟨by simp [L_zero, Q], ?_⟩
+  rw [hL4, Q_eq_affine]; ring
 
 end Proof_Claim_1
 
@@ -701,7 +837,25 @@ include hβ
 $(0,\frac12]$). -/
 theorem lemma_5_9_2_concave :
     ConcaveOn ℝ (Ioc 0 2⁻¹) (fun x ↦ deriv (deriv (L β)) x - deriv (deriv (Q β)) x) := by
-  sorry
+  have hβ1 : β ≤ 1 := hβ.2.trans logb_three_halves_mem.2 |>.trans (by norm_num)
+  set f2 : ℝ → ℝ := fun x ↦ deriv (deriv (L β)) x - deriv (deriv (Q β)) x with hf2
+  have hD : ∀ x ∈ Ioo (0 : ℝ) 1, HasDerivAt f2 (L3f β x + 16 * (3 - 2 ^ (1 + β))) x :=
+    fun x hx ↦ hasDerivAt_deriv2_L_sub_Q hx
+  have hD2 : ∀ x ∈ Ioo (0 : ℝ) 1, HasDerivAt (deriv f2) (L4f β x) x := fun x hx ↦
+    ((hasDerivAt_L3f hx).add_const _).congr_of_eventuallyEq (by
+      filter_upwards [Ioo_mem_nhds hx.1 hx.2] with y hy using (hD y hy).deriv)
+  refine concaveOn_of_deriv2_nonpos (convex_Ioc 0 2⁻¹)
+    (fun x hx ↦ (hD x ⟨hx.1, hx.2.trans_lt (by norm_num)⟩).continuousAt.continuousWithinAt)
+    (fun x hx ↦ ?_) (fun x hx ↦ ?_) (fun x hx ↦ ?_) <;> rw [interior_Ioc] at hx <;>
+    have hx1 : x ∈ Ioo (0 : ℝ) 1 := ⟨hx.1, hx.2.trans (by norm_num)⟩
+  · exact (hD x hx1).differentiableAt.differentiableWithinAt
+  · exact (hD2 x hx1).differentiableAt.differentiableWithinAt
+  · change deriv (deriv f2) x ≤ 0
+    rw [(hD2 x hx1).deriv]
+    have h := (lemma_5_6 β ⟨hβ.1, hβ1⟩).2.2.2 x ⟨hx.1, hx.2.le⟩
+    simp only [iteratedDeriv_succ, iteratedDeriv_zero] at h
+    rw [deriv4_L_eq hx1] at h
+    exact h.le
 
 /-- [DIR], proof of Lemma 5.9 (2): we compute
 $L_\beta''(\frac12)-Q_\beta''(\frac12)=(\log2)^{-2}(2\beta(\beta-1-\log2)+4(\log2)^2)$; this is
@@ -716,15 +870,53 @@ theorem lemma_5_9_2_half :
     2 * (log 2) ^ (-2 : ℤ) * (2 * β - 1 - log 2) < 0 ∧
     deriv (deriv (L (log₂ (3 / 2)))) 2⁻¹ - deriv (deriv (Q (log₂ (3 / 2)))) 2⁻¹ > 1.3 ∧
     deriv (deriv (L β)) 2⁻¹ - deriv (deriv (Q β)) 2⁻¹ > 0 := by
-  sorry
+  have hl1 := log_two_gt_d9
+  have hl2 := log_two_lt_d9
+  have hb := logb_three_halves_mem
+  have hl : 0 < log 2 := by linarith
+  have hl22 : 0 < (log 2) ^ 2 := by positivity
+  have hz : (log 2) ^ (-2 : ℤ) = ((log 2) ^ 2)⁻¹ := by rw [zpow_neg, zpow_ofNat]
+  have hz0 : 0 < (log 2) ^ (-2 : ℤ) := by rw [hz]; positivity
+  have hneg : ∀ b ≤ log₂ (3 / 2), 2 * (log 2) ^ (-2 : ℤ) * (2 * b - 1 - log 2) < 0 :=
+    fun b hb' ↦ mul_neg_of_pos_of_neg (by positivity) (by linarith [hb.2])
+  have hfun : (fun β' ↦ deriv (deriv (L β')) 2⁻¹ - deriv (deriv (Q β')) 2⁻¹) =
+      fun β' : ℝ ↦ (log 2) ^ (-2 : ℤ) * (2 * β' * (β' - 1 - log 2) + 4 * (log 2) ^ 2) :=
+    funext deriv2_L_sub_Q_half
+  have hval : (log 2) ^ (-2 : ℤ) * (2 * log₂ (3 / 2) * (log₂ (3 / 2) - 1 - log 2) +
+      4 * (log 2) ^ 2) > 1.3 := by
+    have key : 1.3 * (log 2) ^ 2 < 2 * log₂ (3 / 2) * (log₂ (3 / 2) - 1 - log 2) +
+        4 * (log 2) ^ 2 := by
+      nlinarith [mul_nonneg_of_nonpos_of_nonpos (by linarith [hb.2] : log₂ (3 / 2) - 0.585 ≤ 0)
+        (by linarith [hb.2] : log₂ (3 / 2) + 0.585 - 1 - log 2 ≤ 0),
+        mul_nonneg (by linarith : (0 : ℝ) ≤ log 2 - 0.6931471803) hl.le]
+    have h := mul_lt_mul_of_pos_left key (inv_pos.2 hl22)
+    rw [show ((log 2) ^ 2)⁻¹ * (1.3 * (log 2) ^ 2) = 1.3 by field_simp] at h
+    rw [hz]; exact h
+  refine ⟨deriv2_L_sub_Q_half β, by rw [hfun]; exact (hasDerivAt_half_diff2 β).deriv,
+    hneg β hβ.2, by rw [deriv2_L_sub_Q_half]; exact hval, ?_⟩
+  have hanti : AntitoneOn (fun β' : ℝ ↦ (log 2) ^ (-2 : ℤ) *
+      (2 * β' * (β' - 1 - log 2) + 4 * (log 2) ^ 2)) (Icc 2⁻¹ (log₂ (3 / 2))) :=
+    antitoneOn_of_deriv_nonpos (convex_Icc _ _)
+      (fun b _ ↦ (hasDerivAt_half_diff2 b).continuousAt.continuousWithinAt)
+      (fun b _ ↦ (hasDerivAt_half_diff2 b).differentiableAt.differentiableWithinAt)
+      fun b hb' ↦ by
+        rw [interior_Icc] at hb'
+        rw [(hasDerivAt_half_diff2 b).deriv]; exact (hneg b hb'.2.le).le
+  have h := hanti hβ ⟨hb.1, le_rfl⟩ hβ.2
+  simp only at h
+  rw [deriv2_L_sub_Q_half]; linarith
 
+omit hβ in
 /-- [DIR], proof of Lemma 5.9 (2):
 $L_\beta''(\frac14)-Q_\beta''(\frac14)=8(2^\beta-1)+(\log2)^{-2}(2^\beta\beta(\beta-1-\log4))$
 is increasing in $\beta$. Indeed,
 $\partial_\beta(L_\beta''(\frac14)-Q_\beta''(\frac14))=\frac{2^\beta}{(\log2)^2}(\beta^2\log2
 +2\beta-\beta\log2(1+\log4)-1-\log4+8(\log2)^3)$, and $\beta^2\log2+2\beta-\beta\log2(1+\log4)$ is
 increasing in $\beta$, positive at $\beta=\frac12$, and $8(\log2)^3-1-\log4>0$. Moreover,
-$L_{\frac12}''(\frac14)-Q_{\frac12}''(\frac14)>0.5$. -/
+$L_{\frac12}''(\frac14)-Q_{\frac12}''(\frac14)>0.5$.
+
+**Unused hypothesis.** The paper assumes $\beta\in[\frac12,\log_2\frac32]$; this is not needed for
+the claim and is omitted in the Lean statement. -/
 theorem lemma_5_9_2_quarter :
     deriv (deriv (L β)) 4⁻¹ - deriv (deriv (Q β)) 4⁻¹ =
         8 * (2 ^ β - 1) + (log 2) ^ (-2 : ℤ) * (2 ^ β * β * (β - 1 - log 4)) ∧
@@ -737,7 +929,53 @@ theorem lemma_5_9_2_quarter :
     MonotoneOn (fun β' ↦ deriv (deriv (L β')) 4⁻¹ - deriv (deriv (Q β')) 4⁻¹)
       (Icc 2⁻¹ (log₂ (3 / 2))) ∧
     deriv (deriv (L 2⁻¹)) 4⁻¹ - deriv (deriv (Q 2⁻¹)) 4⁻¹ > 0.5 := by
-  sorry
+  have hl1 := log_two_gt_d9
+  have hl2 := log_two_lt_d9
+  have hb := logb_three_halves_mem
+  have hl : 0 < log 2 := by linarith
+  have hl22 : 0 < (log 2) ^ 2 := by positivity
+  have h4 := log_four_eq
+  have hz : (log 2) ^ (-2 : ℤ) = ((log 2) ^ 2)⁻¹ := by rw [zpow_neg, zpow_ofNat]
+  have hP : MonotoneOn (fun β' : ℝ ↦ β' ^ 2 * log 2 + 2 * β' - β' * log 2 * (1 + log 4))
+      (Icc 2⁻¹ 1) := by
+    intro a ha b hb' hab
+    simp only
+    rw [h4]
+    nlinarith [mul_nonneg (sub_nonneg.2 hab) (by nlinarith [ha.1, hb'.1] :
+      (0 : ℝ) ≤ log 2 * (a + b) + 2 - log 2 * (1 + 2 * log 2))]
+  have hP0 : (2⁻¹ : ℝ) ^ 2 * log 2 + 2 * 2⁻¹ - 2⁻¹ * log 2 * (1 + log 4) > 0 := by
+    rw [h4]; nlinarith
+  have hc : 8 * (log 2) ^ 3 - 1 - log 4 > 0 := by
+    have : (0.6931471803 : ℝ) ^ 3 < (log 2) ^ 3 := by gcongr
+    rw [h4]; norm_num at this; linarith
+  have hfun : (fun β' ↦ deriv (deriv (L β')) 4⁻¹ - deriv (deriv (Q β')) 4⁻¹) =
+      fun β' : ℝ ↦ 8 * (2 ^ β' - 1) + (log 2) ^ (-2 : ℤ) * (2 ^ β' * β' * (β' - 1 - log 4)) :=
+    funext deriv2_L_sub_Q_quarter
+  have hmono : MonotoneOn (fun β' ↦ deriv (deriv (L β')) 4⁻¹ - deriv (deriv (Q β')) 4⁻¹)
+      (Icc 2⁻¹ (log₂ (3 / 2))) := by
+    rw [hfun]
+    refine monotoneOn_of_deriv_nonneg (convex_Icc _ _)
+      (fun b _ ↦ (hasDerivAt_quarter_diff2 b).continuousAt.continuousWithinAt)
+      (fun b _ ↦ (hasDerivAt_quarter_diff2 b).differentiableAt.differentiableWithinAt)
+      fun b hb' ↦ ?_
+    rw [interior_Icc] at hb'
+    rw [(hasDerivAt_quarter_diff2 b).deriv]
+    have h1 := hP ⟨le_rfl, by norm_num⟩ ⟨hb'.1.le, hb'.2.le.trans (hb.2.trans (by norm_num))⟩
+      hb'.1.le
+    simp only at h1
+    have : (0 : ℝ) ≤ 2 ^ b / (log 2) ^ 2 := by positivity
+    exact mul_nonneg this (by linarith)
+  have hval : deriv (deriv (L 2⁻¹)) 4⁻¹ - deriv (deriv (Q 2⁻¹)) 4⁻¹ > 0.5 := by
+    rw [deriv2_L_sub_Q_quarter, h4, hz, show (2 : ℝ) ^ (2⁻¹ : ℝ) = √2 by
+      rw [sqrt_eq_rpow]; norm_num]
+    have hs1 : √2 < 1.41422 := by rw [sqrt_lt' (by norm_num)]; norm_num
+    have hs2 : 1.41421 < √2 := by rw [lt_sqrt (by norm_num)]; norm_num
+    have key : -2.8 * (log 2) ^ 2 < √2 * 2⁻¹ * (2⁻¹ - 1 - 2 * log 2) := by nlinarith
+    have h := mul_lt_mul_of_pos_left key (inv_pos.2 hl22)
+    rw [show ((log 2) ^ 2)⁻¹ * (-2.8 * (log 2) ^ 2) = -2.8 by field_simp] at h
+    linarith
+  exact ⟨deriv2_L_sub_Q_quarter β, by rw [hfun]; exact (hasDerivAt_quarter_diff2 β).deriv,
+    hP, hP0, hc, hmono, hval⟩
 
 /-- [DIR], proof of Lemma 5.9 (2): therefore $L_\beta''-Q_\beta''\ge0$ (on $[\frac14,\frac12]$), so
 $L_\beta-Q_\beta$ is convex. Since
@@ -747,7 +985,39 @@ theorem lemma_5_9_2_convex :
     (∀ x ∈ Icc (4⁻¹ : ℝ) 2⁻¹, deriv (deriv (L β)) x - deriv (deriv (Q β)) x ≥ 0) ∧
     ConvexOn ℝ (Icc 4⁻¹ 2⁻¹) (fun x ↦ L β x - Q β x) ∧
     L β 4⁻¹ - Q β 4⁻¹ = 0 ∧ L β 2⁻¹ - Q β 2⁻¹ = 0 := by
-  sorry
+  have hβ1 : β ≤ 1 := hβ.2.trans logb_three_halves_mem.2 |>.trans (by norm_num)
+  have hconc := lemma_5_9_2_concave β hβ
+  have hhalf := (lemma_5_9_2_half β hβ).2.2.2.2
+  have hquart : deriv (deriv (L β)) 4⁻¹ - deriv (deriv (Q β)) 4⁻¹ > 0 := by
+    obtain ⟨-, -, -, -, -, hmono, h05⟩ := lemma_5_9_2_quarter β
+    have := hmono ⟨le_rfl, logb_three_halves_mem.1⟩ hβ hβ.1
+    simp only at this; linarith
+  have hnn : ∀ x ∈ Icc (4⁻¹ : ℝ) 2⁻¹, deriv (deriv (L β)) x - deriv (deriv (Q β)) x ≥ 0 :=
+    fun x hx ↦ by
+      have h := hconc.min_le_of_mem_Icc (⟨by norm_num, by norm_num⟩ : (4⁻¹ : ℝ) ∈ Ioc 0 2⁻¹)
+        (⟨by norm_num, le_rfl⟩ : (2⁻¹ : ℝ) ∈ Ioc 0 2⁻¹) hx
+      have := lt_min hquart hhalf
+      linarith
+  have hg : ∀ y ∈ Ioo (0 : ℝ) 1, HasDerivAt (fun x ↦ L β x - Q β x)
+      (deriv (L β) y - deriv (Q β) y) y := fun y hy ↦ by
+    rw [deriv_L_eq hy, deriv_Q_eq]; exact (hasDerivAt_L hy).sub (hasDerivAt_Q β y)
+  have hg2 : ∀ y ∈ Ioo (0 : ℝ) 1, HasDerivAt (deriv fun x ↦ L β x - Q β x)
+      (deriv (deriv (L β)) y - deriv (deriv (Q β)) y) y := fun y hy ↦ by
+    rw [deriv2_L_eq hy, deriv2_Q_eq]
+    exact (hasDerivAt_deriv_L_sub_Q hy).congr_of_eventuallyEq (by
+      filter_upwards [Ioo_mem_nhds hy.1 hy.2] with z hz using (hg z hz).deriv)
+  have hL2 : L β 2⁻¹ = 2⁻¹ := by rw [L, inv_inv, logb_self_eq_one one_lt_two, one_rpow, mul_one]
+  refine ⟨hnn, ?_, (lemma_5_9_1_endpoints β).2, by rw [hL2, Q_eq_affine]; ring⟩
+  refine convexOn_of_deriv2_nonneg (convex_Icc _ _)
+    ((continuousOn_L (by linarith [hβ.1]) hβ1).sub (continuous_Q β).continuousOn |>.mono
+      (Icc_subset_Icc (by norm_num) (by norm_num)))
+    (fun x hx ↦ ?_) (fun x hx ↦ ?_) (fun x hx ↦ ?_) <;> rw [interior_Icc] at hx <;>
+    have hx1 : x ∈ Ioo (0 : ℝ) 1 := ⟨(by norm_num : (0 : ℝ) < 4⁻¹).trans hx.1,
+      hx.2.trans (by norm_num)⟩
+  · exact (hg x hx1).differentiableAt.differentiableWithinAt
+  · exact (hg2 x hx1).differentiableAt.differentiableWithinAt
+  · change 0 ≤ deriv (deriv fun x ↦ L β x - Q β x) x
+    rw [(hg2 x hx1).deriv]; exact hnn x ⟨hx.1.le, hx.2.le⟩
 
 end Proof_Claim_2
 
@@ -759,6 +1029,18 @@ end Proof_Lemma_5_9
 theorem lemma_5_9 (β : ℝ) (hβ : β ∈ Icc (2⁻¹ : ℝ) (log₂ (3 / 2))) :
     (∀ x ∈ Icc (0 : ℝ) 4⁻¹, L β x ≥ Q β x) ∧ (∀ x ∈ Icc (4⁻¹ : ℝ) 2⁻¹, L β x ≤
         Q β x) := by
-  sorry
+  refine ⟨fun x hx ↦ ?_, fun x hx ↦ ?_⟩
+  · obtain ⟨xt, hxt, -, hmono, hanti⟩ := lemma_5_9_1_max β hβ
+    obtain ⟨h0, h4⟩ := lemma_5_9_1_endpoints β
+    rcases le_total x xt with h | h
+    · have := hmono ⟨le_rfl, hxt.1.le⟩ ⟨hx.1, h⟩ hx.1
+      simp only at this; linarith
+    · have := hanti ⟨h, hx.2⟩ ⟨hxt.2, le_rfl⟩ hx.2
+      simp only at this; linarith
+  · obtain ⟨-, hconv, h4, h2⟩ := lemma_5_9_2_convex β hβ
+    have := hconv.le_max_of_mem_Icc (left_mem_Icc.2 (by norm_num))
+      (right_mem_Icc.2 (by norm_num)) hx
+    rw [h4, h2, max_self] at this
+    linarith
 
 end Auto.DIR

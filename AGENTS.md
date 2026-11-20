@@ -12,7 +12,11 @@
    results of the main file that an auxiliary lemma needs as hypotheses of that lemma). Same
    header, namespace (`Auto.DIR` / `Auto.DIRX`), notation and docstring conventions as the main
    files; add the `_aux` module to `Isoperim.lean`. Do not change the statements of the scaffold
-   (only exception: rule 7).
+   (only exception: rule 7). All auxiliary code of a main file (lemmas, tables, certificates) goes
+   into this one `_aux` file; a continuation `<file>_aux_2.lean`, `<file>_aux_3.lean`, … (each
+   importing the previous one; the main file imports the last) is created only when the current
+   one would exceed 10,000 lines (user requirement, 2026-11-17). Auxiliary code that an earlier
+   main file needs goes into the `_aux` file of that earlier main file.
 2. **Completion.** A proof is complete only when it no longer depends on `sorry`, directly or
    transitively (check with `#print axioms <name>`).
 3. **Axioms.** Allowed: only the standard Lean axioms `propext`, `Classical.choice`,
@@ -51,9 +55,10 @@
    parameters `Checker.P11` with `Checker.hw11` ($w_0$ to $9\cdot10^{-12}$). Generate tables and
    certificate lemmas with scripts kept in the repository (witnesses:
    `automation/cert/checker_witness.py`; worked example and timings: branch `cert-test`,
-   `CertTest/gen/casej_prime.py`, `CertTest/CaseJDefs.lean`, `CertTest/ESTIMATES.md`); split
-   large claims into several files (≈ 0.15 s per table entry, 0.05–1 s per box). LeanCert stays
-   a dependency but is not used (it is not a Lean `module` package).
+   `CertTest/gen/casej_prime.py`, `CertTest/CaseJDefs.lean`, `CertTest/ESTIMATES.md`); large
+   claims are spread over the `_aux` continuation files of rule 1, not over separate files
+   (≈ 0.15 s per table entry, 0.05–1 s per box).
+   LeanCert stays a dependency but is not used (it is not a Lean `module` package).
 
 This Lean library formalizes the papers [DIR] (arXiv:2407.12674) and [DIRX]
 (arXiv:2602.20462); it is pinned to `leanprover/lean4:v4.35.0` in
