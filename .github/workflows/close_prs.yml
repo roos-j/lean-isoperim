@@ -1,19 +1,24 @@
 name: Close PRs
 
-# Manually triggered: closes the given PRs (or all open PRs) with a comment.
-# Comments and closes are authored by github-actions[bot], not by a user account.
+# Manually triggered: closes the given PRs (or all open PRs) with a comment and
+# prefixes their titles. Already-closed PRs are only retitled.
+# Comments, closes and title edits are authored by github-actions[bot], not by a user account.
 
 on:
   workflow_dispatch:
     inputs:
       prs:
-        description: "Space-separated PR numbers to close (empty = all open PRs)"
+        description: "Space-separated PR numbers (empty = all open PRs)"
         required: false
         default: ""
       message:
-        description: "Comment to post before closing"
+        description: "Comment to post when closing an open PR"
         required: true
         default: "[This has been merged by Claude.]"
+      title_prefix:
+        description: "Prefix to add to the PR titles (empty = leave titles unchanged)"
+        required: false
+        default: "[Merged]"
 
 permissions:
   pull-requests: write
@@ -22,17 +27,26 @@ jobs:
   close:
     runs-on: ubuntu-latest
     steps:
-      - name: Close PRs
+      - name: Close and retitle PRs
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
           PRS: ${{ inputs.prs }}
           MESSAGE: ${{ inputs.message }}
+          PREFIX: ${{ inputs.title_prefix }}
         run: |
           if [ -z "$PRS" ]; then
             PRS=$(gh pr list --state open --json number --jq '.[].number')
           fi
           for pr in $PRS; do
-            echo "Closing #$pr"
-            gh pr close "$pr" --comment "$MESSAGE"
+            state=$(gh pr view "$pr" --json state --jq .state)
+            title=$(gh pr view "$pr" --json title --jq .title)
+            if [ "$state" = "OPEN" ]; then
+              echo "Closing #$pr"
+              gh pr close "$pr" --comment "$MESSAGE"
+            fi
+            if [ -n "$PREFIX" ] && [ "${title#"$PREFIX"}" = "$title" ]; then
+              echo "Retitling #$pr"
+              gh pr edit "$pr" --title "$PREFIX $title"
+            fi
           done
