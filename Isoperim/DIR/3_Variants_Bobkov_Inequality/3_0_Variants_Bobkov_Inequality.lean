@@ -7,6 +7,7 @@ module
 
 public import Isoperim.DIR.«1_Introduction».Definitions
 public import Isoperim.DIR.«2_Envelope_Functions».Definitions
+public import Isoperim.Definitions
 public import Isoperim.DIR.«3_Variants_Bobkov_Inequality».«3_0_Variants_Bobkov_Inequality_aux»
 
 /-!
@@ -23,6 +24,9 @@ cube near the critical exponent*, arXiv:2407.12674v2, §3 (this section has no s
 * `φ`, `Φ` : the standard Gaussian density and distribution function;
 * `I` : the Gaussian isoperimetric profile $I=\varphi\circ\Phi^{-1}$;
 * `Jw w x` : $J_w(x)$; `w₀`, `x₀` : the constants $w_0$, $x_0$ of (3.4), (3.6).
+
+The definitions and notation on which the statements of the main theorems depend (`φ`, `Φ`, `I`) are in
+`Isoperim/Definitions.lean` (moved there verbatim, user decision 2026-11-20).
 -/
 
 @[expose] public section
@@ -196,18 +200,6 @@ theorem proof_thm_1_6_chain (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) :
       exact Real.sqrt_nonneg _
 
 end Proof_Theorem_1_6
-
-/-- The standard Gaussian density $\varphi(t)=(2\pi)^{-1/2}e^{-t^2/2}$ ([DIR], §3). -/
-noncomputable def φ (t : ℝ) : ℝ := (2 * π) ^ (-(2⁻¹ : ℝ)) * exp (-t ^ 2 / 2)
-
-/-- The standard Gaussian distribution function $\Phi(t)=\int_{-\infty}^t\varphi(s)\,ds$
-([DIR], §3). -/
-noncomputable def Φ (t : ℝ) : ℝ := ∫ s in Iic t, φ s
-
-/-- The Gaussian isoperimetric profile $I(x)=\varphi(\Phi^{-1}(x))$ ([DIR], §3), for
-$x\in(0,1)$, with the continuous extension $I(0)=I(1)=0$ (and junk value $0$ outside $[0,1]$).
-Here $\Phi^{-1}$ is the inverse of the bijection $\Phi:\mathbb{R}\to(0,1)$. -/
-noncomputable def I (x : ℝ) : ℝ := if 0 < x ∧ x < 1 then φ (Function.invFun Φ x) else 0
 
 /-- [DIR], §3: the function $I$ is also characterized by the conditions $I(0)=I(1)=0$,
 $I\cdot I''=-1$: it satisfies them, and it is the unique non-negative continuous function on

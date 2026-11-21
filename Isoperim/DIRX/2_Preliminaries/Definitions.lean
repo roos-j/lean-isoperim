@@ -6,6 +6,7 @@ Authors: Claude
 module
 
 public import Isoperim.DIR.«2_Envelope_Functions».Definitions
+public import Isoperim.Definitions
 public import Isoperim.DIR.«3_Variants_Bobkov_Inequality».«3_0_Variants_Bobkov_Inequality»
 
 /-!
@@ -44,6 +45,9 @@ From `2_2_Properties_J.lean`:
 * `absDJX_lo xl xu`, `absDJX_hi xl xu` : the interval enclosure
   $\underline{|\mathrm{J}'|}(\underline x,\overline x)$, $\overline{|\mathrm{J}'|}(\underline x,
   \overline x)$ of $|\mathrm{J}'|$.
+
+The definitions and notation on which the statements of the main theorems depend (`JXw`, `BX`, `w₁`) are in
+`Isoperim/Definitions.lean` (moved there verbatim, user decision 2026-11-20).
 -/
 
 @[expose] public section
@@ -66,11 +70,6 @@ local notation "L" => Auto.DIR.L 2⁻¹
 
 local notation "Q" => Auto.DIR.Q 2⁻¹
 
-/-- $\mathrm{J}_w(x)=\frac12I(\frac1{2w})^{-1}I(\frac{1-x}w)$ for a parameter $w\in(\frac12,1]$
-([DIRX], §2.1). It is meaningful for $x\in[1-w,1]$ (outside this range `I` takes the junk value
-$0$). Written `JXw w x`. -/
-noncomputable def JXw (w x : ℝ) : ℝ := 2⁻¹ * (I ((2 * w)⁻¹))⁻¹ * I ((1 - x) / w)
-
 /-- [DIRX], §2.1: $\mathrm{J}_w(\frac12)=\frac12$ and $\mathrm{J}_w(1)=0$ for $w\in(\frac12,1]$. -/
 theorem JXw_half_one (w : ℝ) (hw : w ∈ Ioc (2⁻¹ : ℝ) 1) :
     JXw w 2⁻¹ = 2⁻¹ ∧ JXw w 1 = 0 := by
@@ -83,16 +82,6 @@ theorem JXw_half_one (w : ℝ) (hw : w ∈ Ioc (2⁻¹ : ℝ) 1) :
   simp only [JXw, hI]
   rw [show (1 - 2⁻¹ : ℝ) / w = (2 * w)⁻¹ by field_simp; norm_num, mul_assoc,
     inv_mul_cancel₀ hp, mul_one]
-
-/-- **(2.2)** ([DIRX], §2.1). The Bellman function
-$$B_w(x)=\begin{cases}L(x)&x\in[0,\frac14],\\ Q(x)&x\in[\frac14,\frac12],\\
-\mathrm{J}_w(x)&x\in[\frac12,1].\end{cases}$$
-Only the values on $[0,1]$ are meaningful. Written `BX w x`. -/
-noncomputable def BX (w x : ℝ) : ℝ :=
-  if x ≤ 4⁻¹ then L x else if x ≤ 2⁻¹ then Q x else JXw w x
-
-/-- **(2.3)** ([DIRX], §2.1). The parameter $w=w_1=\frac{29}{32}$. -/
-noncomputable def w₁ : ℝ := 29 / 32
 
 /-- The function $\mathrm{J}=\mathrm{J}_{w_1}$ ([DIRX], §2.1, after (2.3)). Written `J x`. -/
 noncomputable def JX : ℝ → ℝ := JXw w₁

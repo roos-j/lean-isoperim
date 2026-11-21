@@ -5,6 +5,7 @@ Authors: Claude
 -/
 module
 
+public import Isoperim.Definitions
 public import Isoperim.DIR.«1_Introduction».Definitions
 public import Isoperim.DIR.«2_Envelope_Functions».Definitions
 public import Isoperim.DIR.«3_Variants_Bobkov_Inequality».«3_0_Variants_Bobkov_Inequality_aux»
