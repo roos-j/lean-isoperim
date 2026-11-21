@@ -6,6 +6,7 @@ Authors: Claude
 module
 
 public import Isoperim.DIR.«1_Introduction».Definitions
+public import Isoperim.DIR.«1_Introduction».Thm_1_1_aux
 public import Isoperim.DIRX.«4_Proof_Poincare_Inequality».«4_0_Proof_Poincare_Inequality»
 
 /-!
@@ -46,7 +47,13 @@ theorem thm_1_3 (n : ℕ) (hn : 1 ≤ n) :
       pNorm 1 (∇f) ≥ pNorm 1 (f - fun _ ↦ 𝐄 f)) ∧
     (∀ A : Set ({0,1}^n), IsHalfCube A →
       pNorm 1 (∇(𝟏 A)) = pNorm 1 (𝟏 A - fun _ ↦ 𝐄 𝟏 A)) := by
-  sorry
+  refine ⟨fun f hf ↦ thm_1_3_of_eqn_4_1 eqn_4_1 n hn f hf, fun A hA ↦ ?_⟩
+  obtain ⟨hd, he, hec⟩ := halfCube_expect hA (β := 2⁻¹) (by norm_num)
+  obtain ⟨h1, h2⟩ := norms_indicator n A
+  have e : ∀ B : Set ({0,1}^n), 𝐄 (fun x ↦ √(h B x)) = 𝐄 (h B ^ (2⁻¹ : ℝ)) := fun B ↦ by
+    congr 1; funext x; rw [Pi.pow_apply, Real.sqrt_eq_rpow, one_div]
+  rw [h1, h2, e, e, he, hec, hd]
+  norm_num
 
 /-! ### Acknowledgments -/
 

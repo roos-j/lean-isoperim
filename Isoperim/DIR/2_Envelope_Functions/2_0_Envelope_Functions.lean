@@ -63,7 +63,28 @@ $$G_{\beta_0}[b_{\beta_0}](x,y)\ge0, \tag{2.4}$$
 $$G_{\frac12}[c_0\cdot b_{\frac12}](x,y)\ge0. \tag{2.5}$$ -/
 theorem thm_2_2 (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y) (hy : y ≤ 1) :
     G β₀ (b β₀) x y ≥ 0 ∧ G 2⁻¹ (c₀ • b 2⁻¹) x y ≥ 0 := by
-  sorry
+  have hc0 : (0 : ℝ) ≤ c₀ := by norm_num [c₀]
+  have hc1 : c₀ ≤ 1 := by norm_num [c₀]
+  suffices hcase : (∀ β : ℝ, (β = 2⁻¹ ∨ β = β₀) → G β (b β) x y ≥ 0) ∨
+      (G₁ β₀ (b β₀) x y ≥ 0 ∧ G₁ 2⁻¹ (c₀ • b 2⁻¹) x y ≥ 0) by
+    rcases hcase with h | h
+    · refine ⟨h β₀ (Or.inr rfl), ?_⟩
+      have hb : 0 ≤ b 2⁻¹ y := b_nonneg (mem_Ico_of_caseQ (Or.inl rfl)) ⟨hx.trans hxy, hy⟩
+      have hs := G_smul_ge (by norm_num : (0 : ℝ) < 2⁻¹) hc0 hc1 (b 2⁻¹) hxy hb
+      exact (mul_nonneg hc0 (h 2⁻¹ (Or.inl rfl))).trans hs
+    · exact ⟨le_max_of_le_left h.1, le_max_of_le_left h.2⟩
+  rcases le_or_gt y 2⁻¹ with hy2 | hy2
+  · exact Or.inl fun β hβ ↦ thm_2_2_caseQ hβ hx hxy hy2
+  rcases le_or_gt 2⁻¹ x with hx2 | hx2
+  · exact Or.inr (thm_2_2_caseJ hx2 hxy hy)
+  rcases le_or_gt x 4⁻¹ with hx4 | hx4
+  · refine Or.inl fun β hβ ↦ ?_
+    rcases le_or_gt (x + y) 1 with h1 | h1
+    · exact thm_2_2_caseLJQ hβ hx hx4 hy2 h1
+    · exact thm_2_2_caseLJ hβ hx hx4 hy2 hy h1
+  · rcases le_or_gt (x + y) 1 with h1 | h1
+    · exact Or.inl fun β hβ ↦ thm_2_2_caseQJQ hβ hx4 hx2 hy2 h1
+    · exact Or.inr (thm_2_2_caseQJ hx4 hx2 hy h1)
 
 /-! ### Remark 2.4 -/
 
@@ -72,6 +93,16 @@ $$\mathcal{B}_{\beta_0}\ge b_{\beta_0}, \tag{2.6}$$
 $$\mathcal{B}_{\frac12}\ge0.997\cdot b_{\frac12}. \tag{2.7}$$ -/
 theorem cor_2_5 :
     (∀ x ∈ 𝒬, 𝓑 β₀ x ≥ b β₀ x) ∧ (∀ x ∈ 𝒬, 𝓑 2⁻¹ x ≥ 0.997 * b 2⁻¹ x) := by
-  sorry
+  have hb : ∀ β : ℝ, (β = 2⁻¹ ∨ β = β₀) → ∀ x ∈ Icc (0 : ℝ) 1, 0 ≤ b β x :=
+    fun β hβ x hx ↦ b_nonneg (mem_Ico_of_caseQ hβ) hx
+  have hb0 : ∀ β : ℝ, b β 0 = 0 := fun β ↦ by rw [b_of_le_quarter (by norm_num), L_zero]
+  have hb1 : ∀ β : ℝ, b β 1 = 0 := fun β ↦ by rw [b_of_half_le (by norm_num), J_one]
+  refine ⟨prop_2_1 β₀ (by norm_num [β₀]) (by norm_num [β₀]) (b β₀) (hb β₀ (Or.inr rfl))
+    (hb0 β₀) (hb1 β₀) fun x y hx hxy hy ↦ (thm_2_2 x y hx hxy hy).1, ?_⟩
+  intro x hx
+  have h := prop_2_1 2⁻¹ le_rfl (by norm_num) (c₀ • b 2⁻¹)
+    (fun t ht ↦ mul_nonneg (by norm_num [c₀]) (hb _ (Or.inl rfl) t ht))
+    (by simp [hb0]) (by simp [hb1]) (fun x y hx hxy hy ↦ (thm_2_2 x y hx hxy hy).2) x hx
+  simpa [c₀] using h
 
 end Auto.DIR

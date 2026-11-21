@@ -7,6 +7,7 @@ module
 
 public import Isoperim.DIR.«1_Introduction».Definitions
 public import Isoperim.DIR.«2_Envelope_Functions».«2_0_Envelope_Functions»
+public import Isoperim.DIR.«2_Envelope_Functions».«2_2_Proofs_Theorems_1_1_1_5_1_7_aux»
 public import Isoperim.DIR.«2_Envelope_Functions».Definitions
 public import Isoperim.DIR.«3_Variants_Bobkov_Inequality».«3_0_Variants_Bobkov_Inequality»
 public import Isoperim.DIR.«5_Auxiliary_Estimates».«5_2_Two_Point_Inequalities»
@@ -54,7 +55,14 @@ theorem b_eq_Q_ge_L (x : ℝ) (hx : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
 /-- [DIR], §2.2, proof of Theorem 1.1: for $\beta=\beta_0$, (1.1) follows from (2.6). -/
 theorem eqn_1_1_β₀ (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) (hA : ｜A｜ ≤ 2⁻¹) :
     𝐄 h A ^ β₀ ≥ ｜A｜ * (log₂ ｜A｜⁻¹) ^ β₀ := by
-  sorry
+  have h1 := cor_2_5.1 ｜A｜ (dens_mem_dyadic n A)
+  have h2 := isoProfile_le_expect (β := β₀) hn A
+  have h3 : L β₀ ｜A｜ ≤ b β₀ ｜A｜ := by
+    rcases le_or_gt ｜A｜ 4⁻¹ with h | h
+    · rw [b_of_le_quarter h]
+    · obtain ⟨hb, hQ⟩ := b_eq_Q_ge_L ｜A｜ ⟨h.le, hA⟩
+      rw [hb]; exact hQ
+  exact h3.trans (h1.trans h2)
 
 end Proof_Theorem_1_1
 
@@ -82,7 +90,12 @@ theorem b_half_two_pow (k : ℕ) (hk : 1 ≤ k) : b 2⁻¹ (2⁻¹ ^ k) = 2⁻¹
 
 /-- [DIR], §2.2, proof of Theorem 1.5: the lower bound follows from (2.7). -/
 theorem thm_1_5_lower (k : ℕ) (hk : 1 ≤ k) : 𝓑 2⁻¹ (2⁻¹ ^ k) ≥ 0.997 * 2⁻¹ ^ k * √k := by
-  sorry
+  have hq : (2⁻¹ : ℝ) ^ k ∈ 𝒬 :=
+    ⟨k, 1, Nat.one_le_two_pow, by push_cast; rw [inv_pow, one_div]⟩
+  have h := cor_2_5.2 _ hq
+  rw [b_half_two_pow k hk] at h
+  rw [mul_assoc]
+  exact h
 
 /-- [DIR], §2.2, proof of Theorem 1.5: the upper bound follows from letting $A$ be a subcube of
 codimension $k$.
@@ -155,21 +168,66 @@ $y\ge x=2\frac{x+y}2-y\ge\frac12$ (for $0\le x\le y\le1$). -/
 theorem b_lt_Ltilde_imp (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y) (hy : y ≤ 1)
     (h : b β₀ ((x + y) / 2) < L̃ ((x + y) / 2)) :
     (x + y) / 2 ≥ 1 - (10 : ℝ) ^ (-(10 : ℝ) ^ 380) ∧ y ≥ x ∧ x ≥ 2⁻¹ := by
-  sorry
+  have hε : (10 : ℝ) ^ (-(10 : ℝ) ^ 380) ≤ 10⁻¹ := by
+    calc (10 : ℝ) ^ (-(10 : ℝ) ^ 380) ≤ (10 : ℝ) ^ (-1 : ℝ) :=
+          rpow_le_rpow_of_exponent_le (by norm_num)
+            (by rw [neg_le_neg_iff]; exact one_le_pow₀ (by norm_num))
+      _ = 10⁻¹ := rpow_neg_one 10
+  have hbnn : 0 ≤ b β₀ ((x + y) / 2) :=
+    b_nonneg (mem_Ico_of_caseQ (Or.inr rfl)) ⟨by linarith, by linarith⟩
+  have hm2 : 2⁻¹ ≤ (x + y) / 2 := by
+    by_contra hlt
+    rw [not_le] at hlt
+    rw [Ltilde, ite_eq_right (not_le.2 hlt)] at h
+    linarith
+  have hmε : (x + y) / 2 ≥ 1 - (10 : ℝ) ^ (-(10 : ℝ) ^ 380) := by
+    by_contra hlt
+    rw [ge_iff_le, not_le] at hlt
+    rcases hm2.lt_or_eq with hlt2 | heq
+    · have h9 := eqn_2_9 _ ⟨hlt2, hlt⟩
+      rw [b_of_half_le hm2, Ltilde, ite_eq_left hm2] at h
+      linarith
+    · rw [← heq, b_of_half_le le_rfl, Ltilde, ite_eq_left le_rfl, (J_half_eq_L_half β₀).1,
+        (J_half_eq_L_half β₀).2] at h
+      exact lt_irrefl _ h
+  exact ⟨hmε, hxy, by linarith⟩
 
 /-- **(2.8)** ([DIR], §2.2). $\tilde b_{\beta_0}$ also satisfies the two-point inequality
 $$G_{\beta_0}[\tilde b_{\beta_0}](x,y)\ge0$$
 for all $0\le x\le y\le1$. -/
 theorem eqn_2_8 (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y) (hy : y ≤ 1) :
     G β₀ (b̃ β₀) x y ≥ 0 := by
-  sorry
+  have hβ : (0 : ℝ) < β₀ := by norm_num [β₀]
+  have hβI : β₀ ∈ Ico (2⁻¹ : ℝ) (log₂ (3 / 2)) := mem_Ico_of_caseQ (Or.inr rfl)
+  have key := lemma_5_2 (𝓛G β₀) 0 1 (𝓛G_mono hβ) (b β₀) L̃
+    (fun x y hx hxy hy _ ↦
+      (G_nonneg_iff_𝓛G (b_nonneg hβI ⟨hx.trans hxy, hy⟩)).1 (thm_2_2 x y hx hxy hy).1)
+    (fun x y hx hxy hy hlt ↦ by
+      obtain ⟨-, -, hx2⟩ := b_lt_Ltilde_imp x y hx hxy hy hlt
+      have hG := Ltilde_twopt x y hx2 hxy hy
+      have hyL : 0 ≤ L β₀ (1 - y) := L_nonneg ⟨by linarith, by linarith⟩
+      have e : ∀ t, 2⁻¹ ≤ t → L̃ t = L β₀ (1 - t) := fun t ht ↦ by rw [Ltilde, ite_eq_left ht]
+      rw [e x hx2, e y (hx2.trans hxy), e _ (by linarith)]
+      exact (G_nonneg_iff_𝓛G (B := fun t ↦ L β₀ (1 - t)) hyL).1 hG)
+    x y hx hxy hy
+  have hm : (x + y) / 2 ∈ Icc (0 : ℝ) 1 := ⟨by linarith, by linarith⟩
+  rw [← btilde_eq_max x ⟨hx, hxy.trans hy⟩, ← btilde_eq_max y ⟨hx.trans hxy, hy⟩,
+    ← btilde_eq_max _ hm] at key
+  have hy' : 0 ≤ b̃ β₀ y := by
+    rw [btilde_eq_max y ⟨hx.trans hxy, hy⟩]
+    exact (b_nonneg hβI ⟨hx.trans hxy, hy⟩).trans (le_max_left _ _)
+  exact (G_nonneg_iff_𝓛G hy').2 key
 
 /-- [DIR], §2.2, proof of Theorem 1.7 (implicit in "it suffices to show" and "Theorem 1.7
 follows"): by Proposition 2.1 and (2.8), $\mathcal{B}_{\beta_0}\ge\tilde b_{\beta_0}$ on
 $\mathcal{Q}$; since $\tilde b_{\beta_0}(x)=\max(J(x),L_{\beta_0}(1-x))$ for $x\in[\frac12,1]$,
 this is (1.6). -/
 theorem isoProfile_ge_btilde (x : ℝ) (hx : x ∈ 𝒬) : 𝓑 β₀ x ≥ b̃ β₀ x := by
-  sorry
+  have hβI : β₀ ∈ Ico (2⁻¹ : ℝ) (log₂ (3 / 2)) := mem_Ico_of_caseQ (Or.inr rfl)
+  refine prop_2_1 β₀ (by norm_num [β₀]) (by norm_num [β₀]) (b̃ β₀) (fun t ht ↦ ?_) btilde_zero
+    btilde_one (fun x y hx hxy hy ↦ eqn_2_8 x y hx hxy hy) x hx
+  rw [btilde_eq_max t ht]
+  exact (b_nonneg hβI ht).trans (le_max_left _ _)
 
 end Proof_Theorem_1_7
 

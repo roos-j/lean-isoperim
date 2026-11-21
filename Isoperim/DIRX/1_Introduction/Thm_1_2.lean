@@ -6,6 +6,7 @@ Authors: Claude
 module
 
 public import Isoperim.DIR.«1_Introduction».Definitions
+public import Isoperim.DIR.«1_Introduction».Thm_1_1_aux
 public import Isoperim.DIRX.«1_Introduction».Thm_1_1
 
 /-!
@@ -35,16 +36,29 @@ open Real
 $|B\cup W|=|A|=\frac12$,
 $$\tfrac12\le\mathbf{E}\sqrt{h_{B\cup W}}\le\mathbf{E}(h_{B\cup W}\mathbf{1}_B)
 +\mathbf{E}(\sqrt{h_{B\cup W}}\mathbf{1}_W),$$
-which is no greater than $|\nabla(A,B)|+\sqrt n|W|$. -/
-theorem thm_1_2_chain (n : ℕ) (hn : 1 ≤ n) (A B W : Set ({0,1}^n))
-    (hAB : Disjoint A B) (hAW : Disjoint A W) (hBW : Disjoint B W)
-    (hcover : A ∪ B ∪ W = Set.univ) (hBW' : ｜B ∪ W｜ = 2⁻¹) (hA : ｜A｜ = 2⁻¹) :
+which is no greater than $|\nabla(A,B)|+\sqrt n|W|$.
+
+**Unused hypothesis.** The paper assumes that $A$ is disjoint from $B$ and $W$ and that
+$|A|=\frac12$; this is not needed for the claim (given $|B\cup W|=\frac12$, $B\cap W=\emptyset$
+and $A\cup B\cup W=\{0,1\}^n$) and is omitted in the Lean statement. -/
+theorem thm_1_2_chain (n : ℕ) (hn : 1 ≤ n) (A B W : Set ({0,1}^n)) (hBW : Disjoint B W)
+    (hcover : A ∪ B ∪ W = Set.univ) (hBW' : ｜B ∪ W｜ = 2⁻¹) :
     2⁻¹ ≤ 𝐄 (fun x ↦ √(h (B ∪ W) x)) ∧
     𝐄 (fun x ↦ √(h (B ∪ W) x)) ≤
       𝐄 (h (B ∪ W) * 𝟏 B) + 𝐄 (fun x ↦ √(h (B ∪ W) x) * 𝟏 W x) ∧
     𝐄 (h (B ∪ W) * 𝟏 B) + 𝐄 (fun x ↦ √(h (B ∪ W) x) * 𝟏 W x) ≤
       |∇(A, B)| + √n * ｜W｜ := by
-  sorry
+  have e1 : (fun x ↦ √(h (B ∪ W) x)) = h (B ∪ W) ^ (2⁻¹ : ℝ) := by
+    funext x; rw [Pi.pow_apply, Real.sqrt_eq_rpow, one_div]
+  have e2 : (fun x ↦ √(h (B ∪ W) x) * 𝟏 W x) = h (B ∪ W) ^ (2⁻¹ : ℝ) * 𝟏 W := by
+    funext x; rw [Pi.mul_apply, Pi.pow_apply, Real.sqrt_eq_rpow, one_div]
+  have e3 : √(n : ℝ) = (n : ℝ) ^ (2⁻¹ : ℝ) := by rw [Real.sqrt_eq_rpow, one_div]
+  rw [e1, e2, e3]
+  refine ⟨?_, expect_h_rpow_le_split B W hBW (by norm_num) (by norm_num),
+    expect_split_le A B W hcover (by norm_num)⟩
+  have h := thm_1_1 n hn (B ∪ W) hBW'.le
+  rw [hBW', inv_inv, Real.logb_self_eq_one (by norm_num), Real.sqrt_one, mul_one, e1] at h
+  exact h
 
 /-! ### Applications -/
 
@@ -58,6 +72,9 @@ theorem thm_1_2 (n : ℕ) (hn : 1 ≤ n) (A B W : Set ({0,1}^n))
     (hAB : Disjoint A B) (hAW : Disjoint A W) (hBW : Disjoint B W)
     (hcover : A ∪ B ∪ W = Set.univ) (hA : ｜A｜ = 2⁻¹) :
     |∇(A, B)| + √n * ｜W｜ ≥ 2⁻¹ := by
-  sorry
+  have hBW' : ｜B ∪ W｜ = 2⁻¹ := by
+    rw [dens_union_of_partition A B W hAB hAW hcover, hA]; norm_num
+  obtain ⟨h1, h2, h3⟩ := thm_1_2_chain n hn A B W hBW hcover hBW'
+  exact h1.trans (h2.trans h3)
 
 end Auto.DIRX

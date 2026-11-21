@@ -37,6 +37,18 @@ $|A|\ge\frac12$,
 $$\mathbf{E}h_A^\beta\ge\max\big(J(|A|),(1-|A|)(\log_2(1/(1-|A|)))^\beta\big). \tag{1.6}$$ -/
 theorem thm_1_7 (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) (hA : ｜A｜ ≥ 2⁻¹) :
     𝐄 h A ^ β₀ ≥ max (J ｜A｜) ((1 - ｜A｜) * (log₂ ((1 - ｜A｜)⁻¹)) ^ β₀) := by
-  sorry
+  have h1 := isoProfile_ge_btilde ｜A｜ (dens_mem_dyadic n A)
+  have h2 := isoProfile_le_expect (β := β₀) hn A
+  have h3 : b̃ β₀ ｜A｜ = max (J ｜A｜) ((1 - ｜A｜) * (log₂ ((1 - ｜A｜)⁻¹)) ^ β₀) := by
+    rcases hA.lt_or_eq with hlt | heq
+    · rw [btilde, ite_eq_right (by norm_num at hlt ⊢; linarith), ite_eq_right (not_le.2 hlt)]
+      rfl
+    · rw [← heq, btilde, ite_eq_right (by norm_num), ite_eq_left le_rfl,
+        (J_half_eq_L_half β₀).1]
+      have hL := (J_half_eq_L_half β₀).2
+      rw [L] at hL
+      rw [hL, max_self, Q_half]
+  rw [← h3]
+  exact h1.trans h2
 
 end Auto.DIR

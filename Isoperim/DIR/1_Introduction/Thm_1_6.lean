@@ -8,6 +8,7 @@ module
 public import Isoperim.DIR.«1_Introduction».Definitions
 public import Isoperim.DIR.«1_Introduction».Thm_1_5
 public import Isoperim.DIR.«1_Introduction».Thm_1_5_aux
+public import Isoperim.DIR.«1_Introduction».Thm_1_6_aux
 public import Isoperim.DIR.«3_Variants_Bobkov_Inequality».«3_0_Variants_Bobkov_Inequality»
 
 /-!
@@ -98,7 +99,24 @@ theorem isoProfile_half_le_sqrt (x : ℝ) (hx : x ∈ 𝒬) : 𝓑 2⁻¹ x ≤ 
 $\mathcal{B}_1(x)\sim x\log_2(1/x)$ as $x\to0^+$ (along $x\in\mathcal{Q}$). -/
 theorem isoProfile_one_asymp :
     Tendsto (fun x ↦ 𝓑 1 x / (x * log₂ x⁻¹)) (𝓝[𝒬 ∩ Set.Ioi 0] 0) (𝓝 1) := by
-  sorry
+  have hF : 𝓝[𝒬 ∩ Set.Ioi 0] (0 : ℝ) ≤ 𝓝[>] 0 := nhdsWithin_mono _ Set.inter_subset_right
+  have hℓ : Tendsto (fun x : ℝ ↦ log₂ x⁻¹) (𝓝[>] 0) atTop :=
+    (tendsto_logb_atTop (by norm_num : (1 : ℝ) < 2)).comp tendsto_inv_nhdsGT_zero
+  have hg : Tendsto (fun x : ℝ ↦ 1 + 2 * (log₂ x⁻¹)⁻¹) (𝓝[>] 0) (𝓝 1) := by
+    have := ((tendsto_inv_atTop_zero.comp hℓ).const_mul 2).const_add 1
+    simpa using this
+  refine tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds (hg.mono_left hF) ?_ ?_
+  · filter_upwards [eventually_dyadic_small] with x ⟨hq, hx0, hx2⟩
+    have hpos : 0 < x * log₂ x⁻¹ := mul_pos hx0 (by linarith [one_le_logb_inv hx0 hx2])
+    rw [le_div_iff₀ hpos, one_mul]
+    exact isoProfile_one_ge x hq hx2
+  · filter_upwards [eventually_dyadic_small] with x ⟨hq, hx0, hx2⟩
+    have hl := one_le_logb_inv hx0 hx2
+    have hpos : 0 < x * log₂ x⁻¹ := mul_pos hx0 (by linarith)
+    rw [div_le_iff₀ hpos]
+    calc 𝓑 1 x ≤ x * (log₂ x⁻¹ + 2) := isoProfile_one_le x hq hx0
+      _ = (1 + 2 * (log₂ x⁻¹)⁻¹) * (x * log₂ x⁻¹) := by
+          linear_combination (-2 * x) * inv_mul_cancel₀ (show log₂ x⁻¹ ≠ 0 by linarith)
 
 /-- **Theorem 1.6** ([DIR]). For all $A\subset\{0,1\}^n$,
 $$\mathbf{E}\sqrt{h_A}\ge|A|\sqrt{\log_2(1/|A|)+1}-|A| \tag{1.4}$$
@@ -110,6 +128,64 @@ theorem thm_1_6 :
     (∀ (n : ℕ), 1 ≤ n → ∀ A : Set ({0,1}^n),
       𝐄 (fun x ↦ √(h A x)) ≥ ｜A｜ * √(log₂ ｜A｜⁻¹ + 1) - ｜A｜) ∧
     Tendsto (fun x ↦ 𝓑 2⁻¹ x / (x * √(log₂ x⁻¹))) (𝓝[𝒬 ∩ Set.Ioi 0] 0) (𝓝 1) := by
-  sorry
+  have part1 : ∀ (n : ℕ), 1 ≤ n → ∀ A : Set ({0,1}^n),
+      𝐄 (fun x ↦ √(h A x)) ≥ ｜A｜ * √(log₂ ｜A｜⁻¹ + 1) - ｜A｜ := by
+    intro n hn A
+    obtain ⟨-, h1, h2⟩ := proof_thm_1_6_chain n hn A
+    rcases (dens_mem_Icc A).1.eq_or_lt with h0 | hpos
+    · rw [← h0]
+      have := expect_le_expect (f := fun _ : {0,1}^n ↦ (0 : ℝ)) (g := fun x ↦ √(h A x))
+        fun z ↦ Real.sqrt_nonneg _
+      simpa [expect] using this
+    · have hL : L 2⁻¹ (2⁻¹ * ｜A｜) = 2⁻¹ * ｜A｜ * √(log₂ ｜A｜⁻¹ + 1) := by
+        rw [L, mul_inv, inv_inv, Real.logb_mul (by norm_num) (inv_ne_zero hpos.ne'),
+          Real.logb_self_eq_one (by norm_num), Real.sqrt_eq_rpow, one_div, add_comm]
+      rw [hL] at h1
+      linarith
+  refine ⟨part1, ?_⟩
+  have hlow : ∀ x ∈ 𝒬, x * √(log₂ x⁻¹ + 1) - x ≤ 𝓑 2⁻¹ x := by
+    rintro x ⟨m, k, hk, rfl⟩
+    obtain ⟨A, hA⟩ := exists_set_dens m k hk
+    refine le_csInf ⟨_, m + 1, by omega, A, hA, rfl⟩ ?_
+    rintro v ⟨n, hn, A', hA', rfl⟩
+    have h1 := part1 n hn A'
+    rw [hA'] at h1
+    have e : 𝐄 (h A' ^ (2⁻¹ : ℝ)) = 𝐄 (fun x ↦ √(h A' x)) := by
+      congr 1; funext z; rw [Pi.pow_apply, Real.sqrt_eq_rpow, one_div]
+    rw [e]; exact h1
+  have hF : 𝓝[𝒬 ∩ Set.Ioi 0] (0 : ℝ) ≤ 𝓝[>] 0 := nhdsWithin_mono _ Set.inter_subset_right
+  have hℓ : Tendsto (fun x : ℝ ↦ log₂ x⁻¹) (𝓝[>] 0) atTop :=
+    (tendsto_logb_atTop (by norm_num : (1 : ℝ) < 2)).comp tendsto_inv_nhdsGT_zero
+  have hg1 : Tendsto (fun x : ℝ ↦ 1 - (√(log₂ x⁻¹))⁻¹) (𝓝[𝒬 ∩ Set.Ioi 0] 0) (𝓝 1) := by
+    have := ((tendsto_inv_atTop_zero.comp (Real.tendsto_sqrt_atTop.comp hℓ)).const_sub 1)
+    simpa using this.mono_left hF
+  have hg2 : Tendsto (fun x : ℝ ↦ √(𝓑 1 x / (x * log₂ x⁻¹))) (𝓝[𝒬 ∩ Set.Ioi 0] 0) (𝓝 1) := by
+    have := (Real.continuous_sqrt.tendsto 1).comp isoProfile_one_asymp
+    rw [Real.sqrt_one] at this
+    exact this
+  refine tendsto_of_tendsto_of_tendsto_of_le_of_le' hg1 hg2 ?_ ?_
+  · filter_upwards [eventually_dyadic_small] with x ⟨hq, hx0, hx2⟩
+    have hl := one_le_logb_inv hx0 hx2
+    have hs : 0 < √(log₂ x⁻¹) := Real.sqrt_pos.2 (by linarith)
+    have hpos : 0 < x * √(log₂ x⁻¹) := mul_pos hx0 hs
+    rw [le_div_iff₀ hpos]
+    have h1 := hlow x hq
+    have h2 : √(log₂ x⁻¹) ≤ √(log₂ x⁻¹ + 1) := Real.sqrt_le_sqrt (by linarith)
+    have e : (1 - (√(log₂ x⁻¹))⁻¹) * (x * √(log₂ x⁻¹)) = x * √(log₂ x⁻¹) - x := by
+      linear_combination (-x) * inv_mul_cancel₀ hs.ne'
+    rw [e]
+    nlinarith
+  · filter_upwards [eventually_dyadic_small] with x ⟨hq, hx0, hx2⟩
+    have hl := one_le_logb_inv hx0 hx2
+    have hs : 0 < √(log₂ x⁻¹) := Real.sqrt_pos.2 (by linarith)
+    have hpos : 0 < x * √(log₂ x⁻¹) := mul_pos hx0 hs
+    rw [div_le_iff₀ hpos]
+    have e : x * 𝓑 1 x = 𝓑 1 x / (x * log₂ x⁻¹) * (x * √(log₂ x⁻¹)) ^ 2 := by
+      rw [mul_pow, Real.sq_sqrt (by linarith), div_mul_eq_mul_div,
+        eq_div_iff (by positivity)]
+      ring
+    calc 𝓑 2⁻¹ x ≤ √(x * 𝓑 1 x) := isoProfile_half_le_sqrt x hq
+      _ = √(𝓑 1 x / (x * log₂ x⁻¹)) * (x * √(log₂ x⁻¹)) := by
+          rw [e, Real.sqrt_mul' _ (sq_nonneg _), Real.sqrt_sq hpos.le]
 
 end Auto.DIR

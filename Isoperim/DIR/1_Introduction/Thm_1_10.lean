@@ -6,6 +6,7 @@ Authors: Claude
 module
 
 public import Isoperim.DIR.«1_Introduction».Definitions
+public import Isoperim.DIR.«1_Introduction».Thm_1_10_aux
 public import Isoperim.DIR.«2_Envelope_Functions».«2_0_Envelope_Functions»
 public import Isoperim.DIR.«7_Proof_Poincare_Inequality».«7_0_Proof_Poincare_Inequality»
 
@@ -34,16 +35,76 @@ $$\|\nabla f\|_p\ge\|f-\mathbf{E}f\|_p. \tag{1.7}$$
 Equality is achieved when $f=\mathbf{1}_A$ for a half-cube $A$. Moreover,
 $\|\nabla f\|_1\ge0.997\|f-\mathbf{E}f\|_1$.
 
-**Discrepancy with the paper.** Statement as in the paper, but the paper's proof only covers
-$p=2\beta_0$; the case $p>2\beta_0$ of the first conjunct is an unresolved gap. -/
+**Discrepancy with the paper.** Paper: (1.7) for all $p\ge2\beta_0$. Lean: (1.7) for
+$2\beta_0\le p\le2$ (user decision 2026-11-20, `automation/instructions_task5.md`). For large $p$
+the claim is false: $n=2$, $f=\mathbf{1}_{\{0\}}$, $p=6$ give $\|\nabla f\|_6^6\approx0.0391<0.0447
+\approx\|f-\mathbf{E}f\|_6^6$; the paper's introduction considers $1\le p\le2$. The paper's proof
+covers $p=2\beta_0$ only; for $2\beta_0<p\le2$ the proof uses in addition
+$\mathbf{E}h_A^{p/2}\ge\mathbf{E}h_A^{\beta_0}$, convexity in $p$ and the new estimate
+$b_{\beta_0}(x)+b_{\beta_0}(1-x)\ge4x(1-x)$ (`Auto.DIR.interp_le_b_add_b`). The equality for
+half-cubes holds for all $p\ge2\beta_0$. -/
 theorem thm_1_10 (n : ℕ) (hn : 1 ≤ n) :
-    (∀ p : ℝ, 2 * β₀ ≤ p → ∀ f : ({0,1}^n) → ℝ, (∀ x, f x = 0 ∨ f x = 1) →
+    (∀ p : ℝ, 2 * β₀ ≤ p → p ≤ 2 → ∀ f : ({0,1}^n) → ℝ, (∀ x, f x = 0 ∨ f x = 1) →
       pNorm p (∇f) ≥ pNorm p (f - fun _ ↦ 𝐄 f)) ∧
     (∀ p : ℝ, 2 * β₀ ≤ p → ∀ A : Set ({0,1}^n), IsHalfCube A →
       pNorm p (∇(𝟏 A)) = pNorm p (𝟏 A - fun _ ↦ 𝐄 𝟏 A)) ∧
     (∀ f : ({0,1}^n) → ℝ, (∀ x, f x = 0 ∨ f x = 1) →
       pNorm 1 (∇f) ≥ 0.997 * pNorm 1 (f - fun _ ↦ 𝐄 f)) := by
-  sorry
+  have hβ0 : (0 : ℝ) < β₀ := by norm_num [β₀]
+  have hEb : ∀ A : Set ({0,1}^n), 𝐄 h A ^ β₀ ≥ b β₀ ｜A｜ := fun A ↦
+    (cor_2_5.1 _ (dens_mem_dyadic n A)).trans (isoProfile_le_expect hn A)
+  have hpn : ∀ (p : ℝ) (g : ({0,1}^n) → ℝ), 0 ≤ pNorm p g := fun p g ↦ by
+    unfold pNorm
+    apply rpow_nonneg
+    have := expect_le_expect (f := fun _ : {0,1}^n ↦ (0 : ℝ)) (g := fun x ↦ ‖g x‖ ^ p)
+      fun z ↦ rpow_nonneg (norm_nonneg _) _
+    simpa [expect] using this
+  refine ⟨?_, ?_, ?_⟩
+  · intro p hp hp2 f hf
+    obtain ⟨A, rfl⟩ := boolean_eq_indicator n f hf
+    have hp0 : 0 < p := by linarith
+    have hβ : β₀ ≤ p / 2 := by linarith
+    have hB : ∀ A' : Set ({0,1}^n), 𝐄 h A' ^ (p / 2) ≥ b β₀ ｜A'｜ := fun A' ↦
+      (hEb A').trans (expect_h_rpow_mono A' hβ0 hβ)
+    have hg := grad_norm_ge n (p / 2) (by linarith) (b β₀) hB A
+    rw [show 2 * (p / 2) = p by ring] at hg
+    obtain ⟨-, -, hf'⟩ := indicator_norms n A p hp0
+    have ha0 := (dens_mem_Icc A).1
+    have ha1 : 0 ≤ 1 - ｜A｜ := by linarith [(dens_mem_Icc A).2]
+    have hK := interp_le_b_add_b (dens_mem_Icc A) hβ (by linarith)
+    rw [show 2 * (p / 2) = p by ring, mul_rpow (by norm_num) ha0,
+      mul_rpow (by norm_num) ha1] at hK
+    have e : (2 : ℝ) ^ (-p) * 2 ^ p = 1 := by rw [← rpow_add two_pos]; simp
+    have hpow : pNorm p (𝟏 A - fun _ ↦ 𝐄 𝟏 A) ^ p ≤ pNorm p (∇(𝟏 A)) ^ p := by
+      rw [hf']
+      have hX : ｜A｜ ^ p * (1 - ｜A｜) + ｜A｜ * (1 - ｜A｜) ^ p =
+          2 ^ (-p) * ((1 - ｜A｜) * (2 ^ p * ｜A｜ ^ p) + ｜A｜ * (2 ^ p * (1 - ｜A｜) ^ p)) := by
+        linear_combination (-(｜A｜ ^ p * (1 - ｜A｜) + ｜A｜ * (1 - ｜A｜) ^ p)) * e
+      rw [hX]
+      exact (mul_le_mul_of_nonneg_left hK (by positivity)).trans hg
+    exact (rpow_le_rpow_iff (hpn _ _) (hpn _ _) hp0).1 hpow
+  · intro p hp A hA
+    have hp0 : 0 < p := by linarith
+    obtain ⟨hd, he, hec⟩ := halfCube_expect hA (β := p / 2) (by linarith)
+    have h1 := eqn_7_1 n A p hp0
+    obtain ⟨-, -, h2⟩ := indicator_norms n A p hp0
+    rw [he, hec] at h1
+    rw [hd] at h2
+    have heq : pNorm p (∇(𝟏 A)) ^ p = pNorm p (𝟏 A - fun _ ↦ 𝐄 𝟏 A) ^ p := by
+      rw [h1, h2, rpow_neg (by norm_num), ← inv_rpow (by norm_num)]
+      ring_nf
+    exact le_antisymm ((rpow_le_rpow_iff (hpn _ _) (hpn _ _) hp0).1 heq.le)
+      ((rpow_le_rpow_iff (hpn _ _) (hpn _ _) hp0).1 heq.ge)
+  · intro f hf
+    obtain ⟨A, rfl⟩ := boolean_eq_indicator n f hf
+    have hB : ∀ A' : Set ({0,1}^n), 𝐄 h A' ^ (2⁻¹ : ℝ) ≥ 0.997 * b 2⁻¹ ｜A'｜ := fun A' ↦
+      (cor_2_5.2 _ (dens_mem_dyadic n A')).trans (isoProfile_le_expect hn A')
+    have hg := grad_norm_ge n 2⁻¹ (by norm_num) (fun x ↦ 0.997 * b 2⁻¹ x) hB A
+    obtain ⟨-, -, hf'⟩ := indicator_norms n A 1 one_pos
+    have hP := prop_7_1 ｜A｜ (dens_mem_Icc A) 2⁻¹ ⟨le_rfl, by norm_num [β₀]⟩
+    unfold G_P at hP
+    simp only [show (2 : ℝ) * 2⁻¹ = 1 by norm_num, rpow_one, rpow_neg_one] at hg hP hf'
+    linarith
 
 /-! ### Structure of the paper -/
 

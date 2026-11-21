@@ -7,6 +7,14 @@ module
 
 public import Isoperim.DIR.«1_Introduction».Definitions
 public import Isoperim.DIR.«2_Envelope_Functions».Definitions
+public import Isoperim.DIR.«3_Variants_Bobkov_Inequality».«3_0_Variants_Bobkov_Inequality»
+public import Isoperim.DIR.«5_Auxiliary_Estimates».«5_3_Properties_L_Q»
+public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_1_Case_J»
+public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_2_Case_Q»
+public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_3_Case_LJQ»
+public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_4_Case_LJ»
+public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_5_Case_QJQ»
+public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_6_Case_QJ»
 
 /-!
 # Auxiliary lemmas for [DIR] §2: the Kahn–Park reduction
@@ -23,6 +31,11 @@ the induction on the dimension in `sources/two_point_general_beta.tex`:
   $\mathbf{E}(h+\mathbf{1}_D)^\beta\ge N(d,H)$, and $(k+1)^\beta\ge1+(2^\beta-1)k^\beta$ gives
   $\mathbf{E}(h+\mathbf{1}_D)^\beta\ge d+(2^\beta-1)H$;
 * the induction step combines these with the two-point inequality $G_\beta[B]\ge0$.
+
+It also contains the auxiliary material for the proofs of Theorem 2.2 (the case distinction of
+[DIR] §6, Figure 3) and Corollary 2.5: $\mathcal{B}_\beta(|A|)\le\mathbf{E}h_A^\beta$,
+$G_\beta[cB]\ge c\,G_\beta[B]$ for $0\le c\le1$, the pieces of $b_\beta$, and the cases $Q$, $J$,
+$LJQ$, $LJ$, $QJQ$, $QJ$ of the two-point inequality.
 -/
 
 @[expose] public section
@@ -400,5 +413,184 @@ theorem kp_ineq {β : ℝ} (hβ : 2⁻¹ ≤ β) (hβ1 : β ≤ 1) (B : ℝ → 
       rw [add_comm (｜slice A 1｜)] at this
       rw [hE, hd]
       linarith
+
+end Auto.DIR
+
+namespace Auto.DIR
+
+/-- $\mathcal{B}_\beta(|A|)\le\mathbf{E}h_A^\beta$ for $A\subset\{0,1\}^n$, $n\ge1$ (definition of
+$\mathcal{B}_\beta$ as an infimum). -/
+theorem isoProfile_le_expect {β : ℝ} {n : ℕ} (hn : 1 ≤ n) (A : Set ({0,1}^n)) :
+    𝓑 β ｜A｜ ≤ 𝐄 (h A ^ β) := by
+  refine csInf_le ⟨0, ?_⟩ ⟨n, hn, A, rfl, rfl⟩
+  rintro v ⟨m, -, A', -, rfl⟩
+  have := expect_le_expect (f := fun _ : {0,1}^m ↦ (0 : ℝ)) (g := h A' ^ β)
+    fun z ↦ by rw [Pi.pow_apply, h_eq_hN]; positivity
+  simpa [expect] using this
+
+end Auto.DIR
+
+/-! ## Assembly of Theorem 2.2 ([DIR], §6)
+
+The case distinction of [DIR] §6 (Figure 3): Case $Q$ ($y\le\frac12$), Case $J$ ($x\ge\frac12$),
+and for $x<\frac12<y$ the cases $LJQ$, $LJ$ ($x\le\frac14$) and $QJQ$, $QJ$ ($x>\frac14$),
+according to whether $x+y\le1$. -/
+
+namespace Auto.DIR
+
+open Real Set
+
+/-- For $0\le c\le1$, $\beta>0$, $x\le y$ and $B(y)\ge0$: $c\,G^1_\beta[B](x,y)\le G^1_\beta[cB](x,y)$. -/
+theorem G₁_smul_ge {β c : ℝ} (hβ : 0 < β) (hc0 : 0 ≤ c) (hc1 : c ≤ 1) (B : ℝ → ℝ) {x y : ℝ}
+    (hxy : x ≤ y) (hB : 0 ≤ B y) : c * G₁ β B x y ≤ G₁ β (c • B) x y := by
+  have hd : 0 ≤ y - x := sub_nonneg.2 hxy
+  have e : c * ((y - x) ^ β⁻¹ + B y ^ β⁻¹) ^ β =
+      ((c * (y - x)) ^ β⁻¹ + (c * B y) ^ β⁻¹) ^ β := by
+    rw [mul_rpow hc0 hd, mul_rpow hc0 hB, ← mul_add,
+      mul_rpow (rpow_nonneg hc0 _) (by positivity), rpow_inv_rpow hc0 hβ.ne']
+  have key : c * ((y - x) ^ β⁻¹ + B y ^ β⁻¹) ^ β ≤
+      ((y - x) ^ β⁻¹ + (c * B y) ^ β⁻¹) ^ β := by
+    rw [e]
+    have h1 : c * (y - x) ≤ y - x := mul_le_of_le_one_left hd hc1
+    gcongr
+  simp only [G₁, Pi.smul_apply, smul_eq_mul]
+  linarith
+
+/-- For $c\le1$ and $x\le y$: $c\,G^2_\beta[B](x,y)\le G^2_\beta[cB](x,y)$. -/
+theorem G₂_smul_ge {β c : ℝ} (hc1 : c ≤ 1) (B : ℝ → ℝ) {x y : ℝ}
+    (hxy : x ≤ y) : c * G₂ β B x y ≤ G₂ β (c • B) x y := by
+  simp only [G₂, Pi.smul_apply, smul_eq_mul]
+  nlinarith [mul_nonneg (sub_nonneg.2 hc1) (sub_nonneg.2 hxy)]
+
+/-- For $0\le c\le1$, $\beta>0$, $x\le y$ and $B(y)\ge0$: $c\,G_\beta[B](x,y)\le G_\beta[cB](x,y)$
+(used for $c=c_0$ in (2.5) outside Cases $J$ and $QJ$). -/
+theorem G_smul_ge {β c : ℝ} (hβ : 0 < β) (hc0 : 0 ≤ c) (hc1 : c ≤ 1) (B : ℝ → ℝ) {x y : ℝ}
+    (hxy : x ≤ y) (hB : 0 ≤ B y) : c * G β B x y ≤ G β (c • B) x y := by
+  rw [G, G, mul_max_of_nonneg _ _ hc0]
+  exact max_le_max (G₁_smul_ge hβ hc0 hc1 B hxy hB) (G₂_smul_ge hc1 B hxy)
+
+/-- $b_\beta(x)=L_\beta(x)$ for $x\le\frac14$. -/
+theorem b_of_le_quarter {β x : ℝ} (hx : x ≤ 4⁻¹) : b β x = L β x := by
+  simp [b, hx]
+
+/-- $b_\beta(x)=Q_\beta(x)$ for $\frac14<x\le\frac12$. -/
+theorem b_of_quarter_lt {β x : ℝ} (h1 : 4⁻¹ < x) (h2 : x ≤ 2⁻¹) : b β x = Q β x := by
+  simp [b, not_le.2 h1, h2]
+
+/-- $b_\beta(x)=J(x)$ for $x\ge\frac12$ (at $x=\frac12$: $Q_\beta(\frac12)=\frac12=J(\frac12)$). -/
+theorem b_of_half_le {β x : ℝ} (hx : 2⁻¹ ≤ x) : b β x = J x := by
+  rcases hx.lt_or_eq with h | h
+  · simp [b, not_le.2 h, not_le.2 ((by norm_num : (4⁻¹ : ℝ) < 2⁻¹).trans h)]
+  · subst h
+    rw [b_of_quarter_lt (by norm_num) le_rfl, Q_half, (J_half_eq_L_half β).1]
+
+/-- [DIR] Lemma 5.9: $b_\beta=\max(L_\beta,Q_\beta)$ on $[0,\frac12]$ for
+$\beta\in[\frac12,\log_2\frac32]$. -/
+theorem b_eq_max {β : ℝ} (hβ : β ∈ Icc (2⁻¹ : ℝ) (log₂ (3 / 2))) {x : ℝ}
+    (hx : x ∈ Icc (0 : ℝ) 2⁻¹) : b β x = max (L β x) (Q β x) := by
+  obtain ⟨h1, h2⟩ := lemma_5_9 β hβ
+  rcases le_or_gt x 4⁻¹ with h | h
+  · rw [b_of_le_quarter h, max_eq_left (h1 x ⟨hx.1, h⟩)]
+  · rw [b_of_quarter_lt h hx.2, max_eq_right (h2 x ⟨h.le, hx.2⟩)]
+
+/-- $b_\beta\ge0$ on $[0,1]$ for $\beta\in[\frac12,\log_2\frac32)$ ([DIR] Lemma 5.8). -/
+theorem b_nonneg {β : ℝ} (hβ : β ∈ Ico (2⁻¹ : ℝ) (log₂ (3 / 2))) {x : ℝ}
+    (hx : x ∈ Icc (0 : ℝ) 1) : 0 ≤ b β x := by
+  rcases le_or_gt x 4⁻¹ with h | h
+  · rw [b_of_le_quarter h]; exact L_nonneg hx
+  rcases le_or_gt x 2⁻¹ with h' | h'
+  · rw [b_of_quarter_lt h h']; exact (lemma_5_8 x ⟨hx.1, h'⟩ β hβ).1.1
+  · rw [b_of_half_le h'.le]; exact J_nonneg ⟨h'.le, hx.2⟩
+
+/-- [DIR] §6.2, Case $Q$ ($0\le x\le y\le\frac12$): $G_\beta[b_\beta](x,y)\ge0$ for
+$\beta\in\{\frac12,\beta_0\}$, from Proposition 6.2 and Lemma 5.9. -/
+theorem thm_2_2_caseQ {β : ℝ} (hβ : β = 2⁻¹ ∨ β = β₀) {x y : ℝ} (hx : 0 ≤ x) (hxy : x ≤ y)
+    (hy : y ≤ 2⁻¹) : G β (b β) x y ≥ 0 := by
+  have hβ' : β ∈ Icc (2⁻¹ : ℝ) (log₂ (3 / 2)) := Ico_subset_Icc_self (mem_Ico_of_caseQ hβ)
+  have e : G₁ β (b β) x y = G₁ β (fun t ↦ max (L β t) (Q β t)) x y := by
+    simp only [G₁]
+    rw [b_eq_max hβ' ⟨hx, hxy.trans hy⟩, b_eq_max hβ' ⟨hx.trans hxy, hy⟩,
+      b_eq_max hβ' ⟨by linarith, by linarith⟩]
+  exact le_max_of_le_left (e ▸ prop_6_2 β hβ x y hx hxy hy)
+
+/-- [DIR] §6.1, Case $J$ ($\frac12\le x\le y\le1$): Proposition 6.1 for $x\le x_0$ and
+Corollary 3.4 ((3.2) for $J$, via `caseJ_II_suffices`) for $x\ge x_0$. -/
+theorem thm_2_2_caseJ {x y : ℝ} (hx : 2⁻¹ ≤ x) (hxy : x ≤ y) (hy : y ≤ 1) :
+    G₁ β₀ (b β₀) x y ≥ 0 ∧ G₁ 2⁻¹ (c₀ • b 2⁻¹) x y ≥ 0 := by
+  have hm : 2⁻¹ ≤ (x + y) / 2 := by linarith
+  have e : ∀ β β' : ℝ, ∀ c : ℝ, G₁ β (c • b β') x y = G₁ β (c • J) x y := by
+    intro β β' c
+    simp only [G₁, Pi.smul_apply, smul_eq_mul, b_of_half_le hx, b_of_half_le (hx.trans hxy),
+      b_of_half_le hm]
+  have e1 : G₁ β₀ (b β₀) x y = G₁ β₀ J x y := by
+    simpa only [one_smul] using e β₀ β₀ 1
+  rw [e1, e 2⁻¹ 2⁻¹ c₀]
+  rcases le_or_gt x x₀ with h | h
+  · exact prop_6_1 β₀ le_rfl x y hx h hxy hy
+  · exact caseJ_II_suffices x y hx hxy hy ((eqn_3_2_iff_G₁ J x y).1 (J_eqn_3_2 x y h.le hxy hy))
+
+/-- [DIR] §6.3, Case $LJQ$ ($0\le x\le\frac14$, $\frac12<y$, $x+y\le1$): (6.13) on
+$[\frac1{16},\frac14]\times[\frac12,\frac34]$ and Proposition 6.6 on the rest. -/
+theorem thm_2_2_caseLJQ {β : ℝ} (hβ : β = 2⁻¹ ∨ β = β₀) {x y : ℝ} (hx : 0 ≤ x)
+    (hx4 : x ≤ 4⁻¹) (hy : 2⁻¹ < y) (hxy : x + y ≤ 1) : G β (b β) x y ≥ 0 := by
+  by_cases h : 16⁻¹ ≤ x ∧ y ≤ 3 / 4
+  · exact (eqn_6_13 β hβ.symm x y ⟨h.1, hx4⟩ ⟨hy.le, h.2⟩).le.trans' (by positivity)
+  · have h' : x ≤ 16⁻¹ ∨ y ≥ 3 / 4 := by
+      rcases not_and_or.1 h with h | h
+      · exact Or.inl (not_le.1 h).le
+      · exact Or.inr (not_le.1 h).le
+    have hβI : β ∈ Icc (2⁻¹ : ℝ) 1 := by
+      rcases hβ with rfl | rfl <;> norm_num [β₀]
+    have hG := prop_6_6 β hβI x y ⟨hx, hx4⟩ ⟨hy.le, by linarith⟩ hxy h'
+    have e : G₂ β (b β) x y = G_LJQ β x y := by
+      simp only [G₂, G_LJQ, b_of_le_quarter hx4, b_of_half_le hy.le,
+        b_of_quarter_lt (show 4⁻¹ < (x + y) / 2 by linarith) (show (x + y) / 2 ≤ 2⁻¹ by linarith)]
+    exact le_max_of_le_right (e ▸ hG)
+
+/-- [DIR] §6.4, Case $LJ$ ($0\le x\le\frac14$, $\frac12<y\le1$, $x+y>1$): Proposition 6.8. -/
+theorem thm_2_2_caseLJ {β : ℝ} (hβ : β = 2⁻¹ ∨ β = β₀) {x y : ℝ} (hx : 0 ≤ x)
+    (hx4 : x ≤ 4⁻¹) (hy : 2⁻¹ < y) (hy1 : y ≤ 1) (hxy : 1 < x + y) : G β (b β) x y ≥ 0 := by
+  have hβI : β ∈ Icc (2⁻¹ : ℝ) 1 := by
+    rcases hβ with rfl | rfl <;> norm_num [β₀]
+  have hy' := caseLJ_region x y ⟨hx, hx4⟩ ⟨hy.le, hy1⟩ hxy.le
+  have hG := prop_6_8 x y ⟨hx, hx4⟩ hy' hxy.le β hβI
+  have e : G₂ β (b β) x y = y - x + (2 ^ β - 1) * J y + L β x - 2 * J ((x + y) / 2) := by
+    simp only [G₂, b_of_le_quarter hx4, b_of_half_le hy.le,
+      b_of_half_le (show 2⁻¹ ≤ (x + y) / 2 by linarith)]
+  exact le_max_of_le_right (e ▸ hG)
+
+/-- [DIR] §6.5, Case $QJQ$ ($\frac14<x<\frac12<y$, $x+y\le1$): Proposition 6.9 gives
+$G^1_{1/2}[b_\beta](x,y)\ge0$, and $G^1_\beta\ge G^1_{1/2}$ for $\beta\ge\frac12$. -/
+theorem thm_2_2_caseQJQ {β : ℝ} (hβ : β = 2⁻¹ ∨ β = β₀) {x y : ℝ} (hx4 : 4⁻¹ < x)
+    (hx2 : x < 2⁻¹) (hy : 2⁻¹ < y) (hxy : x + y ≤ 1) : G β (b β) x y ≥ 0 := by
+  have hβ1 : β ∈ Icc 2⁻¹ β₁ := by
+    rcases hβ with rfl | rfl <;> norm_num [β₀, β₁]
+  have hG := prop_6_9 x y ⟨hx4.le, hx2.le⟩ ⟨hy.le, by linarith⟩ β hβ1
+  have hm1 : 4⁻¹ < (x + y) / 2 := by linarith
+  have hm2 : (x + y) / 2 ≤ 2⁻¹ := by linarith
+  have hJ : 0 ≤ J y := J_nonneg ⟨hy.le, by linarith⟩
+  have hhalf : G₁ 2⁻¹ (b β) x y ≥ 0 := by
+    rw [G₁_half_eq, b_of_quarter_lt hx4 hx2.le, b_of_half_le hy.le, b_of_quarter_lt hm1 hm2]
+    have hsq : (2 * Q β ((x + y) / 2) - Q β x) ^ 2 ≤ (y - x) ^ 2 + J y ^ 2 := by
+      have := hG; simp only [G_QJQ] at this; linarith
+    have := (le_abs_self _).trans (Real.abs_le_sqrt hsq)
+    linarith
+  have hmono : G₁ 2⁻¹ (b β) x y ≤ G₁ β (b β) x y := by
+    have hb : 0 ≤ b β y := by rw [b_of_half_le hy.le]; exact hJ
+    have := rpow_inv_add_rpow_inv_mono (sub_nonneg.2 (by linarith : x ≤ y)) hb
+      (by norm_num : (0 : ℝ) < 2⁻¹) hβ1.1
+    simp only [G₁]
+    linarith
+  exact le_max_of_le_left (hhalf.trans hmono)
+
+/-- [DIR] §6.6, Case $QJ$ ($\frac14<x<\frac12<y\le1$, $x+y>1$): Proposition 6.11 for
+$y<\frac58$ (then $x>\frac38$) and Proposition 6.12 for $y\ge\frac58$. -/
+theorem thm_2_2_caseQJ {x y : ℝ} (hx4 : 4⁻¹ < x) (hx2 : x < 2⁻¹) (hy1 : y ≤ 1)
+    (hxy : 1 < x + y) : G₁ β₀ (b β₀) x y ≥ 0 ∧ G₁ 2⁻¹ (c₀ • b 2⁻¹) x y ≥ 0 := by
+  rcases le_or_gt (5 / 8) y with h | h
+  · exact prop_6_12_stronger x y ⟨hx4.le, hx2.le⟩ ⟨h, hy1⟩ hxy.le
+      ((prop_6_12 x y ⟨hx4.le, hx2.le⟩ ⟨h, hy1⟩).le.trans' (by positivity))
+  · exact prop_6_11 x y ⟨by linarith, hx2.le⟩ ⟨by linarith, h.le⟩ hxy.le β₀
+      ⟨le_rfl, by norm_num [β₀]⟩
 
 end Auto.DIR

@@ -77,7 +77,15 @@ noncomputable def G_PX (x : ℝ) : ℝ := 2⁻¹ * (BX w₁ x + BX w₁ (1 - x))
 theorem thm_1_3_of_eqn_4_1 (h : ∀ x ∈ Icc (0 : ℝ) 1, G_PX x ≥ 0) (n : ℕ) (hn : 1 ≤ n)
     (f : ({0,1}^n) → ℝ) (hf : ∀ x, f x = 0 ∨ f x = 1) :
     pNorm 1 (∇f) ≥ pNorm 1 (f - fun _ ↦ 𝐄 f) := by
-  sorry
+  obtain ⟨A, rfl⟩ := bool_eq_indicator n f hf
+  obtain ⟨h1, h2⟩ := norms_indicator n A
+  rw [h1, h2]
+  have hA := eqn_2_5 n hn A
+  have hAc := eqn_2_5 n hn Aᶜ
+  rw [poincare_dens_compl] at hAc
+  have hG := h ｜A｜ (dens_mem_Icc A)
+  unfold G_PX at hG
+  linarith
 
 /-- [DIRX], §4: $G_P(x)=G_P(1-x)$. -/
 theorem G_PX_symm (x : ℝ) : G_PX x = G_PX (1 - x) := by

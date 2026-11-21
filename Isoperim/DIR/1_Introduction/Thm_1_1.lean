@@ -6,6 +6,7 @@ Authors: Claude
 module
 
 public import Isoperim.DIR.«1_Introduction».Definitions
+public import Isoperim.DIR.«1_Introduction».Thm_1_1_aux
 public import Isoperim.DIR.«2_Envelope_Functions».«2_2_Proofs_Theorems_1_1_1_5_1_7»
 public import Isoperim.DIR.«5_Auxiliary_Estimates».«5_1_Small_Exponents_Large_Exponents»
 
@@ -40,20 +41,32 @@ theorem thm_1_1 (n : ℕ) (hn : 1 ≤ n) (β : ℝ) (hβ : β₀ ≤ β) :
       𝐄 h A ^ β ≥ ｜A｜ * (log₂ ｜A｜⁻¹) ^ β) ∧
     (∀ A : Set ({0,1}^n), ｜A｜ ≤ 2⁻¹ → IsSubcube A →
       𝐄 h A ^ β = ｜A｜ * (log₂ ｜A｜⁻¹) ^ β) := by
-  sorry
+  refine ⟨fun A hA ↦ lemma_5_1.2 (fun n hn A hA ↦ eqn_1_1_β₀ n hn A hA) β hβ n hn A hA, ?_⟩
+  rintro A - ⟨S, a, rfl⟩
+  have hβ0 : 0 < β := lt_of_lt_of_le (by norm_num [β₀]) hβ
+  rw [expect_h_rpow_subcube S a hβ0, dens_subcube, inv_pow, inv_inv, Real.logb_pow,
+    Real.logb_self_eq_one (by norm_num), mul_one]
 
 /-- [DIR], §1.4, display after Corollary 1.9: for a partition $(A,B,W)$ of $\{0,1\}^n$ with
 $|B\cup W|=|A|=\frac12$,
 $$\tfrac12\le\mathbf{E}h_{B\cup W}^{\beta_0}\le\mathbf{E}(h_{B\cup W}\mathbf{1}_B)
-+\mathbf{E}(h_{B\cup W}^{\beta_0}\mathbf{1}_W)\le|\nabla(A,B)|+n^{0.50057}|W|.$$ -/
-theorem cor_1_9_chain (n : ℕ) (hn : 1 ≤ n) (A B W : Set ({0,1}^n))
-    (hAB : Disjoint A B) (hAW : Disjoint A W) (hBW : Disjoint B W)
-    (hcover : A ∪ B ∪ W = Set.univ) (hBW' : ｜B ∪ W｜ = 2⁻¹) (hA : ｜A｜ = 2⁻¹) :
++\mathbf{E}(h_{B\cup W}^{\beta_0}\mathbf{1}_W)\le|\nabla(A,B)|+n^{0.50057}|W|.$$
+
+**Unused hypothesis.** The paper assumes that $A$ is disjoint from $B$ and $W$ and that
+$|A|=\frac12$; this is not needed for the claim (given $|B\cup W|=\frac12$, $B\cap W=\emptyset$
+and $A\cup B\cup W=\{0,1\}^n$) and is omitted in the Lean statement. -/
+theorem cor_1_9_chain (n : ℕ) (hn : 1 ≤ n) (A B W : Set ({0,1}^n)) (hBW : Disjoint B W)
+    (hcover : A ∪ B ∪ W = Set.univ) (hBW' : ｜B ∪ W｜ = 2⁻¹) :
     2⁻¹ ≤ 𝐄 h (B ∪ W) ^ β₀ ∧
     𝐄 h (B ∪ W) ^ β₀ ≤ 𝐄 (h (B ∪ W) * 𝟏 B) + 𝐄 (h (B ∪ W) ^ β₀ * 𝟏 W) ∧
     𝐄 (h (B ∪ W) * 𝟏 B) + 𝐄 (h (B ∪ W) ^ β₀ * 𝟏 W) ≤
       |∇(A, B)| + (n : ℝ) ^ (0.50057 : ℝ) * ｜W｜ := by
-  sorry
+  have hβ0 : (0 : ℝ) < β₀ := by norm_num [β₀]
+  have hβ1 : β₀ ≤ 1 := by norm_num [β₀]
+  refine ⟨?_, expect_h_rpow_le_split B W hBW hβ0 hβ1, expect_split_le A B W hcover hβ0⟩
+  have h := eqn_1_1_β₀ n hn (B ∪ W) hBW'.le
+  rw [hBW', inv_inv, Real.logb_self_eq_one (by norm_num), Real.one_rpow, mul_one] at h
+  exact h
 
 /-- **Corollary 1.9** ([DIR]). Let $(A,B,W)$ be a partition of $\{0,1\}^n$ and assume
 $|A|=\frac12$. Then
@@ -64,6 +77,9 @@ theorem cor_1_9 (n : ℕ) (hn : 1 ≤ n) (A B W : Set ({0,1}^n))
     (hAB : Disjoint A B) (hAW : Disjoint A W) (hBW : Disjoint B W)
     (hcover : A ∪ B ∪ W = Set.univ) (hA : ｜A｜ = 2⁻¹) :
     |∇(A, B)| + (n : ℝ) ^ (0.50057 : ℝ) * ｜W｜ ≥ 2⁻¹ := by
-  sorry
+  have hBW' : ｜B ∪ W｜ = 2⁻¹ := by
+    rw [dens_union_of_partition A B W hAB hAW hcover, hA]; norm_num
+  obtain ⟨h1, h2, h3⟩ := cor_1_9_chain n hn A B W hBW hcover hBW'
+  exact h1.trans (h2.trans h3)
 
 end Auto.DIR

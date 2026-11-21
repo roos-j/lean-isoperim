@@ -9,6 +9,7 @@ public import Isoperim.DIR.«1_Introduction».Definitions
 public import Isoperim.DIR.«2_Envelope_Functions».«2_0_Envelope_Functions»
 public import Isoperim.DIR.«2_Envelope_Functions».Definitions
 public import Isoperim.DIR.«5_Auxiliary_Estimates».«5_3_Properties_L_Q»
+public import Isoperim.DIRX.«2_Preliminaries».«2_1_Reduction_Two_Point_Inequality_aux»
 public import Isoperim.DIRX.«2_Preliminaries».«2_2_Properties_J»
 public import Isoperim.DIRX.«2_Preliminaries».Definitions
 public import Isoperim.DIRX.«3_Proof_Two_Point_Inequality».«3_1_Case_J»
@@ -96,7 +97,13 @@ theorem thm_1_1_of_eqn_2_4
     (hyp : ∃ w ∈ Ioc (2⁻¹ : ℝ) 1, ∀ x y : ℝ, 0 ≤ x → x ≤ y → y ≤ 1 → G (BX w) x y ≥ 0)
     (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) (hA : ｜A｜ ≤ 2⁻¹) :
     𝐄 (fun x ↦ √(h A x)) ≥ ｜A｜ * √(log₂ ｜A｜⁻¹) := by
-  sorry
+  obtain ⟨w, hw, htwo⟩ := hyp
+  have hk := kahn_park (BX w) (fun x hx ↦ BX_nonneg w hx) (BX_zero w) (BX_one w hw) htwo n hn A
+  have hL := BX_ge_LX w ｜A｜ ⟨(dens_mem_Icc A).1, hA⟩
+  have e : L ｜A｜ = ｜A｜ * √(log₂ ｜A｜⁻¹) := by
+    rw [Auto.DIR.L, Real.sqrt_eq_rpow, one_div]
+  rw [← e]
+  exact hL.trans hk
 
 /-- **(2.4)** ([DIRX], §2.1; proved in §3 for $w=w_1$). For all $0\le x\le y\le1$,
 $$G[B_w](x,y)\ge0$$ with $w=w_1$. -/
@@ -118,8 +125,9 @@ theorem eqn_2_4 (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y) (hy : y ≤ 1) :
 $$\mathbf{E}\sqrt{h_A}\ge B_{w_1}(|A|),$$
 valid for all $A\subset\{0,1\}^n$. -/
 theorem eqn_2_5 (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) :
-    𝐄 (fun x ↦ √(h A x)) ≥ BX w₁ ｜A｜ := by
-  sorry
+    𝐄 (fun x ↦ √(h A x)) ≥ BX w₁ ｜A｜ :=
+  kahn_park (BX w₁) (fun x hx ↦ BX_nonneg w₁ hx) (BX_zero w₁) (BX_one w₁ (by norm_num [w₁]))
+    (fun x y hx hxy hy ↦ eqn_2_4 x y hx hxy hy) n hn A
 
 /-! ### Remark 2.1 -/
 

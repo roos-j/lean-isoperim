@@ -106,6 +106,12 @@ theorem thm_1_5 :
     (∀ k : ℕ, 1 ≤ k →
       2⁻¹ ^ k * √k ≥ 𝓑 2⁻¹ (2⁻¹ ^ k) ∧ 𝓑 2⁻¹ (2⁻¹ ^ k) ≥ 0.997 * 2⁻¹ ^ k * √k) ∧
     (0.5 ≥ 𝓑 2⁻¹ 2⁻¹ ∧ 𝓑 2⁻¹ 2⁻¹ ≥ 0.4985) := by
-  sorry
+  have h : ∀ k : ℕ, 1 ≤ k →
+      2⁻¹ ^ k * √k ≥ 𝓑 2⁻¹ (2⁻¹ ^ k) ∧ 𝓑 2⁻¹ (2⁻¹ ^ k) ≥ 0.997 * 2⁻¹ ^ k * √k :=
+    fun k hk ↦ ⟨thm_1_5_upper k, thm_1_5_lower k hk⟩
+  refine ⟨h, ?_⟩
+  obtain ⟨h1, h2⟩ := h 1 le_rfl
+  simp only [pow_one, Nat.cast_one, Real.sqrt_one, mul_one] at h1 h2
+  constructor <;> norm_num at h1 h2 ⊢ <;> linarith
 
 end Auto.DIR
