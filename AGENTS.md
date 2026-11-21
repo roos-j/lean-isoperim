@@ -21,8 +21,8 @@
    transitively (check with `#print axioms <name>`).
 3. **Axioms.** Allowed: only the standard Lean axioms `propext`, `Classical.choice`,
    `Quot.sound`, for every declaration including the computer-assisted (🚗) claims. No other
-   axioms, no `native_decide` (nor LeanCert's default trust mode `native`, nor anything else that
-   adds `…native_decide.ax_…`/`Lean.ofReduceBool` axioms), no `admit`, no
+   axioms, no `native_decide` (nor anything else that adds `…native_decide.ax_…`/
+   `Lean.ofReduceBool` axioms), no `admit`, no
    `implemented_by`/`extern` tricks. Computations are checked by the kernel (`norm_num`,
    `decide`, `decide +kernel`).
 4. **Start condition.** Work on a proof may start only when the proofs of all its dependencies
@@ -58,12 +58,12 @@
    `CertTest/gen/casej_prime.py`, `CertTest/CaseJDefs.lean`, `CertTest/ESTIMATES.md`); large
    claims are spread over the `_aux` continuation files of rule 1, not over separate files
    (≈ 0.15 s per table entry, 0.05–1 s per box).
-   LeanCert stays a dependency but is not used (it is not a Lean `module` package).
 
 This Lean library formalizes the papers [DIR] (arXiv:2407.12674) and [DIRX]
 (arXiv:2602.20462); it is pinned to `leanprover/lean4:v4.35.0` in
 `lean-toolchain`. Preserve that pin unless the user requests an upgrade.
-Mathlib and LeanCert are pinned to their `v4.35.0` releases in `lakefile.toml`.
+Mathlib is pinned to its `v4.35.0` release in `lakefile.toml` (LeanCert was removed from the
+dependencies, user request 2026-11-20).
 Preserve compatible dependency pins when adding or updating packages.
 
 ## Layout and validation

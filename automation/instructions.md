@@ -40,7 +40,8 @@ proved). The work split into Tasks 1–5 is in `automation/splitting.md`.
 - **2026-11-13** (user, after the test on branch `cert-test`): no additional axioms, no
   `native_decide`; proofs follow the papers' arguments, 🚗 claims via the paper's tight lower
   bounds and partitions with kernel-checked rational arithmetic (`AGENTS.md`, rules 3 and 8);
-  LeanCert stays in the dependencies for possible later use.
+  LeanCert stays in the dependencies for possible later use. **Superseded (2026-11-20, user):**
+  LeanCert removed from the dependencies.
 - **2026-11-13** (user): adopt the verified interval checker with sharing of repeated values
   (tested on branch `cert-test`) for the 🚗 claims; it is part of
   `4_3_Source_Code_aux.lean` (`Auto.DIR.Checker`, with `w₀_mem_11`, `P11`, `hw11`). Prep only;
