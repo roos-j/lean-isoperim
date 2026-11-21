@@ -42,6 +42,14 @@ proved). The work split into Tasks 1–5 is in `automation/splitting.md`.
   bounds and partitions with kernel-checked rational arithmetic (`AGENTS.md`, rules 3 and 8);
   LeanCert stays in the dependencies for possible later use. **Superseded (2026-11-20, user):**
   LeanCert removed from the dependencies.
+- **2026-11-20** (user, branch `palomar`): the definitions (and notation) on which the statements
+  of the main theorems depend (`Cube`, `e`, `h`, `expect`, `ind`, `dens`, `β₀`, `edges`,
+  `edgeMeasure`, `pNorm`, `gradNorm`, `IsHalfCube`, `isoProfile`, `dyadic`, `IsJ`, `J`, `L`, `Q`,
+  `b`, `φ`, `Φ`, `I`, `JXw`, `BX`, `w₁`) were moved verbatim into the new top-level module
+  `Isoperim/Definitions.lean`, imported by the section files they came from. Reason: Palomar's
+  Comparator compares these definitions structurally, including Lean's auxiliary proof constants
+  (`_proof_n`, e.g. for `Nat.AtLeastTwo 4` in numerals), whose names depend on the module; the
+  Palomar `Challenge.lean` repeats this module verbatim, so both elaborate identically.
 - **2026-11-13** (user): adopt the verified interval checker with sharing of repeated values
   (tested on branch `cert-test`) for the 🚗 claims; it is part of
   `4_3_Source_Code_aux.lean` (`Auto.DIR.Checker`, with `w₀_mem_11`, `P11`, `hw11`). Prep only;

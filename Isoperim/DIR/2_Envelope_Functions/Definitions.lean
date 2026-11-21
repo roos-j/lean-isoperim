@@ -6,6 +6,7 @@ Authors: Claude
 module
 
 public import Isoperim.DIR.«1_Introduction».Definitions
+public import Isoperim.Definitions
 
 /-!
 # [DIR] 2 Envelope_Functions: definitions
@@ -28,6 +29,9 @@ From `2_0_Envelope_Functions.lean`:
 From `2_2_Proofs_Theorems_1_1_1_5_1_7.lean`:
 * `b̃ β x` : the function $\tilde b_\beta(x)$;
 * `L̃ x` : the function $\tilde L(x)=L_{\beta_0}(1-x)\mathbf{1}_{x\ge\frac12}$.
+
+The definitions and notation on which the statements of the main theorems depend (`L`, `Q`, `b`) are in
+`Isoperim/Definitions.lean` (moved there verbatim, user decision 2026-11-20).
 -/
 
 @[expose] public section
@@ -49,17 +53,6 @@ noncomputable def G₂ (β : ℝ) (B : ℝ → ℝ) (x y : ℝ) : ℝ :=
 /-- ([DIR], §2, display after (2.1)).
 $$G_\beta[B](x,y)=\max(G^1_\beta[B](x,y),G^2_\beta[B](x,y)).$$ -/
 noncomputable def G (β : ℝ) (B : ℝ → ℝ) (x y : ℝ) : ℝ := max (G₁ β B x y) (G₂ β B x y)
-
-/-- $L_\beta(x)=x(\log_2(1/x))^\beta$ ([DIR], §2). (At $x=0$ Lean's conventions give
-$L_\beta(0)=0$, the continuous extension.) -/
-noncomputable def L (β x : ℝ) : ℝ := x * (log₂ x⁻¹) ^ β
-
-/-- The cubic $Q_\beta$ ([DIR], §2): the unique cubic interpolation polynomial with
-$Q_\beta(0)=Q_\beta(1)=0$, $Q_\beta(\frac12)=\frac12$ and $Q_\beta(\frac14)=2^{\beta-2}$, i.e.
-$Q_\beta(x)=\frac23x(1-x)(2^{\beta+2}-3+4(3-2^{\beta+1})x)$ (see `Auto.DIR.Q_spec` for the
-interpolation property). -/
-noncomputable def Q (β x : ℝ) : ℝ :=
-  2 / 3 * x * (1 - x) * (2 ^ (β + 2) - 3 + 4 * (3 - 2 ^ (β + 1)) * x)
 
 /-- [DIR], §2: $Q_\beta$ is the unique cubic interpolation polynomial such that
 $Q_\beta(0)=Q_\beta(1)=0$, $Q_\beta(\frac12)=\frac12$ and $Q_\beta(\frac14)=2^{\beta-2}$; then
@@ -106,13 +99,6 @@ theorem Q_spec (β : ℝ) :
       rw [this]; have := hP.1; omega
   exact ⟨⟨p₀, hP, fun p hp => huniq p hp.1 hp.2.1 hp.2.2.1 hp.2.2.2.1 hp.2.2.2.2⟩,
     fun p hd e0 e1 e2 e4 x => by rw [huniq p hd e0 e1 e2 e4, hev]⟩
-
-/-- **(2.3)** ([DIR], §2).
-$$b_\beta(x)=\begin{cases}L_\beta(x)&x\in[0,\frac14],\\ Q_\beta(x)&x\in[\frac14,\frac12],\\
-J(x)&x\in[\frac12,1].\end{cases}$$
-Only the values on $[0,1]$ are meaningful. -/
-noncomputable def b (β x : ℝ) : ℝ :=
-  if x ≤ 4⁻¹ then L β x else if x ≤ 2⁻¹ then Q β x else J x
 
 /-- The constant $c_0=0.997$ ([DIR], Theorem 2.2). -/
 noncomputable def c₀ : ℝ := 0.997

@@ -6,6 +6,7 @@ Authors: Claude
 module
 
 public import Mathlib
+public import Isoperim.Definitions
 
 /-!
 # [DIR] 1 Introduction: definitions
@@ -45,6 +46,11 @@ From `Thm_1_7.lean`:
 From `Thm_1_10.lean`:
 * `pNorm p f` : $\|f\|_p=(\mathbf{E}|f|^p)^{1/p}$;
 * `∇f` : the function $x\mapsto|\nabla f(x)|$, so that `pNorm p (∇f)` is $\|\nabla f\|_p$.
+
+The definitions and notation on which the statements of the main theorems depend (`Cube`, `e`, `h`, `expect`, `ind`, `dens`, `β₀`,
+`edges`, `edgeMeasure`, `pNorm`, `gradNorm`, `IsHalfCube`, `isoProfile`, `dyadic`, `IsJ`, `J` and all
+the notation listed above)) are in
+`Isoperim/Definitions.lean` (moved there verbatim, user decision 2026-11-20).
 -/
 
 @[expose] public section
@@ -57,116 +63,13 @@ open Real Set
 
 open scoped ContDiff
 
-/-- The Hamming cube $\{0,1\}^n$ ([DIR], §1, first paragraph). We realize it as
-`Fin n → ZMod 2`, so that the bitwise addition $x\oplus y$ of [DIR, §3] is `x + y`. -/
-abbrev Cube (n : ℕ) : Type := Fin n → ZMod 2
-
-@[inherit_doc] notation "{0,1}^" n => Cube n
-
-/-- The unit vector $e_i\in\{0,1\}^n$; $x\oplus e_i$ (written `x + e i`) is $x$ with the $i$-th
-bit flipped ([DIR], §1.5 and §3). Two vertices are joined by an edge iff they differ by some
-`e i`. -/
-def e {n : ℕ} (i : Fin n) : {0,1}^n := Pi.single i 1
-
-/-- $h_A(x)$ ([DIR], §1, first paragraph): for $x\in A$ the number of edges connecting $x$ with
-the complement of $A$, i.e. the number of $i$ with $x\oplus e_i\notin A$; and $h_A(x)=0$ if
-$x\notin A$. -/
-noncomputable def h {n : ℕ} (A : Set ({0,1}^n)) (x : {0,1}^n) : ℝ :=
-  open Classical in
-  if x ∈ A then (#{i : Fin n | x + e i ∉ A} : ℝ) else 0
-
-/-- The expectation $\mathbf{E}f=2^{-n}\sum_{x\in\{0,1\}^n}f(x)$ ([DIR], §1, after Theorem 1.1),
-for functions with values in any real vector space (e.g. `ℝ` or `ℂ`). -/
-noncomputable def expect {n : ℕ} {M : Type*} [AddCommGroup M] [Module ℝ M]
-    (f : ({0,1}^n) → M) : M :=
-  ((2 : ℝ)⁻¹ ^ n) • ∑ x, f x
-
-@[inherit_doc] notation:max "𝐄 " f:75 => expect f
-
-/-- The (real-valued) indicator function $\mathbf{1}_A$ of $A\subset\{0,1\}^n$.
-Written `𝟏 A`. -/
-noncomputable def ind {n : ℕ} (A : Set ({0,1}^n)) : ({0,1}^n) → ℝ := A.indicator 1
-
-@[inherit_doc] notation "𝟏" => ind
-
-/-- The normalized size $|A|=\mathbf{E}\mathbf{1}_A$ of $A\subset\{0,1\}^n$
-([DIR], §1, after Theorem 1.1). Written `｜A｜` (full-width bars). -/
-noncomputable def dens {n : ℕ} (A : Set ({0,1}^n)) : ℝ := 𝐄 𝟏 A
-
-/-- The notation `｜A｜` for `Auto.DIR.dens A`, the paper's $|A|$. It uses the full-width vertical
-bar `｜` (U+FF5C): the ASCII `|` cannot be used by a plain `notation` without clashing with
-Mathlib's `|a|` and with set-builder notation `{x ∈ s | p x}`. -/
-notation:max "｜" A "｜" => dens A
-
-/-- The binary logarithm $\log_2$. -/
-notation "log₂" => Real.logb 2
-
-/-- The threshold exponent $\beta_0=0.50057$ ([DIR], Theorem 1.1). -/
-noncomputable def β₀ : ℝ := 0.50057
-
 /-- A *subcube* of $\{0,1\}^n$: a set obtained by fixing the values of some coordinates, i.e.
 $\{x : x_i=a_i \text{ for } i\in S\}$ (e.g. the codimension $k$ subcube
 $\{x\in\{0,1\}^n : x_1=\dots=x_k=0\}$ of [DIR], §1.1). -/
 def IsSubcube {n : ℕ} (A : Set ({0,1}^n)) : Prop :=
   ∃ (S : Finset (Fin n)) (a : {0,1}^n), A = {x | ∀ i ∈ S, x i = a i}
 
-/-! ### §1.4 Towards a conjecture of Kahn and Park
-
-In the paper this subsection follows Remark 1.8 (§1.3). It is placed here since Corollary 1.9
-is a corollary of Theorem 1.1. -/
-
-/-- The set $\mathcal{E}$ of edges of $\{0,1\}^n$ ([DIR], Corollary 1.9), as ordered pairs
-$(x,y)$ of vertices differing in exactly one bit. -/
-def edges (n : ℕ) : Set (({0,1}^n) × ({0,1}^n)) := {p | ∃ i, p.2 = p.1 + e i}
-
-/-- The edge boundary measure
-$|\nabla(A,B)|=2^{-n}\#\{(x,y)\in\mathcal{E} : x\in A, y\in B\}$ ([DIR], Corollary 1.9).
-Written `|∇(A, B)|`. -/
-noncomputable def edgeMeasure {n : ℕ} (A B : Set ({0,1}^n)) : ℝ :=
-  (2 : ℝ)⁻¹ ^ n * (Set.ncard {p ∈ edges n | p.1 ∈ A ∧ p.2 ∈ B} : ℝ)
-
-@[inherit_doc] notation "|∇(" A ", " B ")|" => edgeMeasure A B
-
-/-! ### §1.5 Sharp Poincaré inequalities -/
-
-/-- $\|f\|_p=(\mathbf{E}|f|^p)^{1/p}$ ([DIR], §1.5), for functions with values in a normed
-space (e.g. `ℝ` or `ℂ`). Written `pNorm p f`. -/
-noncomputable def pNorm {n : ℕ} {M : Type*} [NormedAddCommGroup M] (p : ℝ) (f : ({0,1}^n) → M) :
-    ℝ :=
-  (𝐄 (fun x ↦ ‖f x‖ ^ p)) ^ p⁻¹
-
-/-- The length of the discrete gradient ([DIR], §1.5),
-$|\nabla f|^2=\sum_{i=1}^n|\tfrac12(f(x)-f(x\oplus e_i))|^2$. Written `∇f` (as a function of
-$x$). -/
-noncomputable def gradNorm {n : ℕ} {M : Type*} [NormedAddCommGroup M] [NormedSpace ℝ M]
-    (f : ({0,1}^n) → M) (x : {0,1}^n) : ℝ :=
-  √(∑ i, ‖(2⁻¹ : ℝ) • (f x - f (x + e i))‖ ^ 2)
-
-@[inherit_doc] notation:max "∇" f:max => gradNorm f
-
-/-- A *half-cube* of $\{0,1\}^n$: a set $\{x : x_i=a\}$ for some coordinate $i$ and bit $a$
-([DIR], Theorem 1.10). -/
-def IsHalfCube {n : ℕ} (A : Set ({0,1}^n)) : Prop := ∃ (i : Fin n) (a : ZMod 2), A = {x | x i = a}
-
 /-! ### §1.1 Motivation, history and further results -/
-
-/-- **Definition 1.3** ([DIR]). The *$\beta$-isoperimetric profile* $\mathcal{B}_\beta$ for the
-Hamming cube is
-$$\mathcal{B}_\beta(x)=\inf_{n\ge1}\ \inf_{A\subset\{0,1\}^n,\,|A|=x}\mathbf{E}h_A^\beta.
-\tag{1.2}$$
-The double infimum is taken as a single infimum over all admissible pairs $(n, A)$. If no
-$A$ with $|A|=x$ exists (i.e. $x\notin\mathcal{Q}$, see `Auto.DIR.dyadic`), the value is the junk
-value $0$ (`Real.sInf_empty`); the paper only uses $\mathcal{B}_\beta$ on $\mathcal{Q}$. -/
-noncomputable def isoProfile (β x : ℝ) : ℝ :=
-  sInf {v : ℝ | ∃ n : ℕ, 1 ≤ n ∧ ∃ A : Set ({0,1}^n), ｜A｜ = x ∧ v = 𝐄 h A ^ β}
-
-@[inherit_doc] notation "𝓑" => isoProfile
-
-/-- The dyadic rationals in $[0,1]$ ([DIR], §1.1):
-$\mathcal{Q}=\{k2^{-n} : n\ge0,\ 0\le k\le 2^n\}\subset[0,1]$. -/
-def dyadic : Set ℝ := {x | ∃ n k : ℕ, k ≤ 2 ^ n ∧ x = k / 2 ^ n}
-
-@[inherit_doc] notation "𝒬" => dyadic
 
 /-- [DIR], §1.1: the definition of $\mathcal{B}_\beta$ is restricted to $x\in\mathcal{Q}$,
 since otherwise there exists no $A$ with $|A|=x$; i.e. $|A|\in\mathcal{Q}$ for every
@@ -220,19 +123,5 @@ theorem isoProfile_two_pow_le (β : ℝ) (hβ : 0 < β) (k : ℕ) :
       · intro x _ hx
         simp [h, hx, Real.zero_rpow hβ.ne']
       · simp
-
-/-- The defining properties of the function $J$ of [DIR], §1.3: $f$ is smooth on
-$(\frac12,1)$, continuous at the endpoints (i.e. on $[\frac12,1]$), and satisfies
-$f''f=-2$ on $(\frac12,1)$, $f(\frac12)=\frac12$, $f(1)=0$. -/
-def IsJ (f : ℝ → ℝ) : Prop :=
-  ContDiffOn ℝ ∞ f (Ioo 2⁻¹ 1) ∧ ContinuousOn f (Icc 2⁻¹ 1) ∧
-    (∀ x ∈ Ioo (2⁻¹ : ℝ) 1, deriv (deriv f) x * f x = -2) ∧ f 2⁻¹ = 2⁻¹ ∧ f 1 = 0
-
-open Classical in
-/-- The function $J$ ([DIR], §1.3): the unique smooth function on $(\frac12,1)$ continuous at the
-endpoints satisfying $J''J=-2$, $J(\frac12)=\frac12$, $J(1)=0$ (see `Auto.DIR.existsUnique_J`).
-Only its values on $[\frac12,1]$ are meaningful. It can be expressed in terms of the Gaussian
-isoperimetric profile $I(x)$, see (3.4). -/
-noncomputable def J : ℝ → ℝ := if h : ∃ f, IsJ f then h.choose else 0
 
 end Auto.DIR
