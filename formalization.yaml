@@ -32,9 +32,9 @@ classification:
     - math.CA
     - math.CO
   msc2020:
-    - 60E15
-    - 05C35
-    - 65G30
+    - "60E15"
+    - "05C35"
+    - "65G30"
 
 sources:
   - title: "Sharp isoperimetric inequalities on the Hamming cube II: The critical exponent"
