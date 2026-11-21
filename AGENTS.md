@@ -53,8 +53,8 @@
    …) once as table entries (`Cert.ofJ`, `Cert.ofDJ`, `Cert.ofJx0`, `Cert.ofRpow`, …), and prove
    each box by `check_sound` with the box's table entries and one `decide +kernel`. Use the
    parameters `Checker.P11` with `Checker.hw11` ($w_0$ to $9\cdot10^{-12}$). Generate tables and
-   certificate lemmas with scripts kept in the repository (witnesses:
-   `automation/cert/checker_witness.py`; worked example and timings: branch `cert-test`,
+   certificate lemmas with scripts in `automation/cert/` (local working files, not tracked in git;
+   witnesses: `automation/cert/checker_witness.py`; worked example and timings: branch `cert-test`,
    `CertTest/gen/casej_prime.py`, `CertTest/CaseJDefs.lean`, `CertTest/ESTIMATES.md`); large
    claims are spread over the `_aux` continuation files of rule 1, not over separate files
    (≈ 0.15 s per table entry, 0.05–1 s per box).

@@ -305,7 +305,7 @@ theorem derivs_f_LJQ_1_half (y : ℝ) (hy : y ∈ Ioo (2⁻¹ : ℝ) 1) :
       deriv (deriv (f_LJQ_1 2⁻¹)) y =
         -2 * (√2 - 1) * J y ^ (-1 : ℤ) - 2⁻¹ * deriv (deriv (Q 2⁻¹)) (y / 2) := by
   have hf : f_LJQ_1 2⁻¹ = fJQ (√2 - 1) 2⁻¹ :=
-    funext fun y ↦ by rw [f_LJQ_1_eq, two_rpow_half]; rfl
+    funext fun y ↦ by rw [f_LJQ_1_eq, two_rpow_half_eq_sqrt]; rfl
   obtain ⟨h1, h2, -⟩ := derivs_fJQ (√2 - 1) 2⁻¹ hy
   rw [hf, h1, h2, fJQ1, fJQ2, deriv2_Q_eq, deriv_Q_eq, zpow_neg_one]
   constructor <;> ring
@@ -316,8 +316,8 @@ theorem f_LJQ_1_half_deriv4 :
     (∀ y ∈ Ioo (2⁻¹ : ℝ) 1, iteratedDeriv 4 (f_LJQ_1 2⁻¹) y < 0) ∧
       StrictConcaveOn ℝ (Ioo 2⁻¹ 1) (deriv (deriv (f_LJQ_1 2⁻¹))) := by
   have hf : f_LJQ_1 2⁻¹ = fJQ (√2 - 1) 2⁻¹ :=
-    funext fun y ↦ by rw [f_LJQ_1_eq, two_rpow_half]; rfl
-  have hc : (0 : ℝ) < √2 - 1 := by linarith [sqrt_two_mem.1]
+    funext fun y ↦ by rw [f_LJQ_1_eq, two_rpow_half_eq_sqrt]; rfl
+  have hc : (0 : ℝ) < √2 - 1 := by linarith [sqrt_two_mem_fine.1]
   rw [hf]
   exact ⟨fun y hy ↦ by rw [iteratedDeriv_four_fJQ _ _ hy]; exact fJQ4_neg hc hy,
     strictConcaveOn_deriv2_fJQ hc _⟩
@@ -330,9 +330,9 @@ $y\to\frac12^+$. -/
 theorem f_LJQ_1_half_deriv2_half :
     Tendsto (deriv (deriv (f_LJQ_1 2⁻¹))) (𝓝[>] 2⁻¹) (𝓝 0) := by
   have hf : f_LJQ_1 2⁻¹ = fJQ (√2 - 1) 2⁻¹ :=
-    funext fun y ↦ by rw [f_LJQ_1_eq, two_rpow_half]; rfl
+    funext fun y ↦ by rw [f_LJQ_1_eq, two_rpow_half_eq_sqrt]; rfl
   have h := tendsto_fJQ2_half (√2 - 1) 2⁻¹
-  rw [Q2f_eq_affine, two_rpow_half, show (√2 - 1) * (-2 * (2⁻¹ : ℝ)⁻¹) -
+  rw [Q2f_eq_affine, two_rpow_half_eq_sqrt, show (√2 - 1) * (-2 * (2⁻¹ : ℝ)⁻¹) -
     2⁻¹ * (20 - 48 * (2⁻¹ / 2) + (-16 + 32 * (2⁻¹ / 2)) * √2) = 0 by ring] at h
   rw [hf]
   refine h.congr' ?_
@@ -350,7 +350,7 @@ theorem eqn_6_15 :
     deriv (deriv (f_LJQ_1 2⁻¹)) (9 / 16) > 0.05 ∧
       deriv (deriv (f_LJQ_1 2⁻¹)) (4 / 5) < -0.3 := by
   have hf : f_LJQ_1 2⁻¹ = fJQ (√2 - 1) 2⁻¹ :=
-    funext fun y ↦ by rw [f_LJQ_1_eq, two_rpow_half]; rfl
+    funext fun y ↦ by rw [f_LJQ_1_eq, two_rpow_half_eq_sqrt]; rfl
   rw [hf, (derivs_fJQ _ _ (⟨by norm_num, by norm_num⟩ : (9 / 16 : ℝ) ∈ Ioo 2⁻¹ 1)).2.1,
     (derivs_fJQ _ _ (⟨by norm_num, by norm_num⟩ : (4 / 5 : ℝ) ∈ Ioo 2⁻¹ 1)).2.1]
   exact ⟨fJQ2_nine_sixteenths, fJQ2_four_fifths⟩
@@ -365,7 +365,7 @@ theorem f_LJQ_1_half_y₀ :
       MonotoneOn (deriv (f_LJQ_1 2⁻¹)) (Ioc 2⁻¹ y₀) ∧
       AntitoneOn (deriv (f_LJQ_1 2⁻¹)) (Ico y₀ 1) := by
   have hf : f_LJQ_1 2⁻¹ = fJQ (√2 - 1) 2⁻¹ :=
-    funext fun y ↦ by rw [f_LJQ_1_eq, two_rpow_half]; rfl
+    funext fun y ↦ by rw [f_LJQ_1_eq, two_rpow_half_eq_sqrt]; rfl
   have hF : ∀ z ∈ Ioo (2⁻¹ : ℝ) 1,
       HasDerivAt (deriv (f_LJQ_1 2⁻¹)) (deriv (deriv (f_LJQ_1 2⁻¹)) z) z := by
     intro z hz
@@ -386,7 +386,7 @@ $f_{\frac12}'(\frac9{16})>0.05$ and $f_{\frac12}'(\frac{15}{16})<-0.1$. -/
 theorem eqn_6_16 :
     deriv (f_LJQ_1 2⁻¹) (9 / 16) > 0.05 ∧ deriv (f_LJQ_1 2⁻¹) (15 / 16) < -0.1 := by
   have hf : f_LJQ_1 2⁻¹ = fJQ (√2 - 1) 2⁻¹ :=
-    funext fun y ↦ by rw [f_LJQ_1_eq, two_rpow_half]; rfl
+    funext fun y ↦ by rw [f_LJQ_1_eq, two_rpow_half_eq_sqrt]; rfl
   rw [hf, (derivs_fJQ _ _ (⟨by norm_num, by norm_num⟩ : (9 / 16 : ℝ) ∈ Ioo 2⁻¹ 1)).1,
     (derivs_fJQ _ _ (⟨by norm_num, by norm_num⟩ : (15 / 16 : ℝ) ∈ Ioo 2⁻¹ 1)).1]
   exact ⟨fJQ1_nine_sixteenths, fJQ1_fifteen_sixteenths⟩
@@ -398,7 +398,7 @@ $>0.05$ (numerically $\approx0.0571$). -/
 theorem f_LJQ_1_half_deriv_half :
     ∃ d > (0.05 : ℝ), Tendsto (deriv (f_LJQ_1 2⁻¹)) (𝓝[>] 2⁻¹) (𝓝 d) := by
   have hf : f_LJQ_1 2⁻¹ = fJQ (√2 - 1) 2⁻¹ :=
-    funext fun y ↦ by rw [f_LJQ_1_eq, two_rpow_half]; rfl
+    funext fun y ↦ by rw [f_LJQ_1_eq, two_rpow_half_eq_sqrt]; rfl
   refine ⟨_, fJQ1_half_lim_gt, ?_⟩
   rw [hf]
   refine (tendsto_fJQ1_half (√2 - 1) 2⁻¹).congr' ?_
@@ -417,7 +417,7 @@ theorem f_LJQ_1_half_y₁ :
       MonotoneOn (f_LJQ_1 2⁻¹) (Icc 2⁻¹ y₁) ∧
       AntitoneOn (f_LJQ_1 2⁻¹) (Icc y₁ 1) := by
   have hf : f_LJQ_1 2⁻¹ = fJQ (√2 - 1) 2⁻¹ :=
-    funext fun y ↦ by rw [f_LJQ_1_eq, two_rpow_half]; rfl
+    funext fun y ↦ by rw [f_LJQ_1_eq, two_rpow_half_eq_sqrt]; rfl
   have hF : ∀ z ∈ Ioo (2⁻¹ : ℝ) 1,
       HasDerivAt (deriv (f_LJQ_1 2⁻¹)) (deriv (deriv (f_LJQ_1 2⁻¹)) z) z := by
     intro z hz
@@ -439,11 +439,11 @@ theorem f_LJQ_1_half_y₁ :
 theorem f_LJQ_1_half_endpoints :
     f_LJQ_1 2⁻¹ 1 = 0 ∧ f_LJQ_1 2⁻¹ 2⁻¹ = 0 := by
   have hf : f_LJQ_1 2⁻¹ = fJQ (√2 - 1) 2⁻¹ :=
-    funext fun y ↦ by rw [f_LJQ_1_eq, two_rpow_half]; rfl
+    funext fun y ↦ by rw [f_LJQ_1_eq, two_rpow_half_eq_sqrt]; rfl
   rw [hf]
   constructor
   · rw [fJQ, J_one, show (1 : ℝ) / 2 = 2⁻¹ by norm_num, Q_half]; ring
-  · rw [fJQ, J_half, Q_eq_affine, two_rpow_half]; ring
+  · rw [fJQ, J_half, Q_eq_affine, two_rpow_half_eq_sqrt]; ring
 
 /-- [DIR], §6.3.2, proof of (1): $f_{\frac12}(y)\ge0$ for $y\in[\frac12,1]$. -/
 theorem f_LJQ_1_half_nonneg (y : ℝ) (hy : y ∈ Icc (2⁻¹ : ℝ) 1) :
@@ -533,16 +533,16 @@ theorem f_LJQ_3_half_deriv2 (y : ℝ) (hy : y ∈ Ioo (3 / 4 : ℝ) 1) :
         (√2 - 1) * deriv (deriv J) y + deriv (deriv (L 2⁻¹)) (1 - y) ∧
       (√2 - 1) * deriv (deriv J) y + deriv (deriv (L 2⁻¹)) (1 - y) ≤ 0 := by
   have hf : f_LJQ_3 2⁻¹ = fJL (√2 - 1) 2⁻¹ :=
-    funext fun y ↦ by rw [f_LJQ_3_eq, two_rpow_half]; rfl
+    funext fun y ↦ by rw [f_LJQ_3_eq, two_rpow_half_eq_sqrt]; rfl
   have hy' : y ∈ Ioo (2⁻¹ : ℝ) 1 := ⟨by linarith [hy.1], hy.2⟩
   have h1y : 1 - y ∈ Ioo (0 : ℝ) 1 := ⟨by linarith [hy.2], by linarith [hy.1]⟩
   rw [hf, (derivs_fJL _ _ hy').2.1, fJL2, deriv2_J hy', deriv2_L_eq h1y]
-  exact ⟨rfl, fJL2_half_nonpos (by linarith [sqrt_two_mem.1]) hy'⟩
+  exact ⟨rfl, fJL2_half_nonpos (by linarith [sqrt_two_mem_fine.1]) hy'⟩
 
 /-- [DIR], §6.3.2, proof of (3): $f_{\frac12}$ is concave on $[\frac34,1]$. -/
 theorem f_LJQ_3_half_concaveOn : ConcaveOn ℝ (Icc (3 / 4) 1) (f_LJQ_3 2⁻¹) := by
   have hf : f_LJQ_3 2⁻¹ = fJL (√2 - 1) 2⁻¹ :=
-    funext fun y ↦ by rw [f_LJQ_3_eq, two_rpow_half]; rfl
+    funext fun y ↦ by rw [f_LJQ_3_eq, two_rpow_half_eq_sqrt]; rfl
   have hsub : ∀ z ∈ interior (Icc (3 / 4 : ℝ) 1), z ∈ Ioo (2⁻¹ : ℝ) 1 := fun z hz ↦ by
     rw [interior_Icc] at hz; exact ⟨by linarith [hz.1], hz.2⟩
   refine concaveOn_of_deriv2_nonpos (convex_Icc _ _) ?_ (fun z hz ↦ ?_) (fun z hz ↦ ?_)
@@ -565,7 +565,7 @@ theorem f_LJQ_3_half_one : f_LJQ_3 2⁻¹ 1 = 0 := by
 /-- **(6.18)** ([DIR], §6.3.2, proof of (3)). $f_{\frac12}(\frac34)>0.01$. -/
 theorem eqn_6_18 : f_LJQ_3 2⁻¹ (3 / 4) > 0.01 := by
   have hf : f_LJQ_3 2⁻¹ = fJL (√2 - 1) 2⁻¹ :=
-    funext fun y ↦ by rw [f_LJQ_3_eq, two_rpow_half]; rfl
+    funext fun y ↦ by rw [f_LJQ_3_eq, two_rpow_half_eq_sqrt]; rfl
   rw [hf]; exact fJL_three_fourths
 
 end Proof_Claim_3
