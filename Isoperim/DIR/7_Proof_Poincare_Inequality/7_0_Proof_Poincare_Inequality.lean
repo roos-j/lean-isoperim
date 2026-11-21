@@ -9,6 +9,7 @@ public import Isoperim.DIR.«1_Introduction».Definitions
 public import Isoperim.DIR.«2_Envelope_Functions».Definitions
 public import Isoperim.DIR.«3_Variants_Bobkov_Inequality».«3_0_Variants_Bobkov_Inequality»
 public import Isoperim.DIR.«5_Auxiliary_Estimates».«5_4_Lower_Bounds_Gaussian_Isoperimetric_Profile»
+public import Isoperim.DIR.«7_Proof_Poincare_Inequality».«7_0_Proof_Poincare_Inequality_aux»
 
 /-!
 # [DIR] §7 Proof of the Poincaré inequality
@@ -47,20 +48,23 @@ open Real Set
 $A\subset\{0,1\}^n$. -/
 theorem boolean_eq_indicator (n : ℕ) (f : ({0,1}^n) → ℝ) (hf : ∀ x, f x = 0 ∨ f x = 1) :
     ∃ A : Set ({0,1}^n), f = 𝟏 A := by
-  sorry
+  classical
+  refine ⟨{x | f x = 1}, funext fun x ↦ ?_⟩
+  rw [poincare_ind_apply]
+  rcases hf x with h | h <;> simp [h]
 
 /-- [DIR], §7: for $f=\mathbf{1}_A$, $\mathbf{E}f=|A|=2^{-n}\#A$ and
 $\|f-\mathbf{E}f\|_p^p=|A|^p(1-|A|)+|A|(1-|A|)^p$ (for $p>0$). -/
 theorem indicator_norms (n : ℕ) (A : Set ({0,1}^n)) (p : ℝ) (hp : 0 < p) :
     𝐄 𝟏 A = ｜A｜ ∧ ｜A｜ = (2 : ℝ)⁻¹ ^ n * A.ncard ∧
-    pNorm p (𝟏 A - fun _ ↦ 𝐄 𝟏 A) ^ p = ｜A｜ ^ p * (1 - ｜A｜) + ｜A｜ * (1 - ｜A｜) ^ p := by
-  sorry
+    pNorm p (𝟏 A - fun _ ↦ 𝐄 𝟏 A) ^ p = ｜A｜ ^ p * (1 - ｜A｜) + ｜A｜ * (1 - ｜A｜) ^ p :=
+  ⟨rfl, poincare_dens_eq_ncard A, poincare_ind_norm_rpow A hp⟩
 
 /-- **(7.1)** ([DIR], §7). For $f=\mathbf{1}_A$ (and $p>0$),
 $$\|\nabla f\|_p^p=2^{-p}(\mathbf{E}h_A^{p/2}+\mathbf{E}h_{A^c}^{p/2}).$$ -/
 theorem eqn_7_1 (n : ℕ) (A : Set ({0,1}^n)) (p : ℝ) (hp : 0 < p) :
-    pNorm p (∇(𝟏 A)) ^ p = 2 ^ (-p) * (𝐄 h A ^ (p / 2) + 𝐄 h Aᶜ ^ (p / 2)) := by
-  sorry
+    pNorm p (∇(𝟏 A)) ^ p = 2 ^ (-p) * (𝐄 h A ^ (p / 2) + 𝐄 h Aᶜ ^ (p / 2)) :=
+  poincare_eqn_7_1 A hp
 
 /-- [DIR], §7: set $p=2\beta$. If $\mathbf{E}h_A^\beta\ge B(|A|)$ for some function $B$ (for all
 $A\subset\{0,1\}^n$), then
@@ -68,7 +72,10 @@ $\|\nabla f\|_p^p\ge2^{-2\beta}(B(|A|)+B(1-|A|))$ for $f=\mathbf{1}_A$. -/
 theorem grad_norm_ge (n : ℕ) (β : ℝ) (hβ : 0 < β) (B : ℝ → ℝ)
     (hB : ∀ A : Set ({0,1}^n), 𝐄 h A ^ β ≥ B ｜A｜) (A : Set ({0,1}^n)) :
     pNorm (2 * β) (∇(𝟏 A)) ^ (2 * β) ≥ 2 ^ (-(2 * β)) * (B ｜A｜ + B (1 - ｜A｜)) := by
-  sorry
+  rw [eqn_7_1 n A (2 * β) (by positivity), show 2 * β / 2 = β by ring]
+  have h2 := hB Aᶜ
+  rw [poincare_dens_compl] at h2
+  exact mul_le_mul_of_nonneg_left (add_le_add (hB A) h2) (by positivity)
 
 /-- The function
 $G_{P,\beta}(x)=2^{-2\beta}(b_\beta(x)+b_\beta(1-x))-x^{2\beta}(1-x)-x(1-x)^{2\beta}$
@@ -81,7 +88,21 @@ section Proof_Proposition_7_1
 this for $x\in[0,\frac12]$. Notice that $G_{P,\beta}$ vanishes at $x=0,\frac12,1$. -/
 theorem G_P_symm (β : ℝ) (hβ : β ∈ Icc 2⁻¹ β₀) :
     (∀ x, G_P β x = G_P β (1 - x)) ∧ G_P β 0 = 0 ∧ G_P β 2⁻¹ = 0 ∧ G_P β 1 = 0 := by
-  sorry
+  have hs : ∀ x, G_P β x = G_P β (1 - x) := fun x ↦ by simp only [G_P, sub_sub_cancel]; ring
+  have h2β : 2 * β ≠ 0 := by linarith [hβ.1]
+  have hJ1 : J 1 = 0 := by rw [J_eq_gJw ⟨by norm_num, le_rfl⟩, gJw_one]
+  have hb0 : b β 0 = 0 := by rw [b, ite_eq_left (by norm_num), L_zero]
+  have hb1 : b β 1 = 0 := by rw [b, ite_eq_right (by norm_num), ite_eq_right (by norm_num), hJ1]
+  have h0 : G_P β 0 = 0 := by
+    rw [G_P, sub_zero, hb0, hb1, zero_rpow h2β]; ring
+  have hhalf : G_P β 2⁻¹ = 0 := by
+    have hb : b β 2⁻¹ = 2⁻¹ := by
+      rw [b, ite_eq_right (by norm_num), ite_eq_left le_rfl, poincare_Q_half]
+    rw [G_P, show (1 : ℝ) - 2⁻¹ = 2⁻¹ by norm_num, hb, inv_rpow (by norm_num),
+      rpow_neg (by norm_num)]
+    ring
+  refine ⟨hs, h0, hhalf, ?_⟩
+  rw [hs, sub_self, h0]
 
 section Case_I
 /-! ### Case I: $x\in[0,\frac1{64}]$ -/
@@ -91,7 +112,10 @@ $2^{-2\beta}(L_\beta(x)+J(1-x))-x^{2\beta}(1-x)-x(1-x)^{2\beta}\ge0$; this is $G
 theorem prop_7_1_case_I_eq (β : ℝ) (x : ℝ) (hx : x ∈ Icc (0 : ℝ) 64⁻¹) :
     G_P β x = 2 ^ (-(2 * β)) * (L β x + J (1 - x)) - x ^ (2 * β) * (1 - x) -
       x * (1 - x) ^ (2 * β) := by
-  sorry
+  have hb1 : b β x = L β x := by rw [b, ite_eq_left (by linarith [hx.2])]
+  have hb2 : b β (1 - x) = J (1 - x) := by
+    rw [b, ite_eq_right (by norm_num; linarith [hx.2]), ite_eq_right (by norm_num; linarith [hx.2])]
+  rw [G_P, hb1, hb2]
 
 /-- The function
 $g_{P,1}(x)=2^{-2\beta_0}\sqrt{\log_2(1/x)}+2^{-2\beta_0}\sqrt{\log(w_0/x)}-2$
@@ -109,18 +133,60 @@ theorem prop_7_1_case_I_chain (β : ℝ) (hβ : β ∈ Icc 2⁻¹ β₀) (x : �
     (hx : x ∈ Ioc (0 : ℝ) 64⁻¹) :
     G_P β x ≥ 2 ^ (-(2 * β₀)) * (L 2⁻¹ x + J (1 - x)) - 2 * x * (1 - x) ∧
     2 ^ (-(2 * β₀)) * (L 2⁻¹ x + J (1 - x)) - 2 * x * (1 - x) ≥ x * g_P_1 x := by
-  sorry
+  refine ⟨poincare_GPf_ge β hβ ⟨hx.1, by linarith [hx.2]⟩, ?_⟩
+  have hJ := cor_5_12 x hx
+  have hL : L 2⁻¹ x = x * √(log₂ x⁻¹) := by rw [L, sqrt_eq_rpow, one_div]
+  have hK : (0 : ℝ) < 2 ^ (-(2 * β₀)) := by positivity
+  rw [hL, g_P_1]
+  nlinarith [mul_le_mul_of_nonneg_left hJ hK.le, sq_nonneg x]
 
 /-- **(7.2)** ([DIR], proof of Proposition 7.1, Case I). $g_{P,1}$ is a decreasing function of $x$
 and one can evaluate $g_{P,1}(\frac1{64})>0.2$. -/
 theorem eqn_7_2 : AntitoneOn g_P_1 (Ioc 0 64⁻¹) ∧ g_P_1 64⁻¹ > 0.2 := by
-  sorry
+  have hK := two_rpow_neg_two_β₀_mem
+  have hK0 : (0 : ℝ) ≤ 2 ^ (-(2 * β₀)) := by positivity
+  have hw := w₀_mem
+  constructor
+  · intro x hx y hy hxy
+    unfold g_P_1
+    have h1 : log₂ y⁻¹ ≤ log₂ x⁻¹ :=
+      logb_le_logb_of_le one_lt_two (inv_pos.2 hy.1) (inv_anti₀ hx.1 hxy)
+    have h2 : log (w₀ / y) ≤ log (w₀ / x) :=
+      log_le_log (div_pos (by linarith [hw.1]) hy.1)
+        (div_le_div_of_nonneg_left (by linarith [hw.1]) hx.1 hxy)
+    nlinarith [mul_le_mul_of_nonneg_left (sqrt_le_sqrt h1) hK0,
+      mul_le_mul_of_nonneg_left (sqrt_le_sqrt h2) hK0]
+  · unfold g_P_1
+    have h64 : log₂ (64⁻¹ : ℝ)⁻¹ = 6 := by
+      rw [inv_inv, show (64 : ℝ) = 2 ^ (6 : ℕ) by norm_num, logb_pow,
+        logb_self_eq_one one_lt_two]
+      norm_num
+    have hlog : (4.04 : ℝ) ≤ log (w₀ / 64⁻¹) := by
+      rw [div_inv_eq_mul, log_mul (by linarith [hw.1]) (by norm_num),
+        show (64 : ℝ) = 2 ^ (6 : ℕ) by norm_num, log_pow]
+      have e1 := one_sub_inv_le_log_of_pos (show 0 < w₀ by linarith [hw.1])
+      have e2 : w₀⁻¹ ≤ (0.895 : ℝ)⁻¹ := inv_anti₀ (by norm_num) hw.1
+      have e3 := log_two_gt_d9
+      norm_num at e2 ⊢
+      linarith
+    have hs6 : (2.449 : ℝ) ≤ √6 := by rw [le_sqrt (by norm_num) (by norm_num)]; norm_num
+    have hs4 : (2.0099 : ℝ) ≤ √(log (w₀ / 64⁻¹)) := by
+      rw [le_sqrt (by norm_num) (by linarith)]; nlinarith
+    rw [h64]
+    nlinarith [mul_le_mul hK.1 hs6 (by norm_num) hK0, mul_le_mul hK.1 hs4 (by norm_num) hK0]
 
 /-- [DIR], proof of Proposition 7.1, Case I: thus $G_{P,\beta}(x)\ge0.2\,x$ for all
 $x\in[0,\frac1{64}]$ and $\beta\in[\frac12,\beta_0]$. -/
 theorem prop_7_1_case_I (β : ℝ) (hβ : β ∈ Icc 2⁻¹ β₀) (x : ℝ)
     (hx : x ∈ Icc (0 : ℝ) 64⁻¹) : G_P β x ≥ 0.2 * x := by
-  sorry
+  rcases eq_or_lt_of_le hx.1 with h0 | hpos
+  · subst h0
+    rw [(G_P_symm β hβ).2.1]
+    norm_num
+  · obtain ⟨h1, h2⟩ := prop_7_1_case_I_chain β hβ x ⟨hpos, hx.2⟩
+    obtain ⟨hanti, hval⟩ := eqn_7_2
+    have hg := hanti ⟨hpos, hx.2⟩ ⟨by norm_num, le_rfl⟩ hx.2
+    nlinarith [mul_le_mul_of_nonneg_left hg hpos.le]
 
 end Case_I
 
@@ -132,8 +198,8 @@ $\textsc{Partition}_1(\underline{g_{P,2}},[\frac1{64},\frac14])$ shows that
 $$G_{P,\beta}(x)>10^{-4}$$
 for all $x\in[\frac1{64},\frac14]$ and $\beta\in[\frac12,\beta_0]$. -/
 theorem eqn_7_3 (β : ℝ) (hβ : β ∈ Icc 2⁻¹ β₀) (x : ℝ) (hx : x ∈ Icc (64⁻¹ : ℝ) 4⁻¹) :
-    G_P β x > 1e-4 := by
-  sorry
+    G_P β x > 1e-4 :=
+  poincare_eqn_7_3 β hβ x hx
 
 end Case_II
 
@@ -148,7 +214,11 @@ theorem prop_7_1_case_III_eq (β : ℝ) (x : ℝ) (hx : x ∈ Icc (4⁻¹ : ℝ)
       x * (1 - x) ^ (2 * β) ∧
     2 ^ (-(2 * β)) * (Q β 2⁻¹ + J (1 - 2⁻¹)) - (2⁻¹ : ℝ) ^ (2 * β) * (1 - 2⁻¹) -
       2⁻¹ * (1 - 2⁻¹) ^ (2 * β) = 0 := by
-  sorry
+  refine ⟨by rw [G_P, poincare_b_eq_Q β hx, poincare_b_one_sub β ⟨by linarith [hx.1], hx.2⟩],
+    ?_⟩
+  rw [show (1 : ℝ) - 2⁻¹ = 2⁻¹ by norm_num, poincare_Q_half, (J_half_eq_L_half β).1,
+    inv_rpow (by norm_num), rpow_neg (by norm_num)]
+  ring
 
 /-- The function $g_{P,3,\beta}(x)=-\partial_xG_{P,\beta}(x)$ ([DIR], proof of Proposition 7.1,
 Case III), for $x\in[\frac14,\frac12]$; the derivative is taken within $[\frac14,\frac12]$, so it is
@@ -161,8 +231,8 @@ $$g_{P,3,\beta}(x)>0.001$$
 for all $x\in[\frac14,\frac12]$ (and $\beta\in[\frac12,\beta_0]$), which finishes the proof of
 Proposition 7.1. -/
 theorem eqn_7_4 (β : ℝ) (hβ : β ∈ Icc 2⁻¹ β₀) (x : ℝ) (hx : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
-    g_P_3 β x > 0.001 := by
-  sorry
+    g_P_3 β x > 0.001 :=
+  poincare_eqn_7_4 β hβ x hx
 
 end Case_III
 
@@ -172,6 +242,26 @@ end Proof_Proposition_7_1
 $$G_{P,\beta}(x)=2^{-2\beta}(b_\beta(x)+b_\beta(1-x))-x^{2\beta}(1-x)-x(1-x)^{2\beta}\ge0.$$ -/
 theorem prop_7_1 (x : ℝ) (hx : x ∈ Icc (0 : ℝ) 1) (β : ℝ) (hβ : β ∈ Icc 2⁻¹ β₀) :
     G_P β x ≥ 0 := by
-  sorry
+  obtain ⟨hsymm, -, hhalf, -⟩ := G_P_symm β hβ
+  suffices H : ∀ y ∈ Icc (0 : ℝ) 2⁻¹, G_P β y ≥ 0 by
+    rcases le_total x 2⁻¹ with h | h
+    · exact H x ⟨hx.1, h⟩
+    · rw [hsymm x]
+      exact H (1 - x) ⟨by linarith [hx.2], by linarith⟩
+  intro y hy
+  rcases le_total y 64⁻¹ with h1 | h1
+  · have := prop_7_1_case_I β hβ y ⟨hy.1, h1⟩
+    linarith [hy.1]
+  rcases le_total y 4⁻¹ with h2 | h2
+  · have := eqn_7_3 β hβ y ⟨h1, h2⟩
+    linarith
+  have hanti : AntitoneOn (G_P β) (Icc 4⁻¹ 2⁻¹) :=
+    poincare_antitoneOn_of_derivWithin fun t ht ↦ by
+      have := eqn_7_4 β hβ t ht
+      unfold g_P_3 at this
+      linarith
+  have := hanti ⟨h2, hy.2⟩ ⟨by norm_num, le_rfl⟩ hy.2
+  rw [hhalf] at this
+  exact this
 
 end Auto.DIR

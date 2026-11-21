@@ -61,7 +61,19 @@ theorem kahn_park (B : ℝ → ℝ) (hB : ∀ x ∈ Icc (0 : ℝ) 1, 0 ≤ B x) 
     (hB1 : B 1 = 0) (htwo : ∀ x y : ℝ, 0 ≤ x → x ≤ y → y ≤ 1 → G B x y ≥ 0)
     (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) :
     𝐄 (fun x ↦ √(h A x)) ≥ B ｜A｜ := by
-  sorry
+  have h1 := prop_2_1 2⁻¹ le_rfl (by norm_num) B hB hB0 hB1 htwo ｜A｜ (dens_mem_dyadic n A)
+  have hbdd : BddBelow {v : ℝ | ∃ m : ℕ, 1 ≤ m ∧ ∃ A' : Set ({0,1}^m), ｜A'｜ = ｜A｜ ∧
+      v = 𝐄 h A' ^ (2⁻¹ : ℝ)} := by
+    refine ⟨0, ?_⟩
+    rintro v ⟨m, -, A', -, rfl⟩
+    have := expect_le_expect (f := fun _ : {0,1}^m ↦ (0 : ℝ)) (g := h A' ^ (2⁻¹ : ℝ))
+      fun z ↦ by rw [Pi.pow_apply, h_eq_hN]; positivity
+    simpa [expect] using this
+  have h2 : 𝓑 2⁻¹ ｜A｜ ≤ 𝐄 h A ^ (2⁻¹ : ℝ) := csInf_le hbdd ⟨n, hn, A, rfl, rfl⟩
+  have h3 : 𝐄 h A ^ (2⁻¹ : ℝ) = 𝐄 (fun x ↦ √(h A x)) := by
+    congr 1; funext x; rw [Pi.pow_apply, Real.sqrt_eq_rpow, one_div]
+  rw [← h3]
+  exact h1.le.trans h2
 
 local notation "L" => Auto.DIR.L 2⁻¹
 

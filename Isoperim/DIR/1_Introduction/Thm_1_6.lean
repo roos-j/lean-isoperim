@@ -7,6 +7,7 @@ module
 
 public import Isoperim.DIR.«1_Introduction».Definitions
 public import Isoperim.DIR.«1_Introduction».Thm_1_5
+public import Isoperim.DIR.«1_Introduction».Thm_1_5_aux
 public import Isoperim.DIR.«3_Variants_Bobkov_Inequality».«3_0_Variants_Bobkov_Inequality»
 
 /-!
@@ -30,7 +31,68 @@ open Real Filter Topology
 $\mathbf{E}\sqrt{h_A}\le\sqrt{|A|\,\mathbf{E}h_A}$, which gives
 $\mathcal{B}_{\frac12}(x)\le\sqrt{x\,\mathcal{B}_1(x)}$ for $x\in\mathcal{Q}$. -/
 theorem isoProfile_half_le_sqrt (x : ℝ) (hx : x ∈ 𝒬) : 𝓑 2⁻¹ x ≤ √(x * 𝓑 1 x) := by
-  sorry
+  obtain ⟨m, k, hk, rfl⟩ := hx
+  obtain ⟨A0, hA0⟩ := exists_set_dens m k hk
+  have hEnn : ∀ (β : ℝ) (n : ℕ) (A : Set ({0,1}^n)), 0 ≤ 𝐄 h A ^ β := by
+    intro β n A
+    simp only [expect, smul_eq_mul]
+    exact mul_nonneg (by positivity) (Finset.sum_nonneg fun z _ ↦ by
+      rw [Pi.pow_apply]; exact Real.rpow_nonneg (h_nonneg A z) _)
+  have hbdd : ∀ β : ℝ, BddBelow {v : ℝ | ∃ n : ℕ, 1 ≤ n ∧ ∃ A : Set ({0,1}^n),
+      ｜A｜ = (k : ℝ) / 2 ^ m ∧ v = 𝐄 h A ^ β} := by
+    intro β
+    refine ⟨0, ?_⟩
+    rintro v ⟨n, -, A, -, rfl⟩
+    exact hEnn β n A
+  have hB0 : 0 ≤ 𝓑 2⁻¹ ((k : ℝ) / 2 ^ m) := by
+    refine Real.sInf_nonneg fun v hv ↦ ?_
+    obtain ⟨n, -, A, -, rfl⟩ := hv
+    exact hEnn _ n A
+  -- Cauchy–Schwarz: $(\mathbf{E}\sqrt{h_A})^2\le|A|\,\mathbf{E}h_A$
+  have hCS : ∀ (n : ℕ) (A : Set ({0,1}^n)),
+      (𝐄 h A ^ (2⁻¹ : ℝ)) ^ 2 ≤ ｜A｜ * 𝐄 h A ^ (1 : ℝ) := by
+    intro n A
+    have hcs := Finset.sum_mul_sq_le_sq_mul_sq Finset.univ (𝟏 A) (fun z ↦ √(h A z))
+    have e1 : ∀ z, 𝟏 A z * √(h A z) = h A z ^ (2⁻¹ : ℝ) := by
+      intro z
+      rw [Real.sqrt_eq_rpow, one_div]
+      by_cases hz : z ∈ A
+      · simp [ind, hz]
+      · simp [ind, hz, h, Real.zero_rpow (by norm_num : (2⁻¹ : ℝ) ≠ 0)]
+    have e2 : ∀ z, 𝟏 A z ^ 2 = 𝟏 A z := by
+      intro z; by_cases hz : z ∈ A <;> simp [ind, hz]
+    have e3 : ∀ z, √(h A z) ^ 2 = h A z := fun z ↦ Real.sq_sqrt (h_nonneg A z)
+    simp only [e1, e2, e3] at hcs
+    simp only [dens, expect, smul_eq_mul, Pi.pow_apply, Real.rpow_one]
+    calc ((2⁻¹ : ℝ) ^ n * ∑ z, h A z ^ (2⁻¹ : ℝ)) ^ 2
+        = ((2⁻¹ : ℝ) ^ n) ^ 2 * (∑ z, h A z ^ (2⁻¹ : ℝ)) ^ 2 := by ring
+      _ ≤ ((2⁻¹ : ℝ) ^ n) ^ 2 * ((∑ z, 𝟏 A z) * ∑ z, h A z) :=
+          mul_le_mul_of_nonneg_left hcs (by positivity)
+      _ = ((2⁻¹ : ℝ) ^ n * ∑ z, 𝟏 A z) * ((2⁻¹ : ℝ) ^ n * ∑ z, h A z) := by ring
+  have key : ∀ v ∈ {v : ℝ | ∃ n : ℕ, 1 ≤ n ∧ ∃ A : Set ({0,1}^n),
+      ｜A｜ = (k : ℝ) / 2 ^ m ∧ v = 𝐄 h A ^ (1 : ℝ)},
+      𝓑 2⁻¹ ((k : ℝ) / 2 ^ m) ^ 2 ≤ (k : ℝ) / 2 ^ m * v := by
+    rintro v ⟨n, hn, A, hA, rfl⟩
+    have h1 : 𝓑 2⁻¹ ((k : ℝ) / 2 ^ m) ≤ 𝐄 h A ^ (2⁻¹ : ℝ) :=
+      csInf_le (hbdd _) ⟨n, hn, A, hA, rfl⟩
+    calc 𝓑 2⁻¹ ((k : ℝ) / 2 ^ m) ^ 2 ≤ (𝐄 h A ^ (2⁻¹ : ℝ)) ^ 2 := pow_le_pow_left₀ hB0 h1 2
+      _ ≤ ｜A｜ * 𝐄 h A ^ (1 : ℝ) := hCS n A
+      _ = _ := by rw [hA]
+  have hne : ({v : ℝ | ∃ n : ℕ, 1 ≤ n ∧ ∃ A : Set ({0,1}^n),
+      ｜A｜ = (k : ℝ) / 2 ^ m ∧ v = 𝐄 h A ^ (1 : ℝ)}).Nonempty :=
+    ⟨_, m + 1, by omega, A0, hA0, rfl⟩
+  suffices hsq : 𝓑 2⁻¹ ((k : ℝ) / 2 ^ m) ^ 2 ≤ (k : ℝ) / 2 ^ m * 𝓑 1 ((k : ℝ) / 2 ^ m) by
+    calc 𝓑 2⁻¹ ((k : ℝ) / 2 ^ m) = √(𝓑 2⁻¹ ((k : ℝ) / 2 ^ m) ^ 2) := (Real.sqrt_sq hB0).symm
+      _ ≤ _ := Real.sqrt_le_sqrt hsq
+  rcases Nat.eq_zero_or_pos k with rfl | hk0
+  · obtain ⟨v, hv⟩ := hne
+    have := key v hv
+    simp only [Nat.cast_zero, zero_div, zero_mul] at this ⊢
+    exact this
+  · have hx0 : (0 : ℝ) < (k : ℝ) / 2 ^ m := by positivity
+    have : 𝓑 2⁻¹ ((k : ℝ) / 2 ^ m) ^ 2 / ((k : ℝ) / 2 ^ m) ≤ 𝓑 1 ((k : ℝ) / 2 ^ m) :=
+      le_csInf hne fun v hv ↦ by rw [div_le_iff₀ hx0, mul_comm]; exact key v hv
+    rwa [div_le_iff₀ hx0, mul_comm] at this
 
 /-- [DIR], §1.2, after Theorem 1.6: the characterization (1.3) of $\mathcal{B}_1$ implies
 $\mathcal{B}_1(x)\sim x\log_2(1/x)$ as $x\to0^+$ (along $x\in\mathcal{Q}$). -/

@@ -20,7 +20,12 @@ Auxiliary material for `3_0_Variants_Bobkov_Inequality.lean`:
 * an API for the standard Gaussian density `gDens`, distribution function `gCDF`, its inverse
   `gInv` and the Gaussian isoperimetric profile `gProf`. These are definitionally equal to
   `Auto.DIR.φ`, `Auto.DIR.Φ`, `Function.invFun Auto.DIR.Φ` and `Auto.DIR.I` of the main file
-  (e.g. `(rfl : I = gProf)`), so the lemmas here apply to those.
+  (e.g. `(rfl : I = gProf)`), so the lemmas here apply to those;
+* the function $G_c$ of the proof of Proposition 3.3 and its derivatives;
+* the tensorization argument of Lemma 3.1 (`tensor_two_point`, with $Mf$ written out as
+  `gradPlus`);
+* [BIM23] (Beltran–Ivanisvili–Madrid, arXiv:2303.06738), Lemmas 2.2 and 2.3 for
+  $L_\beta(x)=x(\log_2(1/x))^\beta$ (`bim_lemma_2_2`, `bim_lemma_2_3`).
 -/
 
 @[expose] public section
@@ -1007,5 +1012,708 @@ theorem isJ_unique {f g : ℝ → ℝ} (hf : IsJ f) (hg : IsJ g) : EqOn f g (Icc
   exact eqOn_of_mul_deriv2_eq (k := 2) (by norm_num) hf.2.1 hg.2.1 (contDiffOn_two_of_infty hf.1)
     (contDiffOn_two_of_infty hg.1) (hpos f hf) (hpos g hg) (hmul f hf) (hmul g hg)
     (hf.2.2.2.1.trans hg.2.2.2.1.symm) (hf.2.2.2.2.trans hg.2.2.2.2.symm)
+
+/-! ### Proposition 3.3: the function $G_c$ -/
+
+/-- [DIR], proof of Proposition 3.3: derivative of
+$G_c(u)=I(c+u)^2-I(c-u)^2+2u^2-4I(c)^2+4I(c)I(c-u)$ (for $c\pm u\in(a,b)$). -/
+theorem gc_hasDerivAt (I : ℝ → ℝ) (a b : ℝ) (hI : ContDiffOn ℝ 2 I (Ioo a b)) (c u : ℝ)
+    (hcu : c + u ∈ Ioo a b) (hcu' : c - u ∈ Ioo a b) :
+    HasDerivAt (fun v ↦ I (c + v) ^ 2 - I (c - v) ^ 2 + 2 * v ^ 2 - 4 * I c ^ 2 +
+      4 * I c * I (c - v))
+      (2 * deriv I (c + u) * I (c + u) + 2 * deriv I (c - u) * I (c - u) +
+        4 * u - 4 * I c * deriv I (c - u)) u := by
+  have e1 := HasDerivAt.comp_const_add c u
+    (contDiffOn_two_differentiableAt isOpen_Ioo hI hcu).1.hasDerivAt
+  have e2 := HasDerivAt.comp_const_sub c u
+    (contDiffOn_two_differentiableAt isOpen_Ioo hI hcu').1.hasDerivAt
+  have h := (((e1.pow 2).sub (e2.pow 2)).add (((hasDerivAt_id' u).pow 2).const_mul 2)).sub_const
+    (4 * I c ^ 2) |>.add (e2.const_mul (4 * I c))
+  convert h using 1
+  simp; ring
+
+/-- [DIR], proof of Proposition 3.3: near $u$ (with $c\pm u\in(a,b)$), $G_c'$ is given by the
+formula of `gc_hasDerivAt`. -/
+theorem gc_eventually_deriv (I : ℝ → ℝ) (a b : ℝ) (hI : ContDiffOn ℝ 2 I (Ioo a b)) (c u : ℝ)
+    (hcu : c + u ∈ Ioo a b) (hcu' : c - u ∈ Ioo a b) :
+    deriv (fun v ↦ I (c + v) ^ 2 - I (c - v) ^ 2 + 2 * v ^ 2 - 4 * I c ^ 2 +
+      4 * I c * I (c - v)) =ᶠ[𝓝 u]
+      fun v ↦ 2 * deriv I (c + v) * I (c + v) + 2 * deriv I (c - v) * I (c - v) +
+        4 * v - 4 * I c * deriv I (c - v) := by
+  have h1 : ∀ᶠ v in 𝓝 u, c + v ∈ Ioo a b :=
+    (continuous_const.add continuous_id).continuousAt.preimage_mem_nhds (isOpen_Ioo.mem_nhds hcu)
+  have h2 : ∀ᶠ v in 𝓝 u, c - v ∈ Ioo a b :=
+    (continuous_const.sub continuous_id).continuousAt.preimage_mem_nhds
+      (isOpen_Ioo.mem_nhds hcu')
+  filter_upwards [h1, h2] with v hv hv'
+  exact (gc_hasDerivAt I a b hI c v hv hv').deriv
+
+/-- [DIR], proof of Proposition 3.3: second derivative
+$G_c''(u)=2(I'(c+u)^2-I'(c-u)^2)+4(1-\frac{I(c)}{I(c-u)})$, using $I''I=-1$. -/
+theorem gc_deriv_hasDerivAt (I : ℝ → ℝ) (a b : ℝ) (hI : ContDiffOn ℝ 2 I (Ioo a b))
+    (hII : ∀ x ∈ Ioo a b, deriv (deriv I) x * I x = -1) (c u : ℝ)
+    (hcu : c + u ∈ Ioo a b) (hcu' : c - u ∈ Ioo a b) :
+    HasDerivAt (deriv (fun v ↦ I (c + v) ^ 2 - I (c - v) ^ 2 + 2 * v ^ 2 - 4 * I c ^ 2 +
+      4 * I c * I (c - v)))
+      (2 * (deriv I (c + u) ^ 2 - deriv I (c - u) ^ 2) + 4 * (1 - I c / I (c - u))) u := by
+  obtain ⟨p1, q1⟩ := contDiffOn_two_differentiableAt isOpen_Ioo hI hcu
+  obtain ⟨p2, q2⟩ := contDiffOn_two_differentiableAt isOpen_Ioo hI hcu'
+  have a1 := HasDerivAt.comp_const_add c u p1.hasDerivAt
+  have a2 := HasDerivAt.comp_const_sub c u p2.hasDerivAt
+  have b1 := HasDerivAt.comp_const_add c u q1.hasDerivAt
+  have b2 := HasDerivAt.comp_const_sub c u q2.hasDerivAt
+  have h := ((((b1.mul a1).const_mul 2).add ((b2.mul a2).const_mul 2)).add
+    ((hasDerivAt_id' u).const_mul 4)).sub (b2.const_mul (4 * I c))
+  have hne1 : I (c + u) ≠ 0 := fun h0 ↦ by
+    have := hII _ hcu; rw [h0, mul_zero] at this; norm_num at this
+  have hne2 : I (c - u) ≠ 0 := fun h0 ↦ by
+    have := hII _ hcu'; rw [h0, mul_zero] at this; norm_num at this
+  have r1 : deriv (deriv I) (c + u) = -(I (c + u))⁻¹ := by
+    have := hII _ hcu; field_simp; linarith
+  have r2 : deriv (deriv I) (c - u) = -(I (c - u))⁻¹ := by
+    have := hII _ hcu'; field_simp; linarith
+  have h' : HasDerivAt (fun v ↦ 2 * deriv I (c + v) * I (c + v) + 2 * deriv I (c - v) * I (c - v) +
+      4 * v - 4 * I c * deriv I (c - v))
+      (2 * (deriv (deriv I) (c + u) * I (c + u) + deriv I (c + u) * deriv I (c + u)) +
+        2 * (-deriv (deriv I) (c - u) * I (c - u) + deriv I (c - u) * -deriv I (c - u)) +
+        4 * 1 - 4 * I c * -deriv (deriv I) (c - u)) u := by
+    convert h using 1
+    funext v; simp only [Pi.add_apply, Pi.sub_apply, Pi.mul_apply]; ring
+  refine (h'.congr_of_eventuallyEq (gc_eventually_deriv I a b hI c u hcu hcu')).congr_deriv ?_
+  rw [r1, r2]; field_simp; ring
+
+/-! ### Lemma 3.1: tensorization -/
+
+/-- $\sqrt{\sum_i((f(x)-f(x\oplus e_i))_+)^2}$, i.e. $Mf(x)$ of [DIR], §3 (definitionally equal to
+`Auto.DIR.M f x` of the main file). -/
+noncomputable def gradPlus {n : ℕ} (f : ({0,1}^n) → ℝ) (x : {0,1}^n) : ℝ :=
+  √(∑ i, (max (f x - f (x + e i)) 0) ^ 2)
+
+/-- The two elements of $\mathbb{Z}/2$. -/
+theorem tens_zmod2_univ : (Finset.univ : Finset (ZMod 2)) = {0, 1} := by decide
+
+/-- Summing over $\{0,1\}^{n+1}$ by splitting off the first coordinate. -/
+theorem tens_cube_sum_cons {n : ℕ} (g : ({0,1}^(n + 1)) → ℝ) :
+    ∑ x, g x = ∑ x' : {0,1}^n, g (Fin.cons 0 x') + ∑ x' : {0,1}^n, g (Fin.cons 1 x') := by
+  rw [← (Fin.consEquiv fun _ ↦ ZMod 2).sum_comp, Fintype.sum_prod_type, tens_zmod2_univ,
+    Finset.sum_pair (by decide)]
+  rfl
+
+/-- $\mathbf{E}g=\frac12(\mathbf{E}g(0,\cdot)+\mathbf{E}g(1,\cdot))$ on $\{0,1\}^{n+1}$. -/
+theorem tens_expect_cons {n : ℕ} (g : ({0,1}^(n + 1)) → ℝ) :
+    𝐄 g = 2⁻¹ * (𝐄 (fun x' : {0,1}^n ↦ g (Fin.cons 0 x')) +
+      𝐄 (fun x' : {0,1}^n ↦ g (Fin.cons 1 x'))) := by
+  simp only [expect, smul_eq_mul, tens_cube_sum_cons, pow_succ]
+  ring
+
+/-- The two points of $\{0,1\}^1$. -/
+theorem tens_cube1_univ : (Finset.univ : Finset ({0,1}^1)) = {0, 1} := by decide
+
+/-- $\mathbf{E}g=\frac12(g(0)+g(1))$ on $\{0,1\}^1$. -/
+theorem tens_expect_cube1 (g : ({0,1}^1) → ℝ) : 𝐄 g = 2⁻¹ * (g 0 + g 1) := by
+  simp only [expect, smul_eq_mul, pow_one, tens_cube1_univ, Finset.sum_pair (show (0 : {0,1}^1) ≠ 1
+    by decide)]
+
+/-- $0\oplus e_1=1$ in $\{0,1\}^1$. -/
+theorem tens_cube1_e0 : (0 : {0,1}^1) + e 0 = 1 := by decide
+/-- $1\oplus e_1=0$ in $\{0,1\}^1$. -/
+theorem tens_cube1_e1 : (1 : {0,1}^1) + e 0 = 0 := by decide
+
+/-- $Mf(0)=(f(0)-f(1))_+$ on $\{0,1\}^1$. -/
+theorem gradPlus_cube1_zero (g : ({0,1}^1) → ℝ) : gradPlus g 0 = max (g 0 - g 1) 0 := by
+  simp only [gradPlus, Fin.sum_univ_one, Fin.isValue, tens_cube1_e0]
+  exact Real.sqrt_sq (le_max_right _ _)
+
+/-- $Mf(1)=(f(1)-f(0))_+$ on $\{0,1\}^1$. -/
+theorem gradPlus_cube1_one (g : ({0,1}^1) → ℝ) : gradPlus g 1 = max (g 1 - g 0) 0 := by
+  simp only [gradPlus, Fin.sum_univ_one, Fin.isValue, tens_cube1_e1]
+  exact Real.sqrt_sq (le_max_right _ _)
+
+/-- Flipping the first bit of $(a,x')$. -/
+theorem tens_cons_add_e_zero {n : ℕ} (a : ZMod 2) (x' : {0,1}^n) :
+    (Fin.cons a x' : {0,1}^(n + 1)) + e 0 = Fin.cons (a + 1) x' := by
+  funext i
+  refine Fin.cases ?_ (fun k ↦ ?_) i <;> simp [e, Fin.succ_ne_zero]
+
+/-- Flipping bit $j+1$ of $(a,x')$. -/
+theorem tens_cons_add_e_succ {n : ℕ} (a : ZMod 2) (x' : {0,1}^n) (j : Fin n) :
+    (Fin.cons a x' : {0,1}^(n + 1)) + e j.succ = Fin.cons a (x' + e j) := by
+  funext i
+  refine Fin.cases ?_ (fun k ↦ ?_) i <;> simp [e, Pi.single_apply, (Fin.succ_ne_zero j).symm]
+
+/-- $(Mf)^2(a,x')=((f(a,x')-f(a+1,x'))_+)^2+(Mf(a,\cdot))^2(x')$. -/
+theorem gradPlus_cons_sq {n : ℕ} (f : ({0,1}^(n + 1)) → ℝ) (a : ZMod 2) (x' : {0,1}^n) :
+    gradPlus f (Fin.cons a x') ^ 2 = (max (f (Fin.cons a x') - f (Fin.cons (a + 1) x')) 0) ^ 2 +
+      gradPlus (fun y ↦ f (Fin.cons a y)) x' ^ 2 := by
+  simp only [gradPlus]
+  rw [Real.sq_sqrt (Finset.sum_nonneg fun _ _ ↦ sq_nonneg _),
+    Real.sq_sqrt (Finset.sum_nonneg fun _ _ ↦ sq_nonneg _), Fin.sum_univ_succ,
+    tens_cons_add_e_zero]
+  simp only [tens_cons_add_e_succ]
+
+/-- An expectation of an $\mathcal I$-valued function lies in the interval $\mathcal I$. -/
+theorem tens_expect_mem {n : ℕ} {𝓘 : Set ℝ} (h𝓘 : 𝓘.OrdConnected) (g : ({0,1}^n) → ℝ)
+    (hg : ∀ x, g x ∈ 𝓘) : 𝐄 g ∈ 𝓘 := by
+  obtain ⟨x1, hx1⟩ := Finite.exists_min g
+  obtain ⟨x2, hx2⟩ := Finite.exists_max g
+  have hc : (Fintype.card ({0,1}^n) : ℝ) = 2 ^ n := by simp
+  have hpos : (0 : ℝ) < 2⁻¹ ^ n := by positivity
+  have e1 : (2⁻¹ : ℝ) ^ n * (2 ^ n) = 1 := by rw [← mul_pow]; norm_num
+  refine h𝓘.out (hg x1) (hg x2) ⟨?_, ?_⟩
+  · have : ∑ _x : {0,1}^n, g x1 ≤ ∑ x, g x := Finset.sum_le_sum fun x _ ↦ hx1 x
+    rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul, hc] at this
+    simp only [expect, smul_eq_mul]
+    calc g x1 = 2⁻¹ ^ n * (2 ^ n * g x1) := by rw [← mul_assoc, e1, one_mul]
+      _ ≤ 2⁻¹ ^ n * ∑ x, g x := mul_le_mul_of_nonneg_left this hpos.le
+  · have : ∑ x, g x ≤ ∑ _x : {0,1}^n, g x2 := Finset.sum_le_sum fun x _ ↦ hx2 x
+    rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul, hc] at this
+    simp only [expect, smul_eq_mul]
+    calc 2⁻¹ ^ n * ∑ x, g x ≤ 2⁻¹ ^ n * (2 ^ n * g x2) := mul_le_mul_of_nonneg_left this hpos.le
+      _ = g x2 := by rw [← mul_assoc, e1, one_mul]
+
+/-- Monotonicity of $\mathbf{E}$. -/
+theorem tens_expect_mono {n : ℕ} {g₁ g₂ : ({0,1}^n) → ℝ} (h : ∀ x, g₁ x ≤ g₂ x) : 𝐄 g₁ ≤ 𝐄 g₂ := by
+  simp only [expect, smul_eq_mul]
+  exact mul_le_mul_of_nonneg_left (Finset.sum_le_sum fun x _ ↦ h x) (by positivity)
+
+/-- Linearity: $\mathbf{E}(g_1-g_2)=\mathbf{E}g_1-\mathbf{E}g_2$. -/
+theorem tens_expect_sub {n : ℕ} (g₁ g₂ : ({0,1}^n) → ℝ) :
+    𝐄 (fun x ↦ g₁ x - g₂ x) = 𝐄 g₁ - 𝐄 g₂ := by
+  simp only [expect, smul_eq_mul, Finset.sum_sub_distrib]; ring
+
+/-- Minkowski's inequality in $\mathbb{R}^2$:
+$\sqrt{(\mathbf{E}u)^2+(\mathbf{E}v)^2}\le\mathbf{E}\sqrt{u^2+v^2}$. -/
+theorem tens_sqrt_expect_sq_add_le {n : ℕ} (u v : ({0,1}^n) → ℝ) :
+    √((𝐄 u) ^ 2 + (𝐄 v) ^ 2) ≤ 𝐄 (fun x ↦ √(u x ^ 2 + v x ^ 2)) := by
+  have key : √((∑ x, u x) ^ 2 + (∑ x, v x) ^ 2) ≤ ∑ x, √(u x ^ 2 + v x ^ 2) := by
+    have h := norm_sum_le (Finset.univ : Finset ({0,1}^n)) (fun x ↦ (⟨u x, v x⟩ : ℂ))
+    simp only [Complex.norm_def, Complex.normSq_apply, Complex.re_sum, Complex.im_sum] at h
+    simpa [sq] using h
+  simp only [expect, smul_eq_mul]
+  set c : ℝ := 2⁻¹ ^ n
+  have hc : 0 ≤ c := by positivity
+  have e : (c * ∑ x, u x) ^ 2 + (c * ∑ x, v x) ^ 2 =
+      c ^ 2 * ((∑ x, u x) ^ 2 + (∑ x, v x) ^ 2) := by ring
+  rw [e, Real.sqrt_mul (sq_nonneg c), Real.sqrt_sq hc]
+  exact mul_le_mul_of_nonneg_left key hc
+
+/-- [DIR], Lemma 3.1 (tensorization of the two-point inequality (3.1)), with $Mf$ written out
+as `gradPlus`. Proof by induction on $n$ ([Bob97, Lemma 1]). -/
+theorem tensor_two_point (𝓘 : Set ℝ) (h𝓘 : 𝓘.OrdConnected) (B : ℝ → ℝ)
+    (hB : ∀ t ∈ 𝓘, 0 ≤ B t)
+    (h1 : ∀ f : ({0,1}^1) → ℝ, (∀ x, f x ∈ 𝓘) →
+      B (𝐄 f) ≤ 𝐄 (fun x ↦ √(B (f x) ^ 2 + (gradPlus f x) ^ 2)))
+    (n : ℕ) (hn : 1 ≤ n) (f : ({0,1}^n) → ℝ) (hf : ∀ x, f x ∈ 𝓘) :
+    B (𝐄 f) ≤ 𝐄 (fun x ↦ √(B (f x) ^ 2 + (gradPlus f x) ^ 2)) := by
+  induction n, hn using Nat.le_induction with
+  | base => exact h1 f hf
+  | succ n hn ih =>
+    set F : ZMod 2 → ({0,1}^n) → ℝ := fun a x' ↦ f (Fin.cons a x') with hF
+    have hFm : ∀ a, 𝐄 (F a) ∈ 𝓘 := fun a ↦ tens_expect_mem h𝓘 _ fun x' ↦ hf _
+    set φ : ({0,1}^1) → ℝ := fun z ↦ 𝐄 (F (z 0)) with hφ
+    have hφ0 : φ 0 = 𝐄 (F 0) := rfl
+    have hφ1 : φ 1 = 𝐄 (F 1) := rfl
+    have hEf : 𝐄 f = 𝐄 φ := by rw [tens_expect_cons, tens_expect_cube1, hφ0, hφ1]
+    have hstep := h1 φ fun z ↦ hFm _
+    rw [tens_expect_cube1 (fun x ↦ √(B (φ x) ^ 2 + gradPlus φ x ^ 2)), gradPlus_cube1_zero,
+      gradPlus_cube1_one, hφ0, hφ1] at hstep
+    -- one slice
+    have slice : ∀ a : ZMod 2,
+        √(B (𝐄 (F a)) ^ 2 + (max (𝐄 (F a) - 𝐄 (F (a + 1))) 0) ^ 2) ≤
+          𝐄 (fun x' ↦ √(B (f (Fin.cons a x')) ^ 2 + gradPlus f (Fin.cons a x') ^ 2)) := by
+      intro a
+      set u : ({0,1}^n) → ℝ := fun x' ↦ √(B (F a x') ^ 2 + gradPlus (F a) x' ^ 2) with hu
+      set v : ({0,1}^n) → ℝ := fun x' ↦ max (F a x' - F (a + 1) x') 0 with hv
+      have hIH : B (𝐄 (F a)) ≤ 𝐄 u := ih (F a) fun x' ↦ hf _
+      have hB0 : 0 ≤ B (𝐄 (F a)) := hB _ (hFm a)
+      have hmax : max (𝐄 (F a) - 𝐄 (F (a + 1))) 0 ≤ 𝐄 v := by
+        apply max_le
+        · rw [← tens_expect_sub]; exact tens_expect_mono fun x' ↦ le_max_left _ _
+        · have := tens_expect_mono (g₁ := fun _ ↦ (0 : ℝ)) (g₂ := v) fun x' ↦ le_max_right _ _
+          simpa [expect] using this
+      have hm0 : 0 ≤ max (𝐄 (F a) - 𝐄 (F (a + 1))) 0 := le_max_right _ _
+      calc √(B (𝐄 (F a)) ^ 2 + (max (𝐄 (F a) - 𝐄 (F (a + 1))) 0) ^ 2)
+          ≤ √((𝐄 u) ^ 2 + (𝐄 v) ^ 2) := by
+            apply Real.sqrt_le_sqrt
+            have := pow_le_pow_left₀ hB0 hIH 2
+            have := pow_le_pow_left₀ hm0 hmax 2
+            linarith
+        _ ≤ 𝐄 (fun x' ↦ √(u x' ^ 2 + v x' ^ 2)) := tens_sqrt_expect_sq_add_le u v
+        _ = 𝐄 (fun x' ↦ √(B (f (Fin.cons a x')) ^ 2 + gradPlus f (Fin.cons a x') ^ 2)) := by
+            congr 1; funext x'
+            rw [gradPlus_cons_sq f a x', hu, hv]
+            simp only
+            rw [Real.sq_sqrt (by positivity)]
+            congr 1; ring
+    have s0 := slice 0
+    have s1 := slice 1
+    have e11 : (1 : ZMod 2) + 1 = 0 := by decide
+    rw [zero_add] at s0
+    rw [e11] at s1
+    rw [hEf, tens_expect_cons (fun x ↦ √(B (f x) ^ 2 + gradPlus f x ^ 2))]
+    linarith
+
+/-- Linearity: $\mathbf{E}(cg)=c\,\mathbf{E}g$. -/
+theorem tens_expect_const_mul {n : ℕ} (c : ℝ) (g : ({0,1}^n) → ℝ) :
+    𝐄 (fun x ↦ c * g x) = c * 𝐄 g := by
+  simp only [expect, smul_eq_mul, ← Finset.mul_sum]; ring
+
+/-- Linearity: $\mathbf{E}(g_1+g_2)=\mathbf{E}g_1+\mathbf{E}g_2$. -/
+theorem tens_expect_add {n : ℕ} (g₁ g₂ : ({0,1}^n) → ℝ) :
+    𝐄 (fun x ↦ g₁ x + g₂ x) = 𝐄 g₁ + 𝐄 g₂ := by
+  simp only [expect, smul_eq_mul, Finset.sum_add_distrib]; ring
+
+/-- $M(cg)=c\,Mg$ for $c\ge0$. -/
+theorem gradPlus_const_mul {n : ℕ} {c : ℝ} (hc : 0 ≤ c) (g : ({0,1}^n) → ℝ) (x : {0,1}^n) :
+    gradPlus (fun y ↦ c * g y) x = c * gradPlus g x := by
+  simp only [gradPlus]
+  have e : ∀ i, (max (c * g x - c * g (x + e i)) 0) ^ 2 =
+      c ^ 2 * (max (g x - g (x + e i)) 0) ^ 2 := fun i ↦ by
+    have hm : max (c * g x - c * g (x + e i)) 0 = c * max (g x - g (x + e i)) 0 := by
+      rw [mul_max_of_nonneg _ _ hc, mul_sub, mul_zero]
+    rw [hm, mul_pow]
+  simp only [e, ← Finset.mul_sum]
+  rw [Real.sqrt_mul (sq_nonneg c), Real.sqrt_sq hc]
+
+/-! ### [BIM23], Lemmas 2.2 and 2.3 -/
+
+/-- [BIM23], proof of Lemma 2.2, (logar1): $-\ln(1-s)\ge s+\frac{s^2}2$ for $0\le s<1$. -/
+theorem bim_log_one_sub_le {s : ℝ} (hs0 : 0 ≤ s) (hs1 : s < 1) :
+    s + s ^ 2 / 2 ≤ -log (1 - s) := by
+  have h := Real.hasSum_pow_div_log_of_abs_lt_one (x := s)
+    (by rw [abs_lt]; constructor <;> linarith)
+  have := sum_le_hasSum (Finset.range 2) (fun i _ ↦ by positivity) h
+  norm_num [Finset.sum_range_succ] at this
+  linarith
+
+/-- The quartic $v(s)$ of [BIM23], proof of Lemma 2.2 (with $\ell=\ln2$). -/
+noncomputable def bimV (ℓ s : ℝ) : ℝ :=
+  4 * (ℓ - 1) ^ 2 * s ^ 4 + 12 * (1 - ℓ) * (2 * ℓ - 1) * s ^ 3 -
+    (17 - 18 * ℓ) * (2 * ℓ - 1) * s ^ 2 - (12 - 24 * ℓ + 16 * ℓ ^ 2) * s +
+      32 * ℓ ^ 2 - 32 * ℓ + 4
+
+/-- [BIM23], proof of Lemma 2.2: $v(s)<0$ on $[0,1]$ (the paper uses Descartes' rule of signs;
+here the sign pattern of the coefficients is used directly). -/
+theorem bimV_neg {s : ℝ} (hs0 : 0 ≤ s) (hs1 : s ≤ 1) : bimV (log 2) s < 0 := by
+  have h1 := Real.log_two_gt_d9
+  have h2 := Real.log_two_lt_d9
+  unfold bimV
+  set ℓ := log 2
+  have hs2 : s ^ 2 ≤ s := by nlinarith
+  have hs3 : s ^ 3 ≤ s ^ 2 := by nlinarith
+  have hs4 : s ^ 4 ≤ s ^ 3 := by nlinarith
+  have k4 : 0 ≤ 4 * (ℓ - 1) ^ 2 := by positivity
+  have k3 : 0 ≤ 12 * (1 - ℓ) * (2 * ℓ - 1) := by nlinarith
+  nlinarith [mul_le_mul_of_nonneg_left hs4 k4, mul_le_mul_of_nonneg_left hs3 k3,
+    pow_nonneg hs0 2, pow_nonneg hs0 3, mul_nonneg hs0 (sub_nonneg.2 hs1)]
+
+/-- [BIM23], proof of Lemma 2.2: after replacing the logarithms by (logar1), (logar2) and
+squaring twice, the difference of the two sides is $-\frac{s^2(1-s)^2}{4\ell^2}v(s)$. -/
+theorem bim_poly_identity (ℓ s : ℝ) (hℓ : ℓ ≠ 0) :
+    4 * (1 - s) ^ 2 * (1 + s ^ 2) * (1 + s / ℓ + s ^ 2 / (2 * ℓ)) -
+      ((2 - s) ^ 2 * (1 + s / (2 * ℓ) + (1 - 1 / (2 * ℓ)) * s ^ 2) -
+        (1 - s) ^ 2 * (1 + s / ℓ + s ^ 2 / (2 * ℓ)) - 1 - s ^ 2) ^ 2 =
+      -(s ^ 2 * (1 - s) ^ 2 * bimV ℓ s) / (4 * ℓ ^ 2) := by
+  unfold bimV
+  field_simp
+  ring
+
+/-- (logar2): $\ln\frac2{2-s}\le\frac s2+(\ln2-\frac12)s^2$ on $[0,1]$. -/
+theorem bim_log_two_div_le {s : ℝ} (hs0 : 0 ≤ s) (hs1 : s ≤ 1) :
+    log (2 / (2 - s)) ≤ s / 2 + (log 2 - 2⁻¹) * s ^ 2 := by
+  have l1 := Real.log_two_gt_d9
+  have l2 := Real.log_two_lt_d9
+  set ℓ := log 2 with hℓ
+  set g : ℝ → ℝ := fun s ↦ s / 2 + (ℓ - 2⁻¹) * s ^ 2 - ℓ + log (2 - s) with hg
+  have hgd : ∀ s, s < 2 → HasDerivAt g (2⁻¹ + (ℓ - 2⁻¹) * (2 * s) - 1 / (2 - s)) s := by
+    intro s hs
+    have hl := ((hasDerivAt_id' s).const_sub 2).log (by linarith)
+    have h := ((((hasDerivAt_id' s).div_const 2).add
+      (((hasDerivAt_id' s).pow 2).const_mul (ℓ - 2⁻¹))).sub_const ℓ).add hl
+    convert h using 1
+    simp; ring
+  have hcont : ContinuousOn g (Icc 0 1) := fun s hs ↦
+    (hgd s (by linarith [hs.2])).continuousAt.continuousWithinAt
+  have hdiff : ∀ s ∈ Ioo (0 : ℝ) 1, DifferentiableWithinAt ℝ g (Ioo 0 1) s := fun s hs ↦
+    (hgd s (by linarith [hs.2])).differentiableAt.differentiableWithinAt
+  set sst := (4 * ℓ - 5 / 2) / (2 * ℓ - 1) with hsst
+  have hden : 0 < 2 * ℓ - 1 := by linarith
+  have hsst0 : 0 < sst := div_pos (by linarith) hden
+  have hsst1 : sst < 1 := (div_lt_one hden).2 (by linarith)
+  have key : ∀ s, s < 2 → 2⁻¹ + (ℓ - 2⁻¹) * (2 * s) - 1 / (2 - s) =
+      s * ((4 * ℓ - 5 / 2) - (2 * ℓ - 1) * s) / (2 - s) := by
+    intro s hs
+    have : (2 - s) ≠ 0 := by linarith
+    field_simp
+    ring
+  have g0 : g 0 = 0 := by simp only [hg]; norm_num [hℓ]
+  have g1 : g 1 = 0 := by
+    simp only [hg]; norm_num [hℓ]
+  have gs : g s = s / 2 + (ℓ - 2⁻¹) * s ^ 2 - (log (2 / (2 - s))) := by
+    simp only [hg]
+    rw [Real.log_div (by norm_num) (by linarith)]; ring
+  suffices 0 ≤ g s by linarith
+  rcases le_total s sst with hss | hss
+  · have hmono : MonotoneOn g (Icc 0 sst) := by
+      refine monotoneOn_of_deriv_nonneg (convex_Icc 0 sst)
+        (hcont.mono (Icc_subset_Icc le_rfl hsst1.le)) ?_ ?_
+      · rw [interior_Icc]; intro u hu
+        exact (hgd u (by linarith [hu.2])).differentiableAt.differentiableWithinAt
+      · rw [interior_Icc]; intro u hu
+        rw [(hgd u (by linarith [hu.2])).deriv, key u (by linarith [hu.2])]
+        apply div_nonneg _ (by linarith [hu.2])
+        apply mul_nonneg hu.1.le
+        have : (2 * ℓ - 1) * u ≤ (2 * ℓ - 1) * sst := by nlinarith [hu.2]
+        have e : (2 * ℓ - 1) * sst = 4 * ℓ - 5 / 2 := by
+          rw [hsst]; field_simp
+        linarith
+    have := hmono ⟨le_rfl, hsst0.le⟩ ⟨hs0, hss⟩ hs0
+    linarith
+  · have hanti : AntitoneOn g (Icc sst 1) := by
+      refine antitoneOn_of_deriv_nonpos (convex_Icc sst 1)
+        (hcont.mono (Icc_subset_Icc hsst0.le le_rfl)) ?_ ?_
+      · rw [interior_Icc]; intro u hu
+        exact (hgd u (by linarith [hu.2])).differentiableAt.differentiableWithinAt
+      · rw [interior_Icc]; intro u hu
+        rw [(hgd u (by linarith [hu.2])).deriv, key u (by linarith [hu.2])]
+        apply div_nonpos_of_nonpos_of_nonneg _ (by linarith [hu.2])
+        apply mul_nonpos_of_nonneg_of_nonpos (by linarith [hu.1])
+        have : (2 * ℓ - 1) * sst ≤ (2 * ℓ - 1) * u := by nlinarith [hu.1]
+        have e : (2 * ℓ - 1) * sst = 4 * ℓ - 5 / 2 := by
+          rw [hsst]; field_simp
+        linarith
+    have := hanti ⟨hss, hs1⟩ ⟨hsst1.le, le_rfl⟩ hs1
+    linarith
+
+/-- [BIM23], proof of Lemma 2.2, Step 3: the inequality (22point). -/
+theorem bim_step3 {t : ℝ} (ht0 : 0 ≤ t) (ht1 : t ≤ 1) :
+    (1 + t) * √(1 + logb 2 (2 / (1 + t))) ≤
+      √(1 + (1 - t) ^ 2) + t * √(1 + logb 2 t⁻¹) := by
+  have l1 := Real.log_two_gt_d9
+  have l2 := Real.log_two_lt_d9
+  have hℓ : 0 < log 2 := by linarith
+  set ℓ := log 2 with hℓdef
+  set s := 1 - t with hsdef
+  have hs0 : 0 ≤ s := by linarith
+  have hs1 : s ≤ 1 := by linarith
+  set A := 1 + s / ℓ + s ^ 2 / (2 * ℓ) with hA
+  set Bq := 1 + s / (2 * ℓ) + (1 - 1 / (2 * ℓ)) * s ^ 2 with hBq
+  have hA0 : 0 ≤ A := by positivity
+  have hc : 0 < 1 - 1 / (2 * ℓ) := by
+    rw [sub_pos, div_lt_one (by linarith)]; linarith
+  have hB0 : 0 ≤ Bq := by positivity
+  -- lower bound (logar1)
+  have hlow : t * √A ≤ t * √(1 + logb 2 t⁻¹) := by
+    rcases ht0.lt_or_eq with htp | htz
+    · apply mul_le_mul_of_nonneg_left _ ht0
+      apply Real.sqrt_le_sqrt
+      have h1 := bim_log_one_sub_le hs0 (by linarith : s < 1)
+      have e1 : 1 - s = t := by rw [hsdef]; ring
+      rw [e1] at h1
+      have e2 : logb 2 t⁻¹ = -log t / ℓ := by
+        rw [Real.logb, Real.log_inv]
+      rw [e2, hA]
+      have : (s + s ^ 2 / 2) / ℓ ≤ -log t / ℓ := div_le_div_of_nonneg_right h1 hℓ.le
+      have e3 : s / ℓ + s ^ 2 / (2 * ℓ) = (s + s ^ 2 / 2) / ℓ := by field_simp
+      linarith
+    · rw [← htz]; simp
+  -- upper bound (logar2)
+  have hup : √(1 + logb 2 (2 / (1 + t))) ≤ √Bq := by
+    apply Real.sqrt_le_sqrt
+    have h2 := bim_log_two_div_le hs0 hs1
+    have e1 : 2 - s = 1 + t := by rw [hsdef]; ring
+    rw [e1] at h2
+    have : log (2 / (1 + t)) / ℓ ≤ (s / 2 + (ℓ - 2⁻¹) * s ^ 2) / ℓ :=
+      div_le_div_of_nonneg_right h2 hℓ.le
+    have e3 : (s / 2 + (ℓ - 2⁻¹) * s ^ 2) / ℓ = s / (2 * ℓ) + (1 - 1 / (2 * ℓ)) * s ^ 2 := by
+      field_simp
+    rw [Real.logb]
+    rw [hBq]; linarith
+  -- the squared polynomial inequality
+  have hmain : (2 - s) * √Bq ≤ √(1 + s ^ 2) + (1 - s) * √A := by
+    have hP := Real.sqrt_nonneg (1 + s ^ 2)
+    have hQ := Real.sqrt_nonneg A
+    have hP2 := Real.sq_sqrt (by positivity : (0 : ℝ) ≤ 1 + s ^ 2)
+    have hQ2 := Real.sq_sqrt hA0
+    have hB2 := Real.sq_sqrt hB0
+    have hBn := Real.sqrt_nonneg Bq
+    set R := (2 - s) ^ 2 * Bq - (1 - s) ^ 2 * A - 1 - s ^ 2 with hR
+    have hRle : R ≤ 2 * (1 - s) * (√(1 + s ^ 2) * √A) := by
+      rcases le_or_gt R 0 with hR0 | hR0
+      · have : 0 ≤ 2 * (1 - s) * (√(1 + s ^ 2) * √A) := by positivity
+        linarith
+      · have hpoly := bim_poly_identity ℓ s hℓ.ne'
+        have hv := bimV_neg hs0 hs1
+        have hnn : 0 ≤ -(s ^ 2 * (1 - s) ^ 2 * bimV ℓ s) / (4 * ℓ ^ 2) := by
+          apply div_nonneg _ (by positivity)
+          have : 0 ≤ s ^ 2 * (1 - s) ^ 2 := by positivity
+          nlinarith
+        have hsq : R ^ 2 ≤ (2 * (1 - s) * (√(1 + s ^ 2) * √A)) ^ 2 := by
+          have : (2 * (1 - s) * (√(1 + s ^ 2) * √A)) ^ 2 =
+              4 * (1 - s) ^ 2 * (1 + s ^ 2) * A := by
+            rw [mul_pow, mul_pow, mul_pow, hP2, hQ2]; ring
+          rw [this]; rw [hR]; linarith
+        exact (pow_le_pow_iff_left₀ hR0.le (by positivity) two_ne_zero).1 hsq
+    have hsq : ((2 - s) * √Bq) ^ 2 ≤ (√(1 + s ^ 2) + (1 - s) * √A) ^ 2 := by
+      have e1 : ((2 - s) * √Bq) ^ 2 = (2 - s) ^ 2 * Bq := by rw [mul_pow, hB2]
+      have e2 : (√(1 + s ^ 2) + (1 - s) * √A) ^ 2 =
+          (1 + s ^ 2) + (1 - s) ^ 2 * A + 2 * (1 - s) * (√(1 + s ^ 2) * √A) := by
+        ring_nf; rw [hP2, hQ2]; ring
+      rw [e1, e2]; rw [hR] at hRle; linarith
+    exact (pow_le_pow_iff_left₀ (by nlinarith) (by positivity) two_ne_zero).1 hsq
+  have e2 : 1 + t = 2 - s := by rw [hsdef]; ring
+  have e3 : t = 1 - s := by rw [hsdef]; ring
+  calc (1 + t) * √(1 + logb 2 (2 / (1 + t))) ≤ (1 + t) * √Bq :=
+        mul_le_mul_of_nonneg_left hup (by linarith)
+    _ = (2 - s) * √Bq := by rw [e2]
+    _ ≤ √(1 + s ^ 2) + (1 - s) * √A := hmain
+    _ = √(1 + s ^ 2) + t * √A := by rw [← e3]
+    _ ≤ √(1 + s ^ 2) + t * √(1 + logb 2 t⁻¹) := by linarith
+
+/-- AM–GM step of [BIM23], Step 2: $\sqrt{(p^2+s)(q^2+s)}\ge s+pq$ for $s\ge0$. -/
+theorem bim_sqrt_prod_ge {p q s : ℝ} (hs : 0 ≤ s) :
+    s + p * q ≤ √((p ^ 2 + s) * (q ^ 2 + s)) := by
+  apply Real.le_sqrt_of_sq_le
+  nlinarith [mul_nonneg hs (sq_nonneg (p - q))]
+
+/-- [BIM23], proof of Lemma 2.2, Steps 2–3 ($\beta=\frac12$), in the variables $t=x/y$,
+$a=\log_2(1/y)\ge1$. -/
+theorem bim_half_t {t a : ℝ} (ht0 : 0 ≤ t) (ht1 : t ≤ 1) (ha : 1 ≤ a) :
+    (1 + t) * √(a + logb 2 (2 / (1 + t))) ≤
+      √(a + (1 - t) ^ 2) + t * √(a + logb 2 t⁻¹) := by
+  set X := (1 - t) ^ 2 with hX
+  set lam := logb 2 t⁻¹ with hlam
+  set μ := logb 2 (2 / (1 + t)) with hμ
+  have hlam0 : 0 ≤ lam := by
+    rcases ht0.lt_or_eq with htp | htz
+    · exact Real.logb_nonneg (by norm_num) (one_le_inv₀ htp |>.2 ht1)
+    · rw [hlam, ← htz]; simp
+  have hμ0 : 0 ≤ μ := Real.logb_nonneg (by norm_num) ((one_le_div (by linarith)).2 (by linarith))
+  have h3 := bim_step3 ht0 ht1
+  rw [← hμ, ← hlam] at h3
+  rw [show (1 - t) ^ 2 = X from rfl] at h3
+  set P1 := √(1 + X)
+  set Q1 := √(1 + lam)
+  set Pa := √(a + X)
+  set Qa := √(a + lam)
+  have hX0 : 0 ≤ X := sq_nonneg _
+  have hP1 : P1 ^ 2 = 1 + X := Real.sq_sqrt (by linarith)
+  have hQ1 : Q1 ^ 2 = 1 + lam := Real.sq_sqrt (by linarith)
+  have hPa : Pa ^ 2 = a + X := Real.sq_sqrt (by linarith)
+  have hQa : Qa ^ 2 = a + lam := Real.sq_sqrt (by linarith)
+  have hC : √(a + μ) ^ 2 = a + μ := Real.sq_sqrt (by linarith)
+  have hC1 : √(1 + μ) ^ 2 = 1 + μ := Real.sq_sqrt (by linarith)
+  have hP1n : 0 ≤ P1 := Real.sqrt_nonneg _
+  have hQ1n : 0 ≤ Q1 := Real.sqrt_nonneg _
+  have hPan : 0 ≤ Pa := Real.sqrt_nonneg _
+  have hQan : 0 ≤ Qa := Real.sqrt_nonneg _
+  -- monotonicity in `a`: `Pa * Qa ≥ (a - 1) + P1 * Q1`
+  have hmono : (a - 1) + P1 * Q1 ≤ Pa * Qa := by
+    have := bim_sqrt_prod_ge (p := P1) (q := Q1) (by linarith : 0 ≤ a - 1)
+    rw [hP1, hQ1] at this
+    have e : (1 + X + (a - 1)) * (1 + lam + (a - 1)) = (a + X) * (a + lam) := by ring
+    rw [e, Real.sqrt_mul (by linarith)] at this
+    exact this
+  -- squared Step 3
+  have h3sq : ((1 + t) * √(1 + μ)) ^ 2 ≤ (P1 + t * Q1) ^ 2 :=
+    pow_le_pow_left₀ (by positivity) h3 2
+  have hsq : ((1 + t) * √(a + μ)) ^ 2 ≤ (Pa + t * Qa) ^ 2 := by
+    have e1 : ((1 + t) * √(a + μ)) ^ 2 = (1 + t) ^ 2 * (a + μ) := by rw [mul_pow, hC]
+    have e2 : ((1 + t) * √(1 + μ)) ^ 2 = (1 + t) ^ 2 * (1 + μ) := by rw [mul_pow, hC1]
+    have e3 : (P1 + t * Q1) ^ 2 = 1 + X + t ^ 2 * (1 + lam) + 2 * t * (P1 * Q1) := by
+      ring_nf; rw [hP1, hQ1]; ring
+    have e4 : (Pa + t * Qa) ^ 2 = a + X + t ^ 2 * (a + lam) + 2 * t * (Pa * Qa) := by
+      ring_nf; rw [hPa, hQa]; ring
+    rw [e2, e3] at h3sq
+    rw [e1, e4]
+    nlinarith [mul_le_mul_of_nonneg_left hmono (by linarith : 0 ≤ 2 * t)]
+  exact (pow_le_pow_iff_left₀ (by positivity) (by positivity) two_ne_zero).1 hsq
+
+/-- $(\sqrt z)^{2\beta}=z^\beta$ for $z\ge0$. -/
+theorem sqrt_rpow_two_mul {z : ℝ} (hz : 0 ≤ z) (β : ℝ) : √z ^ (2 * β) = z ^ β := by
+  rw [Real.sqrt_eq_rpow, ← Real.rpow_mul hz]; congr 1; ring
+
+/-- [BIM23], proof of Lemma 2.2, Step 1 (power means), in the variables $t$, $a$. -/
+theorem bim_beta_t {β : ℝ} (hβ : 2⁻¹ ≤ β) {t a : ℝ} (ht0 : 0 ≤ t) (ht1 : t ≤ 1) (ha : 1 ≤ a) :
+    (1 + t) * (a + logb 2 (2 / (1 + t))) ^ β ≤
+      (a + (1 - t) ^ β⁻¹) ^ β + t * (a + logb 2 t⁻¹) ^ β := by
+  have hβ0 : 0 < β := by linarith
+  set lam := logb 2 t⁻¹ with hlam
+  set μ := logb 2 (2 / (1 + t)) with hμ
+  have hlam0 : 0 ≤ lam := by
+    rcases ht0.lt_or_eq with htp | htz
+    · exact Real.logb_nonneg (by norm_num) (one_le_inv₀ htp |>.2 ht1)
+    · rw [hlam, ← htz]; simp
+  have hμ0 : 0 ≤ μ := Real.logb_nonneg (by norm_num) ((one_le_div (by linarith)).2 (by linarith))
+  have hX : (1 - t) ^ 2 ≤ (1 - t) ^ β⁻¹ := by
+    have hinv : β⁻¹ ≤ 2 := by rw [inv_le_comm₀ hβ0 two_pos]; exact hβ
+    rcases (sub_nonneg.2 ht1).lt_or_eq with hp | hz
+    · rw [← Real.rpow_two]
+      exact Real.rpow_le_rpow_of_exponent_ge hp (by linarith) hinv
+    · rw [← hz, Real.zero_rpow (inv_ne_zero hβ0.ne')]; simp
+  have h := bim_half_t ht0 ht1 ha
+  rw [← hμ, ← hlam] at h
+  set A := a + (1 - t) ^ 2
+  set B := a + lam
+  set C := a + μ
+  have hA : 0 ≤ A := by positivity
+  have hB : 0 ≤ B := by linarith
+  have hC : 0 ≤ C := by linarith
+  have hpq : 0 < 1 + t := by linarith
+  set p := 1 / (1 + t) with hpdef
+  set q := t / (1 + t) with hqdef
+  have hp : 0 ≤ p := by positivity
+  have hq : 0 ≤ q := by positivity
+  have hpq1 : p + q = 1 := by rw [hpdef, hqdef]; field_simp
+  have hmean : √C ≤ p * √A + q * √B := by
+    have : p * √A + q * √B = (√A + t * √B) / (1 + t) := by rw [hpdef, hqdef]; field_simp
+    rw [this, le_div_iff₀ hpq]; linarith
+  have hconv := (convexOn_rpow (by linarith : (1 : ℝ) ≤ 2 * β)).2
+    (Real.sqrt_nonneg A) (Real.sqrt_nonneg B) hp hq hpq1
+  simp only [smul_eq_mul] at hconv
+  have hmon := Real.rpow_le_rpow (Real.sqrt_nonneg C) hmean (by linarith : 0 ≤ 2 * β)
+  rw [sqrt_rpow_two_mul hA, sqrt_rpow_two_mul hB] at hconv
+  rw [sqrt_rpow_two_mul hC] at hmon
+  have h1 : C ^ β ≤ p * A ^ β + q * B ^ β := hmon.trans hconv
+  have h2 : (1 + t) * C ^ β ≤ A ^ β + t * B ^ β := by
+    have : (1 + t) * (p * A ^ β + q * B ^ β) = A ^ β + t * B ^ β := by
+      rw [hpdef, hqdef]; field_simp
+    nlinarith
+  have h3 : A ^ β ≤ (a + (1 - t) ^ β⁻¹) ^ β :=
+    Real.rpow_le_rpow hA (by linarith) hβ0.le
+  linarith
+
+/-- **[BIM23], Lemma 2.2.** For $\beta\in[\frac12,1]$ and $0\le x\le y\le\frac12$,
+$((y-x)^{1/\beta}+L_\beta(y)^{1/\beta})^\beta+L_\beta(x)\ge2L_\beta(\frac{x+y}2)$. -/
+theorem bim_lemma_2_2 (β : ℝ) (hβ : 2⁻¹ ≤ β) (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y)
+    (hy : y ≤ 2⁻¹) : ((y - x) ^ β⁻¹ + L β y ^ β⁻¹) ^ β + L β x ≥ 2 * L β ((x + y) / 2) := by
+  have hβ0 : 0 < β := by linarith
+  rcases (hx.trans hxy).lt_or_eq with hyp | hy0
+  · set t := x / y with ht
+    set a := logb 2 y⁻¹ with ha
+    have ht0 : 0 ≤ t := div_nonneg hx hyp.le
+    have ht1 : t ≤ 1 := (div_le_one hyp).2 hxy
+    have ha1 : 1 ≤ a := by
+      rw [ha, ← Real.logb_self_eq_one (by norm_num : (1 : ℝ) < 2)]
+      exact Real.logb_le_logb_of_le (by norm_num) (by norm_num)
+        (by rw [le_inv_comm₀ (by norm_num) hyp]; exact hy)
+    have hxt : x = y * t := by rw [ht]; field_simp
+    have hB := bim_beta_t hβ ht0 ht1 ha1
+    have ha0 : 0 ≤ a := by linarith
+    -- the first term
+    have eLy : L β y ^ β⁻¹ = y ^ β⁻¹ * a := by
+      rw [L, ← ha, Real.mul_rpow hyp.le (Real.rpow_nonneg ha0 _),
+        Real.rpow_rpow_inv ha0 hβ0.ne']
+    have eyx : (y - x) ^ β⁻¹ = y ^ β⁻¹ * (1 - t) ^ β⁻¹ := by
+      rw [← Real.mul_rpow hyp.le (by linarith), hxt]; ring_nf
+    have e1 : ((y - x) ^ β⁻¹ + L β y ^ β⁻¹) ^ β = y * (a + (1 - t) ^ β⁻¹) ^ β := by
+      rw [eLy, eyx, ← mul_add, Real.mul_rpow (by positivity)
+        (by have := Real.rpow_nonneg (sub_nonneg.2 ht1) β⁻¹; positivity),
+        Real.rpow_inv_rpow hyp.le hβ0.ne', add_comm]
+    -- the term `L β x`
+    have e2 : L β x = y * (t * (a + logb 2 t⁻¹) ^ β) := by
+      rcases ht0.lt_or_eq with htp | htz
+      · rw [L, hxt, mul_inv, Real.logb_mul (inv_ne_zero hyp.ne') (inv_ne_zero htp.ne'), ← ha]
+        ring
+      · rw [← htz] at hxt ⊢; rw [hxt]; simp [L]
+    -- the right-hand side
+    have e3 : 2 * L β ((x + y) / 2) = y * ((1 + t) * (a + logb 2 (2 / (1 + t))) ^ β) := by
+      have hm : (x + y) / 2 = y * ((1 + t) / 2) := by rw [hxt]; ring
+      rw [L, hm, mul_inv, Real.logb_mul (inv_ne_zero hyp.ne') (by positivity), ← ha,
+        inv_div]
+      ring
+    rw [e1, e2, e3, ge_iff_le, ← mul_add]
+    exact mul_le_mul_of_nonneg_left hB hyp.le
+  · have hy' : y = 0 := hy0.symm
+    subst hy'
+    have hx0 : x = 0 := by linarith
+    subst hx0
+    simp [L, Real.zero_rpow (inv_ne_zero hβ0.ne'), Real.zero_rpow hβ0.ne']
+
+/-- $L_\beta\ge0$ on $[0,1]$. -/
+theorem L_nonneg_of_mem {β x : ℝ} (hx0 : 0 ≤ x) (hx1 : x ≤ 1) : 0 ≤ L β x := by
+  unfold L
+  rcases hx0.lt_or_eq with hp | hz
+  · have : 0 ≤ logb 2 x⁻¹ := Real.logb_nonneg (by norm_num) (one_le_inv₀ hp |>.2 hx1)
+    have := Real.rpow_nonneg this β
+    positivity
+  · rw [← hz]; simp
+
+/-- [BIM23], proof of Lemma 2.3: $L_\beta$ is non-decreasing on $[0,\frac12]$ for
+$\beta\le\ln2$. -/
+theorem L_mono_half {β : ℝ} (hβ0 : 0 < β) (hβ : β ≤ log 2) {x y : ℝ} (hx : 0 ≤ x)
+    (hxy : x ≤ y) (hy : y ≤ 2⁻¹) : L β x ≤ L β y := by
+  have l1 := Real.log_two_gt_d9
+  rcases hx.lt_or_eq with hxp | hx0
+  · set f : ℝ → ℝ := fun z ↦ -log z / log 2 with hf
+    have hLf : ∀ z, L β z = z * f z ^ β := fun z ↦ by
+      simp only [L, hf, Real.logb, Real.log_inv]
+    have hf1 : ∀ z, 0 < z → z ≤ 2⁻¹ → 1 ≤ f z := fun z hz hz2 ↦ by
+      simp only [hf]
+      rw [le_div_iff₀ (by linarith), one_mul, ← Real.log_inv]
+      exact Real.log_le_log (by norm_num) ((le_inv_comm₀ (by norm_num) hz).2 hz2)
+    have hd : ∀ z, 0 < z → z ≤ 2⁻¹ → HasDerivAt (L β)
+        (f z ^ β + z * (-(1 / z) / log 2 * β * f z ^ (β - 1))) z := by
+      intro z hz hz2
+      have hfz : HasDerivAt f (-(1 / z) / log 2) z := by
+        have := ((Real.hasDerivAt_log hz.ne').neg).div_const (log 2)
+        simpa [hf, one_div] using this
+      have hr := hfz.rpow_const (p := β) (Or.inl (by linarith [hf1 z hz hz2]))
+      have := (hasDerivAt_id' z).mul hr
+      simp only [one_mul] at this
+      refine this.congr_of_eventuallyEq ?_
+      exact Filter.Eventually.of_forall fun w ↦ hLf w
+    have hmono : MonotoneOn (L β) (Icc x 2⁻¹) := by
+      refine monotoneOn_of_deriv_nonneg (convex_Icc x 2⁻¹) ?_ ?_ ?_
+      · intro z hz
+        exact (hd z (by linarith [hz.1]) hz.2).continuousAt.continuousWithinAt
+      · rw [interior_Icc]; intro z hz
+        exact (hd z (by linarith [hz.1]) hz.2.le).differentiableAt.differentiableWithinAt
+      · rw [interior_Icc]; intro z hz
+        have hz0 : 0 < z := by linarith [hz.1]
+        have hfz := hf1 z hz0 hz.2.le
+        rw [(hd z hz0 hz.2.le).deriv]
+        have hfpos : 0 < f z := by linarith
+        have e : f z ^ β = f z ^ (β - 1) * f z := by
+          rw [← Real.rpow_add_one hfpos.ne']; ring_nf
+        rw [e]
+        have hr := Real.rpow_pos_of_pos hfpos (β - 1)
+        have : β / log 2 ≤ 1 := (div_le_one (by linarith)).2 hβ
+        have e2 : z * (-(1 / z) / log 2 * β * f z ^ (β - 1)) =
+            -(f z ^ (β - 1) * (β / log 2)) := by field_simp
+        rw [e2]
+        nlinarith
+    exact hmono ⟨le_rfl, hxy.trans hy⟩ ⟨hxy, hy⟩ hxy
+  · rw [← hx0]
+    simp only [L, zero_mul]
+    exact L_nonneg_of_mem (hx0 ▸ hxy) (by linarith)
+
+/-- [BIM23], proof of Lemma 2.3: $\psi(t)=(d^{1/\beta}+t^{1/\beta})^\beta-t$ is non-increasing
+on $[0,\infty)$ for $\beta\in(0,1]$ (Minkowski's inequality in $\ell^{1/\beta}$). -/
+theorem bim_psi_anti {β : ℝ} (hβ0 : 0 < β) (hβ1 : β ≤ 1) {d s s' : ℝ} (hd : 0 ≤ d)
+    (hs : 0 ≤ s) (hss : s ≤ s') :
+    (d ^ β⁻¹ + s' ^ β⁻¹) ^ β - s' ≤ (d ^ β⁻¹ + s ^ β⁻¹) ^ β - s := by
+  have hp : 1 ≤ β⁻¹ := (one_le_inv₀ hβ0).2 hβ1
+  have h := Real.Lp_add_le Finset.univ ![d, s] ![0, s' - s] hp
+  simp only [Fin.sum_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one,
+    one_div, inv_inv] at h
+  have hp0 : β⁻¹ ≠ 0 := inv_ne_zero hβ0.ne'
+  rw [add_zero, abs_zero, Real.zero_rpow hp0, zero_add, abs_of_nonneg hd, abs_of_nonneg hs,
+    abs_of_nonneg (by linarith : 0 ≤ s' - s), Real.rpow_inv_rpow (by linarith) hβ0.ne',
+    abs_of_nonneg (by linarith : 0 ≤ s + (s' - s)), add_sub_cancel] at h
+  linarith
+
+/-- **[BIM23], Lemma 2.3.** For $\beta\in[\frac12,\ln2]$ and $0\le a\le b\le\frac12$,
+$((b-a)^{1/\beta}+L_\beta(a)^{1/\beta})^\beta+L_\beta(b)\ge2L_\beta(\frac{a+b}2)$. -/
+theorem bim_lemma_2_3 (β : ℝ) (hβ : 2⁻¹ ≤ β) (hβ2 : β ≤ Real.log 2) (a b : ℝ) (ha : 0 ≤ a)
+    (hab : a ≤ b) (hb : b ≤ 2⁻¹) :
+    ((b - a) ^ β⁻¹ + L β a ^ β⁻¹) ^ β + L β b ≥ 2 * L β ((a + b) / 2) := by
+  have l2 := Real.log_two_lt_d9
+  have hβ0 : 0 < β := by linarith
+  have h22 := bim_lemma_2_2 β hβ a b ha hab hb
+  have hLa := L_nonneg_of_mem (β := β) ha (by linarith)
+  have hmon := L_mono_half hβ0 hβ2 ha hab hb
+  have hψ := bim_psi_anti hβ0 (by linarith) (sub_nonneg.2 hab) hLa hmon
+  linarith
 
 end Auto.DIR

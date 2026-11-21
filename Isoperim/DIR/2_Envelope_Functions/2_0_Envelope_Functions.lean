@@ -7,6 +7,7 @@ module
 
 public import Isoperim.DIR.«1_Introduction».Definitions
 public import Isoperim.DIR.«2_Envelope_Functions».Definitions
+public import Isoperim.DIR.«2_Envelope_Functions».«2_0_Envelope_Functions_aux»
 public import Isoperim.DIR.«3_Variants_Bobkov_Inequality».«3_0_Variants_Bobkov_Inequality»
 public import Isoperim.DIR.«5_Auxiliary_Estimates».«5_3_Properties_L_Q»
 public import Isoperim.DIR.«6_Proof_Two_Point_Inequality».«6_1_Case_J»
@@ -42,12 +43,19 @@ $B:[0,1]\to[0,\infty)$ satisfies $B(0)=B(1)=0$ and that the following two-point 
 holds:
 $$G_\beta[B](x,y)\ge0 \tag{2.2}$$
 for all $0\le x\le y\le1$. Then $\mathcal{B}_\beta\ge B$ (on $\mathcal{Q}$, where
-$\mathcal{B}_\beta$ is defined). -/
-theorem prop_2_1 (β : ℝ) (hβ : 2⁻¹ ≤ β) (B : ℝ → ℝ) (hB : ∀ x ∈ Icc (0 : ℝ) 1, 0 ≤ B x)
-    (hB0 : B 0 = 0) (hB1 : B 1 = 0)
+$\mathcal{B}_\beta$ is defined).
+
+**Discrepancy with the paper.** Paper: $\beta\ge\frac12$. Lean: $\frac12\le\beta\le1$. -/
+theorem prop_2_1 (β : ℝ) (hβ : 2⁻¹ ≤ β) (hβ1 : β ≤ 1) (B : ℝ → ℝ)
+    (hB : ∀ x ∈ Icc (0 : ℝ) 1, 0 ≤ B x) (hB0 : B 0 = 0) (hB1 : B 1 = 0)
     (h22 : ∀ x y : ℝ, 0 ≤ x → x ≤ y → y ≤ 1 → G β B x y ≥ 0) :
     ∀ x ∈ 𝒬, 𝓑 β x ≥ B x := by
-  sorry
+  rintro x ⟨m, k, hk, rfl⟩
+  obtain ⟨A, hA⟩ := exists_set_dens m k hk
+  refine le_csInf ⟨_, m + 1, by omega, A, hA, rfl⟩ ?_
+  rintro v ⟨n, -, A', hA', rfl⟩
+  rw [← hA']
+  exact kp_ineq hβ hβ1 B hB hB0 hB1 h22 n A'
 
 /-- **Theorem 2.2** (Main two-point inequality, [DIR]). Let $\beta_0=0.50057$ and $c_0=0.997$.
 Then for all $0\le x\le y\le1$:

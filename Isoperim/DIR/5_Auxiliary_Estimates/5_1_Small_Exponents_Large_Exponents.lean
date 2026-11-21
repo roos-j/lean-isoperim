@@ -30,7 +30,42 @@ which implies the claim. -/
 theorem lemma_5_1_holder (n : ℕ) (A : Set ({0,1}^n)) (B : ℝ → ℝ) (β : ℝ) (hβ : 0 < β)
     (hyp : 𝐄 h A ^ β ≥ B ｜A｜) (p : ℝ) (hp : 1 ≤ p) :
     B ｜A｜ ≤ 𝐄 h A ^ β ∧ 𝐄 h A ^ β ≤ (𝐄 h A ^ (p * β)) ^ p⁻¹ * ｜A｜ ^ (1 - p⁻¹) := by
-  sorry
+  refine ⟨hyp, ?_⟩
+  have hh : ∀ z, 0 ≤ h A z := fun z ↦ by unfold h; split_ifs <;> positivity
+  have hw : (0 : ℝ) ≤ (2⁻¹ : ℝ) ^ n := by positivity
+  rcases hp.lt_or_eq with hp1 | rfl
+  · have hpq := Real.HolderConjugate.conjExponent hp1
+    set q := p.conjExponent
+    have hq : 0 < q := hpq.symm.pos
+    have key := Real.inner_le_Lp_mul_Lq (s := Finset.univ) (f := fun z ↦ h A z ^ β)
+      (g := 𝟏 A) hpq
+    have hfg : ∀ z, h A z ^ β * 𝟏 A z = h A z ^ β := by
+      intro z
+      by_cases hz : z ∈ A
+      · simp [ind, hz]
+      · simp [ind, hz, h, Real.zero_rpow hβ.ne']
+    have hf : ∀ z, |h A z ^ β| ^ p = h A z ^ (p * β) := by
+      intro z
+      rw [abs_of_nonneg (Real.rpow_nonneg (hh z) β), ← Real.rpow_mul (hh z), mul_comm]
+    have hg : ∀ z, |𝟏 A z| ^ q = 𝟏 A z := by
+      intro z; by_cases hz : z ∈ A <;> simp [ind, hz, Real.zero_rpow hq.ne']
+    simp only [hfg, hf, hg, one_div] at key
+    have hX : 0 ≤ ∑ z, h A z ^ (p * β) := Finset.sum_nonneg fun z _ ↦ Real.rpow_nonneg (hh z) _
+    have hY : 0 ≤ ∑ z, 𝟏 A z := Finset.sum_nonneg fun z _ ↦ by
+      by_cases hz : z ∈ A <;> simp [ind, hz]
+    have hsplit : (2⁻¹ : ℝ) ^ n = ((2⁻¹ : ℝ) ^ n) ^ p⁻¹ * ((2⁻¹ : ℝ) ^ n) ^ q⁻¹ := by
+      rw [← Real.rpow_add' hw (by rw [hpq.inv_add_inv_eq_one]; norm_num),
+        hpq.inv_add_inv_eq_one, Real.rpow_one]
+    simp only [dens, expect, smul_eq_mul, Pi.pow_apply, hpq.one_sub_inv]
+    rw [Real.mul_rpow hw hX, Real.mul_rpow hw hY]
+    calc (2⁻¹ : ℝ) ^ n * ∑ z, h A z ^ β
+        = (((2⁻¹ : ℝ) ^ n) ^ p⁻¹ * ((2⁻¹ : ℝ) ^ n) ^ q⁻¹) * ∑ z, h A z ^ β := by
+          rw [← hsplit]
+      _ ≤ (((2⁻¹ : ℝ) ^ n) ^ p⁻¹ * ((2⁻¹ : ℝ) ^ n) ^ q⁻¹) *
+          ((∑ z, h A z ^ (p * β)) ^ p⁻¹ * (∑ z, 𝟏 A z) ^ q⁻¹) :=
+          mul_le_mul_of_nonneg_left key (by positivity)
+      _ = _ := by ring
+  · simp
 
 end Proof_Lemma_5_1
 
@@ -48,6 +83,78 @@ theorem lemma_5_1 :
         𝐄 h A ^ β₀ ≥ ｜A｜ * (log₂ ｜A｜⁻¹) ^ β₀) →
       ∀ β : ℝ, β₀ ≤ β → ∀ (n : ℕ), 1 ≤ n → ∀ A : Set ({0,1}^n), ｜A｜ ≤ 2⁻¹ →
         𝐄 h A ^ β ≥ ｜A｜ * (log₂ ｜A｜⁻¹) ^ β) := by
-  sorry
+  have part1 : ∀ (n : ℕ) (A : Set ({0,1}^n)) (B : ℝ → ℝ) (β : ℝ), 0 < β →
+      𝐄 h A ^ β ≥ B ｜A｜ → B ｜A｜ > 0 →
+      ∀ β' : ℝ, β ≤ β' → 𝐄 h A ^ β' ≥ B ｜A｜ ^ (β' / β) * ｜A｜ ^ (-(β' / β) + 1) := by
+    intro n A B β hβ hyp hB β' hββ
+    have hp : 1 ≤ β' / β := (one_le_div hβ).2 hββ
+    obtain ⟨-, hH⟩ := lemma_5_1_holder n A B β hβ hyp (β' / β) hp
+    have hpβ : β' / β * β = β' := by field_simp
+    rw [hpβ] at hH
+    have hh : ∀ z, 0 ≤ h A z := fun z ↦ by unfold h; split_ifs <;> positivity
+    have hX : 0 ≤ 𝐄 h A ^ β' := by
+      simp only [expect, smul_eq_mul]
+      exact mul_nonneg (by positivity) (Finset.sum_nonneg fun z _ ↦ by
+        rw [Pi.pow_apply]; exact Real.rpow_nonneg (hh z) _)
+    have ha : 0 ≤ ｜A｜ := by
+      simp only [dens, expect, smul_eq_mul]
+      exact mul_nonneg (by positivity) (Finset.sum_nonneg fun z _ ↦ by
+        by_cases hz : z ∈ A <;> simp [ind, hz])
+    set p := β' / β with hpdef
+    set X := 𝐄 h A ^ β'
+    set a := ｜A｜
+    set b := B a
+    have hbH : b ≤ X ^ p⁻¹ * a ^ (1 - p⁻¹) := le_trans hyp hH
+    rcases hp.lt_or_eq with hp1 | hp1
+    · rcases ha.lt_or_eq with ha0 | ha0
+      · have hp0 : 0 < p := by linarith
+        have h1 : b ^ p ≤ X * a ^ (p - 1) := by
+          have := Real.rpow_le_rpow hB.le hbH hp0.le
+          rwa [Real.mul_rpow (Real.rpow_nonneg hX _) (Real.rpow_nonneg ha _),
+            Real.rpow_inv_rpow hX hp0.ne', ← Real.rpow_mul ha,
+            show (1 - p⁻¹) * p = p - 1 by field_simp] at this
+        have h2 : a ^ (p - 1) * a ^ (-p + 1) = 1 := by
+          rw [← Real.rpow_add ha0]; norm_num
+        calc b ^ p * a ^ (-p + 1) ≤ X * a ^ (p - 1) * a ^ (-p + 1) :=
+              mul_le_mul_of_nonneg_right h1 (Real.rpow_nonneg ha _)
+          _ = X := by rw [mul_assoc, h2, mul_one]
+      · have hp0 : 0 < 1 - p⁻¹ := by
+          have : p⁻¹ < 1 := inv_lt_one_of_one_lt₀ hp1
+          linarith
+        rw [← ha0, Real.zero_rpow hp0.ne', mul_zero] at hbH
+        linarith
+    · rw [← hp1]
+      simp only [Real.rpow_one, neg_add_cancel, Real.rpow_zero, mul_one]
+      have : β' = β := by
+        have := hp1.symm
+        rw [hpdef, div_eq_one_iff_eq hβ.ne'] at this
+        exact this
+      have hXE : X = 𝐄 h A ^ β := by rw [show X = 𝐄 h A ^ β' from rfl, this]
+      rw [hXE]
+      exact hyp
+  refine ⟨part1, ?_⟩
+  intro H β hβ n hn A hA
+  have hβ₀ : (0 : ℝ) < β₀ := by norm_num [β₀]
+  have hh : ∀ z, 0 ≤ h A z := fun z ↦ by unfold h; split_ifs <;> positivity
+  have hE : 0 ≤ 𝐄 h A ^ β := by
+    simp only [expect, smul_eq_mul]
+    exact mul_nonneg (by positivity) (Finset.sum_nonneg fun z _ ↦ by
+      rw [Pi.pow_apply]; exact Real.rpow_nonneg (hh z) _)
+  have ha : 0 ≤ ｜A｜ := by
+    simp only [dens, expect, smul_eq_mul]
+    exact mul_nonneg (by positivity) (Finset.sum_nonneg fun z _ ↦ by
+      by_cases hz : z ∈ A <;> simp [ind, hz])
+  rcases ha.lt_or_eq with ha0 | ha0
+  · have hL : 0 < log₂ ｜A｜⁻¹ := Real.logb_pos (by norm_num)
+      ((one_lt_inv₀ ha0).2 (by linarith))
+    have h1 := part1 n A (fun t ↦ t * (log₂ t⁻¹) ^ β₀) β₀ hβ₀ (H n hn A hA)
+      (mul_pos ha0 (Real.rpow_pos_of_pos hL _)) β hβ
+    rw [Real.mul_rpow ha0.le (Real.rpow_nonneg hL.le _), ← Real.rpow_mul hL.le,
+      show β₀ * (β / β₀) = β by field_simp, mul_comm (｜A｜ ^ (β / β₀)), mul_assoc,
+      ← Real.rpow_add ha0, show β / β₀ + (-(β / β₀) + 1) = 1 by ring, Real.rpow_one,
+      mul_comm] at h1
+    exact h1
+  · rw [← ha0, zero_mul]
+    exact hE
 
 end Auto.DIR

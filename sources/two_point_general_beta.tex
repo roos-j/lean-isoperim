@@ -1,0 +1,131 @@
+\documentclass[11pt]{amsart}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,amsthm,mathtools,microtype}
+\setlength{\emergencystretch}{2em}
+\newtheorem{theorem}{Theorem}
+\newcommand{\E}{\mathbb E}
+\newcommand{\one}{\mathbf 1}
+\pagestyle{plain}
+
+\begin{document}
+
+\begin{theorem}[Two-point reduction]\label{thm:two-point}
+Let $\frac12\le\beta\le1$ and let $B:[0,1]\to[0,\infty)$ satisfy
+$B(0)=B(1)=0$. Suppose that, for every $0\le x\le y\le1$,
+\begin{equation}\label{eq:two-point}
+ B(x)+\max\left\{
+ \bigl((y-x)^{1/\beta}+B(y)^{1/\beta}\bigr)^\beta,\,
+ y-x+(2^\beta-1)B(y)
+ \right\}
+ \ge 2B\!\left(\frac{x+y}{2}\right).
+\end{equation}
+Then, for every $n\ge1$ and every $A\subseteq\{0,1\}^n$,
+\[
+ \E_n h_A^\beta\ge B(|A|).
+\]
+Here $|A|=2^{-n}\#A$ and $\E_n$ denotes expectation with respect to
+normalized counting measure on $\{0,1\}^n$. For $z\in A$, the value
+$h_A(z)$ is the number of neighbors of $z$ outside $A$, where two
+vertices are neighbors if they differ in exactly one coordinate;
+set $h_A(z)=0$ for $z\notin A$.
+\end{theorem}
+
+\begin{proof}
+Set
+\[
+ q=\frac1\beta,\qquad c=2^\beta-1,\qquad
+ N(s,t)=(s^q+t^q)^{1/q}\quad(s,t\ge0).
+\]
+Since $q\ge1$, the function $N$ is the $\ell^q$ norm on the
+nonnegative quadrant, and $0<c\le1$.
+
+We first establish an estimate for adding an indicator. Let $h$ be
+a nonnegative integer-valued function on a finite probability space,
+let $D$ be an event, and write $H=\E h^\beta$ and $d=\mathbb P(D)$.
+We claim that
+\begin{equation}\label{eq:increment}
+ \E(h+\one_D)^\beta\ge\max\{N(d,H),\,d+cH\}.
+\end{equation}
+The triangle inequality for an average of vectors gives
+\[
+ N(H,d)
+ =\bigl\|\E(h^\beta,\one_D)\bigr\|_{\ell^q}
+ \le \E\bigl\|(h^\beta,\one_D)\bigr\|_{\ell^q}
+ =\E(h+\one_D)^\beta,
+\]
+which proves the first lower bound.
+
+For the second lower bound, observe that
+\begin{equation}\label{eq:scalar}
+ (k+1)^\beta\ge1+ck^\beta
+ \qquad(k=0,1,2,\ldots).
+\end{equation}
+This is an equality for $k=0$. If $k\ge1$, set $t=k^\beta\ge1$.
+The triangle inequality, applied to $(t,t)=(1,t)+(t-1,0)$, yields
+\[
+ 2^\beta t=\|(t,t)\|_{\ell^q}
+ \le\|(1,t)\|_{\ell^q}+t-1
+ =(k+1)^\beta+t-1.
+\]
+Rearranging proves \eqref{eq:scalar}. Applying \eqref{eq:scalar}
+on $D$ and using $h^\beta\ge ch^\beta$ on $D^c$, we obtain
+\[
+ (h+\one_D)^\beta\ge\one_D+ch^\beta.
+\]
+Taking expectations proves the second lower bound in
+\eqref{eq:increment}.
+
+We now prove the theorem by induction on the dimension, allowing
+dimension zero for the base case. The zero-dimensional cube consists
+of one point and has no edges. Its only subsets have measure zero
+or one, so the desired bound follows from $B(0)=B(1)=0$.
+
+Suppose the bound holds in dimension $n$, and let
+$A\subseteq\{0,1\}^{n+1}$. Define its slices by
+\[
+ A_i=\{z\in\{0,1\}^n:(z,i)\in A\},\qquad
+ a_i=|A_i|,\qquad H_i=\E_n h_{A_i}^\beta
+ \quad(i=0,1).
+\]
+Relabel the slices so that $a_0\le a_1$. Then
+\[
+ |A|=\frac{a_0+a_1}{2},
+ \qquad H_i\ge B(a_i)
+\]
+by the induction hypothesis. The boundary degrees satisfy the exact
+identity
+\[
+ h_A(z,i)=h_{A_i}(z)+\one_{A_i\setminus A_{1-i}}(z).
+\]
+Indeed, the first term counts the outgoing edges in the first $n$
+coordinates and the second counts the outgoing edge in the last
+coordinate. Both sides vanish when $z\notin A_i$.
+
+The contribution from slice zero is at least $H_0$. Applying
+\eqref{eq:increment} to slice one, with $h=h_{A_1}$ and
+$D=A_1\setminus A_0$, gives
+\[
+ 2\E_{n+1}h_A^\beta
+ \ge H_0+\max\{N(d,H_1),\,d+cH_1\},
+ \qquad d=|A_1\setminus A_0|.
+\]
+Since
+\[
+ d=a_1-|A_0\cap A_1|\ge a_1-a_0
+\]
+and both entries in the maximum are nondecreasing in each variable,
+the induction hypothesis implies
+\begin{align*}
+ 2\E_{n+1}h_A^\beta
+ &\ge B(a_0)+
+ \max\{N(a_1-a_0,B(a_1)),\,a_1-a_0+cB(a_1)\}\\
+ &\ge 2B\!\left(\frac{a_0+a_1}{2}\right)
+ =2B(|A|),
+\end{align*}
+where the last inequality is \eqref{eq:two-point}. This completes
+the induction.
+\end{proof}
+
+\end{document}

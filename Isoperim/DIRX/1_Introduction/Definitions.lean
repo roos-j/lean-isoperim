@@ -48,17 +48,36 @@ noncomputable def s {n : ℕ} (f : ({0,1}^n) → ℝ) (x : {0,1}^n) : ℝ :=
 /-- [DIRX], §1, after (1.4): for $f=\mathbf{1}_A$, $s_f(x)=h_A(x)+h_{A^c}(x)$. -/
 theorem sensitivity_indicator (n : ℕ) (A : Set ({0,1}^n)) (x : {0,1}^n) :
     s (𝟏 A) x = h A x + h Aᶜ x := by
-  sorry
+  classical
+  by_cases hx : x ∈ A
+  · have h0 : h Aᶜ x = 0 := by simp [h, hx]
+    rw [h0, add_zero]
+    simp only [s, h, hx, ite_true]
+    refine congrArg (fun t : Finset (Fin n) ↦ ((t.card : ℕ) : ℝ))
+      (Finset.filter_congr fun j _ ↦ ?_)
+    by_cases hj : x + e j ∈ A <;> simp [ind, hj, hx]
+  · have h0 : h A x = 0 := by simp [h, hx]
+    rw [h0, zero_add]
+    have hx' : x ∈ Aᶜ := hx
+    simp only [s, h, hx', ite_true, Finset.card_filter]
+    push_cast
+    refine Finset.sum_congr rfl fun j _ ↦ ?_
+    by_cases hj : x + e j ∈ A <;> simp [ind, hj, hx]
 
 /-- [DIRX], §1, after (1.4): $h_A$ and $h_{A^c}$ have disjoint support. -/
 theorem hA_mul_hA_compl (n : ℕ) (A : Set ({0,1}^n)) (x : {0,1}^n) :
     h A x * h Aᶜ x = 0 := by
-  sorry
+  by_cases hx : x ∈ A <;> simp [h, hx]
 
 /-- [DIRX], §1, after (1.4): since $h_A$ and $h_{A^c}$ have disjoint support,
 $\sqrt{s_f}=\sqrt{h_A}+\sqrt{h_{A^c}}$ for $f=\mathbf{1}_A$. -/
 theorem sqrt_sensitivity_indicator (n : ℕ) (A : Set ({0,1}^n)) (x : {0,1}^n) :
     √(s (𝟏 A) x) = √(h A x) + √(h Aᶜ x) := by
-  sorry
+  rw [sensitivity_indicator]
+  by_cases hx : x ∈ A
+  · have h0 : h Aᶜ x = 0 := by simp [h, hx]
+    simp [h0]
+  · have h0 : h A x = 0 := by simp [h, hx]
+    simp [h0]
 
 end Auto.DIRX

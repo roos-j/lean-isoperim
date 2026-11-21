@@ -117,7 +117,13 @@ $$I(x)\ge\sqrt2\cdot x\sqrt{\log(1/x)}\Big(1-\frac12\frac{\log\log(1/x)}{\log(1/
 theorem I_lower (x : ℝ) (hx : x ∈ Ioc (0 : ℝ) 5⁻¹) :
     I x ≥ √2 * x * √(log x⁻¹) *
       (1 - 2⁻¹ * log (log x⁻¹) / log x⁻¹ - log (2 * √π) / log x⁻¹) := by
-  sorry
+  have h := prop_5_11 x hx
+  have hπ : π ^ (2⁻¹ : ℝ) = √π := by rw [sqrt_eq_rpow, one_div]
+  rw [hπ] at h
+  have e : 1 - 2⁻¹ * log (log x⁻¹) / log x⁻¹ - log (2 * √π) / log x⁻¹ =
+      1 - 2⁻¹ * (log (log x⁻¹) / log x⁻¹) - log (2 * √π) / log x⁻¹ := by ring
+  rw [e]
+  exact h
 
 /-- [DIRX], proof of (2.6): thus, for $x\in(0,\frac1{64}]$,
 $$\mathrm{J}(1-x)\ge\frac{\sqrt2}{2w_1}I(\tfrac1{2w_1})^{-1}(1-\varepsilon)x\sqrt{\log(w_1/x)},$$
@@ -125,24 +131,128 @@ where $\varepsilon=\frac12\frac{\log\log(w_1/x)}{\log(w_1/x)}+\frac{\log(2\sqrt\
 -/
 theorem eqn_2_6_step (x : ℝ) (hx : x ∈ Ioc (0 : ℝ) 64⁻¹) :
     J (1 - x) ≥ √2 / (2 * w₁) * (I ((2 * w₁)⁻¹))⁻¹ * (1 - ε x) * x * √(log (w₁ / x)) := by
-  sorry
+  have hw : w₁ = 29 / 32 := rfl
+  have hw0 : (0 : ℝ) < w₁ := by rw [hw]; norm_num
+  have hx0 := hx.1
+  have hy : x / w₁ ∈ Ioc (0 : ℝ) 5⁻¹ :=
+    ⟨div_pos hx0 hw0, by rw [div_le_iff₀ hw0, hw]; linarith [hx.2]⟩
+  have hL := I_lower (x / w₁) hy
+  rw [inv_div] at hL
+  have hK : 0 ≤ (I ((2 * w₁)⁻¹))⁻¹ := inv_nonneg.2 (gProf_nonneg _)
+  have hJ : J (1 - x) = 2⁻¹ * (I ((2 * w₁)⁻¹))⁻¹ * I (x / w₁) := by
+    show 2⁻¹ * (I ((2 * w₁)⁻¹))⁻¹ * I ((1 - (1 - x)) / w₁) = _
+    rw [sub_sub_cancel]
+  rw [hJ]
+  calc 2⁻¹ * (I ((2 * w₁)⁻¹))⁻¹ * I (x / w₁)
+      ≥ 2⁻¹ * (I ((2 * w₁)⁻¹))⁻¹ * (√2 * (x / w₁) * √(log (w₁ / x)) *
+        (1 - 2⁻¹ * log (log (w₁ / x)) / log (w₁ / x) - log (2 * √π) / log (w₁ / x))) := by
+        gcongr
+    _ = _ := by simp only [εX]; ring
 
 /-- [DIRX], proof of (2.6): $\varepsilon$ is an increasing function of $x$ (on
 $(0,\frac1{64}]$). -/
 theorem εX_monotone : MonotoneOn ε (Ioc 0 64⁻¹) := by
-  sorry
+  have hw : w₁ = 29 / 32 := rfl
+  have hw0 : (0 : ℝ) < w₁ := by rw [hw]; norm_num
+  have hc : 2⁻¹ ≤ log (2 * √π) := by
+    have h := half_le_log_two_mul_sqrt_pi
+    have hπ : π ^ (2⁻¹ : ℝ) = √π := by rw [sqrt_eq_rpow, one_div]
+    rwa [hπ] at h
+  have hεX : ∀ x, ε x = (2⁻¹ * log (log (w₁ / x)) + log (2 * √π)) / log (w₁ / x) :=
+    fun x ↦ by simp only [εX]; ring
+  have hu1 : ∀ x ∈ Ioc (0 : ℝ) 64⁻¹, 1 ≤ log (w₁ / x) := by
+    intro x hx
+    have he := exp_one_lt_d9
+    have h1 : exp 1 * x ≤ 2.7182818286 * 64⁻¹ := mul_le_mul he.le hx.2 hx.1.le (by norm_num)
+    have h2 : exp 1 ≤ w₁ / x := by rw [le_div_iff₀ hx.1, hw]; linarith
+    rw [← log_exp 1]
+    exact log_le_log (exp_pos 1) h2
+  intro a ha b hb hab
+  have h := eps_antitone_aux hc (hu1 b hb)
+    (log_le_log (div_pos hw0 hb.1) (div_le_div_of_nonneg_left hw0.le ha.1 hab))
+  rw [hεX a, hεX b]
+  exact h
 
 /-- [DIRX], proof of (2.6): evaluating at $x=\frac1{64}$,
 $\frac{\sqrt2}{2w_1}I(\frac1{2w_1})^{-1}(1-\varepsilon(\frac1{64}))>1$. -/
 theorem eqn_2_6_eval : √2 / (2 * w₁) * (I ((2 * w₁)⁻¹))⁻¹ * (1 - ε 64⁻¹) > 1 := by
-  sorry
+  have hw : w₁ = 29 / 32 := rfl
+  have hw0 : (0 : ℝ) < w₁ := by rw [hw]; norm_num
+  have hG : gJw (29 / 32) 2⁻¹ < 0.507 := by
+    have h := Checker.checkUpper_sound Checker.P0 Checker.hw0 []
+      (.JwHalf (29 / 32) 0.0919370219368074 0.0919370219366073) 0.507 (by decide +kernel)
+    simp only [Checker.denote] at h
+    have e1 : ((29 / 32 : ℚ) : ℝ) = 29 / 32 := by norm_num
+    have e2 : ((0.507 : ℚ) : ℝ) = 0.507 := by norm_num
+    rwa [e1, e2] at h
+  have hGeq : gJw (29 / 32) 2⁻¹ = √2 * w₁ * I ((2 * w₁)⁻¹) := by
+    simp only [gJw, hw]
+    rw [show ((29 / 32 : ℝ))⁻¹ * (1 - 2⁻¹) = (2 * (29 / 32 : ℝ))⁻¹ by norm_num]
+    rfl
+  have hIpos : 0 < I ((2 * w₁)⁻¹) := by
+    apply gProf_pos
+    rw [hw]; constructor <;> norm_num
+  have hGpos : 0 < gJw (29 / 32) 2⁻¹ := by rw [hGeq]; positivity
+  have h58 : w₁ / 64⁻¹ = ((58 : ℚ) : ℝ) := by rw [hw]; norm_num
+  have hl1 := log_mem_of_logIv Checker.P11 58 4.06 4.061 (by decide +kernel)
+  have hl2 := log_mem_of_logIv Checker.P11 4.061 1.40 1.402 (by decide +kernel)
+  have hl3 := log_mem_of_logIv Checker.P11 3.545 1.26 1.266 (by decide +kernel)
+  have c1 : ((4.06 : ℚ) : ℝ) = 4.06 := by norm_num
+  have c2 : ((4.061 : ℚ) : ℝ) = 4.061 := by norm_num
+  have c3 : ((1.402 : ℚ) : ℝ) = 1.402 := by norm_num
+  have c4 : ((3.545 : ℚ) : ℝ) = 3.545 := by norm_num
+  have c5 : ((1.266 : ℚ) : ℝ) = 1.266 := by norm_num
+  rw [c1, c2] at hl1
+  rw [c2, c3] at hl2
+  rw [c4, c5] at hl3
+  have hu : 4.06 ≤ log (w₁ / 64⁻¹) := by rw [h58]; exact hl1.1
+  have hu' : log (w₁ / 64⁻¹) ≤ 4.061 := by rw [h58]; exact hl1.2
+  have hll : log (log (w₁ / 64⁻¹)) ≤ 1.402 :=
+    (log_le_log (by linarith) hu').trans hl2.2
+  have hsp := sqrt_pi_bounds_fine
+  have hc : log (2 * √π) ≤ 1.266 :=
+    (log_le_log (by positivity) (by linarith)).trans hl3.2
+  have hε : ε 64⁻¹ < 0.49 := by
+    have e : ε 64⁻¹ = (2⁻¹ * log (log (w₁ / 64⁻¹)) + log (2 * √π)) / log (w₁ / 64⁻¹) := by
+      simp only [εX]; ring
+    rw [e, div_lt_iff₀ (by linarith)]
+    linarith
+  have hK : I ((2 * w₁)⁻¹) = gJw (29 / 32) 2⁻¹ / (√2 * w₁) := by
+    rw [hGeq]; field_simp
+  have h22 : √2 * √2 = 2 := mul_self_sqrt (by norm_num)
+  rw [hK, inv_div]
+  have e : √2 / (2 * w₁) * (√2 * w₁ / gJw (29 / 32) 2⁻¹) * (1 - ε 64⁻¹) =
+      (√2 * √2) / 2 * (w₁ / w₁) * ((1 - ε 64⁻¹) / gJw (29 / 32) 2⁻¹) := by ring
+  rw [e, h22, div_self hw0.ne', gt_iff_lt]
+  have : 1 < (1 - ε 64⁻¹) / gJw (29 / 32) 2⁻¹ := by rw [lt_div_iff₀ hGpos]; linarith
+  linarith
 
 end Proof_Eqn_2_6
 
 /-- **(2.6)** ([DIRX], §2.2). For $x\in(0,\frac1{64}]$,
 $$\mathrm{J}(1-x)>x\sqrt{\log(w_1/x)}.$$ -/
 theorem eqn_2_6 (x : ℝ) (hx : x ∈ Ioc (0 : ℝ) 64⁻¹) : J (1 - x) > x * √(log (w₁ / x)) := by
-  sorry
+  have hw : w₁ = 29 / 32 := rfl
+  have hw0 : (0 : ℝ) < w₁ := by rw [hw]; norm_num
+  have h1 := eqn_2_6_step x hx
+  have hK : 0 ≤ √2 / (2 * w₁) * (I ((2 * w₁)⁻¹))⁻¹ :=
+    mul_nonneg (by positivity) (inv_nonneg.2 (gProf_nonneg _))
+  have hm := εX_monotone hx ⟨by norm_num, le_rfl⟩ hx.2
+  have h2 := eqn_2_6_eval
+  have hu : 0 < log (w₁ / x) := by
+    apply log_pos
+    rw [one_lt_div hx.1, hw]; linarith [hx.2]
+  have hpos : 0 < x * √(log (w₁ / x)) := mul_pos hx.1 (sqrt_pos.2 hu)
+  have h3 : √2 / (2 * w₁) * (I ((2 * w₁)⁻¹))⁻¹ * (1 - ε 64⁻¹) ≤
+      √2 / (2 * w₁) * (I ((2 * w₁)⁻¹))⁻¹ * (1 - ε x) :=
+    mul_le_mul_of_nonneg_left (by linarith) hK
+  calc x * √(log (w₁ / x)) = 1 * (x * √(log (w₁ / x))) := (one_mul _).symm
+    _ < (√2 / (2 * w₁) * (I ((2 * w₁)⁻¹))⁻¹ * (1 - ε 64⁻¹)) * (x * √(log (w₁ / x))) :=
+      mul_lt_mul_of_pos_right h2 hpos
+    _ ≤ (√2 / (2 * w₁) * (I ((2 * w₁)⁻¹))⁻¹ * (1 - ε x)) * (x * √(log (w₁ / x))) :=
+      mul_le_mul_of_nonneg_right h3 hpos.le
+    _ = √2 / (2 * w₁) * (I ((2 * w₁)⁻¹))⁻¹ * (1 - ε x) * x * √(log (w₁ / x)) := by ring
+    _ ≤ J (1 - x) := h1
 
 /-- [DIRX], §2.2: $\mathrm{J}'(x_1)=0$ and $\mathrm{J}''<0$ (on $(1-w_1,1)$), so $\mathrm{J}'$ is
 strictly decreasing (on $(1-w_1,1)\supset[\frac12,1)$). -/

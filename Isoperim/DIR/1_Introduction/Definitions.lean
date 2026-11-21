@@ -172,7 +172,13 @@ def dyadic : Set ℝ := {x | ∃ n k : ℕ, k ≤ 2 ^ n ∧ x = k / 2 ^ n}
 since otherwise there exists no $A$ with $|A|=x$; i.e. $|A|\in\mathcal{Q}$ for every
 $A\subset\{0,1\}^n$. -/
 theorem dens_mem_dyadic (n : ℕ) (A : Set ({0,1}^n)) : ｜A｜ ∈ 𝒬 := by
-  sorry
+  classical
+  refine ⟨n, (Finset.univ.filter (· ∈ A)).card, ?_, ?_⟩
+  · calc _ ≤ (Finset.univ : Finset ({0,1}^n)).card := Finset.card_filter_le _ _
+      _ = 2 ^ n := by simp
+  · simp only [dens, expect, ind, smul_eq_mul, Set.indicator_apply, Pi.one_apply]
+    rw [Finset.sum_boole]
+    simp [div_eq_mul_inv, mul_comm]
 
 /-- The sum $s(j)$ of the binary digits of $j$ ([DIR], (1.3)). -/
 def s (j : ℕ) : ℕ := (Nat.digits 2 j).sum
@@ -182,7 +188,38 @@ $A=\{x\in\{0,1\}^n : x_1=\dots=x_k=0\}$ shows that
 $\mathcal{B}_\beta(2^{-k})\le 2^{-k}k^\beta$. -/
 theorem isoProfile_two_pow_le (β : ℝ) (hβ : 0 < β) (k : ℕ) :
     𝓑 β (2⁻¹ ^ k) ≤ 2⁻¹ ^ k * (k : ℝ) ^ β := by
-  sorry
+  have hbdd : BddBelow {v : ℝ | ∃ n : ℕ, 1 ≤ n ∧ ∃ A : Set ({0,1}^n), ｜A｜ = 2⁻¹ ^ k ∧
+      v = 𝐄 h A ^ β} := by
+    refine ⟨0, ?_⟩
+    rintro v ⟨n, -, A, -, rfl⟩
+    simp only [expect, smul_eq_mul]
+    refine mul_nonneg (by positivity) (Finset.sum_nonneg fun z _ ↦ ?_)
+    rw [Pi.pow_apply]
+    exact Real.rpow_nonneg (by unfold h; split_ifs <;> positivity) _
+  rcases Nat.eq_zero_or_pos k with rfl | hk
+  · -- the full cube in dimension 1
+    refine (csInf_le hbdd ⟨1, le_rfl, Set.univ, ?_, rfl⟩).trans (le_of_eq ?_)
+    · simp [dens, expect, ind]
+    · simp [expect, h, Real.zero_rpow hβ.ne']
+  · -- a single point in dimension k
+    classical
+    refine (csInf_le hbdd ⟨k, hk, {0}, ?_, rfl⟩).trans (le_of_eq ?_)
+    · simp [dens, expect, ind, Set.indicator_apply]
+    · simp only [expect, smul_eq_mul, Pi.pow_apply]
+      rw [Finset.sum_eq_single (0 : {0,1}^k)]
+      · congr 1
+        have : ∀ i : Fin k, (0 : {0,1}^k) + e i ∉ ({0} : Set ({0,1}^k)) := by
+          intro i
+          simp only [zero_add, Set.mem_singleton_iff, e]
+          intro hi
+          have := congr_fun hi i
+          simp at this
+        have he : ∀ i : Fin k, ¬ e i = 0 := fun i hi ↦ by
+          have := congr_fun hi i; simp [e] at this
+        simp [h, he]
+      · intro x _ hx
+        simp [h, hx, Real.zero_rpow hβ.ne']
+      · simp
 
 /-- The defining properties of the function $J$ of [DIR], §1.3: $f$ is smooth on
 $(\frac12,1)$, continuous at the endpoints (i.e. on $[\frac12,1]$), and satisfies

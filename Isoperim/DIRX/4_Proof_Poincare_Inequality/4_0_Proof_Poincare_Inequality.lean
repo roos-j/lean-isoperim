@@ -12,6 +12,7 @@ public import Isoperim.DIRX.«1_Introduction».Definitions
 public import Isoperim.DIRX.«2_Preliminaries».«2_1_Reduction_Two_Point_Inequality»
 public import Isoperim.DIRX.«2_Preliminaries».«2_2_Properties_J»
 public import Isoperim.DIRX.«2_Preliminaries».Definitions
+public import Isoperim.DIRX.«4_Proof_Poincare_Inequality».«4_0_Proof_Poincare_Inequality_aux»
 
 /-!
 # [DIRX] §4 Proof of the Poincaré inequality
@@ -53,15 +54,21 @@ section Proof_Theorem_1_3
 /-- [DIRX], §4: every Boolean-valued function $f$ can be written as $f=\mathbf{1}_A$ for some
 $A\subset\{0,1\}^n$. -/
 theorem bool_eq_indicator (n : ℕ) (f : ({0,1}^n) → ℝ) (hf : ∀ x, f x = 0 ∨ f x = 1) :
-    ∃ A : Set ({0,1}^n), f = 𝟏 A := by
-  sorry
+    ∃ A : Set ({0,1}^n), f = 𝟏 A :=
+  boolean_eq_indicator n f hf
 
 /-- [DIRX], §4: for $f=\mathbf{1}_A$, $\|f-\mathbf{E}f\|_1=2|A|(1-|A|)$ and
 $\|\nabla f\|_1=\frac12(\mathbf{E}\sqrt{h_A}+\mathbf{E}\sqrt{h_{A^c}})$. -/
 theorem norms_indicator (n : ℕ) (A : Set ({0,1}^n)) :
     pNorm 1 (𝟏 A - fun _ ↦ 𝐄 𝟏 A) = 2 * ｜A｜ * (1 - ｜A｜) ∧
       pNorm 1 (∇(𝟏 A)) = 2⁻¹ * (𝐄 (fun x ↦ √(h A x)) + 𝐄 (fun x ↦ √(h Aᶜ x))) := by
-  sorry
+  obtain ⟨-, -, h1⟩ := indicator_norms n A 1 one_pos
+  have h2 := eqn_7_1 n A 1 one_pos
+  rw [Real.rpow_one] at h1 h2
+  refine ⟨by rw [h1]; simp only [Real.rpow_one]; ring, ?_⟩
+  have e : ∀ B : Set ({0,1}^n), 𝐄 h B ^ ((1 : ℝ) / 2) = 𝐄 (fun x ↦ √(h B x)) := by
+    intro B; congr 1; funext x; rw [Pi.pow_apply, Real.sqrt_eq_rpow]
+  rw [h2, e, e, Real.rpow_neg_one]
 
 /-- $G_P(x)=\frac12(B_{w_1}(x)+B_{w_1}(1-x))-2x(1-x)$ ([DIRX], (4.1)). Written `G_PX x`. -/
 noncomputable def G_PX (x : ℝ) : ℝ := 2⁻¹ * (BX w₁ x + BX w₁ (1 - x)) - 2 * x * (1 - x)
@@ -74,7 +81,8 @@ theorem thm_1_3_of_eqn_4_1 (h : ∀ x ∈ Icc (0 : ℝ) 1, G_PX x ≥ 0) (n : �
 
 /-- [DIRX], §4: $G_P(x)=G_P(1-x)$. -/
 theorem G_PX_symm (x : ℝ) : G_PX x = G_PX (1 - x) := by
-  sorry
+  simp only [G_PX, sub_sub_cancel]
+  ring
 
 section Case_I
 /-! ### Case I: $x\in[0,\frac1{64}]$ -/
@@ -82,8 +90,8 @@ section Case_I
 /-- [DIRX], §4, Case I: for $x\in[0,\frac1{64}]$,
 $G_P(x)=\frac12(L(x)+\mathrm{J}(1-x))-2x(1-x)$. -/
 theorem G_PX_eq_I (x : ℝ) (hx : x ∈ Icc (0 : ℝ) 64⁻¹) :
-    G_PX x = 2⁻¹ * (L x + J (1 - x)) - 2 * x * (1 - x) := by
-  sorry
+    G_PX x = 2⁻¹ * (L x + J (1 - x)) - 2 * x * (1 - x) :=
+  poincareX_GPXf_eq (by linarith [hx.2])
 
 /-- $g_{P,1}(x)=\frac12\sqrt{\log_2(1/x)}+\frac12\sqrt{\log(w_1/x)}-2$ ([DIRX], §4, Case I).
 Written `g_P₁X x`. -/
@@ -96,16 +104,58 @@ theorem G_PX_I_lower (x : ℝ) (hx : x ∈ Ioc (0 : ℝ) 64⁻¹) :
     2⁻¹ * (L x + J (1 - x)) - 2 * x * (1 - x) ≥
       x * (2⁻¹ * √(log₂ x⁻¹) + 2⁻¹ * √(log (w₁ / x)) - 2) ∧
     x * (2⁻¹ * √(log₂ x⁻¹) + 2⁻¹ * √(log (w₁ / x)) - 2) = x * g_P₁X x := by
-  sorry
+  refine ⟨?_, rfl⟩
+  have hJ := eqn_2_6 x hx
+  have hL : L x = x * √(log₂ x⁻¹) := by rw [Auto.DIR.L, sqrt_eq_rpow, one_div]
+  rw [hL]
+  nlinarith [sq_nonneg x]
 
 /-- [DIRX], §4, Case I: $g_{P,1}$ is a decreasing function (on $(0,\frac1{64}]$) and
 $g_{P,1}(\frac1{64})>0.2$. -/
 theorem g_P₁X_antitone_eval : AntitoneOn g_P₁X (Ioc 0 64⁻¹) ∧ g_P₁X 64⁻¹ > 0.2 := by
-  sorry
+  have hw : w₁ = 29 / 32 := rfl
+  constructor
+  · intro x hx y hy hxy
+    unfold g_P₁X
+    have h1 : log₂ y⁻¹ ≤ log₂ x⁻¹ :=
+      logb_le_logb_of_le one_lt_two (inv_pos.2 hy.1) (inv_anti₀ hx.1 hxy)
+    have h2 : log (w₁ / y) ≤ log (w₁ / x) :=
+      log_le_log (div_pos (by rw [hw]; norm_num) hy.1)
+        (div_le_div_of_nonneg_left (by rw [hw]; norm_num) hx.1 hxy)
+    nlinarith [sqrt_le_sqrt h1, sqrt_le_sqrt h2]
+  · unfold g_P₁X
+    have h64 : log₂ (64⁻¹ : ℝ)⁻¹ = 6 := by
+      rw [inv_inv, show (64 : ℝ) = 2 ^ (6 : ℕ) by norm_num, logb_pow,
+        logb_self_eq_one one_lt_two]
+      norm_num
+    have hlog : (4.04 : ℝ) ≤ log (w₁ / 64⁻¹) := by
+      rw [div_inv_eq_mul, log_mul (by rw [hw]; norm_num) (by norm_num),
+        show (64 : ℝ) = 2 ^ (6 : ℕ) by norm_num, log_pow]
+      have e1 := one_sub_inv_le_log_of_pos (show 0 < w₁ by rw [hw]; norm_num)
+      have e3 := log_two_gt_d9
+      rw [hw] at e1 ⊢
+      norm_num at e1 ⊢
+      linarith
+    have hs6 : (2.449 : ℝ) ≤ √6 := by rw [le_sqrt (by norm_num) (by norm_num)]; norm_num
+    have hs4 : (2.0099 : ℝ) ≤ √(log (w₁ / 64⁻¹)) := by
+      rw [le_sqrt (by norm_num) (by linarith)]; nlinarith
+    rw [h64]
+    linarith
 
 /-- [DIRX], §4, Case I: $G_P(x)\ge0.2\,x$ for all $x\in[0,\frac1{64}]$. -/
 theorem G_PX_I (x : ℝ) (hx : x ∈ Icc (0 : ℝ) 64⁻¹) : G_PX x ≥ 0.2 * x := by
-  sorry
+  rcases eq_or_lt_of_le hx.1 with h0 | hpos
+  · subst h0
+    rw [G_PX_eq_I 0 ⟨le_rfl, by norm_num⟩, sub_zero]
+    unfold JX
+    rw [(JXw_half_one w₁ ⟨by rw [poincareX_w₁_eq]; norm_num, by rw [poincareX_w₁_eq]; norm_num⟩).2,
+      L_zero]
+    norm_num
+  · obtain ⟨h1, h2⟩ := G_PX_I_lower x ⟨hpos, hx.2⟩
+    obtain ⟨hanti, hval⟩ := g_P₁X_antitone_eval
+    have hg := hanti ⟨hpos, hx.2⟩ ⟨by norm_num, le_rfl⟩ hx.2
+    rw [G_PX_eq_I x hx]
+    nlinarith [mul_le_mul_of_nonneg_left hg hpos.le]
 
 end Case_I
 
@@ -115,14 +165,20 @@ section Case_II
 /-- **(4.2)** ([DIRX], §4, Case II) (🚗). Dyadic partitioning shows that $G_P(x)>10^{-4}$ for all
 $x\in[\frac1{64},\frac14]$. -/
 theorem eqn_4_2 (x : ℝ) (hx : x ∈ Icc (64⁻¹ : ℝ) 4⁻¹) : G_PX x > (10 : ℝ) ^ (-4 : ℤ) := by
-  sorry
+  have h := poincareX_eqn_4_2 x hx
+  have e : (10 : ℝ) ^ (-4 : ℤ) = 1e-4 := by norm_num
+  rw [e]
+  exact h
 
 end Case_II
 
 section Case_III
 /-- [DIRX], §4, Case III: the left-hand side vanishes at $x=\frac12$. -/
 theorem G_PX_half : 2⁻¹ * (Q 2⁻¹ + J (1 - 2⁻¹)) - 2 * 2⁻¹ * (1 - 2⁻¹) = 0 := by
-  sorry
+  rw [show (1 : ℝ) - 2⁻¹ = 2⁻¹ by norm_num, poincare_Q_half,
+    show J 2⁻¹ = 2⁻¹ from (JXw_half_one w₁ ⟨by rw [poincareX_w₁_eq]; norm_num,
+      by rw [poincareX_w₁_eq]; norm_num⟩).1]
+  norm_num
 
 /-- $h_{P,2}(x)=-\partial_xG_P(x)$ ([DIRX], §4, Case III), where $G_P$ is given on
 $[\frac14,\frac12]$ by the formula $\frac12(Q(x)+\mathrm{J}(1-x))-2x(1-x)$ (we differentiate this
@@ -134,13 +190,16 @@ noncomputable def h_P₂ (x : ℝ) : ℝ :=
 /-- [DIRX], §4, Case III: it suffices to show $h_{P,2}(x)>0$ for all $x\in[\frac14,\frac12]$:
 then $x\mapsto\frac12(Q(x)+\mathrm{J}(1-x))-2x(1-x)$ is decreasing on $[\frac14,\frac12]$. -/
 theorem G_PX_III_anti (h : ∀ x ∈ Icc (4⁻¹ : ℝ) 2⁻¹, h_P₂ x > 0) :
-    AntitoneOn (fun x ↦ 2⁻¹ * (Q x + J (1 - x)) - 2 * x * (1 - x)) (Icc 4⁻¹ 2⁻¹) := by
-  sorry
+    AntitoneOn (fun x ↦ 2⁻¹ * (Q x + J (1 - x)) - 2 * x * (1 - x)) (Icc 4⁻¹ 2⁻¹) :=
+  poincare_antitoneOn_of_deriv fun x hx ↦ h x hx
 
 /-- **(4.3)** ([DIRX], §4, Case III) (🚗). By dyadic partitioning, $h_{P,2}(x)>10^{-4}$ for all
 $x\in[\frac14,\frac12]$, which finishes the proof of (4.1). -/
 theorem eqn_4_3 (x : ℝ) (hx : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹) : h_P₂ x > (10 : ℝ) ^ (-4 : ℤ) := by
-  sorry
+  have h := poincareX_eqn_4_3 x hx
+  have e : (10 : ℝ) ^ (-4 : ℤ) = 1e-4 := by norm_num
+  rw [e]
+  exact h
 
 /-! ### Case III: $x\in[\frac14,\frac12]$ -/
 
@@ -149,14 +208,56 @@ $G_P(x)=\frac12(Q(x)+\mathrm{J}(1-x))-2x(1-x)\ge0$. -/
 theorem G_PX_III (x : ℝ) (hx : x ∈ Icc (4⁻¹ : ℝ) 2⁻¹) :
     G_PX x = 2⁻¹ * (Q x + J (1 - x)) - 2 * x * (1 - x) ∧
       2⁻¹ * (Q x + J (1 - x)) - 2 * x * (1 - x) ≥ 0 := by
-  sorry
+  have hw : w₁ = 29 / 32 := rfl
+  have hJh : JXw w₁ 2⁻¹ = 2⁻¹ := (JXw_half_one w₁ ⟨by rw [hw]; norm_num, by rw [hw]; norm_num⟩).1
+  refine ⟨?_, ?_⟩
+  · have hb1 : BX w₁ x = Q x := by
+      rw [BX]
+      split_ifs with h h'
+      · rw [le_antisymm h hx.1, poincare_L_quarter]
+      · rfl
+      · exact absurd hx.2 h'
+    have hb2 : BX w₁ (1 - x) = J (1 - x) := by
+      rw [BX, ite_eq_right (by norm_num; linarith [hx.2])]
+      split_ifs with h
+      · have : x = 2⁻¹ := by linarith [hx.2]
+        subst this
+        rw [show (1 : ℝ) - 2⁻¹ = 2⁻¹ by norm_num, poincare_Q_half]
+        exact hJh.symm
+      · rfl
+    rw [G_PX, hb1, hb2]
+  · have hanti := G_PX_III_anti fun t ht ↦ by
+      have := eqn_4_3 t ht
+      have e : (10 : ℝ) ^ (-4 : ℤ) = 1e-4 := by norm_num
+      rw [e] at this
+      linarith
+    have := hanti ⟨hx.1, hx.2⟩ ⟨by norm_num, le_rfl⟩ hx.2
+    simp only at this
+    rw [G_PX_half] at this
+    exact this
 
 end Case_III
 
 /-- **(4.1)** ([DIRX], §4).
 $$G_P(x)=\tfrac12(B_{w_1}(x)+B_{w_1}(1-x))-2x(1-x)\ge0$$ for all $x\in[0,1]$. -/
 theorem eqn_4_1 (x : ℝ) (hx : x ∈ Icc (0 : ℝ) 1) : G_PX x ≥ 0 := by
-  sorry
+  suffices H : ∀ y ∈ Icc (0 : ℝ) 2⁻¹, G_PX y ≥ 0 by
+    rcases le_total x 2⁻¹ with h | h
+    · exact H x ⟨hx.1, h⟩
+    · rw [G_PX_symm x]
+      exact H (1 - x) ⟨by linarith [hx.2], by linarith⟩
+  intro y hy
+  rcases le_total y 64⁻¹ with h1 | h1
+  · have := G_PX_I y ⟨hy.1, h1⟩
+    linarith [hy.1]
+  rcases le_total y 4⁻¹ with h2 | h2
+  · have := eqn_4_2 y ⟨h1, h2⟩
+    have e : (10 : ℝ) ^ (-4 : ℤ) = 1e-4 := by norm_num
+    rw [e] at this
+    linarith
+  obtain ⟨he, hge⟩ := G_PX_III y ⟨h2, hy.2⟩
+  rw [he]
+  exact hge
 
 end Proof_Theorem_1_3
 

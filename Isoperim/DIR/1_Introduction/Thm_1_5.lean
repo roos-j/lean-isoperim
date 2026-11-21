@@ -6,6 +6,7 @@ Authors: Claude
 module
 
 public import Isoperim.DIR.«1_Introduction».Definitions
+public import Isoperim.DIR.«1_Introduction».Thm_1_5_aux
 public import Isoperim.DIR.«2_Envelope_Functions».«2_2_Proofs_Theorems_1_1_1_5_1_7»
 
 /-!
@@ -35,7 +36,66 @@ $$\mathcal{B}_1(x)=x\Big(n-\frac2k\sum_{j=1}^{k-1}s(j)\Big),$$
 where $s(j)$ is the sum of binary digits of $j$. (For the formula to make sense, $k\ge1$.) -/
 theorem eqn_1_3 (n k : ℕ) (hk : 1 ≤ k) (hkn : k ≤ 2 ^ n) :
     𝓑 1 (k / 2 ^ n) = k / 2 ^ n * (n - 2 / k * ∑ j ∈ Ico 1 k, (s j : ℝ)) := by
-  sorry
+  have hsum : (∑ j ∈ Ico 1 k, (s j : ℝ)) = (fH k : ℝ) := by
+    rw [fH, Nat.cast_sum, Finset.range_eq_Ico,
+      Finset.sum_eq_sum_Ico_succ_bot (by omega : 0 < k)]
+    simp [s]
+  rw [hsum]
+  have hk0 : (0 : ℝ) < k := by exact_mod_cast hk
+  have hE : ∀ m (A : Set ({0,1}^m)), 𝐄 h A ^ (1 : ℝ) = (2⁻¹ : ℝ) ^ m * ∑ x, h A x := by
+    intro m A; simp [expect, Pi.pow_apply, Real.rpow_one]
+  have hd : ∀ m (A : Set ({0,1}^m)), ｜A｜ = (2⁻¹ : ℝ) ^ m * cardN A := by
+    intro m A
+    classical
+    simp only [dens, expect, ind, smul_eq_mul, Set.indicator_apply, Pi.one_apply]
+    rw [Finset.sum_boole]
+    simp [cardN]
+  have hK2 : 2 * k ≤ 2 ^ (n + 1) := by rw [pow_succ]; omega
+  have hseg : ｜segS (n + 1) (2 * k)｜ = (k : ℝ) / 2 ^ n := by
+    rw [hd, cardN_segS _ _ hK2]
+    push_cast
+    rw [pow_succ, inv_pow]
+    field_simp
+  apply le_antisymm
+  · have hb : BddBelow {v : ℝ | ∃ m : ℕ, 1 ≤ m ∧ ∃ A : Set ({0,1}^m),
+        ｜A｜ = (k : ℝ) / 2 ^ n ∧ v = 𝐄 h A ^ (1 : ℝ)} := by
+      refine ⟨0, ?_⟩
+      rintro v ⟨m, -, A, -, rfl⟩
+      rw [hE]
+      exact mul_nonneg (by positivity) (Finset.sum_nonneg fun x _ ↦ h_nonneg A x)
+    refine (csInf_le hb ⟨n + 1, by omega, segS (n + 1) (2 * k), hseg, rfl⟩).trans
+      (le_of_eq ?_)
+    rw [hE, sum_h_segS _ _ hK2, fH_two_mul]
+    push_cast
+    rw [pow_succ, inv_pow]
+    field_simp
+    ring
+  · refine le_csInf ⟨_, n + 1, by omega, segS (n + 1) (2 * k), hseg, rfl⟩ ?_
+    rintro v ⟨m, -, A, hA, rfl⟩
+    rw [hE]
+    have hge := sum_h_ge m A
+    have hx : (k : ℝ) / 2 ^ n = (2⁻¹ : ℝ) ^ m * cardN A := by rw [← hd]; exact hA.symm
+    have hKk : (cardN A : ℝ) * 2 ^ n = k * 2 ^ m := by
+      have h2n : (0 : ℝ) < 2 ^ n := by positivity
+      have h2m : (0 : ℝ) < 2 ^ m := by positivity
+      rw [inv_pow] at hx
+      field_simp at hx
+      linarith
+    have hKk' : cardN A * 2 ^ n = k * 2 ^ m := by exact_mod_cast hKk
+    have hK : 1 ≤ cardN A := by
+      by_contra hc
+      have h0 : cardN A = 0 := by omega
+      rw [h0, zero_mul] at hKk'
+      have : 0 < k * 2 ^ m := by positivity
+      omega
+    have hK0 : (0 : ℝ) < cardN A := by exact_mod_cast hK
+    have hv := hart_value_eq hk hK hKk'
+    calc (k : ℝ) / 2 ^ n * ((n : ℝ) - 2 / k * fH k)
+        = (2⁻¹ : ℝ) ^ m * cardN A * ((m : ℝ) - 2 * fH (cardN A) / cardN A) := by
+          rw [hv, hx]; ring
+      _ = (2⁻¹ : ℝ) ^ m * ((m : ℝ) * cardN A - 2 * fH (cardN A)) := by
+          field_simp
+      _ ≤ (2⁻¹ : ℝ) ^ m * ∑ x, h A x := mul_le_mul_of_nonneg_left hge (by positivity)
 
 /-! ### §1.2 Results at the critical exponent -/
 

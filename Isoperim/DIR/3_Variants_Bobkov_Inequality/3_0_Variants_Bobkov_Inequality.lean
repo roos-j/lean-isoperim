@@ -41,7 +41,17 @@ noncomputable def M {n : ℕ} (f : ({0,1}^n) → ℝ) (x : {0,1}^n) : ℝ := √
 
 /-- [DIR], §3: observe $M\mathbf{1}_A=\sqrt{h_A}$. -/
 theorem M_indicator (n : ℕ) (A : Set ({0,1}^n)) : M (𝟏 A) = fun x ↦ √(h A x) := by
-  sorry
+  funext x
+  unfold M
+  congr 1
+  by_cases hx : x ∈ A
+  · rw [h]; simp only [hx, ↓reduceIte]
+    rw [Finset.cast_card, Finset.sum_filter]
+    refine Finset.sum_congr rfl fun i _ ↦ ?_
+    by_cases hi : x + e i ∈ A <;> simp [Mi, ind, hx, hi]
+  · rw [h]; simp only [hx, ↓reduceIte]
+    refine Finset.sum_eq_zero fun i _ ↦ ?_
+    by_cases hi : x + e i ∈ A <;> simp [Mi, ind, hx, hi]
 
 /-- **Lemma 3.1** ([DIR]). Suppose that $\mathcal{I}\subset[0,\infty)$ is an interval and
 $B:\mathcal{I}\to\mathbb{R}$. If
@@ -50,14 +60,19 @@ holds for all $f:\{0,1\}\to\mathcal{I}$, then it holds for all $f:\{0,1\}^n\to\m
 $n\ge1$.
 
 **Discrepancy with the paper.** Paper: $B:\mathcal{I}\to\mathbb{R}$. Lean: adds $B\ge0$ on
-$\mathcal{I}$. -/
-theorem lemma_3_1 (𝓘 : Set ℝ) (h𝓘 : 𝓘.OrdConnected) (h𝓘0 : 𝓘 ⊆ Ici 0) (B : ℝ → ℝ)
+$\mathcal{I}$.
+
+**Unused hypothesis.** The paper assumes $\mathcal{I}\subset[0,\infty)$; this is not needed for
+the claim and is omitted in the Lean statement.
+
+Proof: induction on $n$ ([Bob97, Lemma 1]), see `Auto.DIR.tensor_two_point`. -/
+theorem lemma_3_1 (𝓘 : Set ℝ) (h𝓘 : 𝓘.OrdConnected) (B : ℝ → ℝ)
     (hB : ∀ t ∈ 𝓘, 0 ≤ B t)
     (h1 : ∀ f : ({0,1}^1) → ℝ, (∀ x, f x ∈ 𝓘) →
       B (𝐄 f) ≤ 𝐄 (fun x ↦ √(B (f x) ^ 2 + (M f x) ^ 2)))
     (n : ℕ) (hn : 1 ≤ n) (f : ({0,1}^n) → ℝ) (hf : ∀ x, f x ∈ 𝓘) :
-    B (𝐄 f) ≤ 𝐄 (fun x ↦ √(B (f x) ^ 2 + (M f x) ^ 2)) := by
-  sorry
+    B (𝐄 f) ≤ 𝐄 (fun x ↦ √(B (f x) ^ 2 + (M f x) ^ 2)) :=
+  tensor_two_point 𝓘 h𝓘 B hB h1 n hn f hf
 
 /-- **(3.2)** ([DIR], §3). For $n=1$, (3.1) may be written as
 $$B\Big(\frac{x+y}2\Big)\le\frac12\sqrt{(y-x)^2+B(y)^2}+\frac12B(x),$$
@@ -69,28 +84,60 @@ theorem eqn_3_2 (B : ℝ → ℝ) (f : ({0,1}^1) → ℝ) (hB : 0 ≤ B (min (f 
       B ((min (f 0) (f 1) + max (f 0) (f 1)) / 2) ≤
         2⁻¹ * √((max (f 0) (f 1) - min (f 0) (f 1)) ^ 2 + B (max (f 0) (f 1)) ^ 2) +
           2⁻¹ * B (min (f 0) (f 1)) := by
-  sorry
+  have hM0 : M f 0 = max (f 0 - f 1) 0 := gradPlus_cube1_zero f
+  have hM1 : M f 1 = max (f 1 - f 0) 0 := gradPlus_cube1_one f
+  rw [tens_expect_cube1, tens_expect_cube1 (fun x ↦ √(B (f x) ^ 2 + (M f x) ^ 2)), hM0, hM1]
+  rcases le_total (f 0) (f 1) with hf | hf
+  · rw [min_eq_left hf, max_eq_right hf] at *
+    rw [max_eq_right (by linarith : f 0 - f 1 ≤ 0), max_eq_left (by linarith : 0 ≤ f 1 - f 0)]
+    have q1 : √(B (f 0) ^ 2 + 0 ^ 2) = B (f 0) := by simp [Real.sqrt_sq hB]
+    have q2 : √(B (f 1) ^ 2 + (f 1 - f 0) ^ 2) = √((f 1 - f 0) ^ 2 + B (f 1) ^ 2) := by
+      rw [add_comm]
+    have q3 : (f 0 + f 1) / 2 = 2⁻¹ * (f 0 + f 1) := by ring
+    rw [q1, q2, q3]; constructor <;> intro hh <;> linarith
+  · rw [min_eq_right hf, max_eq_left hf] at *
+    rw [max_eq_right (by linarith : f 1 - f 0 ≤ 0), max_eq_left (by linarith : 0 ≤ f 0 - f 1)]
+    have q1 : √(B (f 1) ^ 2 + 0 ^ 2) = B (f 1) := by simp [Real.sqrt_sq hB]
+    have q2 : √(B (f 0) ^ 2 + (f 0 - f 1) ^ 2) = √((f 0 - f 1) ^ 2 + B (f 0) ^ 2) := by
+      rw [add_comm]
+    have q3 : (f 1 + f 0) / 2 = 2⁻¹ * (f 0 + f 1) := by ring
+    rw [q1, q2, q3]; constructor <;> intro hh <;> linarith
 
 /-- [DIR], §3: observe that (3.2) is equivalent to $G^1_{\frac12}[B](x,y)\ge0$ with $G^1_\beta$ as
-in (2.1) (for $x\le y$ and $B(y)\ge0$). -/
-theorem eqn_3_2_iff_G₁ (B : ℝ → ℝ) (x y : ℝ) (hxy : x ≤ y) (hBy : 0 ≤ B y) :
+in (2.1) (for $x\le y$ and $B(y)\ge0$).
+
+**Unused hypothesis.** The paper assumes $x\le y$ and $B(y)\ge0$; this is not needed for the
+claim and is omitted in the Lean statement. -/
+theorem eqn_3_2_iff_G₁ (B : ℝ → ℝ) (x y : ℝ) :
     B ((x + y) / 2) ≤ 2⁻¹ * √((y - x) ^ 2 + B y ^ 2) + 2⁻¹ * B x ↔
       G₁ 2⁻¹ B x y ≥ 0 := by
-  sorry
+  have hs : ∀ z : ℝ, z ^ (2⁻¹ : ℝ) = √z := fun z ↦ by rw [Real.sqrt_eq_rpow]; norm_num
+  unfold G₁
+  rw [inv_inv, Real.rpow_two, Real.rpow_two, hs]
+  constructor <;> intro h <;> linarith
 
 section Proof_Theorem_1_6
 /-- [DIR], §3, proof of Theorem 1.6 (cited from [BIM23, Lemma 2.2]): the function
 $L(x)=x\sqrt{\log_2(1/x)}$ satisfies (3.2) when $0\le x\le y\le\frac12$. -/
 theorem L_half_eqn_3_2 (x y : ℝ) (hx : 0 ≤ x) (hxy : x ≤ y) (hy : y ≤ 2⁻¹) :
     L 2⁻¹ ((x + y) / 2) ≤ 2⁻¹ * √((y - x) ^ 2 + L 2⁻¹ y ^ 2) + 2⁻¹ * L 2⁻¹ x := by
-  sorry
+  have h := bim_lemma_2_2 2⁻¹ le_rfl x y hx hxy hy
+  have hs : ∀ z : ℝ, z ^ (2⁻¹ : ℝ) = √z := fun z ↦ by rw [Real.sqrt_eq_rpow]; norm_num
+  rw [inv_inv, Real.rpow_two, Real.rpow_two, hs] at h
+  linarith
 
 /-- [DIR], §3, proof of Theorem 1.6: applying Lemma 3.1 with $\mathcal{I}=[0,\frac12]$,
 $L(\mathbf{E}f)\le\mathbf{E}\sqrt{L(f)^2+(Mf)^2}$ for all $f:\{0,1\}^n\to[0,\frac12]$. -/
 theorem L_half_eqn_3_1 (n : ℕ) (hn : 1 ≤ n) (f : ({0,1}^n) → ℝ)
     (hf : ∀ x, f x ∈ Icc (0 : ℝ) 2⁻¹) :
     L 2⁻¹ (𝐄 f) ≤ 𝐄 (fun x ↦ √(L 2⁻¹ (f x) ^ 2 + (M f x) ^ 2)) := by
-  sorry
+  refine lemma_3_1 (Icc 0 2⁻¹) ordConnected_Icc (L 2⁻¹)
+    (fun t ht ↦ L_nonneg_of_mem ht.1 (by linarith [ht.2])) ?_ n hn f hf
+  intro g hg
+  have hmin : 0 ≤ min (g 0) (g 1) := le_min (hg 0).1 (hg 1).1
+  have hmax : max (g 0) (g 1) ≤ 2⁻¹ := max_le (hg 0).2 (hg 1).2
+  rw [eqn_3_2 (L 2⁻¹) g (L_nonneg_of_mem hmin (by linarith [min_le_max (a := g 0) (b := g 1)]))]
+  exact L_half_eqn_3_2 _ _ hmin min_le_max hmax
 
 /-- [DIR], §3, proof of Theorem 1.6: plugging in $f=\frac12\mathbf{1}_A$ we have
 $\mathbf{E}f=\frac12|A|$ and the inequality becomes
@@ -100,7 +147,53 @@ theorem proof_thm_1_6_chain (n : ℕ) (hn : 1 ≤ n) (A : Set ({0,1}^n)) :
     𝐄 (fun x ↦ 2⁻¹ * 𝟏 A x) = 2⁻¹ * ｜A｜ ∧
     L 2⁻¹ (2⁻¹ * ｜A｜) ≤ 2⁻¹ * 𝐄 (fun x ↦ 𝟏 A x * √(1 + h A x)) ∧
     2⁻¹ * 𝐄 (fun x ↦ 𝟏 A x * √(1 + h A x)) ≤ 2⁻¹ * (｜A｜ + 𝐄 (fun x ↦ √(h A x))) := by
-  sorry
+  classical
+  have hE : 𝐄 (fun x ↦ 2⁻¹ * 𝟏 A x) = 2⁻¹ * ｜A｜ := tens_expect_const_mul _ _
+  have hind : ∀ x, 𝟏 A x = if x ∈ A then 1 else 0 := fun x ↦ by
+    by_cases hx : x ∈ A <;> simp [ind, hx]
+  have hh0 : ∀ x, x ∉ A → h A x = 0 := fun x hx ↦ by simp [h, hx]
+  have hh : ∀ x, 0 ≤ h A x := fun x ↦ by
+    unfold h; split_ifs <;> positivity
+  refine ⟨hE, ?_, ?_⟩
+  · have hf : ∀ x, 2⁻¹ * 𝟏 A x ∈ Icc (0 : ℝ) 2⁻¹ := fun x ↦ by
+      rw [hind x]; split_ifs <;> norm_num
+    have key := L_half_eqn_3_1 n hn _ hf
+    rw [hE] at key
+    have hpt : ∀ x, √(L 2⁻¹ (2⁻¹ * 𝟏 A x) ^ 2 + (M (fun y ↦ 2⁻¹ * 𝟏 A y) x) ^ 2) =
+        2⁻¹ * (𝟏 A x * √(1 + h A x)) := by
+      intro x
+      have hM : M (fun y ↦ 2⁻¹ * 𝟏 A y) x = 2⁻¹ * √(h A x) := by
+        have := gradPlus_const_mul (by norm_num : (0 : ℝ) ≤ 2⁻¹) (𝟏 A) x
+        have h2 : gradPlus (𝟏 A) x = √(h A x) := congrFun (M_indicator n A) x
+        rw [h2] at this
+        exact this
+      rw [hM, hind x]
+      by_cases hx : x ∈ A
+      · simp only [hx, ↓reduceIte, mul_one, one_mul]
+        have hL : L 2⁻¹ 2⁻¹ = 2⁻¹ := by
+          simp [L]
+        rw [hL]
+        have e : (2⁻¹ : ℝ) ^ 2 + (2⁻¹ * √(h A x)) ^ 2 = 2⁻¹ ^ 2 * (1 + h A x) := by
+          rw [mul_pow, Real.sq_sqrt (hh x)]; ring
+        rw [e, Real.sqrt_mul (sq_nonneg _), Real.sqrt_sq (by norm_num)]
+      · simp only [hx, ↓reduceIte, mul_zero, hh0 x hx]
+        simp [L]
+    simp only [hpt] at key
+    rw [tens_expect_const_mul] at key
+    exact key
+  · apply mul_le_mul_of_nonneg_left _ (by norm_num)
+    have hdens : ｜A｜ = 𝐄 (𝟏 A) := rfl
+    rw [hdens, ← tens_expect_add]
+    apply tens_expect_mono
+    intro x
+    rw [hind x]
+    by_cases hx : x ∈ A
+    · simp only [hx, ↓reduceIte, one_mul]
+      apply Real.sqrt_le_iff.2
+      refine ⟨by positivity, ?_⟩
+      nlinarith [Real.sq_sqrt (hh x), Real.sqrt_nonneg (h A x)]
+    · simp only [hx, ↓reduceIte, zero_mul, zero_add]
+      exact Real.sqrt_nonneg _
 
 end Proof_Theorem_1_6
 
@@ -288,22 +381,56 @@ variable (I : ℝ → ℝ) (a b : ℝ) (hIc : ContinuousOn I (Icc a b))
   (hII : ∀ x ∈ Ioo a b, deriv (deriv I) x * I x = -1) (hI' : ∀ x ∈ Ioo a b, deriv I x ≤ 0)
 
 include hIc hI hI0 hII hI'
+omit hIc hI hI0 hII hI' in
 /-- [DIR], proof of Proposition 3.3: with $c=\frac{x+y}2$, $u=\frac{y-x}2$, $c_*=\min(c-a,b-c)$,
-(3.5) amounts to $\sqrt{2u^2+I(c+u)^2}\ge2I(c)-I(c-u)$ for all $u\in[0,c_*]$. -/
-theorem prop_3_3_reduction (c : ℝ) (hc : c ∈ Icc a b) (u : ℝ) (hu : u ∈ Icc 0 (min (c -
-    a) (b - c))) :
+(3.5) amounts to $\sqrt{2u^2+I(c+u)^2}\ge2I(c)-I(c-u)$ for all $u\in[0,c_*]$.
+
+**Unused hypothesis.** The setting assumes $I\ge0$, $I''I=-1$, $I'\le0$ on $[a,b]$ (with its
+regularity), $c\in[a,b]$ and $u\in[0,c_*]$; this is not needed for this algebraic step and is
+omitted in the Lean statement. -/
+theorem prop_3_3_reduction (c u : ℝ) :
     (√(2⁻¹ * ((c + u) - (c - u)) ^ 2 + I (c + u) ^ 2) + I (c - u) ≥ 2 * I c ↔
       √(2 * u ^ 2 + I (c + u) ^ 2) ≥ 2 * I c - I (c - u)) := by
-  sorry
+  have : 2⁻¹ * ((c + u) - (c - u)) ^ 2 = 2 * u ^ 2 := by ring
+  rw [this]
+  constructor <;> intro h <;> linarith
 
+omit hI' in
 /-- [DIR], proof of Proposition 3.3: $2I(c)-I(c-u)\ge0$ (by concavity of $I$), so the inequality is
-equivalent to $2u^2+I(c+u)^2\ge4I(c)^2+I(c-u)^2-4I(c)I(c-u)$. -/
-theorem prop_3_3_squared (c : ℝ) (hc : c ∈ Icc a b) (u : ℝ)
+equivalent to $2u^2+I(c+u)^2\ge4I(c)^2+I(c-u)^2-4I(c)I(c-u)$.
+
+**Unused hypothesis.** The setting assumes $I'\le0$ and $c\in[a,b]$; this is not needed for the
+claim (which follows from $u\in[0,c_*]$ and concavity) and is omitted in the Lean statement. -/
+theorem prop_3_3_squared (c : ℝ) (u : ℝ)
     (hu : u ∈ Icc 0 (min (c - a) (b - c))) :
     2 * I c - I (c - u) ≥ 0 ∧
     (√(2 * u ^ 2 + I (c + u) ^ 2) ≥ 2 * I c - I (c - u) ↔
       2 * u ^ 2 + I (c + u) ^ 2 ≥ 4 * I c ^ 2 + I (c - u) ^ 2 - 4 * I c * I (c - u)) := by
-  sorry
+  have hcv : ConcaveOn ℝ (Icc a b) I := by
+    refine concaveOn_of_deriv2_nonpos (convex_Icc a b) hIc ?_ ?_ ?_
+    · rw [interior_Icc]
+      exact fun x hx ↦ (contDiffOn_two_differentiableAt isOpen_Ioo hI hx).1.differentiableWithinAt
+    · rw [interior_Icc]
+      exact fun x hx ↦ (contDiffOn_two_differentiableAt isOpen_Ioo hI hx).2.differentiableWithinAt
+    · rw [interior_Icc]
+      intro x hx
+      simp only [Function.iterate_succ, Function.iterate_zero, Function.comp_apply, id]
+      have h1 := hII x hx
+      have h2 := hI0 x (Ioo_subset_Icc_self hx)
+      nlinarith
+  have hu1 : u ≤ c - a := hu.2.trans (min_le_left _ _)
+  have hu2 : u ≤ b - c := hu.2.trans (min_le_right _ _)
+  have hm : c - u ∈ Icc a b := ⟨by linarith, by linarith [hu.1]⟩
+  have hp : c + u ∈ Icc a b := ⟨by linarith [hu.1], by linarith⟩
+  have hconc := hcv.2 hm hp (by norm_num : (0 : ℝ) ≤ 2⁻¹) (by norm_num : (0 : ℝ) ≤ 2⁻¹)
+    (by norm_num)
+  simp only [smul_eq_mul] at hconc
+  have e : 2⁻¹ * (c - u) + 2⁻¹ * (c + u) = c := by ring
+  rw [e] at hconc
+  have hpos : 2 * I c - I (c - u) ≥ 0 := by linarith [hI0 _ hp]
+  refine ⟨hpos, ?_⟩
+  rw [ge_iff_le, Real.le_sqrt hpos (by positivity)]
+  constructor <;> intro h <;> nlinarith
 
 omit hIc hI hI0 hII hI' in
 /-- The function
@@ -311,27 +438,56 @@ $G_c(u)=I(c+u)^2-I(c-u)^2+2u^2-4I(c)^2+4I(c)I(c-u)$ ([DIR], proof of Proposition
 noncomputable def dirGc (c u : ℝ) : ℝ :=
   I (c + u) ^ 2 - I (c - u) ^ 2 + 2 * u ^ 2 - 4 * I c ^ 2 + 4 * I c * I (c - u)
 
+omit hIc hI0 hII hI' in
 /-- [DIR], proof of Proposition 3.3:
-$G_c'(u)=2I'(c+u)I(c+u)+2I'(c-u)I(c-u)+4u-4I(c)I'(c-u)$ (for $c\pm u\in(a,b)$). -/
+$G_c'(u)=2I'(c+u)I(c+u)+2I'(c-u)I(c-u)+4u-4I(c)I'(c-u)$ (for $c\pm u\in(a,b)$).
+
+**Unused hypothesis.** The setting assumes $I\ge0$, $I''I=-1$, $I'\le0$ and continuity on
+$[a,b]$; only $I\in C^2(a,b)$ is needed for the claim, the rest is omitted in the Lean
+statement. -/
 theorem prop_3_3_Gc_deriv (c u : ℝ) (hcu : c + u ∈ Ioo a b) (hcu' : c - u ∈ Ioo a b) :
     deriv (dirGc I c) u = 2 * deriv I (c + u) * I (c + u) + 2 * deriv I (c - u) * I (c - u) +
       4 * u - 4 * I c * deriv I (c - u) := by
-  sorry
+  unfold dirGc
+  exact (gc_hasDerivAt I a b hI c u hcu hcu').deriv
 
+omit hIc hI0 hI' in
 /-- [DIR], proof of Proposition 3.3:
-$G_c''(u)=2(I'(c+u)^2-I'(c-u)^2)+4(1-\frac{I(c)}{I(c-u)})$, where $I\cdot I''=-1$ was used. -/
+$G_c''(u)=2(I'(c+u)^2-I'(c-u)^2)+4(1-\frac{I(c)}{I(c-u)})$, where $I\cdot I''=-1$ was used.
+
+**Unused hypothesis.** The setting assumes $I\ge0$, $I'\le0$ and continuity on $[a,b]$; this is
+not needed for the claim and is omitted in the Lean statement. -/
 theorem prop_3_3_Gc_deriv2 (c u : ℝ) (hcu : c + u ∈ Ioo a b) (hcu' : c - u ∈ Ioo a b) :
     deriv (deriv (dirGc I c)) u =
       2 * (deriv I (c + u) ^ 2 - deriv I (c - u) ^ 2) + 4 * (1 - I c / I (c - u)) := by
-  sorry
+  unfold dirGc
+  exact (gc_deriv_hasDerivAt I a b hI hII c u hcu hcu').deriv
 
+omit hIc in
 /-- [DIR], proof of Proposition 3.3: since $I$ is decreasing on $\mathcal{I}$,
-$I(c-u)\ge I(c)$, so $G_c''(u)\ge2(I'(c+u)^2-I'(c-u)^2)$. -/
+$I(c-u)\ge I(c)$, so $G_c''(u)\ge2(I'(c+u)^2-I'(c-u)^2)$.
+
+**Unused hypothesis.** The setting assumes $I$ continuous on $[a,b]$; this is not needed for the
+claim and is omitted in the Lean statement. -/
 theorem prop_3_3_Gc_deriv2_ge (c u : ℝ) (hu : 0 ≤ u) (hcu : c + u ∈ Ioo a b)
     (hcu' : c - u ∈ Ioo a b) :
     I (c - u) ≥ I c ∧
       deriv (deriv (dirGc I c)) u ≥ 2 * (deriv I (c + u) ^ 2 - deriv I (c - u) ^ 2) := by
-  sorry
+  have hc : c ∈ Ioo a b := ⟨by linarith [hcu'.1], by linarith [hcu.2]⟩
+  have hanti : AntitoneOn I (Ioo a b) := by
+    refine antitoneOn_of_deriv_nonpos (convex_Ioo a b) hI.continuousOn ?_ ?_
+    · rw [interior_Ioo]
+      exact fun x hx ↦ (contDiffOn_two_differentiableAt isOpen_Ioo hI hx).1.differentiableWithinAt
+    · rw [interior_Ioo]; exact hI'
+  have hge : I (c - u) ≥ I c := hanti hcu' hc (by linarith)
+  refine ⟨hge, ?_⟩
+  unfold dirGc
+  rw [(gc_deriv_hasDerivAt I a b hI hII c u hcu hcu').deriv]
+  have hne : I (c - u) ≠ 0 := fun h0 ↦ by
+    have := hII _ hcu'; rw [h0, mul_zero] at this; norm_num at this
+  have hpos : 0 < I (c - u) := lt_of_le_of_ne (hI0 _ (Ioo_subset_Icc_self hcu')) (Ne.symm hne)
+  have : I c / I (c - u) ≤ 1 := (div_le_one hpos).2 hge
+  linarith
 
 omit hIc hI hI0 hII hI' in
 /-- [DIR], proof of Proposition 3.3: recall that if $f$ is convex, then for all $x\le y$,
@@ -349,19 +505,35 @@ theorem convex_sub_ge (f : ℝ → ℝ) (s : Set ℝ) (hf : ConvexOn ℝ s f)
     linarith
   · subst h; simp
 
+omit hIc hI' in
 /-- [DIR], proof of Proposition 3.3: since $(I')^2$ is convex by Lemma 3.2,
-$I'(c+u)^2-I'(c-u)^2\ge2u((I')^2)'(c-u)$. -/
+$I'(c+u)^2-I'(c-u)^2\ge2u((I')^2)'(c-u)$.
+
+**Unused hypothesis.** The setting assumes $I'\le0$ and $I$ continuous on $[a,b]$; this is not
+needed for the claim and is omitted in the Lean statement. -/
 theorem prop_3_3_sq_diff (c u : ℝ) (hu : 0 ≤ u) (hcu : c + u ∈ Ioo a b)
     (hcu' : c - u ∈ Ioo a b) :
     deriv I (c + u) ^ 2 - deriv I (c - u) ^ 2 ≥ 2 * u * deriv (fun t ↦ deriv I t ^ 2) (c - u) := by
-  sorry
+  have hcv := (lemma_3_2 I a b hI (fun x hx ↦ hI0 x (Ioo_subset_Icc_self hx))
+    (fun x hx ↦ by rw [mul_comm]; exact hII x hx)).2
+  have h := convex_sub_ge _ _ hcv (c - u) (c + u) hcu' hcu (by linarith)
+    ((contDiffOn_two_differentiableAt isOpen_Ioo hI hcu').2.pow 2)
+  have e : c + u - (c - u) = 2 * u := by ring
+  rw [e] at h
+  exact h
 
+omit hIc in
 /-- [DIR], proof of Proposition 3.3: observe $((I')^2)'=2I'\cdot I''=-2I'/I\ge0$, since $I'\le0$ on
-the interval $\mathcal{I}$. -/
+the interval $\mathcal{I}$.
+
+**Unused hypothesis.** The setting assumes $I$ continuous on $[a,b]$; this is not needed for the
+claim and is omitted in the Lean statement. -/
 theorem prop_3_3_sq_deriv_nonneg (t : ℝ) (ht : t ∈ Ioo a b) :
     deriv (fun s ↦ deriv I s ^ 2) t = 2 * deriv I t * deriv (deriv I) t ∧
       2 * deriv I t * deriv (deriv I) t = -2 * deriv I t / I t ∧ -2 * deriv I t / I t ≥ 0 := by
-  sorry
+  obtain ⟨h1, h2⟩ := lemma_3_2_sq_deriv I a b hI (fun x hx ↦ hI0 x (Ioo_subset_Icc_self hx))
+    (fun x hx ↦ by rw [mul_comm]; exact hII x hx) t ht
+  exact ⟨h1, h2, div_nonneg (by linarith [hI' t ht]) (hI0 t (Ioo_subset_Icc_self ht))⟩
 
 /-- [DIR], proof of Proposition 3.3: thus $G_c''\ge0$ on $[0,c_*]$ (in the interior); since
 $G_c'(0)=0$ we must have $G_c'\ge0$ on $[0,c_*]$; since $G_c(0)=0$, also $G_c\ge0$ on $[0,c_*]$,
@@ -372,7 +544,65 @@ theorem prop_3_3_Gc_nonneg (c : ℝ) (hc : c ∈ Ioo a b) :
     (∀ u ∈ Ico 0 (min (c - a) (b - c)), deriv (dirGc I c) u ≥ 0) ∧
     dirGc I c 0 = 0 ∧
     (∀ u ∈ Icc 0 (min (c - a) (b - c)), dirGc I c u ≥ 0) := by
-  sorry
+  set cs := min (c - a) (b - c) with hcs
+  have mem : ∀ u ∈ Ico 0 cs, c + u ∈ Ioo a b ∧ c - u ∈ Ioo a b := by
+    intro u hu
+    have h1 : u < c - a := hu.2.trans_le (min_le_left _ _)
+    have h2 : u < b - c := hu.2.trans_le (min_le_right _ _)
+    exact ⟨⟨by linarith [hu.1, hc.1], by linarith⟩, ⟨by linarith, by linarith [hu.1, hc.2]⟩⟩
+  have d2 : ∀ u ∈ Ioo 0 cs, deriv (deriv (dirGc I c)) u ≥ 0 := by
+    intro u hu
+    obtain ⟨hp, hm⟩ := mem u (Ioo_subset_Ico_self hu)
+    have k1 := (prop_3_3_Gc_deriv2_ge I a b hI hI0 hII hI' c u hu.1.le hp hm).2
+    have k2 := prop_3_3_sq_diff I a b hI hI0 hII c u hu.1.le hp hm
+    obtain ⟨k4, k5, k3⟩ := prop_3_3_sq_deriv_nonneg I a b hI hI0 hII hI' (c - u) hm
+    have : 0 ≤ 2 * u * deriv (fun t ↦ deriv I t ^ 2) (c - u) := by
+      rw [k4, k5]; exact mul_nonneg (by linarith [hu.1]) k3
+    linarith
+  have hcs0 : 0 < cs := lt_min (by linarith [hc.1]) (by linarith [hc.2])
+  have d10 : deriv (dirGc I c) 0 = 0 := by
+    obtain ⟨hp, hm⟩ := mem 0 ⟨le_rfl, hcs0⟩
+    unfold dirGc
+    rw [(gc_hasDerivAt I a b hI c 0 hp hm).deriv]
+    simp; ring
+  have d1 : ∀ u ∈ Ico 0 cs, deriv (dirGc I c) u ≥ 0 := by
+    have hmono : MonotoneOn (deriv (dirGc I c)) (Ico 0 cs) := by
+      refine monotoneOn_of_deriv_nonneg (convex_Ico 0 cs) ?_ ?_ ?_
+      · intro u hu
+        obtain ⟨hp, hm⟩ := mem u hu
+        exact (gc_deriv_hasDerivAt I a b hI hII c u hp hm).continuousAt.continuousWithinAt
+      · rw [interior_Ico]
+        intro u hu
+        obtain ⟨hp, hm⟩ := mem u (Ioo_subset_Ico_self hu)
+        exact (gc_deriv_hasDerivAt I a b hI hII c u hp hm).differentiableAt.differentiableWithinAt
+      · rw [interior_Ico]; exact d2
+    intro u hu
+    have := hmono ⟨le_rfl, hcs0⟩ hu hu.1
+    rw [d10] at this
+    exact this
+  have g0 : dirGc I c 0 = 0 := by simp [dirGc]; ring
+  refine ⟨d2, d10, d1, g0, ?_⟩
+  have mapsP : MapsTo (fun u ↦ c + u) (Icc 0 cs) (Icc a b) := fun u hu ↦
+    ⟨by linarith [hu.1, hc.1], by linarith [hu.2.trans (min_le_right _ _)]⟩
+  have mapsM : MapsTo (fun u ↦ c - u) (Icc 0 cs) (Icc a b) := fun u hu ↦
+    ⟨by linarith [hu.2.trans (min_le_left _ _)], by linarith [hu.1, hc.2]⟩
+  have hcp : ContinuousOn (fun u ↦ I (c + u)) (Icc 0 cs) := hIc.comp (by fun_prop) mapsP
+  have hcm : ContinuousOn (fun u ↦ I (c - u)) (Icc 0 cs) := hIc.comp (by fun_prop) mapsM
+  have hGc : ContinuousOn (dirGc I c) (Icc 0 cs) :=
+    ((((hcp.pow 2).sub (hcm.pow 2)).add (continuousOn_const.mul (continuousOn_id.pow 2))).sub
+      continuousOn_const).add (continuousOn_const.mul hcm)
+  have hmono : MonotoneOn (dirGc I c) (Icc 0 cs) := by
+    refine monotoneOn_of_deriv_nonneg (convex_Icc 0 cs) hGc ?_ ?_
+    · rw [interior_Icc]
+      intro u hu
+      obtain ⟨hp, hm⟩ := mem u (Ioo_subset_Ico_self hu)
+      exact (gc_hasDerivAt I a b hI c u hp hm).differentiableAt.differentiableWithinAt
+    · rw [interior_Icc]
+      exact fun u hu ↦ d1 u (Ioo_subset_Ico_self hu)
+  intro u hu
+  have := hmono ⟨le_rfl, hcs0.le⟩ hu hu.1
+  rw [g0] at this
+  exact this
 
 end Proof_Proposition_3_3
 
@@ -385,7 +615,23 @@ theorem prop_3_3 (I : ℝ → ℝ) (a b : ℝ) (hIc : ContinuousOn I (Icc a b))
     (hII : ∀ x ∈ Ioo a b, deriv (deriv I) x * I x = -1) (hI' : ∀ x ∈ Ioo a b, deriv I x ≤ 0)
     (x y : ℝ) (hx : x ∈ Icc a b) (hy : y ∈ Icc a b) (hxy : x ≤ y) :
     √(2⁻¹ * (y - x) ^ 2 + I y ^ 2) + I x ≥ 2 * I ((x + y) / 2) := by
-  sorry
+  rcases hxy.lt_or_eq with hlt | heq
+  · have hc : (x + y) / 2 ∈ Ioo a b := ⟨by linarith [hx.1], by linarith [hy.2]⟩
+    have hu : (y - x) / 2 ∈ Icc 0 (min ((x + y) / 2 - a) (b - (x + y) / 2)) :=
+      ⟨by linarith, le_min (by linarith [hx.1]) (by linarith [hy.2])⟩
+    have G := (prop_3_3_Gc_nonneg I a b hIc hI hI0 hII hI' _ hc).2.2.2.2 _ hu
+    obtain ⟨-, hiff⟩ := prop_3_3_squared I a b hIc hI hI0 hII _ _ hu
+    have e1 : (x + y) / 2 + (y - x) / 2 = y := by ring
+    have e2 : (x + y) / 2 - (y - x) / 2 = x := by ring
+    have := (prop_3_3_reduction I ((x + y) / 2) ((y - x) / 2)).2
+      (hiff.2 (by unfold dirGc at G; linarith))
+    rw [e1, e2] at this
+    exact this
+  · subst heq
+    have e : (x + x) / 2 = x := by ring
+    have s : √(2⁻¹ * (x - x) ^ 2 + I x ^ 2) = I x := by
+      rw [sub_self]; norm_num [Real.sqrt_sq (hI0 x hx)]
+    rw [e, s]; linarith
 
 /-- **Remark 3.6** ([DIR]). The range of $x,y$ is optimal: if $x<1-\frac w2$, the inequality fails,
 because $J_w'$ changes sign at $1-\frac w2$, so the necessary condition $I'\le0$ in Proposition
@@ -407,11 +653,50 @@ theorem rem_3_6 (w : ℝ) (hw : 0 < w) :
   exact gJw_reflect_fail hw hx
 
 /-- **Corollary 3.5** ([DIR]). Let $0<w\le1$. Then for all $1-\frac w2\le x\le y\le1$:
-$$\sqrt{(y-x)^2+J_w(y)^2}+J_w(x)\ge2J_w(\tfrac{x+y}2).$$ -/
-theorem cor_3_5 (w : ℝ) (hw : 0 < w) (hw1 : w ≤ 1) (x y : ℝ) (hx : 1 - w / 2 ≤ x)
+$$\sqrt{(y-x)^2+J_w(y)^2}+J_w(x)\ge2J_w(\tfrac{x+y}2).$$
+
+Proof: Proposition 3.3 applied to $I=J_w/\sqrt2$ on $[1-\frac w2,1]$.
+
+**Unused hypothesis.** The paper assumes $w\le1$; this is not needed for the claim and is
+omitted in the Lean statement. -/
+theorem cor_3_5 (w : ℝ) (hw : 0 < w) (x y : ℝ) (hx : 1 - w / 2 ≤ x)
     (hxy : x ≤ y) (hy : y ≤ 1) :
     √((y - x) ^ 2 + Jw w y ^ 2) + Jw w x ≥ 2 * Jw w ((x + y) / 2) := by
-  sorry
+  have hJ : Jw w = gJw w := rfl
+  rw [hJ]
+  have hs : 0 < √2 := by positivity
+  set K : ℝ → ℝ := fun t ↦ gJw w t / √2 with hK
+  have hKc : ContinuousOn K (Icc (1 - w / 2) 1) :=
+    ((continuousOn_gJw hw).mono (Icc_subset_Icc (by linarith) le_rfl)).div_const _
+  have hKd : ContDiffOn ℝ 2 K (Ioo (1 - w / 2) 1) :=
+    (contDiffOn_two_of_infty ((contDiffOn_gJw hw).mono
+      (Ioo_subset_Ioo (by linarith) le_rfl))).div_const _
+  have hK0 : ∀ t ∈ Icc (1 - w / 2) 1, 0 ≤ K t := fun t _ ↦ by
+    have := gProf_nonneg (w⁻¹ * (1 - t))
+    simp only [hK, gJw]; positivity
+  have dK : deriv K = fun t ↦ deriv (gJw w) t / √2 := funext fun t ↦ deriv_div_const _
+  have hKK : ∀ t ∈ Ioo (1 - w / 2) 1, deriv (deriv K) t * K t = -1 := by
+    intro t ht
+    have ht' : t ∈ Ioo (1 - w) 1 := ⟨by linarith [ht.1], ht.2⟩
+    rw [dK, deriv_div_const]
+    simp only [hK]
+    rw [div_mul_div_comm, gJw_deriv2_mul hw ht', Real.mul_self_sqrt (by norm_num)]
+    norm_num
+  have hK' : ∀ t ∈ Ioo (1 - w / 2) 1, deriv K t ≤ 0 := by
+    intro t ht
+    rw [dK]
+    exact div_nonpos_of_nonpos_of_nonneg ((deriv_gJw_sign hw).2.2 t ht).le hs.le
+  have P := prop_3_3 K (1 - w / 2) 1 hKc hKd hK0 hKK hK' x y ⟨hx, by linarith⟩
+    ⟨by linarith, hy⟩ hxy
+  simp only [hK] at P
+  have e : (y - x) ^ 2 + gJw w y ^ 2 = 2 * (2⁻¹ * (y - x) ^ 2 + (gJw w y / √2) ^ 2) := by
+    rw [div_pow, Real.sq_sqrt (by norm_num)]; ring
+  rw [e, Real.sqrt_mul (by norm_num)]
+  have k1 : √2 * (gJw w x / √2) = gJw w x := by field_simp
+  have k2 : √2 * (2 * (gJw w ((x + y) / 2) / √2)) = 2 * gJw w ((x + y) / 2) := by field_simp
+  have := mul_le_mul_of_nonneg_left P hs.le
+  rw [mul_add, k1, k2] at this
+  linarith
 
 /-- The constant $x_0=1-\frac{w_0}2$ ([DIR], (3.6)). -/
 noncomputable def x₀ : ℝ := 1 - w₀ / 2
@@ -425,7 +710,14 @@ theorem eqn_3_6 : x₀ ∈ Icc (0.552 : ℝ) 0.553 := by
 /-- [DIR], §3: setting $w=w_0$, (3.2) holds for $B=J$ as long as $1\ge y\ge x\ge x_0$. -/
 theorem J_eqn_3_2 (x y : ℝ) (hx : x₀ ≤ x) (hxy : x ≤ y) (hy : y ≤ 1) :
     J ((x + y) / 2) ≤ 2⁻¹ * √((y - x) ^ 2 + J y ^ 2) + 2⁻¹ * J x := by
-  sorry
+  have hw := w₀_mem
+  have hx0 : x₀ = 1 - w₀ / 2 := rfl
+  norm_num at hw
+  have h1 : (2⁻¹ : ℝ) ≤ x := by rw [hx0] at hx; linarith [hw.2]
+  have C := cor_3_5 w₀ (by linarith [hw.1]) x y (by rw [hx0] at hx; exact hx) hxy hy
+  rw [eqn_3_4 x ⟨h1, by linarith⟩, eqn_3_4 y ⟨by linarith, hy⟩,
+    eqn_3_4 ((x + y) / 2) ⟨by linarith, by linarith⟩]
+  linarith
 
 /-! ### Remark 3.7 -/
 
