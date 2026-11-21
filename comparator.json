@@ -1,0 +1,12 @@
+{
+  "challenge_module": "Challenge",
+  "solution_module": "Solution",
+  "theorem_names": [
+    "Auto.DIRX.thm_1_1",
+    "Auto.DIRX.thm_1_2",
+    "Auto.DIRX.thm_1_3",
+    "Auto.DIRX.eqn_2_5",
+    "Auto.DIR.cor_2_5"
+  ],
+  "permitted_axioms": ["propext", "Quot.sound", "Classical.choice"]
+}
