@@ -1,0 +1,38 @@
+name: Close PRs
+
+# Manually triggered: closes the given PRs (or all open PRs) with a comment.
+# Comments and closes are authored by github-actions[bot], not by a user account.
+
+on:
+  workflow_dispatch:
+    inputs:
+      prs:
+        description: "Space-separated PR numbers to close (empty = all open PRs)"
+        required: false
+        default: ""
+      message:
+        description: "Comment to post before closing"
+        required: true
+        default: "[This has been merged by Claude.]"
+
+permissions:
+  pull-requests: write
+
+jobs:
+  close:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Close PRs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          PRS: ${{ inputs.prs }}
+          MESSAGE: ${{ inputs.message }}
+        run: |
+          if [ -z "$PRS" ]; then
+            PRS=$(gh pr list --state open --json number --jq '.[].number')
+          fi
+          for pr in $PRS; do
+            echo "Closing #$pr"
+            gh pr close "$pr" --comment "$MESSAGE"
+          done
