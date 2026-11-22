@@ -806,6 +806,364 @@ theorem rdn_le_real (d : ℕ) {q : ℚ} {x : ℝ} (h : (q : ℝ) ≤ x) : (rdn d
 theorem le_rup_real (d : ℕ) {q : ℚ} {x : ℝ} (h : x ≤ q) : x ≤ (rup d q : ℝ) :=
   h.trans (by exact_mod_cast le_rup d q)
 
+/-! ### Series in fixed point
+
+The checker evaluates lower and upper bounds for the series `eNq`, `gIq`, `logSum`, `expSum` in
+fixed point with $128$ fractional bits (`fxD`, `fxU` below). The exact partial sums have
+numerators and denominators with thousands of digits, and every rational operation reduces them
+by a `gcd`, which is slow in kernels without fast big-number `gcd`; the fixed-point bounds use
+only natural-number multiplication and division. The rounding error (of order
+$N\cdot2^{-128}$) is far below the precision of the checks. -/
+
+/-- The precision $2^{-128}$ of the fixed-point series. -/
+def serPrec : ℕ := 128
+
+/-! The series `eNq`, `gIq`, `logSum`, `expSum` are evaluated in fixed point: all quantities are
+natural numbers or integers $n$ standing for $n/2^d$, the powers $ar^k$ ($a,r\ge0$) are kept in
+a lower and an upper chain (floor resp. ceiling division after every multiplication), and each
+term is rounded in the direction its sign requires. This avoids rational normalisation (`gcd`)
+altogether. -/
+
+/-- $\lfloor x/y\rfloor\le x/y$. -/
+theorem natDiv_cast_le (x y : ℕ) : ((x / y : ℕ) : ℚ) ≤ (x : ℚ) / y := Nat.cast_div_le
+
+/-- $x/y\le\lceil x/y\rceil=\lfloor(x+y-1)/y\rfloor$ for $y>0$. -/
+theorem le_natCeilDiv_cast (x y : ℕ) (hy : 0 < y) : (x : ℚ) / y ≤ ((x + y - 1) / y : ℕ) := by
+  rw [div_le_iff₀ (by exact_mod_cast hy)]
+  have h1 := Nat.div_add_mod (x + y - 1) y
+  have h2 := Nat.mod_lt (x + y - 1) hy
+  have h3 : x ≤ (x + y - 1) / y * y := by
+    rw [Nat.mul_comm]
+    generalize y * ((x + y - 1) / y) = t at h1 ⊢
+    omega
+  exact_mod_cast h3
+
+/-- The sign of the $k$-th term: $(-1)^k$ for an alternating series, $1$ otherwise. -/
+def altSign (alt : Bool) (k : ℕ) : ℚ := if alt = false ∨ k % 2 = 0 then 1 else -1
+
+/-- `altSign true k` is $(-1)^k$. -/
+theorem altSign_true (k : ℕ) : altSign true k = (-1) ^ k := by
+  by_cases h : k % 2 = 0
+  · simp [altSign, h, Even.neg_one_pow (Nat.even_iff.2 h)]
+  · have ho : Odd k := Nat.odd_iff.2 (by omega)
+    simp [altSign, h, ho.neg_one_pow]
+
+/-- `altSign false k` is $1$. -/
+theorem altSign_false (k : ℕ) : altSign false k = 1 := by simp [altSign]
+
+/-- Fixed-point lower bound ($\cdot2^d$) for $\sum_{j<n}\sigma_{k+j}ar^{k+j}/c_{k+j}$ with signs
+$\sigma=$ `altSign alt`: `rl`, `ru` enclose $r2^d$, the chains `pl`, `pu` enclose $ar^k2^d$. -/
+def fxD (d rl ru : ℕ) (c : ℕ → ℕ) (alt : Bool) : ℕ → ℕ → ℕ → ℕ → ℤ → ℤ
+  | 0, _, _, _, acc => acc
+  | n + 1, k, pl, pu, acc =>
+    fxD d rl ru c alt n (k + 1) (pl * rl / 2 ^ d) ((pu * ru + 2 ^ d - 1) / 2 ^ d)
+      (acc + if alt = false ∨ k % 2 = 0 then ((pl / c k : ℕ) : ℤ)
+        else -(((pu + c k - 1) / c k : ℕ) : ℤ))
+
+/-- Fixed-point upper bound ($\cdot2^d$) for the sum of `fxD`. -/
+def fxU (d rl ru : ℕ) (c : ℕ → ℕ) (alt : Bool) : ℕ → ℕ → ℕ → ℕ → ℤ → ℤ
+  | 0, _, _, _, acc => acc
+  | n + 1, k, pl, pu, acc =>
+    fxU d rl ru c alt n (k + 1) (pl * rl / 2 ^ d) ((pu * ru + 2 ^ d - 1) / 2 ^ d)
+      (acc + if alt = false ∨ k % 2 = 0 then (((pu + c k - 1) / c k : ℕ) : ℤ)
+        else -((pl / c k : ℕ) : ℤ))
+
+/-- The chains of `fxD`/`fxU` stay around $ar^k2^d$. -/
+theorem fx_chain (d : ℕ) {a r : ℚ} {rl ru pl pu k : ℕ} (hr : 0 ≤ r)
+    (hrl : (rl : ℚ) ≤ r * 2 ^ d) (hru : r * 2 ^ d ≤ ru)
+    (hl : (pl : ℚ) ≤ a * r ^ k * 2 ^ d) (hu : a * r ^ k * 2 ^ d ≤ pu) :
+    ((pl * rl / 2 ^ d : ℕ) : ℚ) ≤ a * r ^ (k + 1) * 2 ^ d ∧
+      a * r ^ (k + 1) * 2 ^ d ≤ (((pu * ru + 2 ^ d - 1) / 2 ^ d : ℕ) : ℚ) := by
+  have hA : (0 : ℚ) ≤ a * r ^ k * 2 ^ d := (Nat.cast_nonneg pl).trans hl
+  have hB : (0 : ℚ) ≤ r * 2 ^ d := by positivity
+  have e : a * r ^ (k + 1) * 2 ^ d = a * r ^ k * 2 ^ d * (r * 2 ^ d) / 2 ^ d := by
+    field_simp; ring
+  rw [e]
+  constructor
+  · refine (natDiv_cast_le _ _).trans ?_
+    push_cast
+    exact div_le_div_of_nonneg_right
+      (mul_le_mul hl hrl (Nat.cast_nonneg _) hA) (by positivity)
+  · refine le_trans ?_ (le_natCeilDiv_cast _ _ (by positivity))
+    push_cast
+    exact div_le_div_of_nonneg_right
+      (mul_le_mul hu hru hB (hA.trans hu)) (by positivity)
+
+/-- Soundness of `fxD`. -/
+theorem fxD_le (d : ℕ) {a r : ℚ} {rl ru : ℕ} {c : ℕ → ℕ} {alt : Bool} (hr : 0 ≤ r)
+    (hrl : (rl : ℚ) ≤ r * 2 ^ d) (hru : r * 2 ^ d ≤ ru) (hc : ∀ j, 0 < c j) :
+    ∀ (n k pl pu : ℕ) (acc : ℤ), (pl : ℚ) ≤ a * r ^ k * 2 ^ d → a * r ^ k * 2 ^ d ≤ pu →
+      (fxD d rl ru c alt n k pl pu acc : ℚ) ≤
+        acc + 2 ^ d *
+          ∑ j ∈ Finset.range n, altSign alt (k + j) * (a * r ^ (k + j)) / c (k + j) := by
+  intro n
+  induction n with
+  | zero => intro k pl pu acc _ _; simp [fxD]
+  | succ n ih =>
+    intro k pl pu acc hl hu
+    obtain ⟨hl', hu'⟩ := fx_chain d hr hrl hru hl hu
+    have hck : (0 : ℚ) < c k := by exact_mod_cast hc k
+    have hterm : (((if alt = false ∨ k % 2 = 0 then ((pl / c k : ℕ) : ℤ)
+        else -(((pu + c k - 1) / c k : ℕ) : ℤ)) : ℤ) : ℚ) ≤
+        2 ^ d * (altSign alt k * (a * r ^ k) / c k) := by
+      split_ifs with hk
+      · rw [show altSign alt k = 1 by simp [altSign, hk], one_mul]
+        push_cast
+        refine (natDiv_cast_le _ _).trans ?_
+        rw [mul_div_assoc', mul_comm (2 ^ d : ℚ) (a * r ^ k)]
+        exact div_le_div_of_nonneg_right hl hck.le
+      · rw [show altSign alt k = -1 by simp [altSign, hk], neg_one_mul, neg_div, mul_neg]
+        push_cast
+        refine neg_le_neg (le_trans ?_ (le_natCeilDiv_cast _ _ (hc k)))
+        rw [mul_div_assoc', mul_comm (2 ^ d : ℚ) (a * r ^ k)]
+        exact div_le_div_of_nonneg_right hu hck.le
+    rw [fxD]
+    refine (ih (k + 1) _ _ _ hl' hu').trans ?_
+    rw [Finset.sum_range_succ']
+    simp only [add_zero, show ∀ j, k + 1 + j = k + (j + 1) from fun j ↦ by omega]
+    push_cast at hterm ⊢
+    linarith [hterm]
+
+/-- Soundness of `fxU`. -/
+theorem le_fxU (d : ℕ) {a r : ℚ} {rl ru : ℕ} {c : ℕ → ℕ} {alt : Bool} (hr : 0 ≤ r)
+    (hrl : (rl : ℚ) ≤ r * 2 ^ d) (hru : r * 2 ^ d ≤ ru) (hc : ∀ j, 0 < c j) :
+    ∀ (n k pl pu : ℕ) (acc : ℤ), (pl : ℚ) ≤ a * r ^ k * 2 ^ d → a * r ^ k * 2 ^ d ≤ pu →
+      acc + 2 ^ d * ∑ j ∈ Finset.range n, altSign alt (k + j) * (a * r ^ (k + j)) / c (k + j) ≤
+        (fxU d rl ru c alt n k pl pu acc : ℚ) := by
+  intro n
+  induction n with
+  | zero => intro k pl pu acc _ _; simp [fxU]
+  | succ n ih =>
+    intro k pl pu acc hl hu
+    obtain ⟨hl', hu'⟩ := fx_chain d hr hrl hru hl hu
+    have hck : (0 : ℚ) < c k := by exact_mod_cast hc k
+    have hterm : 2 ^ d * (altSign alt k * (a * r ^ k) / c k) ≤
+        (((if alt = false ∨ k % 2 = 0 then (((pu + c k - 1) / c k : ℕ) : ℤ)
+        else -((pl / c k : ℕ) : ℤ)) : ℤ) : ℚ) := by
+      split_ifs with hk
+      · rw [show altSign alt k = 1 by simp [altSign, hk], one_mul]
+        push_cast
+        refine le_trans ?_ (le_natCeilDiv_cast _ _ (hc k))
+        rw [mul_div_assoc', mul_comm (2 ^ d : ℚ) (a * r ^ k)]
+        exact div_le_div_of_nonneg_right hu hck.le
+      · rw [show altSign alt k = -1 by simp [altSign, hk], neg_one_mul, neg_div, mul_neg]
+        push_cast
+        refine neg_le_neg ((natDiv_cast_le _ _).trans ?_)
+        rw [mul_div_assoc', mul_comm (2 ^ d : ℚ) (a * r ^ k)]
+        exact div_le_div_of_nonneg_right hl hck.le
+    rw [fxU]
+    refine le_trans ?_ (ih (k + 1) _ _ _ hl' hu')
+    rw [Finset.sum_range_succ']
+    simp only [add_zero, show ∀ j, k + 1 + j = k + (j + 1) from fun j ↦ by omega]
+    push_cast at hterm ⊢
+    linarith [hterm]
+
+/-- $\lfloor q2^{128}\rfloor$ as a natural number. -/
+def fxLo (q : ℚ) : ℕ := ⌊q * 2 ^ serPrec⌋.toNat
+
+/-- $\lceil q2^{128}\rceil$ as a natural number. -/
+def fxHi (q : ℚ) : ℕ := ⌈q * 2 ^ serPrec⌉.toNat
+
+/-- `fxLo q` $\le q2^{128}$ for $q\ge0$. -/
+theorem fxLo_le {q : ℚ} (hq : 0 ≤ q) : (fxLo q : ℚ) ≤ q * 2 ^ serPrec := by
+  have h0 : 0 ≤ ⌊q * 2 ^ serPrec⌋ := Int.floor_nonneg.2 (by positivity)
+  have e : ((fxLo q : ℕ) : ℤ) = ⌊q * 2 ^ serPrec⌋ := Int.toNat_of_nonneg h0
+  have h := Int.floor_le (q * 2 ^ serPrec)
+  rw [← e] at h
+  exact_mod_cast h
+
+/-- $q2^{128}\le$ `fxHi q` for $q\ge0$. -/
+theorem le_fxHi {q : ℚ} (hq : 0 ≤ q) : q * 2 ^ serPrec ≤ (fxHi q : ℚ) := by
+  have h0 : 0 ≤ ⌈q * 2 ^ serPrec⌉ := Int.ceil_nonneg (by positivity)
+  have e : ((fxHi q : ℕ) : ℤ) = ⌈q * 2 ^ serPrec⌉ := Int.toNat_of_nonneg h0
+  have h := Int.le_ceil (q * 2 ^ serPrec)
+  rw [← e] at h
+  exact_mod_cast h
+
+/-- Lower bound ($\cdot 2^{128}$ removed) for $\sum_{j<n}\sigma_jar^j/c_j$, $a,r\ge0$. -/
+def fxSumD (a r : ℚ) (c : ℕ → ℕ) (alt : Bool) (n : ℕ) : ℚ :=
+  (fxD serPrec (fxLo r) (fxHi r) c alt n 0 (fxLo a) (fxHi a) 0 : ℚ) / 2 ^ serPrec
+
+/-- Upper bound for the sum of `fxSumD`. -/
+def fxSumU (a r : ℚ) (c : ℕ → ℕ) (alt : Bool) (n : ℕ) : ℚ :=
+  (fxU serPrec (fxLo r) (fxHi r) c alt n 0 (fxLo a) (fxHi a) 0 : ℚ) / 2 ^ serPrec
+
+/-- `fxSumD` is a lower bound. -/
+theorem fxSumD_le {a r : ℚ} {c : ℕ → ℕ} (alt : Bool) (n : ℕ) (ha : 0 ≤ a) (hr : 0 ≤ r)
+    (hc : ∀ j, 0 < c j) :
+    fxSumD a r c alt n ≤ ∑ j ∈ Finset.range n, altSign alt j * (a * r ^ j) / c j := by
+  have h := fxD_le serPrec (a := a) (alt := alt) hr (fxLo_le hr) (le_fxHi hr) hc n 0
+    (fxLo a) (fxHi a) 0 (by simpa using fxLo_le ha) (by simpa using le_fxHi ha)
+  simp only [zero_add, Int.cast_zero] at h
+  rw [fxSumD, div_le_iff₀ (by positivity)]
+  linarith
+
+/-- `fxSumU` is an upper bound. -/
+theorem le_fxSumU {a r : ℚ} {c : ℕ → ℕ} (alt : Bool) (n : ℕ) (ha : 0 ≤ a) (hr : 0 ≤ r)
+    (hc : ∀ j, 0 < c j) :
+    ∑ j ∈ Finset.range n, altSign alt j * (a * r ^ j) / c j ≤ fxSumU a r c alt n := by
+  have h := le_fxU serPrec (a := a) (alt := alt) hr (fxLo_le hr) (le_fxHi hr) hc n 0
+    (fxLo a) (fxHi a) 0 (by simpa using fxLo_le ha) (by simpa using le_fxHi ha)
+  simp only [zero_add, Int.cast_zero] at h
+  rw [fxSumU, le_div_iff₀ (by positivity)]
+  linarith
+
+/-- $(-1)^j(-1)^j=1$. -/
+theorem neg_one_pow_mul_self (j : ℕ) : ((-1 : ℚ) ^ j) * (-1) ^ j = 1 := by
+  rw [← mul_pow]; norm_num
+
+/-- `eNq` in fixed point, rounded down (for $v\ge0$). -/
+def eNqD (N : ℕ) (v : ℚ) : ℚ := fxSumD 1 v Nat.factorial true N
+
+/-- `eNq` in fixed point, rounded up (for $v\ge0$). -/
+def eNqU (N : ℕ) (v : ℚ) : ℚ := fxSumU 1 v Nat.factorial true N
+
+/-- `gIq` in fixed point, rounded down (for $s\ge0$). -/
+def gIqD (N : ℕ) (s : ℚ) : ℚ := fxSumD s (s ^ 2) (fun k ↦ k.factorial * (2 * k + 1)) true N
+
+/-- `gIq` in fixed point, rounded up (for $s\ge0$). -/
+def gIqU (N : ℕ) (s : ℚ) : ℚ := fxSumU s (s ^ 2) (fun k ↦ k.factorial * (2 * k + 1)) true N
+
+/-- `eNq` as a fixed-point-shaped sum. -/
+theorem eNq_eq_sum (N : ℕ) (v : ℚ) :
+    eNq N v = ∑ j ∈ Finset.range N, altSign true j * (1 * v ^ j) / ((j.factorial : ℕ) : ℚ) := by
+  induction N with
+  | zero => simp [eNq]
+  | succ k ih => rw [eNq, ih, Finset.sum_range_succ, neg_pow, one_mul, altSign_true]
+
+/-- `gIq` as a fixed-point-shaped sum. -/
+theorem gIq_eq_sum (N : ℕ) (s : ℚ) :
+    gIq N s = ∑ j ∈ Finset.range N,
+      altSign true j * (s * (s ^ 2) ^ j) / ((j.factorial * (2 * j + 1) : ℕ) : ℚ) := by
+  induction N with
+  | zero => simp [gIq]
+  | succ k ih =>
+    rw [gIq, ih, Finset.sum_range_succ, altSign_true]
+    push_cast
+    congr 2
+    ring
+
+/-- `eNqD` $\le$ `eNq` for $v\ge0$. -/
+theorem eNqD_le (N : ℕ) {v : ℚ} (hv : 0 ≤ v) : eNqD N v ≤ eNq N v := by
+  rw [eNq_eq_sum]; exact fxSumD_le true N zero_le_one hv Nat.factorial_pos
+
+/-- `eNq` $\le$ `eNqU` for $v\ge0$. -/
+theorem eNq_le_U (N : ℕ) {v : ℚ} (hv : 0 ≤ v) : eNq N v ≤ eNqU N v := by
+  rw [eNq_eq_sum]; exact le_fxSumU true N zero_le_one hv Nat.factorial_pos
+
+/-- `gIqD` $\le$ `gIq` for $s\ge0$. -/
+theorem gIqD_le (N : ℕ) {s : ℚ} (hs : 0 ≤ s) : gIqD N s ≤ gIq N s := by
+  rw [gIq_eq_sum]; exact fxSumD_le true N hs (sq_nonneg s) (fun j ↦ by positivity)
+
+/-- `gIq` $\le$ `gIqU` for $s\ge0$. -/
+theorem gIq_le_U (N : ℕ) {s : ℚ} (hs : 0 ≤ s) : gIq N s ≤ gIqU N s := by
+  rw [gIq_eq_sum]; exact le_fxSumU true N hs (sq_nonneg s) (fun j ↦ by positivity)
+
+/-- `logSum` as a plain sum. -/
+theorem logSum_eq_sum (x : ℚ) (n : ℕ) :
+    logSum x n = ∑ j ∈ Finset.range n, x ^ (j + 1) / ((j + 1 : ℕ) : ℚ) := by
+  have h := logGo_eq x n 0 0
+  simp only [zero_add, pow_one] at h
+  rw [logSum, h]
+
+/-- `expSum` as a plain sum. -/
+theorem expSum_eq_sum (z : ℚ) (n : ℕ) :
+    expSum z n = ∑ j ∈ Finset.range n, z ^ j / ((j.factorial : ℕ) : ℚ) := by
+  have h := expGo_eq z n 0 0
+  simp only [zero_add, pow_zero, Nat.factorial_zero, Nat.cast_one, div_one] at h
+  rw [expSum, h]
+
+/-- `logSum` in fixed point, rounded down. -/
+def logSumD (x : ℚ) (n : ℕ) : ℚ :=
+  if 0 ≤ x then fxSumD x x (· + 1) false n else -fxSumU (-x) (-x) (· + 1) true n
+
+/-- `logSum` in fixed point, rounded up. -/
+def logSumU (x : ℚ) (n : ℕ) : ℚ :=
+  if 0 ≤ x then fxSumU x x (· + 1) false n else -fxSumD (-x) (-x) (· + 1) true n
+
+/-- `expSum` in fixed point, rounded down. -/
+def expSumD (z : ℚ) (n : ℕ) : ℚ :=
+  if 0 ≤ z then fxSumD 1 z Nat.factorial false n else fxSumD 1 (-z) Nat.factorial true n
+
+/-- `expSum` in fixed point, rounded up. -/
+def expSumU (z : ℚ) (n : ℕ) : ℚ :=
+  if 0 ≤ z then fxSumU 1 z Nat.factorial false n else fxSumU 1 (-z) Nat.factorial true n
+
+/-- The terms of `logSum` for $x\ge0$. -/
+theorem logSum_eq_pos (x : ℚ) (n : ℕ) :
+    logSum x n = ∑ j ∈ Finset.range n, altSign false j * (x * x ^ j) / ((j + 1 : ℕ) : ℚ) := by
+  rw [logSum_eq_sum]
+  refine Finset.sum_congr rfl fun j _ ↦ ?_
+  rw [altSign_false, one_mul, pow_succ, mul_comm]
+
+/-- The terms of `logSum` for $x<0$. -/
+theorem logSum_eq_neg (x : ℚ) (n : ℕ) :
+    logSum x n = -∑ j ∈ Finset.range n, altSign true j * (-x * (-x) ^ j) / ((j + 1 : ℕ) : ℚ) := by
+  rw [logSum_eq_sum, ← Finset.sum_neg_distrib]
+  refine Finset.sum_congr rfl fun j _ ↦ ?_
+  rw [altSign_true, neg_pow x j]
+  have e := neg_one_pow_mul_self j
+  linear_combination (-(x ^ (j + 1) / ((j + 1 : ℕ) : ℚ))) * e
+
+/-- The terms of `expSum` for $z\ge0$. -/
+theorem expSum_eq_pos (z : ℚ) (n : ℕ) :
+    expSum z n = ∑ j ∈ Finset.range n, altSign false j * (1 * z ^ j) / ((j.factorial : ℕ) : ℚ) := by
+  rw [expSum_eq_sum]
+  refine Finset.sum_congr rfl fun j _ ↦ ?_
+  rw [altSign_false, one_mul, one_mul]
+
+/-- The terms of `expSum` for $z<0$. -/
+theorem expSum_eq_neg (z : ℚ) (n : ℕ) :
+    expSum z n =
+      ∑ j ∈ Finset.range n, altSign true j * (1 * (-z) ^ j) / ((j.factorial : ℕ) : ℚ) := by
+  rw [expSum_eq_sum]
+  refine Finset.sum_congr rfl fun j _ ↦ ?_
+  rw [altSign_true, neg_pow z j]
+  have e := neg_one_pow_mul_self j
+  linear_combination (-(z ^ j / ((j.factorial : ℕ) : ℚ))) * e
+
+/-- `logSumD` $\le$ `logSum`. -/
+theorem logSumD_le (x : ℚ) (n : ℕ) : (logSumD x n : ℝ) ≤ logSum x n := by
+  have hc : ∀ j, 0 < j + 1 := fun j ↦ Nat.succ_pos j
+  have : logSumD x n ≤ logSum x n := by
+    unfold logSumD
+    split_ifs with hx
+    · rw [logSum_eq_pos]; exact fxSumD_le false n hx hx hc
+    · have hy : 0 ≤ -x := by linarith
+      rw [logSum_eq_neg]; exact neg_le_neg (le_fxSumU true n hy hy hc)
+  exact_mod_cast this
+
+/-- `logSum` $\le$ `logSumU`. -/
+theorem logSum_le_U (x : ℚ) (n : ℕ) : (logSum x n : ℝ) ≤ logSumU x n := by
+  have hc : ∀ j, 0 < j + 1 := fun j ↦ Nat.succ_pos j
+  have : logSum x n ≤ logSumU x n := by
+    unfold logSumU
+    split_ifs with hx
+    · rw [logSum_eq_pos]; exact le_fxSumU false n hx hx hc
+    · have hy : 0 ≤ -x := by linarith
+      rw [logSum_eq_neg]; exact neg_le_neg (fxSumD_le true n hy hy hc)
+  exact_mod_cast this
+
+/-- `expSumD` $\le$ `expSum`. -/
+theorem expSumD_le (z : ℚ) (n : ℕ) : (expSumD z n : ℝ) ≤ expSum z n := by
+  have : expSumD z n ≤ expSum z n := by
+    unfold expSumD
+    split_ifs with hz
+    · rw [expSum_eq_pos]; exact fxSumD_le false n zero_le_one hz Nat.factorial_pos
+    · rw [expSum_eq_neg]
+      exact fxSumD_le true n zero_le_one (by linarith) Nat.factorial_pos
+  exact_mod_cast this
+
+/-- `expSum` $\le$ `expSumU`. -/
+theorem expSum_le_U (z : ℚ) (n : ℕ) : (expSum z n : ℝ) ≤ expSumU z n := by
+  have : expSum z n ≤ expSumU z n := by
+    unfold expSumU
+    split_ifs with hz
+    · rw [expSum_eq_pos]; exact le_fxSumU false n zero_le_one hz Nat.factorial_pos
+    · rw [expSum_eq_neg]
+      exact le_fxSumU true n zero_le_one (by linarith) Nat.factorial_pos
+  exact_mod_cast this
+
 /-- `mul2pow q k` is $q\cdot2^k$. -/
 theorem mul2pow_cast (q : ℚ) (k : ℤ) : ((mul2pow q k : ℚ) : ℝ) = q * (2 : ℝ) ^ k := by
   cases k with
@@ -1014,26 +1372,47 @@ theorem sqrt_pi_lt_hi : √π < sqrtPiHi := by
   norm_num
   linarith [pi_lt_d20]
 
+/-- The degree parameter used for the Taylor polynomials at a witness $s\ge0$: the parameter
+$m$ of `Params`, lowered for small $s$ (where the next term is below $10^{-19}$ already for the
+lower degree). Any degree is sound; this only saves work. -/
+def degFor (m : ℕ) (s : ℚ) : ℕ :=
+  if s ≤ 1 / 8 then min m 7 else if s ≤ 1 / 4 then min m 9 else if s ≤ 1 / 2 then min m 12 else m
+
 /-- Upper bound for $\Phi(-\sqrt2s)$, $s\ge0$: $\frac12-S_{2m+2}(s)/\overline{\sqrt\pi}$. -/
-def phiNegHi (P : Params) (s : ℚ) : ℚ := 2⁻¹ - gIq (2 * P.mI + 2) s / sqrtPiHi
+def phiNegHi (P : Params) (s : ℚ) : ℚ := 2⁻¹ - gIqD (2 * degFor P.mI s + 2) s / sqrtPiHi
 
 /-- Lower bound for $\Phi(-\sqrt2s)$, $s\ge0$: $\frac12-S_{2m+1}(s)/\underline{\sqrt\pi}$. -/
-def phiNegLo (P : Params) (s : ℚ) : ℚ := 2⁻¹ - gIq (2 * P.mI + 1) s / sqrtPiLo
+def phiNegLo (P : Params) (s : ℚ) : ℚ := 2⁻¹ - gIqU (2 * (degFor P.mI s) + 1) s / sqrtPiLo
 
 /-- $\Phi(-\sqrt2s)\le$ `phiNegHi P s` for $s\ge0$. -/
 theorem gCDF_le_phiNegHi (P : Params) {s : ℚ} (hs : 0 ≤ s) :
     gCDF (-(√2 * s)) ≤ phiNegHi P s := by
   have hs' : (0 : ℝ) ≤ s := by exact_mod_cast hs
-  have := gCDF_neg_sqrt_two_mul_le hs' (gaussIntTaylor_le_integral P.mI hs') sqrt_pi_lt_hi.le
-  simpa [phiNegHi, gIq_cast] using this
+  have := gCDF_neg_sqrt_two_mul_le hs' (gaussIntTaylor_le_integral (degFor P.mI s) hs')
+    sqrt_pi_lt_hi.le
+  have hD : ((gIqD (2 * (degFor P.mI s) + 2) s : ℚ) : ℝ) ≤
+      gaussIntTaylor (2 * (degFor P.mI s) + 2) s := by
+    rw [← gIq_cast]; exact_mod_cast gIqD_le _ hs
+  have hpi : (0 : ℝ) < sqrtPiHi := sqrtPiLo_pos.trans (by norm_num [sqrtPiLo, sqrtPiHi])
+  refine this.trans ?_
+  simp only [phiNegHi]
+  push_cast
+  linarith [div_le_div_of_nonneg_right hD hpi.le]
 
 /-- `phiNegLo P s` $\le\Phi(-\sqrt2s)$ for $s\ge0$. -/
 theorem phiNegLo_le_gCDF (P : Params) {s : ℚ} (hs : 0 ≤ s) :
     (phiNegLo P s : ℝ) ≤ gCDF (-(√2 * s)) := by
   have hs' : (0 : ℝ) ≤ s := by exact_mod_cast hs
-  have := le_gCDF_neg_sqrt_two_mul hs' (integral_le_gaussIntTaylor P.mI hs') sqrtPiLo_pos
+  have := le_gCDF_neg_sqrt_two_mul hs' (integral_le_gaussIntTaylor (degFor P.mI s) hs')
+    sqrtPiLo_pos
     sqrtPiLo_lt.le
-  simpa [phiNegLo, gIq_cast] using this
+  have hU : gaussIntTaylor (2 * (degFor P.mI s) + 1) s ≤
+      ((gIqU (2 * (degFor P.mI s) + 1) s : ℚ) : ℝ) := by
+    rw [← gIq_cast]; exact_mod_cast gIq_le_U _ hs
+  refine le_trans ?_ this
+  simp only [phiNegLo]
+  push_cast
+  linarith [div_le_div_of_nonneg_right hU sqrtPiLo_pos.le]
 
 /-- Lower bound for $\Phi(\sqrt2\sigma)$, $\sigma\in\mathbb Q$. -/
 def phiLo (P : Params) (σ : ℚ) : ℚ := if σ < 0 then phiNegLo P (-σ) else 1 - phiNegHi P σ
@@ -1069,8 +1448,8 @@ def gJwIv (P : Params) (wl wu x sl su : ℚ) : Option (ℚ × ℚ) :=
   if 0 < wl ∧ 0 ≤ sl ∧ 0 ≤ su ∧ phiNegHi P sl ≤ (1 - x) / wu ∧
       phiNegHi P sl ≤ 1 - (1 - x) / wl ∧
       ((1 - x) / wl ≤ phiNegLo P su ∨ 1 - (1 - x) / wu ≤ phiNegLo P su) then
-    some (rdn P.prec (wl * eNq (2 * P.mE + 2) (sl ^ 2) / sqrtPiHi),
-      rup P.prec (wu * eNq (2 * P.mE + 1) (su ^ 2) / sqrtPiLo))
+    some (rdn P.prec (wl * eNqD (2 * (degFor P.mE sl) + 2) (sl ^ 2) / sqrtPiHi),
+      rup P.prec (wu * eNqU (2 * (degFor P.mE su) + 1) (su ^ 2) / sqrtPiLo))
   else none
 
 /-- Soundness of `gJwIv`. -/
@@ -1090,6 +1469,14 @@ theorem gJwIv_sound (P : Params) {wl wu x sl su : ℚ} {I : ℚ × ℚ}
     have h2' : ((phiNegHi P sl : ℚ) : ℝ) ≤ 1 - (1 - x) / wl := by exact_mod_cast h2
     have hΦ := gCDF_le_phiNegHi P hsl
     refine le_trans ?_ (gJw_ge_of_gCDF_le hwl' hsl' (hΦ.trans h1') (hΦ.trans h2') hw hx)
+    have hD : ((eNqD (2 * (degFor P.mE sl) + 2) (sl ^ 2) : ℚ) : ℝ) ≤
+        eNq (2 * (degFor P.mE sl) + 2) (sl ^ 2) := by
+      exact_mod_cast eNqD_le _ (sq_nonneg sl)
+    have hpi : (0 : ℝ) < sqrtPiHi := sqrtPiLo_pos.trans (by norm_num [sqrtPiLo, sqrtPiHi])
+    refine le_trans (b := ((wl * eNq (2 * (degFor P.mE sl) + 2) (sl ^ 2) / sqrtPiHi : ℚ) : ℝ))
+      ?_ ?_
+    · push_cast
+      exact div_le_div_of_nonneg_right (mul_le_mul_of_nonneg_left hD hwl'.le) hpi.le
     push_cast
     rw [eNq_cast, mul_div_assoc, mul_div_assoc]
     push_cast
@@ -1104,7 +1491,15 @@ theorem gJwIv_sound (P : Params) {wl wu x sl su : ℚ} {I : ℚ × ℚ}
       · right; exact_mod_cast h3
     refine (gJw_le_of_le_gCDF hwl' hsu' (h3'.imp (·.trans hΦ) (·.trans hΦ)) hw hx).trans ?_
     have hwu : (0 : ℝ) ≤ wu := hwl'.le.trans (hw.1.trans hw.2)
-    have hE := exp_neg_le_expNegTaylor P.mE (sq_nonneg (su : ℝ))
+    have hE := exp_neg_le_expNegTaylor (degFor P.mE su) (sq_nonneg (su : ℝ))
+    have hU : ((eNq (2 * (degFor P.mE su) + 1) (su ^ 2) : ℚ) : ℝ) ≤
+        eNqU (2 * (degFor P.mE su) + 1) (su ^ 2) := by
+      exact_mod_cast eNq_le_U _ (sq_nonneg su)
+    refine le_trans (b := ((wu * eNq (2 * (degFor P.mE su) + 1) (su ^ 2) / sqrtPiLo : ℚ) : ℝ))
+      ?_ ?_
+    swap
+    · push_cast
+      exact div_le_div_of_nonneg_right (mul_le_mul_of_nonneg_left hU hwu) sqrtPiLo_pos.le
     push_cast
     rw [eNq_cast, mul_div_assoc, mul_div_assoc]
     push_cast
@@ -1198,9 +1593,9 @@ def logR (x : ℚ) (n : ℕ) : ℚ := abs x ^ (n + 1) / (1 - abs x)
 /-- Enclosure of $\log q$, $q>0$ rational: $\log q=\log m+k\log2$ with $m=q2^{-k}$. -/
 def logIv (P : Params) (q : ℚ) : Option (ℚ × ℚ) :=
   if 0 < q ∧ abs (logX q) < 1 then
-    some (rdn P.prec (-logSum (logX q) P.nLog - logR (logX q) P.nLog +
+    some (rdn P.prec (-logSumU (logX q) P.nLog - logR (logX q) P.nLog +
         (if 0 ≤ logK q then (logK q : ℚ) * ln2Lo else (logK q : ℚ) * ln2Hi)),
-      rup P.prec (-logSum (logX q) P.nLog + logR (logX q) P.nLog +
+      rup P.prec (-logSumD (logX q) P.nLog + logR (logX q) P.nLog +
         (if 0 ≤ logK q then (logK q : ℚ) * ln2Hi else (logK q : ℚ) * ln2Lo)))
   else none
 
@@ -1239,9 +1634,11 @@ theorem logIv_sound (P : Params) {q : ℚ} {I : ℚ × ℚ} (h : logIv P q = som
     · have : (k : ℝ) ≤ 0 := by exact_mod_cast (not_le.1 hk0).le
       push_cast
       exact ⟨mul_le_mul_of_nonpos_left h2.2 this, mul_le_mul_of_nonpos_left h2.1 this⟩
+  have hSD := logSumD_le (1 - m) P.nLog
+  have hSU := logSum_le_U (1 - m) P.nLog
   refine ⟨rdn_le_real _ ?_, le_rup_real _ ?_⟩
-  · rw [hlog]; push_cast at hL hk ⊢; linarith [hL.1, hk.1]
-  · rw [hlog]; push_cast at hL hk ⊢; linarith [hL.2, hk.2]
+  · rw [hlog]; push_cast at hL hk hSU ⊢; linarith [hL.1, hk.1]
+  · rw [hlog]; push_cast at hL hk hSD ⊢; linarith [hL.2, hk.2]
 
 /-- Squaring with downward rounding preserves lower bounds for $e^t$:
 $0\le a\le e^t\Rightarrow\mathrm{sqIter}(a)\le e^{2^jt}$. -/
@@ -1286,9 +1683,9 @@ def expJ (y : ℚ) : ℕ := Nat.log2 ⌈|y|⌉.toNat + 1
 bound of `Real.exp_bound`, then $j$ squarings. -/
 def expIv (P : Params) (y : ℚ) : Option (ℚ × ℚ) :=
   if |y / 2 ^ expJ y| ≤ 1 ∧ 0 < P.nExp then
-    some (sqIter (rdn P.prec) (expJ y) (max 0 (rdn P.prec (expSum (y / 2 ^ expJ y) P.nExp -
+    some (sqIter (rdn P.prec) (expJ y) (max 0 (rdn P.prec (expSumD (y / 2 ^ expJ y) P.nExp -
         |y / 2 ^ expJ y| ^ P.nExp * ((P.nExp + 1) / (P.nExp.factorial * P.nExp))))),
-      sqIter (rup P.prec) (expJ y) (rup P.prec (expSum (y / 2 ^ expJ y) P.nExp +
+      sqIter (rup P.prec) (expJ y) (rup P.prec (expSumU (y / 2 ^ expJ y) P.nExp +
         |y / 2 ^ expJ y| ^ P.nExp * ((P.nExp + 1) / (P.nExp.factorial * P.nExp)))))
   else none
 
@@ -1309,7 +1706,7 @@ theorem expIv_sound (P : Params) {y : ℚ} {I : ℚ × ℚ} (h : expIv P y = som
   rw [hy]
   constructor
   · refine sqIter_rdn_le _ _ _ _ (le_max_left _ _) ?_
-    rcases le_total (rdn P.prec (expSum z P.nExp -
+    rcases le_total (rdn P.prec (expSumD z P.nExp -
         |z| ^ P.nExp * ((P.nExp + 1) / (P.nExp.factorial * P.nExp)))) 0 with h0 | h0
     · rw [max_eq_left h0]; push_cast; exact (exp_pos _).le
     · rw [max_eq_right h0]
@@ -1317,12 +1714,12 @@ theorem expIv_sound (P : Params) {y : ℚ} {I : ℚ × ℚ} (h : expIv P y = som
       push_cast
       have : ((P.nExp.succ : ℕ) : ℝ) = P.nExp + 1 := by push_cast; ring
       rw [this] at hB
-      linarith [hB.1]
+      linarith [hB.1, expSumD_le z P.nExp]
   · refine le_sqIter_rup _ _ _ _ (le_rup_real _ ?_)
     push_cast
     have : ((P.nExp.succ : ℕ) : ℝ) = P.nExp + 1 := by push_cast; ring
     rw [this] at hB
-    linarith [hB.2]
+    linarith [hB.2, expSum_le_U z P.nExp]
 
 /-- Enclosure of $X^r$ for $X$ in a positive rational interval, $r\in\mathbb Q$:
 $X^r=\exp(r\log X)$. -/
